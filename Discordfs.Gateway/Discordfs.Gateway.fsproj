@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Types\GatewayEventTypes.fs" />
+	<Compile Include="Types\GatewayReceiveEvent.fs" />
+	<Compile Include="Types\GatewaySendEvent.fs" />
+    <Compile Include="Modules\Websocket.fs" />
+    <Compile Include="Modules\Gateway.fs" />
+    <Compile Include="Clients\GatewayClient.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Discordfs.Types\Discordfs.Types.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="9.0.100" />
+  </ItemGroup>
+
+</Project>

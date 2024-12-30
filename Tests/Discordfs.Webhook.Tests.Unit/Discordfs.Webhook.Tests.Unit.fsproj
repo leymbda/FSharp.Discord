@@ -1,0 +1,19 @@
+<Project Sdk="MSTest.Sdk/3.6.1">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Modules\Ed25519Tests.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Discordfs.Webhook\Discordfs.Webhook.fsproj" />
+  </ItemGroup>
+
+</Project>
