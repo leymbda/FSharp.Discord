@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Discordfs.Rest\Discordfs.Rest.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.403" />
+  </ItemGroup>
+
 </Project>
