@@ -49,5 +49,5 @@ jobs:
 
       - name: Publish package
         run: |
-          dotnet nuget push "Discordfs/bin/${{ env.BUILD_CONFIG }}/Discordfs.${{ env.BUILD_VERSION }}.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
-          dotnet nuget push "Discordfs/bin/${{ env.BUILD_CONFIG }}/Discordfs.${{ env.BUILD_VERSION }}.nupkg" --api-key ${{ secrets.NUGET_TOKEN }} --source "nuget"
+          dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
+          dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source "nuget.org"
