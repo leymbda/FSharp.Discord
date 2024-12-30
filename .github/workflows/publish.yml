@@ -41,12 +41,10 @@ jobs:
       - name: Run tests
         run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --verbosity normal
 
-      - name: Add nuget sources
-        run: |
-          dotnet nuget add source --username leydel --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/leydel/index.json"
-          dotnet nuget add source --name nuget "https://api.nuget.org/v3/index.json"
+      - name: Add GPR source
+        run: dotnet nuget add source --username leydel --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/leydel/index.json"
 
-      - name: Package project
+      - name: Pack project
         run: dotnet pack --configuration $BUILD_CONFIG
 
       - name: Publish package
