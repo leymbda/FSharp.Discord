@@ -49,5 +49,5 @@ jobs:
 
       - name: Publish package
         run: |
-          dotnet nuget push **/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
-          dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source "nuget.org"
+          dotnet nuget push **/*.nupkg --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
+          dotnet nuget push **/*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_TOKEN }} --source "nuget.org"
