@@ -31,7 +31,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Discordfs.Utils.Tests.Unit"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Discordfs.Commands.Tests.Unit", "Tests\Discordfs.Commands.Tests.Unit\Discordfs.Commands.Tests.Unit.fsproj", "{BEC2A6FC-74F1-44A0-B47E-A325809A3AE0}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Discordfs.Tests.Unit", "Discordfs.Tests.Unit\Discordfs.Tests.Unit.fsproj", "{23685200-B781-4278-A5EF-AF31D17A8F59}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Discordfs.Tests.Unit", "Tests\Discordfs.Tests.Unit\Discordfs.Tests.Unit.fsproj", "{23685200-B781-4278-A5EF-AF31D17A8F59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

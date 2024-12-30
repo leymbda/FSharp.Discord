@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Discordfs\Discordfs.fsproj" />
+    <ProjectReference Include="..\..\Discordfs\Discordfs.fsproj" />
   </ItemGroup>
 
 </Project>
