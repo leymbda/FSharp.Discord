@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Types\WebhookEventTypes.fs" />
+    <Compile Include="Types\InteractionEventTypes.fs" />
+    <Compile Include="Types\WebhookEvent.fs" />
+    <Compile Include="Types\InteractionReceiveEvent.fs" />
+    <Compile Include="Types\InteractionRespondEvent.fs" />
+    <Compile Include="Modules\Ed25519.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TweetNaclSharp" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FSharp.Discord.Rest\FSharp.Discord.Rest.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.403" />
+  </ItemGroup>
+
+</Project>
