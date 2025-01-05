@@ -606,7 +606,7 @@ type ApplicationIntegrationTypeConfiguration = {
 type TeamMember = {
     [<JsonPropertyName "membership_state">] MembershipState: TeamMembershipState
     [<JsonPropertyName "team_id">] TeamId: string
-    [<JsonPropertyName "user">] User: User
+    [<JsonPropertyName "user">] User: PartialUser // avatar, discriminator, id, username
     [<JsonPropertyName "role">] Role: string
 }
 
