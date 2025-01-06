@@ -30,6 +30,10 @@ module Json =
 
         res.ToJsonString()
 
+module JsonException =
+    let raiseThunk message () =
+        raise (JsonException message)
+
 module Converters =
     type UnixEpoch () =
         inherit JsonConverter<DateTime> () with

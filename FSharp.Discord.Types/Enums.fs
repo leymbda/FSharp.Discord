@@ -5,38 +5,38 @@ open System.Text.Json
 open System.Text.Json.Serialization
 
 type TextInputStyle =
-    | SHORT = 1
+    | SHORT     = 1
     | PARAGRAPH = 2
 
 type ButtonStyle =
-    | PRIMARY = 1
+    | PRIMARY   = 1
     | SECONDARY = 2
-    | SUCCESS = 3
-    | DANGER = 4
-    | LINK = 5
+    | SUCCESS   = 3
+    | DANGER    = 4
+    | LINK      = 5
 
 type ComponentType =
-    | ACTION_ROW = 1
-    | BUTTON = 2
-    | STRING_SELECT = 3
-    | TEXT_INPUT = 4
-    | USER_SELECT = 5
-    | ROLE_SELECT = 6
+    | ACTION_ROW         = 1
+    | BUTTON             = 2
+    | STRING_SELECT      = 3
+    | TEXT_INPUT         = 4
+    | USER_SELECT        = 5
+    | ROLE_SELECT        = 6
     | MENTIONABLE_SELECT = 7
-    | CHANNEL_SELECT = 8
+    | CHANNEL_SELECT     = 8
 
 type PermissionOverwriteType =
-    | ROLE = 0
+    | ROLE   = 0
     | MEMBER = 1
 
 type ChannelForumLayout =
-    | NOT_SET = 0
-    | LIST_VIEW = 1
+    | NOT_SET      = 0
+    | LIST_VIEW    = 1
     | GALLERY_VIEW = 2
 
 type ChannelSortOrder =
     | LATEST_ACTIVITY = 0
-    | CREATION_DATE = 1
+    | CREATION_DATE   = 1
 
 type VideoQualityMode =
     | AUTO = 1
@@ -46,131 +46,131 @@ type PollLayoutType =
     | DEFAULT = 1
 
 type TeamMembershipState =
-    | INVITED = 1
+    | INVITED  = 1
     | ACCEPTED = 2
 
 type MessageActivityType =
-    | JOIN = 1
-    | SPECTATE = 2
-    | LISTEN = 3
+    | JOIN         = 1
+    | SPECTATE     = 2
+    | LISTEN       = 3
     | JOIN_REQUEST = 5
 
 type MessageType =
-    | DEFAULT = 0
-    | RECIPIENT_ADD = 1
-    | RECIPIENT_REMOVE = 2
-    | CALL = 3
-    | CHANNEL_NAME_CHANGE = 4
-    | CHANNEL_ICON_CHANGE = 5
-    | CHANNEL_PINNED_MESSAGE = 6
-    | USER_JOIN = 7
-    | GUILD_BOOST = 8
-    | GUILD_BOOST_TIER_1 = 9
-    | GUILD_BOOST_TIER_2 = 10
-    | GUILD_BOOST_TIER_3 = 11
-    | CHANNEL_FOLLOW_ADD = 12
-    | GUILD_DISCOVERY_DISQUALIFIED = 14
-    | GUILD_DISCOVERY_REQUALIFIED = 15
+    | DEFAULT                                      = 0
+    | RECIPIENT_ADD                                = 1
+    | RECIPIENT_REMOVE                             = 2
+    | CALL                                         = 3
+    | CHANNEL_NAME_CHANGE                          = 4
+    | CHANNEL_ICON_CHANGE                          = 5
+    | CHANNEL_PINNED_MESSAGE                       = 6
+    | USER_JOIN                                    = 7
+    | GUILD_BOOST                                  = 8
+    | GUILD_BOOST_TIER_1                           = 9
+    | GUILD_BOOST_TIER_2                           = 10
+    | GUILD_BOOST_TIER_3                           = 11
+    | CHANNEL_FOLLOW_ADD                           = 12
+    | GUILD_DISCOVERY_DISQUALIFIED                 = 14
+    | GUILD_DISCOVERY_REQUALIFIED                  = 15
     | GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING = 16
-    | GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING = 17
-    | THREAD_CREATED = 18
-    | REPLY = 19
-    | CHAT_INPUT_COMMAND = 20
-    | THREAD_STARTER_MESSAGE = 21
-    | GUILD_INVITE_REMINDER = 22
-    | CONTEXT_MENU_COMMAND = 23
-    | AUTO_MODERATION_ACTION = 24
-    | ROLE_SUBSCRIPTION_PURCHASE = 25
-    | INTERACTION_PREMIUM_UPSELL = 26
-    | STAGE_START = 27
-    | STAGE_END = 28
-    | STAGE_SPEAKER = 29
-    | STAGE_TOPIC = 31
-    | GUILD_APPLICATION_PREMIUM_SUBSCRIPTION = 32
-    | GUILD_INCIDENT_ALERT_MODE_ENABLED = 36
-    | GUILD_INCIDENT_ALERT_MODE_DISABLED = 37
-    | GUILD_INCIDENT_REPORT_RAID = 38
-    | GUILD_INCIDENT_REPORT_FALSE_ALARM = 39
-    | PURCHASE_NOTIFICATION = 44
+    | GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING   = 17
+    | THREAD_CREATED                               = 18
+    | REPLY                                        = 19
+    | CHAT_INPUT_COMMAND                           = 20
+    | THREAD_STARTER_MESSAGE                       = 21
+    | GUILD_INVITE_REMINDER                        = 22
+    | CONTEXT_MENU_COMMAND                         = 23
+    | AUTO_MODERATION_ACTION                       = 24
+    | ROLE_SUBSCRIPTION_PURCHASE                   = 25
+    | INTERACTION_PREMIUM_UPSELL                   = 26
+    | STAGE_START                                  = 27
+    | STAGE_END                                    = 28
+    | STAGE_SPEAKER                                = 29
+    | STAGE_TOPIC                                  = 31
+    | GUILD_APPLICATION_PREMIUM_SUBSCRIPTION       = 32
+    | GUILD_INCIDENT_ALERT_MODE_ENABLED            = 36
+    | GUILD_INCIDENT_ALERT_MODE_DISABLED           = 37
+    | GUILD_INCIDENT_REPORT_RAID                   = 38
+    | GUILD_INCIDENT_REPORT_FALSE_ALARM            = 39
+    | PURCHASE_NOTIFICATION                        = 44
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-types
 type ChannelType =
-    | GUILD_TEXT = 0
-    | DM = 1
-    | GUILD_VOICE = 2
-    | GROUP_DM = 3
-    | GUILD_CATEGORY = 4
-    | GUILD_ANNOUNCEMENT = 5
+    | GUILD_TEXT          = 0
+    | DM                  = 1
+    | GUILD_VOICE         = 2
+    | GROUP_DM            = 3
+    | GUILD_CATEGORY      = 4
+    | GUILD_ANNOUNCEMENT  = 5
     | ANNOUNCEMENT_THREAD = 10
-    | PUBLIC_THREAD = 11
-    | PRIVATE_THREAD = 12
-    | GUILD_STAGE_VOICE = 13
-    | GUILD_DIRECTORY = 14
-    | GUILD_FORUM = 15
-    | GUILD_MEDIA = 16
+    | PUBLIC_THREAD       = 11
+    | PRIVATE_THREAD      = 12
+    | GUILD_STAGE_VOICE   = 13
+    | GUILD_DIRECTORY     = 14
+    | GUILD_FORUM         = 15
+    | GUILD_MEDIA         = 16
 
 type EntitlementType =
-    | PURCHASE = 1
-    | PREMIUM_SUBSCRIPTION = 2
-    | DEVELOPER_GIFT = 3
-    | TEST_MODE_PURCHASE = 4
-    | FREE_PURCHASE = 5
-    | USER_GIFT = 6
-    | PREMIUM_PURCHASE = 7
+    | PURCHASE                 = 1
+    | PREMIUM_SUBSCRIPTION     = 2
+    | DEVELOPER_GIFT           = 3
+    | TEST_MODE_PURCHASE       = 4
+    | FREE_PURCHASE            = 5
+    | USER_GIFT                = 6
+    | PREMIUM_PURCHASE         = 7
     | APPLICATION_SUBSCRIPTION = 8
 
 type UserPremiumType =
-    | NONE = 0
+    | NONE          = 0
     | NITRO_CLASSIC = 1
-    | NITRO = 2
-    | NITRO_BASIC = 3
+    | NITRO         = 2
+    | NITRO_BASIC   = 3
 
 type StickerFormatType = 
-    | PNG = 1
-    | APNG = 2
+    | PNG    = 1
+    | APNG   = 2
     | LOTTIE = 3
-    | GIF = 4
+    | GIF    = 4
 
 type StickerType = 
     | STANDARD = 1
-    | GUILD = 2
+    | GUILD    = 2
 
 // https://discord.com/developers/docs/resources/guild#guild-object-guild-nsfw-level
 type GuildNsfwLevel =
-    | DEFAULT = 0
-    | EXPLICIT = 1
-    | SAFE = 2
+    | DEFAULT        = 0
+    | EXPLICIT       = 1
+    | SAFE           = 2
     | AGE_RESTRICTED = 3
 
 // https://discord.com/developers/docs/resources/guild#guild-object-premium-tier
 type GuildPremiumTier =
-    | NONE = 0
+    | NONE    = 0
     | LEVEL_1 = 1
     | LEVEL_2 = 2
     | LEVEL_3 = 3
 
 // https://discord.com/developers/docs/resources/guild#guild-object-mfa-level
 type GuildMfaLevel =
-    | NONE = 0
+    | NONE     = 0
     | ELEVATED = 1
 
 // https://discord.com/developers/docs/resources/guild#guild-object-explicit-content-filter-level
 type GuildExplicitContentFilterLevel =
-    | DISABLED = 0
+    | DISABLED              = 0
     | MEMBERS_WITHOUT_ROLES = 1
-    | ALL_MEMBERS = 2
+    | ALL_MEMBERS           = 2
 
 // https://discord.com/developers/docs/resources/guild#guild-object-default-message-notification-level
 type GuildMessageNotificationLevel =
-    | ALL_MESSAGES = 0
+    | ALL_MESSAGES  = 0
     | ONLY_MENTIONS = 1
 
 // https://discord.com/developers/docs/resources/guild#guild-object-verification-level
 type GuildVerificationLevel =
-    | NONE = 0
-    | LOW = 1
-    | MEDIUM = 2
-    | HIGH = 3
+    | NONE      = 0
+    | LOW       = 1
+    | MEDIUM    = 2
+    | HIGH      = 3
     | VERY_HIGH = 4
 
 // https://discord.com/developers/docs/resources/guild#guild-object-guild-features
@@ -267,32 +267,30 @@ with
 
 and GuildFeatureConverter () =
     inherit JsonConverter<GuildFeature> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            let value = reader.GetString() |> GuildFeature.FromString
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> GuildFeature.FromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildFeature type")
 
-            match value with
-            | Some gf -> gf
-            | None -> raise (JsonException "Unexpected GuildFeature type")
-
-        override _.Write (writer: Utf8JsonWriter, value: GuildFeature, options: JsonSerializerOptions) = 
-            writer.WriteStringValue (value.ToString())
+        override _.Write (writer, value, _) = 
+            value.ToString() |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-onboarding-mode
 type OnboardingMode =
-    | ONBOARDING_DEFAULT = 0
+    | ONBOARDING_DEFAULT  = 0
     | ONBOARDING_ADVANCED = 1
 
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-prompt-types
 type OnboardingPromptType =
     | MULTIPLE_CHOICE = 0
-    | DROPDOWN = 1
+    | DROPDOWN        = 1
 
 [<JsonConverter(typeof<CommandInteractionDataOptionValueConverter>)>]
 type CommandInteractionDataOptionValue =
     | String of string
-    | Int of int
+    | Int    of int
     | Double of double
-    | Bool of bool
+    | Bool   of bool
 
 and CommandInteractionDataOptionValueConverter () =
     inherit JsonConverter<CommandInteractionDataOptionValue> () with
@@ -312,62 +310,62 @@ and CommandInteractionDataOptionValueConverter () =
             | CommandInteractionDataOptionValue.Double v -> writer.WriteNumberValue v
 
 type ApplicationCommandType = 
-    | CHAT_INPUT = 1
-    | USER = 2
-    | MESSAGE = 3
+    | CHAT_INPUT          = 1
+    | USER                = 2
+    | MESSAGE             = 3
     | PRIMARY_ENTRY_POINT = 4
 
 type ApplicationCommandOptionType =
-    | SUB_COMMAND = 1
+    | SUB_COMMAND       = 1
     | SUB_COMMAND_GROUP = 2
-    | STRING = 3
-    | INTEGER = 4
-    | BOOLEAN = 5
-    | USER = 6
-    | CHANNEL = 7
-    | ROLE = 8
-    | MENTIONABLE = 9
-    | NUMBER = 10
-    | ATTACHMENT = 11
+    | STRING            = 3
+    | INTEGER           = 4
+    | BOOLEAN           = 5
+    | USER              = 6
+    | CHANNEL           = 7
+    | ROLE              = 8
+    | MENTIONABLE       = 9
+    | NUMBER            = 10
+    | ATTACHMENT        = 11
 
 type ApplicationCommandPermissionType =
-    | ROLE = 1
-    | USER = 2
+    | ROLE    = 1
+    | USER    = 2
     | CHANNEL = 3
 
 type InteractionContextType =
-    | GUILD = 0
-    | BOT_DM = 1
+    | GUILD           = 0
+    | BOT_DM          = 1
     | PRIVATE_CHANNEL = 2
 
 type ApplicationIntegrationType =
     | GUILD_INSTALL = 0
-    | USER_INSTALL = 1
+    | USER_INSTALL  = 1
 
 type InteractionType = 
-    | PING = 1
-    | APPLICATION_COMMAND = 2
-    | MESSAGE_COMPONENT = 3
+    | PING                             = 1
+    | APPLICATION_COMMAND              = 2
+    | MESSAGE_COMPONENT                = 3
     | APPLICATION_COMMAND_AUTOCOMPLETE = 4
-    | MODAL_SUBMIT = 5
+    | MODAL_SUBMIT                     = 5
 
 type InteractionCallbackType = 
-    | PONG = 1
-    | CHANNEL_MESSAGE_WITH_SOURCE = 4
-    | DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE = 5
-    | DEFERRED_UPDATE_MESSAGE = 6
-    | UPDATE_MESSAGE = 7
+    | PONG                                    = 1
+    | CHANNEL_MESSAGE_WITH_SOURCE             = 4
+    | DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE    = 5
+    | DEFERRED_UPDATE_MESSAGE                 = 6
+    | UPDATE_MESSAGE                          = 7
     | APPLICATION_COMMAND_AUTOCOMPLETE_RESULT = 8
-    | MODAL = 9
-    | LAUNCH_ACTIVITY = 12
+    | MODAL                                   = 9
+    | LAUNCH_ACTIVITY                         = 12
 
 type InviteType =
-    | GUILD = 0
+    | GUILD    = 0
     | GROUP_DM = 1
-    | FRIEND = 2
+    | FRIEND   = 2
 
 type InviteTargetType =
-    | STREAM = 1
+    | STREAM               = 1
     | EMBEDDED_APPLICATION = 2
 
 [<JsonConverter(typeof<MessageNonceConverter>)>]
@@ -391,7 +389,7 @@ and MessageNonceConverter () =
 [<JsonConverter(typeof<ApplicationCommandOptionChoiceValueConverter>)>]
 type ApplicationCommandOptionChoiceValue =
     | String of string
-    | Int of int
+    | Int    of int
     | Double of double
 
 and ApplicationCommandOptionChoiceValueConverter () =
@@ -419,7 +417,7 @@ and ApplicationCommandOptionChoiceValueConverter () =
     
 [<JsonConverter(typeof<ApplicationCommandMinValueConverter>)>]
 type ApplicationCommandMinValue =
-    | Int of int
+    | Int    of int
     | Double of double
 
 and ApplicationCommandMinValueConverter () =
@@ -445,7 +443,7 @@ and ApplicationCommandMinValueConverter () =
     
 [<JsonConverter(typeof<ApplicationCommandMaxValueConverter>)>]
 type ApplicationCommandMaxValue =
-    | Int of int
+    | Int    of int
     | Double of double
 
 and ApplicationCommandMaxValueConverter () =
@@ -471,208 +469,45 @@ and ApplicationCommandMaxValueConverter () =
 
 [<JsonConverter(typeof<AllowedMentionsParseTypeConverter>)>]
 type AllowedMentionsParseType =
-    | Roles
-    | Users
-    | Everyone
+    | ROLES
+    | USERS
+    | EVERYONE
+with
+    override this.ToString () =
+        match this with
+        | AllowedMentionsParseType.ROLES -> "roles"
+        | AllowedMentionsParseType.USERS -> "users"
+        | AllowedMentionsParseType.EVERYONE -> "everyone"
+
+    static member FromString (str: string) =
+        match str with
+        | "roles" -> Some AllowedMentionsParseType.ROLES
+        | "users" -> Some AllowedMentionsParseType.USERS
+        | "everyone" -> Some AllowedMentionsParseType.EVERYONE
+        | _ -> None
 
 and AllowedMentionsParseTypeConverter () =
     inherit JsonConverter<AllowedMentionsParseType> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.GetString() with
-            | "roles" -> AllowedMentionsParseType.Roles
-            | "users" -> AllowedMentionsParseType.Users
-            | "everyone" -> AllowedMentionsParseType.Everyone
-            | _ -> raise (JsonException "Unexpected AllowedMentionsParseType value")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> AllowedMentionsParseType.FromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected AllowedMentionsParseType type")
 
-        override _.Write (writer: Utf8JsonWriter, value: AllowedMentionsParseType, options: JsonSerializerOptions) =
-            let string =
-                match value with
-                | AllowedMentionsParseType.Roles -> "roles"
-                | AllowedMentionsParseType.Users -> "users"
-                | AllowedMentionsParseType.Everyone -> "everyone"
-
-            writer.WriteStringValue string
+        override _.Write (writer, value, _) = 
+            value.ToString() |> writer.WriteStringValue
 
 type ApplicationCommandHandlerType =
-    | APP_HANDER = 1
+    | APP_HANDER              = 1
     | DISCORD_LAUNCH_ACTIVITY = 2
-
-type GatewayEncoding =
-    | JSON
-    | ETF
-with
-    override this.ToString () =
-        match this with
-        | GatewayEncoding.JSON -> "json"
-        | GatewayEncoding.ETF -> "etf"
-
-type GatewayEncodingConverter () =
-    inherit JsonConverter<GatewayEncoding> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.GetString() with
-            | "json" -> GatewayEncoding.JSON
-            | "etf" -> GatewayEncoding.ETF
-            | _ -> raise (JsonException "Unexpected GatewayEncoding value")
-
-        override _.Write (writer: Utf8JsonWriter, value: GatewayEncoding, options: JsonSerializerOptions) =
-            let string =
-                match value with
-                | GatewayEncoding.JSON -> "json"
-                | GatewayEncoding.ETF -> "etf"
-
-            writer.WriteStringValue string
-
-type GatewayCompression =
-    | ZLIBSTREAM
-    | ZSTDSTREAM
-with
-    override this.ToString () =
-        match this with
-        | GatewayCompression.ZLIBSTREAM -> "zlib-stream"
-        | GatewayCompression.ZSTDSTREAM -> "zstd-stream"
-
-type GatewayCompressionConverter () =
-    inherit JsonConverter<GatewayCompression> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.GetString() with
-            | "zlib-stream" -> GatewayCompression.ZLIBSTREAM
-            | "zstd-stream" -> GatewayCompression.ZSTDSTREAM
-            | _ -> raise (JsonException "Unexpected GatewayCompression value")
-
-        override _.Write (writer: Utf8JsonWriter, value: GatewayCompression, options: JsonSerializerOptions) =
-            let string =
-                match value with
-                | GatewayCompression.ZLIBSTREAM -> "zlib-stream"
-                | GatewayCompression.ZSTDSTREAM -> "zstd-stream"
-
-            writer.WriteStringValue string
-
-type GatewayOpcode =
-    | DISPATCH = 0
-    | HEARTBEAT = 1
-    | IDENTIFY = 2
-    | PRESENCE_UPDATE = 3
-    | VOICE_STATE_UPDATE = 4
-    | RESUME = 6
-    | RECONNECT = 7
-    | REQUEST_GUILD_MEMBERS = 8
-    | INVALID_SESSION = 9
-    | HELLO = 10
-    | HEARTBEAT_ACK = 11
-    | REQUEST_SOUNDBOARD_SOUNDS = 31
-    
-// https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
-type GatewayCloseEventCode =
-    | UNKNOWN_ERROR = 4000
-    | UNKNOWN_OPCODE = 4001
-    | DECODE_ERROR = 4002
-    | NOT_AUTHENTICATED = 4003
-    | AUTHENTICATION_FAILED = 4004
-    | ALREADY_AUTHENTICATED = 4005
-    | INVALID_SEQ = 4007
-    | RATE_LIMITED = 4008
-    | SESSION_TIMED_OUT = 4009
-    | INVALID_SHARD = 4010
-    | SHARDING_REQUIRED = 4011
-    | INVALID_API_VERSION = 4012
-    | INVALID_INTENTS = 4013
-    | DISALLOWED_INTENTS = 4014
-
-type GatewayIntent =
-    | GUILDS =                          0b00000000_00000000_00000000_00000001
-    | GUILD_MEMBERS =                   0b00000000_00000000_00000000_00000010
-    | GUILD_MODERATION =                0b00000000_00000000_00000000_00000100
-    | GUILD_EMOJIS_AND_STICKERS =       0b00000000_00000000_00000000_00001000
-    | GUILD_INTEGRATIONS =              0b00000000_00000000_00000000_00010000
-    | GUILD_WEBHOOKS =                  0b00000000_00000000_00000000_00100000
-    | GUILD_INVITES =                   0b00000000_00000000_00000000_01000000
-    | GUILD_VOICE_STATES =              0b00000000_00000000_00000000_10000000
-    | GUILD_PRESENCES =                 0b00000000_00000000_00000001_00000000
-    | GUILD_MESSAGES =                  0b00000000_00000000_00000010_00000000
-    | GUILD_MESSAGE_REACTIONS =         0b00000000_00000000_00000100_00000000
-    | GUILD_MESSAGE_TYPING =            0b00000000_00000000_00001000_00000000
-    | DIRECT_MESSAGES =                 0b00000000_00000000_00010000_00000000
-    | DIRECT_MESSAGE_REACTIONS =        0b00000000_00000000_00100000_00000000
-    | DIRECT_MESSAGE_TYPING =           0b00000000_00000000_01000000_00000000
-    | MESSAGE_CONTENT =                 0b00000000_00000000_10000000_00000000
-    | GUILD_SCHEDULED_EVENTS =          0b00000000_00000001_00000000_00000000
-    | AUTO_MODERATION_CONFIGURATION =   0b00000000_00010000_00000000_00000000
-    | AUTO_MODERATION_EXECUTION =       0b00000000_00100000_00000000_00000000
-    | GUILD_MESSAGE_POLLS =             0b00000001_00000000_00000000_00000000
-    | DIRECT_MESSAGE_POLLS =            0b00000010_00000000_00000000_00000000
-
-module GatewayIntent =
-    let ALL =
-        int <| (
-                GatewayIntent.GUILDS
-            ||| GatewayIntent.GUILD_MEMBERS
-            ||| GatewayIntent.GUILD_MODERATION
-            ||| GatewayIntent.GUILD_EMOJIS_AND_STICKERS
-            ||| GatewayIntent.GUILD_INTEGRATIONS
-            ||| GatewayIntent.GUILD_WEBHOOKS
-            ||| GatewayIntent.GUILD_INVITES
-            ||| GatewayIntent.GUILD_VOICE_STATES
-            ||| GatewayIntent.GUILD_PRESENCES
-            ||| GatewayIntent.GUILD_MESSAGES
-            ||| GatewayIntent.GUILD_MESSAGE_REACTIONS
-            ||| GatewayIntent.GUILD_MESSAGE_TYPING
-            ||| GatewayIntent.DIRECT_MESSAGES
-            ||| GatewayIntent.DIRECT_MESSAGE_REACTIONS
-            ||| GatewayIntent.DIRECT_MESSAGE_TYPING
-            ||| GatewayIntent.MESSAGE_CONTENT
-            ||| GatewayIntent.GUILD_SCHEDULED_EVENTS
-            ||| GatewayIntent.AUTO_MODERATION_CONFIGURATION
-            ||| GatewayIntent.AUTO_MODERATION_EXECUTION
-            ||| GatewayIntent.GUILD_MESSAGE_POLLS
-            ||| GatewayIntent.DIRECT_MESSAGE_POLLS
-        )
-
-[<JsonConverter(typeof<StatusTypeConverter>)>]
-type StatusType =
-    | ONLINE
-    | DND
-    | IDLE
-    | INVISIBLE
-    | OFFLINE
-    
-and StatusTypeConverter () =
-    inherit JsonConverter<StatusType> () with
-        override __.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.GetString() with
-            | "online" -> StatusType.ONLINE
-            | "dnd" -> StatusType.DND
-            | "idle" -> StatusType.IDLE
-            | "invisible" -> StatusType.INVISIBLE
-            | "offline" -> StatusType.OFFLINE
-            | _ -> raise (JsonException "Unexpected StatusType value")
-
-        override __.Write (writer: Utf8JsonWriter, value: StatusType, options: JsonSerializerOptions) =
-            let string =
-                match value with
-                | StatusType.ONLINE -> "online"
-                | StatusType.DND -> "dnd"
-                | StatusType.IDLE -> "idle"
-                | StatusType.INVISIBLE -> "invisible"
-                | StatusType.OFFLINE -> "offline"
-
-            writer.WriteStringValue string
-
-type ActivityType =
-    | PLAYING = 0
-    | STREAMING = 1
-    | LISTENING = 2
-    | WATCHING = 3
-    | CUSTOM = 4
-    | COMPETING = 5
 
 type AnimationType =
     | PREMIUM = 0
-    | BAISC = 1
+    | BAISC   = 1
 
 [<JsonConverter(typeof<SoundboardSoundIdConverter>)>]
 type SoundboardSoundId =
     | String of string
-    | Int of int
+    | Int    of int
 
 and SoundboardSoundIdConverter () =
     inherit JsonConverter<SoundboardSoundId> () with
@@ -688,49 +523,49 @@ and SoundboardSoundIdConverter () =
             | SoundboardSoundId.Int v -> writer.WriteNumberValue v
 
 type ApplicationRoleConnectionMetadataType =
-    | INTEGER_LESS_THAN_OR_EQUAL = 1
-    | INTEGER_GREATER_THAN_OR_EQUAL = 2
-    | INTEGER_EQUAL = 3
-    | INTEGER_NOT_EQUAL = 4
-    | DATETIME_LESS_THAN_OR_EQUAL = 5
+    | INTEGER_LESS_THAN_OR_EQUAL     = 1
+    | INTEGER_GREATER_THAN_OR_EQUAL  = 2
+    | INTEGER_EQUAL                  = 3
+    | INTEGER_NOT_EQUAL              = 4
+    | DATETIME_LESS_THAN_OR_EQUAL    = 5
     | DATETIME_GREATER_THAN_OR_EQUAL = 6
-    | BOOLEAN_EQUAL = 7
-    | BOOLEAN_NOT_EQUAL = 8
+    | BOOLEAN_EQUAL                  = 7
+    | BOOLEAN_NOT_EQUAL              = 8
 
 type EditChannelPermissionsType =
-    | ROLE = 0
+    | ROLE   = 0
     | MEMBER = 1
 
 type AutoArchiveDurationType =
-    | HOUR = 60
-    | DAY = 1440
+    | HOUR       = 60
+    | DAY        = 1440
     | THREE_DAYS = 4320
-    | WEEK = 10080
+    | WEEK       = 10080
 
 // https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-event-types
 type AutoModerationEventType =
-    | MESSAGE_SEND = 1
+    | MESSAGE_SEND  = 1
     | MEMBER_UDPATE = 2
 
 // https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-trigger-types
 type AutoModerationTriggerType =
-    | KEYWORD = 1
-    | SPAM = 3
+    | KEYWORD        = 1
+    | SPAM           = 3
     | KEYWORD_PRESET = 4
-    | MENTION_SPAM = 5
+    | MENTION_SPAM   = 5
     | MEMBER_PROFILE = 6
 
 // https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-keyword-preset-types
 type AutoModerationKeywordPresetType =
-    | PROFANITY = 1
+    | PROFANITY      = 1
     | SEXUAL_CONTENT = 2
-    | SLURS = 3
+    | SLURS          = 3
 
 // https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-action-object-action-types
 type AutoModerationActionType =
-    | BLOCK_MESSAGE = 1
-    | SEND_ALERT_MESSAGE = 2
-    | TIMEOUT = 3
+    | BLOCK_MESSAGE            = 1
+    | SEND_ALERT_MESSAGE       = 2
+    | TIMEOUT                  = 3
     | BLOCK_MEMBER_INTERACTION = 4
 
 // https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-kind-enum
@@ -738,91 +573,97 @@ type AutoModerationActionType =
 type ActivityLocationKind =
     | GUILD_CHANNEL
     | PRIVATE_CHANNEL
+with
+    override this.ToString () =
+        match this with
+        | ActivityLocationKind.GUILD_CHANNEL -> "gc"
+        | ActivityLocationKind.PRIVATE_CHANNEL -> "pc"
+
+    static member FromString (str: string) =
+        match str with
+        | "gc" -> Some ActivityLocationKind.GUILD_CHANNEL
+        | "pc" -> Some ActivityLocationKind.PRIVATE_CHANNEL
+        | _ -> None
+        
 
 and ActivityLocationKindConverter () =
     inherit JsonConverter<ActivityLocationKind> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.GetString() with
-            | "gc" -> ActivityLocationKind.GUILD_CHANNEL
-            | "pc" -> ActivityLocationKind.PRIVATE_CHANNEL
-            | _ -> raise (JsonException "Unexpected ActivityLocationKind value")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> ActivityLocationKind.FromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected ActivityLocationKind type")
 
-        override _.Write (writer: Utf8JsonWriter, value: ActivityLocationKind, options: JsonSerializerOptions) =
-            let string =
-                match value with
-                | ActivityLocationKind.GUILD_CHANNEL -> "gc"
-                | ActivityLocationKind.PRIVATE_CHANNEL -> "pc"
-
-            writer.WriteStringValue string
+        override _.Write (writer, value, _) = 
+            value.ToString() |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-events
 type AuditLogEventType =
-    | GUILD_UPDATE = 1
-    | CHANNEL_CREATE = 10
-    | CHANNEL_UDPATE = 11
-    | CHANNEL_DELETE = 12
-    | CHANNEL_OVERWRITE_CREATE = 13
-    | CHANNEL_OVERWRITE_UPDATE = 14
-    | CHANNEL_OVERWRITE_DELETE = 15
-    | MEMBER_KICK = 20
-    | MEMBER_PRUNE = 21
-    | MEMBER_BAN_ADD = 22
-    | MEMBER_BAN_REMOVE = 23
-    | MEMBER_UPDATE = 24
-    | MEMBER_ROLE_UPDATE = 25
-    | MEMBER_MOVE = 26
-    | MEMBER_DISCONNECT = 27
-    | BOT_ADD = 28
-    | ROLE_CREATE = 30
-    | ROLE_UPDATE = 31
-    | ROLE_DELETE = 32
-    | INVITE_CREATE = 40
-    | INVITE_UPDATE = 41
-    | INVITE_DELETE = 42
-    | WEBHOOK_CREATE = 50
-    | WEBHOOK_UPDATE = 51
-    | WEBHOOK_DELETE = 52
-    | EMOJI_CREATE = 60
-    | EMOJI_UPDATE = 61
-    | EMOJI_DELETE = 62
-    | MESSAGE_DELETE = 72
-    | MESSAGE_BULK_DELETE = 73
-    | MESSAGE_PIN = 74
-    | MESSAGE_UNPIN = 75
-    | INTEGRATION_CREATE = 80
-    | INTEGRATION_UPDATE = 81
-    | INTEGRATION_DELETE = 82
-    | STAGE_INSTANCE_CREATE = 83
-    | STAGE_INSTANCE_UPDATE = 84
-    | STAGE_INSTANCE_DELETE = 85
-    | STICKER_CREATE = 90
-    | STICKER_UPDATE = 91
-    | STICKER_DELETE = 92
-    | GUILD_SCHEDULED_EVENT_CREATE = 100
-    | GUILD_SCHEDULED_EVENT_UPDATE = 101
-    | GUILD_SCHEDULED_EVENT_DELETE = 102
-    | THREAD_CREATE = 110
-    | THREAD_UPDATE = 111
-    | THREAD_DELETE = 112
-    | APPLICATION_COMMAND_PERMISSION_UPDATE = 121
-    | SOUNDBOARD_SOUND_CREATE = 130
-    | SOUNDBOARD_SOUND_UPDATE = 131
-    | SOUNDBOARD_SOUND_DELETE = 132
-    | AUTO_MODERATION_RULE_CREATE = 140
-    | AUTO_MODERATION_RULE_UPDATE = 141
-    | AUTO_MODERATION_RULE_DELETE = 142
-    | AUTO_MODERATION_BLOCK_MESSAGE = 143
-    | AUTO_MODERATION_FLAG_TO_CHANNEL = 144
+    | GUILD_UPDATE                                = 1
+    | CHANNEL_CREATE                              = 10
+    | CHANNEL_UDPATE                              = 11
+    | CHANNEL_DELETE                              = 12
+    | CHANNEL_OVERWRITE_CREATE                    = 13
+    | CHANNEL_OVERWRITE_UPDATE                    = 14
+    | CHANNEL_OVERWRITE_DELETE                    = 15
+    | MEMBER_KICK                                 = 20
+    | MEMBER_PRUNE                                = 21
+    | MEMBER_BAN_ADD                              = 22
+    | MEMBER_BAN_REMOVE                           = 23
+    | MEMBER_UPDATE                               = 24
+    | MEMBER_ROLE_UPDATE                          = 25
+    | MEMBER_MOVE                                 = 26
+    | MEMBER_DISCONNECT                           = 27
+    | BOT_ADD                                     = 28
+    | ROLE_CREATE                                 = 30
+    | ROLE_UPDATE                                 = 31
+    | ROLE_DELETE                                 = 32
+    | INVITE_CREATE                               = 40
+    | INVITE_UPDATE                               = 41
+    | INVITE_DELETE                               = 42
+    | WEBHOOK_CREATE                              = 50
+    | WEBHOOK_UPDATE                              = 51
+    | WEBHOOK_DELETE                              = 52
+    | EMOJI_CREATE                                = 60
+    | EMOJI_UPDATE                                = 61
+    | EMOJI_DELETE                                = 62
+    | MESSAGE_DELETE                              = 72
+    | MESSAGE_BULK_DELETE                         = 73
+    | MESSAGE_PIN                                 = 74
+    | MESSAGE_UNPIN                               = 75
+    | INTEGRATION_CREATE                          = 80
+    | INTEGRATION_UPDATE                          = 81
+    | INTEGRATION_DELETE                          = 82
+    | STAGE_INSTANCE_CREATE                       = 83
+    | STAGE_INSTANCE_UPDATE                       = 84
+    | STAGE_INSTANCE_DELETE                       = 85
+    | STICKER_CREATE                              = 90
+    | STICKER_UPDATE                              = 91
+    | STICKER_DELETE                              = 92
+    | GUILD_SCHEDULED_EVENT_CREATE                = 100
+    | GUILD_SCHEDULED_EVENT_UPDATE                = 101
+    | GUILD_SCHEDULED_EVENT_DELETE                = 102
+    | THREAD_CREATE                               = 110
+    | THREAD_UPDATE                               = 111
+    | THREAD_DELETE                               = 112
+    | APPLICATION_COMMAND_PERMISSION_UPDATE       = 121
+    | SOUNDBOARD_SOUND_CREATE                     = 130
+    | SOUNDBOARD_SOUND_UPDATE                     = 131
+    | SOUNDBOARD_SOUND_DELETE                     = 132
+    | AUTO_MODERATION_RULE_CREATE                 = 140
+    | AUTO_MODERATION_RULE_UPDATE                 = 141
+    | AUTO_MODERATION_RULE_DELETE                 = 142
+    | AUTO_MODERATION_BLOCK_MESSAGE               = 143
+    | AUTO_MODERATION_FLAG_TO_CHANNEL             = 144
     | AUTO_MODERATION_USER_COMMUNICATION_DISABLED = 145
-    | CREATOR_MONETIZATION_REQUEST_CREATED = 150
-    | CREATOR_MONETIZATION_TERMS_ACCEPTED = 151
-    | ONBOARDING_PROMPT_CREATE = 163
-    | ONBOARDING_PROMPT_UPDATE = 164
-    | ONBOARDING_PROMPT_DELETE = 165
-    | ONBOARDING_CREATE = 166
-    | ONBOARDING_UPDATE = 167
-    | HOME_SETTINGS_CREATE = 190
-    | HOME_SETTINGS_UPDATE = 191
+    | CREATOR_MONETIZATION_REQUEST_CREATED        = 150
+    | CREATOR_MONETIZATION_TERMS_ACCEPTED         = 151
+    | ONBOARDING_PROMPT_CREATE                    = 163
+    | ONBOARDING_PROMPT_UPDATE                    = 164
+    | ONBOARDING_PROMPT_DELETE                    = 165
+    | ONBOARDING_CREATE                           = 166
+    | ONBOARDING_UPDATE                           = 167
+    | HOME_SETTINGS_CREATE                        = 190
+    | HOME_SETTINGS_UPDATE                        = 191
 
 // https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
 type GuildIntegrationType =
@@ -830,30 +671,35 @@ type GuildIntegrationType =
     | YOUTUBE
     | DISCORD
     | GUILD_SUBSCRIPTION
+with
+    override this.ToString () =
+        match this with
+        | GuildIntegrationType.TWITCH -> "twitch"
+        | GuildIntegrationType.YOUTUBE -> "youtube"
+        | GuildIntegrationType.DISCORD -> "discord"
+        | GuildIntegrationType.GUILD_SUBSCRIPTION -> "guild_subscription"
+
+    static member FromString (str: string) =
+        match str with
+        | "twitch" -> Some GuildIntegrationType.TWITCH
+        | "youtube" -> Some GuildIntegrationType.YOUTUBE
+        | "discord" -> Some GuildIntegrationType.DISCORD
+        | "guild_subscription" -> Some GuildIntegrationType.GUILD_SUBSCRIPTION
+        | _ -> None
 
 type GuildIntegrationTypeConverter () =
     inherit JsonConverter<GuildIntegrationType> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.GetString() with
-            | "twitch" -> GuildIntegrationType.TWITCH
-            | "youtube" -> GuildIntegrationType.YOUTUBE
-            | "discord" -> GuildIntegrationType.DISCORD
-            | "guild_subscription" -> GuildIntegrationType.GUILD_SUBSCRIPTION
-            | _ -> raise (JsonException "Unexpected GuildIntegrationType value")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> GuildIntegrationType.FromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildIntegrationType type")
 
-        override _.Write (writer: Utf8JsonWriter, value: GuildIntegrationType, options: JsonSerializerOptions) =
-            let string =
-                match value with
-                | GuildIntegrationType.TWITCH -> "twitch"
-                | GuildIntegrationType.YOUTUBE -> "youtube"
-                | GuildIntegrationType.DISCORD -> "discord"
-                | GuildIntegrationType.GUILD_SUBSCRIPTION -> "guild_subscription"
-
-            writer.WriteStringValue string
+        override _.Write (writer, value, _) = 
+            value.ToString() |> writer.WriteStringValue
 
 type IntegrationExpireBehaviorType =
     | REMOVE_ROLE = 0
-    | KICK = 1
+    | KICK        = 1
 
 [<JsonConverter(typeof<OAuth2ScopeConverter>)>]
 type OAuth2Scope =
@@ -951,25 +797,28 @@ with
 
 and OAuth2ScopeConverter () =
     inherit JsonConverter<OAuth2Scope> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) = 
-            match reader.GetString() |> OAuth2Scope.FromString with
-            | None -> raise (JsonException "Unexpected OAuth2Scope type")
-            | Some v -> v
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> OAuth2Scope.FromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type")
 
-        override _.Write (writer: Utf8JsonWriter, value: OAuth2Scope, options: JsonSerializerOptions) =
-            writer.WriteStringValue (value.ToString())
+        override _.Write (writer, value, _) = 
+            value.ToString() |> writer.WriteStringValue
 
 and OAuth2ScopeListConverter () =
     inherit JsonConverter<OAuth2Scope list> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
+        override _.Read (reader, _, _) =
             reader.GetString()
             |> _.Split(' ')
             |> Array.map OAuth2Scope.FromString
-            |> Array.map (function | Some v -> v | None -> raise (JsonException "Unexpected OAuth2Scope type"))
+            |> Array.map (Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type"))
             |> Array.toList
 
-        override _.Write (writer: Utf8JsonWriter, value: OAuth2Scope list, options: JsonSerializerOptions) =
-            writer.WriteStringValue (value |> List.map (_.ToString()) |> (fun v -> String.Join(' ', v)))
+        override _.Write (writer, value, _) =
+            value
+            |> List.map (_.ToString())
+            |> (fun v -> String.Join(' ', v))
+            |> writer.WriteStringValue
 
 [<JsonConverter(typeof<TokenTypeHintConverter>)>]
 type TokenTypeHint =
@@ -983,28 +832,30 @@ with
 
     static member FromString (str: string) =
         match str with
-        | "access_token" -> TokenTypeHint.ACCESS_TOKEN
-        | "refresh_token" -> TokenTypeHint.REFRESH_TOKEN
-        | _ -> raise (JsonException "Unexpected TokenTypeHint type")
+        | "access_token" -> Some TokenTypeHint.ACCESS_TOKEN
+        | "refresh_token" -> Some TokenTypeHint.REFRESH_TOKEN
+        | _ -> None
 
 and TokenTypeHintConverter () =
     inherit JsonConverter<TokenTypeHint> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) = 
-            reader.GetString() |> TokenTypeHint.FromString
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> TokenTypeHint.FromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected TokenTypeHint type")
 
-        override _.Write (writer: Utf8JsonWriter, value: TokenTypeHint, options: JsonSerializerOptions) =
-            writer.WriteStringValue (value.ToString())
+        override _.Write (writer, value, _) = 
+            value.ToString() |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-types
 type WebhookType =
-    | INCOMING = 1
+    | INCOMING         = 1
     | CHANNEL_FOLLOWER = 2
-    | APPLICATION = 3
+    | APPLICATION      = 3
 
 // https://discord.com/developers/docs/resources/entitlement#create-test-entitlement-json-params
 type EntitlementOwnerType =
     | GUILD_SUBSCRIPTION = 1
-    | USER_SUBSCRIPTION = 2
+    | USER_SUBSCRIPTION  = 2
 
 // https://discord.com/developers/docs/resources/guild#get-guild-widget-image-widget-style-options
 type GuildWidgetStyle =
@@ -1022,27 +873,25 @@ with
         | GuildWidgetStyle.BANNER_3 -> "banner_3"
         | GuildWidgetStyle.BANNER_4 -> "banner_4"
 
+    static member FromString (str: string) =
+        match str with
+        | "shield" -> Some GuildWidgetStyle.SHIELD
+        | "banner_1" -> Some GuildWidgetStyle.BANNER_1
+        | "banner_2" -> Some GuildWidgetStyle.BANNER_2
+        | "banner_3" -> Some GuildWidgetStyle.BANNER_3
+        | "banner_4" -> Some GuildWidgetStyle.BANNER_4
+        | _ -> None
+
+
 type GuildWidgetStyleConverter () =
     inherit JsonConverter<GuildWidgetStyle> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) = 
-            match reader.GetString() with
-            | "shield" -> GuildWidgetStyle.SHIELD
-            | "banner_1" -> GuildWidgetStyle.BANNER_1
-            | "banner_2" -> GuildWidgetStyle.BANNER_2
-            | "banner_3" -> GuildWidgetStyle.BANNER_3
-            | "banner_4" -> GuildWidgetStyle.BANNER_4
-            | _ -> raise (JsonException "Unexpected GuildWidgetStyle type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> GuildWidgetStyle.FromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildWidgetStyle type")
 
-        override _.Write (writer: Utf8JsonWriter, value: GuildWidgetStyle, options: JsonSerializerOptions) =
-            let string =
-                match value with
-                | GuildWidgetStyle.SHIELD -> "shield"
-                | GuildWidgetStyle.BANNER_1 -> "banner_1"
-                | GuildWidgetStyle.BANNER_2 -> "banner_2"
-                | GuildWidgetStyle.BANNER_3 -> "banner_3"
-                | GuildWidgetStyle.BANNER_4 -> "banner_4"
-
-            writer.WriteStringValue string
+        override _.Write (writer, value, _) = 
+            value.ToString() |> writer.WriteStringValue
        
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-privacy-level
 type PrivacyLevelType =
@@ -1051,65 +900,65 @@ type PrivacyLevelType =
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-status
 type EventStatusType =
     | SCHEDULED = 1
-    | ACTIVE = 2
+    | ACTIVE    = 2
     | COMPLETED = 3
-    | CANCELED = 4
+    | CANCELED  = 4
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-entity-types
 type ScheduledEntityType =
     | STANCE_INSTANCE = 1
-    | VOICE = 2
-    | EXTERNAL = 3
+    | VOICE           = 2
+    | EXTERNAL        = 3
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule-frequency
 type RecurrenceRuleFrequencyType =
-    | YEARLY = 0
+    | YEARLY  = 0
     | MONTHLY = 1
-    | WEEKLY = 2
-    | DAILY = 3
+    | WEEKLY  = 2
+    | DAILY   = 3
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule-weekday
 type RecurrenceRuleWeekdayType =
-    | MONDAY = 1
-    | TUESDAY = 2
+    | MONDAY    = 1
+    | TUESDAY   = 2
     | WEDNESDAY = 3
-    | THURSDAY = 4
-    | FRIDAY = 5
-    | SATURDAY = 6
-    | SUNDAY = 7
+    | THURSDAY  = 4
+    | FRIDAY    = 5
+    | SATURDAY  = 6
+    | SUNDAY    = 7
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule-month
 type RecurrenceRuleMonthType =
-    | JANUARY = 1
-    | FEBRUARY = 2
-    | MARCH = 3
-    | APRIL = 4
-    | MAY = 5
-    | JUNE = 6
-    | JULY = 7
-    | AUGUST = 8
+    | JANUARY   = 1
+    | FEBRUARY  = 2
+    | MARCH     = 3
+    | APRIL     = 4
+    | MAY       = 5
+    | JUNE      = 6
+    | JULY      = 7
+    | AUGUST    = 8
     | SEPTEMBER = 9
-    | OCTOBER = 10
-    | NOVEMBER = 11
-    | DECEMBER = 12
+    | OCTOBER   = 10
+    | NOVEMBER  = 11
+    | DECEMBER  = 12
 
 // https://discord.com/developers/docs/resources/sku#sku-object-sku-types
 type SkuType =
-    | DURABLE = 2
-    | CONSUMABLE = 3
-    | SUBSCRIPTION = 5
+    | DURABLE            = 2
+    | CONSUMABLE         = 3
+    | SUBSCRIPTION       = 5
     | SUBSCRIPTION_GROUP = 6
 
 // https://discord.com/developers/docs/resources/subscription#subscription-statuses
 type SubscriptionStatusType =
-    | ACTIVE = 0
-    | ENDING = 1
+    | ACTIVE   = 0
+    | ENDING   = 1
     | INACTIVE = 2
 
 // https://discord.com/developers/docs/resources/message#get-reactions-reaction-types
 type ReactionType =
     | NORMAL = 0
-    | BURST = 1
+    | BURST  = 1
 
 // https://discord.com/developers/docs/resources/user#connection-object-services
 [<JsonConverter(typeof<ConnectionServiceTypeConverter>)>]
@@ -1202,28 +1051,28 @@ with
 
 and ConnectionServiceTypeConverter () =
     inherit JsonConverter<ConnectionServiceType> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) = 
-            match reader.GetString() |> ConnectionServiceType.FromString with
-            | None -> raise (JsonException "Unexpected ConnectionServiceType type")
-            | Some v -> v
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> ConnectionServiceType.FromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected ConnectionServiceType type")
 
-        override _.Write (writer: Utf8JsonWriter, value: ConnectionServiceType, options: JsonSerializerOptions) = 
+        override _.Write (writer, value, _) = 
             value.ToString() |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/user#connection-object-visibility-types
 type ConnectionVisibilityType =
-    | NONE = 0
+    | NONE     = 0
     | EVERYONE = 1
 
 // https://discord.com/developers/docs/events/webhook-events#webhook-types
 type WebhookPayloadType =
-    | PING = 0
+    | PING  = 0
     | EVENT = 1
 
 // https://discord.com/developers/docs/resources/application#application-object-application-event-webhook-status
 type WebhookEventStatus =
-    | DISABLED = 1
-    | ENABLED = 2
+    | DISABLED            = 1
+    | ENABLED             = 2
     | DISABLED_BY_DISCORD = 3
 
 // https://discord.com/developers/docs/events/webhook-events#event-types
@@ -1245,233 +1094,13 @@ with
 
 and WebhookEventTypeConverter () =
     inherit JsonConverter<WebhookEventType> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) = 
-            match reader.GetString() |> WebhookEventType.FromString with
-            | None -> raise (JsonException "Unexpected WebhookEventType type")
-            | Some v -> v
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> WebhookEventType.FromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected WebhookEventType type")
 
-        override _.Write (writer: Utf8JsonWriter, value: WebhookEventType, options: JsonSerializerOptions) = 
+        override _.Write (writer, value, _) = 
             value.ToString() |> writer.WriteStringValue
-
-// https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes
-type JsonErrorCode =
-    | UNKNOWN_ERROR = 0
-    | UNKNOWN_ACCOUNT = 10001
-    | UNKNOWN_APPLICATION = 10002
-    | UNKNOWN_CHANNEL = 10003
-    | UNKNOWN_GUILD = 10004
-    | UNKNOWN_INTEGRATION = 10005
-    | UNKNOWN_INVITE = 10006
-    | UNKNOWN_MEMBER = 10007
-    | UNKNOWN_MESSAGE = 10008
-    | UNKNOWN_PERMISSION_OVERWRITE = 10009
-    | UNKNOWN_PROVIDER = 10010
-    | UNKNOWN_ROLE = 10011
-    | UNKNOWN_TOKEN = 10012
-    | UNKNOWN_USER = 10013
-    | UNKNOWN_EMOJI = 10014
-    | UNKNOWN_WEBHOOK = 10015
-    | UNKNOWN_BAN = 10026
-    | UNKNOWN_SKU = 10027
-    | UNKNOWN_STORE_LISTING = 10028
-    | UNKNOWN_ENTITLEMENT = 10029
-    | UNKNOWN_BUILD = 10030
-    | UNKNOWN_LOBBY = 10031
-    | UNKNOWN_BRANCH = 10032
-    | UNKNOWN_STORE_DIRECTORY_LAYOUT = 10033
-    | UNKNOWN_REDISTRIBUTABLE = 10036
-    | UNKNOWN_GIFT_CODE = 10038
-    | UNKNOWN_STREAM = 10049
-    | UNKNOWN_PREMIUM_SERVER_SUBSCRIBE_COOLDOWN = 10050
-    | UNKNOWN_GUILD_TEMPLATE = 10057
-    | UNKNOWN_DISCOVERABLE_SERVER_CATEGORY = 10059
-    | UNKNOWN_STICKER = 10060
-    | UNKNOWN_STICKER_PACK = 10061
-    | UNKNOWN_INTERACTION = 10062
-    | UNKNOWN_APPLICATION_COMMAND = 10063
-    | UNKNOWN_VOICE_STATE = 10065
-    | UNKNOWN_APPLICATION_COMMAND_PERMISSIONS = 10066
-    | UNKNOWN_STAGE_INSTANCE = 10067
-    | UNKNOWN_GUILD_MEMBER_VERIFICATION_FORM = 10068
-    | UNKNOWN_GUILD_WELCOME_SCREEN = 10069
-    | UNKNOWN_GUILD_SCHEDULED_EVENT = 10070
-    | UNKNOWN_GUILD_SCHEDULED_EVENT_USER = 10071
-    | UNKNOWN_TAG = 10087
-    | UNKNOWN_SOUND = 10097
-    | BOT_CANNOT_USE_ENDPOINT = 20001
-    | BOT_ONLY_ENDPOINT = 20002
-    | RECIPIENT_NOT_ACCEPTING_EXPLICIT_CONTENT = 20009
-    | NOT_AUTHORIZED = 20012
-    | SLOWMODE_RATE_LIMIT = 20016
-    | OWNER_ACTION_ONLY = 20018
-    | ANNOUNCEMENT_EDIT_RATE_LIMITED = 20022
-    | UNDER_MINIMUM_AGE = 20024
-    | CHANNEL_WRITE_RATE_LIMIT = 20028
-    | SERVER_WRITE_RATE_LIMIT = 20029
-    | DISALLOWED_WORDS_IN_SERVER_INFO = 20031
-    | GUILD_PREMIUM_LEVEL_TOO_LOW = 20035
-    | MAX_GUILDS_REACHED = 30001
-    | MAX_FRIENDS_REACHED = 30002
-    | MAX_CHANNEL_PINS_REACHED = 30003
-    | MAX_RECIPIENTS_REACHED = 30004
-    | MAX_GUILD_ROLES_REACHED = 30005
-    | MAX_WEBHOOKS_REACHED = 30007
-    | MAX_EMOJIS_REACHED = 30008
-    | MAX_REACTIONS_REACHED = 30010
-    | MAX_GROUP_DMS_REACHED = 30011
-    | MAX_GUILD_CHANNELS_REACHED = 30013
-    | MAX_ATTACHMENTS_REACHED = 30015
-    | MAX_INVITES_REACHED = 30016
-    | MAX_ANIMATED_EMOJIS_REACHED = 30018
-    | MAX_SERVER_MEMBERS_REACHED = 30019
-    | MAX_SERVER_CATEGORIES_REACHED = 30030
-    | GUILD_TEMPLATE_ALREADY_EXISTS = 30031
-    | MAX_APPLICATION_COMMANDS_REACHED = 30032
-    | MAX_THREAD_PARTICIPANTS_REACHED = 30033
-    | MAX_DAILY_APPLICATION_COMMAND_CREATES_REACHED = 30034
-    | MAX_NON_GUILD_MEMBER_BANS_REACHED = 30035
-    | MAX_BAN_FETCHES_REACHED = 30037
-    | MAX_UNCOMPLETED_GUILD_SCHEDULED_EVENTS_REACHED = 30038
-    | MAX_STICKERS_REACHED = 30039
-    | MAX_PRUNE_REQUESTS_REACHED = 30040
-    | MAX_GUILD_WIDGET_SETTINGS_UPDATES_REACHED = 30042
-    | MAX_SOUNDBOARD_SOUNDS_REACHED = 30045
-    | MAX_MESSAGE_EDITS_OVER_ONE_HOUR_REACHED = 30046
-    | MAX_FORUM_PINNED_THREADS_REACHED = 30047
-    | MAX_FORUM_CHANNEL_TAGS_REACHED = 30048
-    | BITRATE_TOO_HIGH_FOR_CHANNEL_TYPE = 30052
-    | MAX_PREMIUM_EMOJIS_REACHED = 30056
-    | MAX_WEBHOOKS_PER_GUILD_REACHED = 30058
-    | MAX_CHANNEL_PERMISSION_OVERWRITES_REACHED = 30060
-    | GUILD_CHANNELS_TOO_LARGE = 30061
-    | UNAUTHORIZED = 40001
-    | ACCOUNT_VERIFICATION_REQUIRED = 40002
-    | OPENING_DIRECT_MESSAGES_TOO_FAST = 40003
-    | SEND_MESSAGES_TEMPORARILY_DISABLED = 40004
-    | REQUEST_ENTITY_TOO_LARGE = 40005
-    | FEATURE_TEMPORARILY_DISABLED_SERVER_SIDE = 40006
-    | USER_BANNED = 40007
-    | CONNECTION_REVOKED = 40012
-    | ONLY_CONSUMABLE_SKUS_CAN_BE_CONSUMED = 40018
-    | CAN_ONLY_DELETE_SANDBOX_ENTITLEMENTS = 40019
-    | TARGET_USER_NOT_CONNECTED_TO_VOICE = 40032
-    | MESSAGE_ALREADY_CROSSPOSTED = 40033
-    | APPLICATION_COMMAND_NAME_ALREADY_EXISTS = 40041
-    | APPLICATION_INTERACTION_FAILED_TO_SEND = 40043
-    | CANNOT_SEND_MESSAGE_IN_FORUM_CHANNEL = 40058
-    | INTERACTION_ALREADY_ACKNOWLEDGED = 40060
-    | TAG_NAMES_MUST_BE_UNIQUE = 40061
-    | SERVICE_RESOURCE_BEING_RATE_LIMITED = 40062
-    | NO_AVAILABLE_TAGS_FOR_NON_MODERATORS = 40066
-    | TAG_REQUIRED_TO_CREATE_FORUM_POST = 40067
-    | ENTITLEMENT_ALREADY_GRANTED = 40074
-    | INTERACTION_MAX_FOLLOW_UP_MESSAGES = 40094
-    | CLOUDFLARE_USER_AGENT_BLOCKED = 40333
-    | MISSING_ACCESS = 50001
-    | CANNOT_EXECUTE_ACTION_IN_DM_CHANNEL = 50003
-    | GUILD_WIDGET_DISABLED = 50004
-    | CANNOT_EDIT_OTHER_USERS_MESSAGE = 50006
-    | CANNOT_SEND_MESSAGE_TO_THIS_USER = 50007
-    | CANNOT_SEND_MESSAGES_IN_NON_TEXT_CHANNEL = 50008
-    | CHANNEL_VERIFICATION_LEVEL_TOO_HIGH_TO_ACCESS = 50009
-    | OAUTH2_APPLICATION_DOES_NOT_HAVE_BOT = 50010
-    | OAUTH2_APPLICATION_LIMIT_REACHED = 50011
-    | INVALID_OAUTH2_STATE = 50012
-    | LACK_PERMISSIONS = 50013
-    | INVALID_AUTHENTICATION_TOKEN = 50014
-    | NOTE_TOO_LONG = 50015
-    | TOO_FEW_MESSAGES_TO_DELETE = 50016
-    | INVALID_MFA_LEVEL = 50017
-    | CANNOT_PIN_MESSAGES_FROM_OTHER_CHANNELS = 50019
-    | INVALID_OR_TAKEN_INVITE_CODE = 50020
-    | CANNOT_EXECUTE_ACTION_ON_SYSTEM_MESSAGE = 50021
-    | CANNOT_EXECUTE_ACTION_ON_THIS_CHANNEL_TYPE = 50024
-    | INVALID_OAUTH2_ACCESS_TOKEN_PROVIDED = 50025
-    | MISSING_REQUIRED_OAUTH2_SCOPE = 50026
-    | INVALID_WEBHOOK_TOKEN_PROVIDED = 50027
-    | INVALID_ROLE = 50028
-    | INVALID_RECIPIENT = 50033
-    | MESSAGE_TOO_OLD_TO_BULK_DELETE = 50034
-    | INVALID_FORM_BODY_OR_CONTENT_TYPE = 50035
-    | INVITE_ACCEPTED_TO_GUILD_APPLICATION_BOT_NOT_IN = 50036
-    | INVALID_ACTIVITY_ACTION = 50039
-    | INVALID_API_VERSION = 50041
-    | FILE_UPLOAD_EXCEEDS_MAX_SIZE = 50045
-    | INVALID_FILE_UPLOADED = 50046
-    | CANNOT_SELF_REDEEM_GIFT = 50054
-    | INVALID_GUILD = 50055
-    | INVALID_SKU = 50057
-    | INVALID_REQUEST_ORIGIN = 50067
-    | INVALID_MESSAGE_TYPE = 50068
-    | PAYMENT_SOURCE_REQUIRED_TO_REDEEM_GIFT = 50070
-    | CANNOT_MODIFY_SYSTEM_WEBHOOK = 50073
-    | CANNOT_DELETE_CHANNEL_REQUIRED_FOR_COMMUNITY_GUILDS = 50074
-    | CANNOT_EDIT_MESSAGE_STICKERS = 50080
-    | INVALID_STICKER_SENT = 50081
-    | INVALID_OPERATION_ON_ARCHIVED_THREAD = 50083
-    | INVALID_THREAD_NOTIFICATION_SETTINGS = 50084
-    | BEFORE_VALUE_EARLIER_THAN_THREAD_CREATION_DATE = 50085
-    | COMMUNITY_SERVER_CHANNELS_MUST_BE_TEXT_CHANNELS = 50086
-    | EVENT_ENTITY_TYPE_DIFFERENT_FROM_ENTITY_STARTING_EVENT = 50091
-    | SERVER_NEEDS_MONETIZATION_TO_PERFORM_THIS = 50097
-    | SERVER_NEEDS_MORE_BOOSTS_TO_PERFORM_THIS = 50101
-    | REQUEST_INVALID_JSON = 50109
-    | PROVIDED_FILE_INVALID = 50110
-    | PROVIDED_FILE_TYPE_INVALID = 50123
-    | PROVIDED_FILE_DURATION_EXCEEDS_MAX = 50124
-    | OWNER_CANNOT_BE_PENDING_MEMBER = 50131
-    | OWNERSHIP_CANNOT_BE_TRANSFERRED_TO_BOT = 50132
-    | FAILED_TO_RESIZE_ASSET_BELOW_MAX_SIZE = 50138
-    | CANNOT_MIX_SUBSCRIPTION_AND_NON_SUBSCRIPTION_ROLES_FOR_EMOJI = 50144
-    | CANNOT_CONVERT_BETWEEN_PREMIUM_AND_NORMAL_EMOJI = 50145
-    | UPLOADED_FILE_NOT_FOUND = 50146
-    | SPECIFIED_EMOJI_INVALID = 50151
-    | VOICE_MESSAGES_DO_NOT_SUPPORT_ADDITIONAL_CONTENT = 50159
-    | VOICE_MESSAGES_MUST_HAVE_SINGLE_AUDIO_ATTACHMENT = 50160
-    | VOICE_MESSAGES_MUST_HAVE_SUPPORTING_METADATA = 50161
-    | VOICE_MESSAGES_CANNOT_BE_EDITED = 50162
-    | CANNOT_DELETE_GUILD_SUBSCRIPTION_INTEGRATION = 50163
-    | CANNOT_SEND_VOICE_MESSAGES_IN_THIS_CHANNEL = 50173
-    | USER_ACCOUNT_MUST_FIRST_BE_VERIFIED = 50178
-    | PROVIDED_FILE_INVALID_DURATION = 50192
-    | MISSING_PERMISSION_TO_SEND_STICKER = 50600
-    | TWO_FACTOR_AUTH_REQUIRED_FOR_OPERATION = 60003
-    | NO_USERS_WITH_DISCORD_TAG_EXIST = 80004
-    | REACTION_BLOCKED = 90001
-    | USER_CANNOT_USE_BURST_REACTIONS = 90002
-    | APPLICATION_NOT_YET_AVAILABLE = 110001
-    | API_RESOURCE_CURRENTLY_OVERLOADED = 130000
-    | STAGE_ALREADY_OPEN = 150006
-    | CANNOT_REPLY_WITHOUT_MESSAGE_HISTORY_PERMISSION = 160002
-    | THREAD_ALREADY_CREATED_FOR_MESSAGE = 160004
-    | THREAD_LOCKED = 160005
-    | MAX_ACTIVE_THREADS_REACHED = 160006
-    | MAX_ACTIVE_ANNOUNCEMENT_THREADS_REACHED = 160007
-    | INVALID_JSON_FOR_LOTTIE_FILE = 170001
-    | LOTTIES_CANNOT_CONTAIN_RASTERIZED_IMAGES = 170002
-    | STICKER_MAX_FRAMERATE_EXCEEDED = 170003
-    | STICKER_FRAME_COUNT_EXCEEDS_MAX_FRAMES = 170004
-    | LOTTIE_ANIMATION_MAX_DIMENSTION_EXCEEDED = 170005
-    | STICKER_FRAME_RATE_TOO_SMALL_OR_LARGE = 170006
-    | STICKER_ANIMATION_DURATION_EXCEEDS_MAX = 170007
-    | CANNOT_UPDATE_FINISHED_EVENT = 180000
-    | FAILED_TO_CREATE_STAGE_FOR_STAGE_EVENT = 180002
-    | MESSAGE_BLOCKED_BY_AUTO_MODERATION = 200000
-    | TITLE_BLOCKED_BY_AUTO_MODERATION = 200001
-    | WENHOOK_POSTED_TO_FORUM_MUST_HAVE_THREAD_NAME_OR_ID = 220001
-    | WEBHOOK_POSTED_TO_FORUM_MUST_HAVE_BOT_THREAD_NAME_AND_ID = 220002
-    | WEBHOOK_CAN_ONLY_CREATE_THREAD_IN_FORUM_CHANNEL = 220003
-    | WEBHOOK_SERVICES_CANNOT_BE_USED_IN_FORUM_CHANNELS = 220004
-    | MESSAGE_BLOCKED_BY_HARMFUL_LINKS_FILTER = 240000
-    | REQUIREMENTS_NOT_MET_TO_ENABLE_ONBOARDING = 350000
-    | CANNOT_UPDATE_ONBOARDING_WHILE_BELOW_REQUIREMENTS = 350001
-    | FAILED_TO_BAN_USERS = 500000
-    | POLL_VOTING_BLOCKED = 520000
-    | POLL_EXPIRED = 520001
-    | INVALID_CHANNEL_TYPE_FOR_POLL = 520002
-    | CANNOT_EDIT_POLL_MESSAGE = 520003
-    | CANNOT_USE_EMOJI_INCLUDED_WITH_POLL = 520004
-    | CANNOT_EXPIRE_NON_POLL_MESSAGE = 520006
 
 // https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
 type Permission =
@@ -1642,3 +1271,5 @@ module Permission =
         | Permission.MANAGE_THREADS -> true
         | Permission.VIEW_CREATOR_MONETIZATION_ANALYTICS -> true
         | _ -> false
+
+// TODO: Sort alphabetically and extract more into separate files in enums folder
