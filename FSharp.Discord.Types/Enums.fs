@@ -1720,3 +1720,76 @@ module Permission =
         | Permission.MANAGE_THREADS -> true
         | Permission.VIEW_CREATOR_MONETIZATION_ANALYTICS -> true
         | _ -> false
+
+// https://discord.com/developers/docs/resources/user#user-object-user-flags
+type UserFlag =
+    /// Discord employee
+    | STAFF                    = (1 <<< 0)
+    /// Partnered server owner
+    | PARTNER                  = (1 <<< 1)
+    /// HypeSquad events member
+    | HYPERSQUAD               = (1 <<< 2)
+    /// Bug hunter level 1
+    | BUG_HUNTER_LEVEL_1       = (1 <<< 3)
+    /// House bravery member
+    | HYPESQUAD_ONLINE_HOUSE_1 = (1 <<< 6)
+    /// House brilliance member
+    | HYPESQUAD_ONLINE_HOUSE_2 = (1 <<< 7)
+    /// House balance member
+    | HYPESQUAD_ONLINE_HOUSE_3 = (1 <<< 8)
+    /// Early nitro supporter
+    | PREMIUM_EARLY_SUPPORTER  = (1 <<< 9)
+    /// User is a team
+    | TEAM_PSEUDO_USER         = (1 <<< 10)
+    /// Bug hunter level 2
+    | BUG_HUNTER_LEVEL_2       = (1 <<< 14)
+    /// Verified bot
+    | VERIFIED_BOT             = (1 <<< 16)
+    /// Early verified bot developer
+    | VERIFIED_DEVELOPER       = (1 <<< 17)
+    /// Moderator programs alumni
+    | CERTIFIED_MODERATOR      = (1 <<< 18)
+    /// Bot uses only HTTP interactions and is shown in the online member list
+    | BOT_HTTP_INTERACTIONS    = (1 <<< 19)
+    /// User is an active developer
+    | ACTIVE_DEVELOPER         = (1 <<< 22)
+
+// https://discord.com/developers/docs/resources/message#attachment-object-attachment-flags
+type AttachmentFlag =
+    /// This attachment has been edited using the remix feature on mobile
+    | IS_REMIX = (1 <<< 2)
+
+// https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags
+type GuildMemberFlag =
+    /// Member has left and rejoined the guild
+    | DID_REJOIN                      = (1 <<< 0)
+    /// Member has completed onboarding
+    | COMPLETED_ONBOARDING            = (1 <<< 1)
+    /// Member is exempt from guild verification requirements
+    | BYPASSES_VERIFICATION           = (1 <<< 2)
+    /// Member has started onboarding
+    | STARTED_ONBOARDING              = (1 <<< 3)
+    /// Member is a guest and can only access the voice channel they were invited to
+    | IS_GUEST                        = (1 <<< 4)
+    /// Member has started Server Guide new member actions
+    | STARTED_HOME_ACTIONS            = (1 <<< 5)
+    /// Member has completed Server Guide new member actions
+    | COMPLETED_HOME_ACTIONS          = (1 <<< 6)
+    /// Member's username, display name, or nickname is blocked by AutoMod
+    | AUTOMOD_QUARANTINED_USERNAME    = (1 <<< 7)
+    /// Member has dismissed the DM settings upsell
+    | DM_SETTINGS_UPSELL_ACKNOWLEDGED = (1 <<< 9)
+
+module GuildMemberFlag =
+    let isEditable (flag: GuildMemberFlag) =
+        match flag with
+        | GuildMemberFlag.DID_REJOIN                      -> false
+        | GuildMemberFlag.COMPLETED_ONBOARDING            -> false
+        | GuildMemberFlag.BYPASSES_VERIFICATION           -> true
+        | GuildMemberFlag.STARTED_ONBOARDING              -> false
+        | GuildMemberFlag.IS_GUEST                        -> false
+        | GuildMemberFlag.STARTED_HOME_ACTIONS            -> false
+        | GuildMemberFlag.COMPLETED_HOME_ACTIONS          -> false
+        | GuildMemberFlag.AUTOMOD_QUARANTINED_USERNAME    -> false
+        | GuildMemberFlag.DM_SETTINGS_UPSELL_ACKNOWLEDGED -> false
+        | _ -> false
