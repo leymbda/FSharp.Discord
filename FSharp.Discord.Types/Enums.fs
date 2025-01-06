@@ -93,31 +93,6 @@ type MessageType =
     | GUILD_INCIDENT_REPORT_FALSE_ALARM = 39
     | PURCHASE_NOTIFICATION = 44
 
-// https://discord.com/developers/docs/resources/message#message-object-message-flags
-type MessageFlag =
-    /// This message has been published to subscribed channels (via Channel Following)
-    | CROSSPOSTED =                            (1 <<< 0)
-    /// This message originated from a message in another channel (via Channel Following)
-    | IS_CROSSPOST =                           (1 <<< 1)
-    /// Do not include any embeds when serializing this message
-    | SUPPRESS_EMBEDS =                        (1 <<< 2)
-    /// The source message for this crosspost has been deleted (via Channel Following)
-    | SOURCE_MESSAGE_DELETED =                 (1 <<< 3)
-    /// This message came from the urgent message system
-    | URGENT =                                 (1 <<< 4)
-    /// This message has an associated thread, with the same id as the message
-    | HAS_THREAD =                             (1 <<< 5)
-    /// This message is only visible to the user who invoked the Interaction
-    | EPHEMERAL =                              (1 <<< 6)
-    /// This message is an Interaction Response and the bot is "thinking"
-    | LOADING =                                (1 <<< 7)
-    /// This message failed to mention some roles and add their members to the thread
-    | FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = (1 <<< 8)
-    /// This message will not trigger push and desktop notifications
-    | SUPPRESS_NOTIFICATIONS =                 (1 <<< 12)
-    /// This message is a voice message
-    | IS_VOICE_MESSAGE =                       (1 <<< 13)
-
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-types
 type ChannelType =
     | GUILD_TEXT = 0
@@ -133,20 +108,6 @@ type ChannelType =
     | GUILD_DIRECTORY = 14
     | GUILD_FORUM = 15
     | GUILD_MEDIA = 16
-
-// https://discord.com/developers/docs/resources/channel#channel-object-channel-flags
-type ChannelFlag =
-    /// This thread is pinned to the top of its parent `GUILD_FORUM` or `GUILD_MEDIA` channel
-    | PINNED =                      (1 <<< 1)
-    /// Whether a tag is required to be specified when creating a thread in a `GUILD_FORUM` or a `GUILD_MEDIA`channel. Tags are specified in the `applied_tags` field
-    | REQUIRE_TAG =                 (1 <<< 4)
-    /// When set hides the embedded media download options. Available only for media channels
-    | HIDE_MEDIA_DOWNLOAD_OPTIONS = (1 <<< 15)
-
-// https://discord.com/developers/docs/topics/permissions#role-object-role-flags
-type RoleFlag =
-    /// Role can be selected by members in an onboarding prompt
-    | IN_PROMPT = (1 <<< 0)
 
 type EntitlementType =
     | PURCHASE = 1
@@ -211,15 +172,6 @@ type GuildVerificationLevel =
     | MEDIUM = 2
     | HIGH = 3
     | VERY_HIGH = 4
-
-// https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags
-type SystemChannelFlag =
-    | SUPPRESS_JOIN_NOTIFICATIONS                               = 0b00000001
-    | SUPPRESS_PREMIUM_SUBSCRIPTIONS                            = 0b00000010
-    | SUPPRESS_GUILD_REMINDER_NOTIFICATIONS                     = 0b00000100
-    | SUPPRESS_JOIN_NOTIFICATION_REPLIES                        = 0b00001000
-    | SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS         = 0b00010000
-    | SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES  = 0b00100000
 
 // https://discord.com/developers/docs/resources/guild#guild-object-guild-features
 [<JsonConverter(typeof<GuildFeatureConverter>)>]
@@ -713,17 +665,6 @@ type ActivityType =
     | CUSTOM = 4
     | COMPETING = 5
 
-type ActivityFlag =
-    | INSTANCE =                    0b00000000_00000001
-    | JOIN =                        0b00000000_00000010
-    | SPECTATE =                    0b00000000_00000100
-    | JOIN_REQUEST =                0b00000000_00001000
-    | SYNC =                        0b00000000_00010000
-    | PLAY =                        0b00000000_00100000
-    | PARTY_PRIVACY_FRIENDS =       0b00000000_01000000
-    | PARTY_PRIVACY_VOICE_CHANNEL = 0b00000000_10000000
-    | EMBEDDED =                    0b00000001_00000000
-
 type AnimationType =
     | PREMIUM = 0
     | BAISC = 1
@@ -791,19 +732,6 @@ type AutoModerationActionType =
     | SEND_ALERT_MESSAGE = 2
     | TIMEOUT = 3
     | BLOCK_MEMBER_INTERACTION = 4
-
-// https://discord.com/developers/docs/resources/application#application-object-application-flags
-type ApplicationFlag =
-    | APPLICATION_AUTO_MODERATION_RULE_CREATE_BADGE = 0b00000000_00000000_01000000
-    | GATEWAY_PRESENCE                              = 0b00000000_00010000_00000000
-    | GATEWAY_PRESENCE_LIMITED                      = 0b00000000_00100000_00000000
-    | GATEWAY_GUILD_MEMBERS                         = 0b00000000_01000000_00000000
-    | GATEWAY_GUILD_MEMBERS_LIMITED                 = 0b00000000_10000000_00000000
-    | VERIFICATION_PENDING_GUILD_LIMIT              = 0b00000001_00000000_00000000
-    | EMBEDDED                                      = 0b00000010_00000000_00000000
-    | GATEWAY_MESSAGE_CONTENT                       = 0b00000100_00000000_00000000
-    | GATEWAY_MESSAGE_CONTENT_LIMITED               = 0b00001000_00000000_00000000
-    | APPLICATION_COMMAND_BADGE                     = 0b10000000_00000000_00000000
 
 // https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-kind-enum
 [<JsonConverter(typeof<ActivityLocationKindConverter>)>]
@@ -1171,12 +1099,6 @@ type SkuType =
     | CONSUMABLE = 3
     | SUBSCRIPTION = 5
     | SUBSCRIPTION_GROUP = 6
-
-// https://discord.com/developers/docs/resources/sku#sku-object-sku-flags
-type SkuFlag =
-    | AVAILABLE          = 0b00000000_00000100
-    | GUILD_SUBSCRIPTION = 0b00000000_10000000
-    | USER_SUBSCRIPTION  = 0b00000001_00000000
 
 // https://discord.com/developers/docs/resources/subscription#subscription-statuses
 type SubscriptionStatusType =
@@ -1719,77 +1641,4 @@ module Permission =
         | Permission.MANAGE_GUILD_EXPRESSIONS -> true
         | Permission.MANAGE_THREADS -> true
         | Permission.VIEW_CREATOR_MONETIZATION_ANALYTICS -> true
-        | _ -> false
-
-// https://discord.com/developers/docs/resources/user#user-object-user-flags
-type UserFlag =
-    /// Discord employee
-    | STAFF                    = (1 <<< 0)
-    /// Partnered server owner
-    | PARTNER                  = (1 <<< 1)
-    /// HypeSquad events member
-    | HYPERSQUAD               = (1 <<< 2)
-    /// Bug hunter level 1
-    | BUG_HUNTER_LEVEL_1       = (1 <<< 3)
-    /// House bravery member
-    | HYPESQUAD_ONLINE_HOUSE_1 = (1 <<< 6)
-    /// House brilliance member
-    | HYPESQUAD_ONLINE_HOUSE_2 = (1 <<< 7)
-    /// House balance member
-    | HYPESQUAD_ONLINE_HOUSE_3 = (1 <<< 8)
-    /// Early nitro supporter
-    | PREMIUM_EARLY_SUPPORTER  = (1 <<< 9)
-    /// User is a team
-    | TEAM_PSEUDO_USER         = (1 <<< 10)
-    /// Bug hunter level 2
-    | BUG_HUNTER_LEVEL_2       = (1 <<< 14)
-    /// Verified bot
-    | VERIFIED_BOT             = (1 <<< 16)
-    /// Early verified bot developer
-    | VERIFIED_DEVELOPER       = (1 <<< 17)
-    /// Moderator programs alumni
-    | CERTIFIED_MODERATOR      = (1 <<< 18)
-    /// Bot uses only HTTP interactions and is shown in the online member list
-    | BOT_HTTP_INTERACTIONS    = (1 <<< 19)
-    /// User is an active developer
-    | ACTIVE_DEVELOPER         = (1 <<< 22)
-
-// https://discord.com/developers/docs/resources/message#attachment-object-attachment-flags
-type AttachmentFlag =
-    /// This attachment has been edited using the remix feature on mobile
-    | IS_REMIX = (1 <<< 2)
-
-// https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags
-type GuildMemberFlag =
-    /// Member has left and rejoined the guild
-    | DID_REJOIN                      = (1 <<< 0)
-    /// Member has completed onboarding
-    | COMPLETED_ONBOARDING            = (1 <<< 1)
-    /// Member is exempt from guild verification requirements
-    | BYPASSES_VERIFICATION           = (1 <<< 2)
-    /// Member has started onboarding
-    | STARTED_ONBOARDING              = (1 <<< 3)
-    /// Member is a guest and can only access the voice channel they were invited to
-    | IS_GUEST                        = (1 <<< 4)
-    /// Member has started Server Guide new member actions
-    | STARTED_HOME_ACTIONS            = (1 <<< 5)
-    /// Member has completed Server Guide new member actions
-    | COMPLETED_HOME_ACTIONS          = (1 <<< 6)
-    /// Member's username, display name, or nickname is blocked by AutoMod
-    | AUTOMOD_QUARANTINED_USERNAME    = (1 <<< 7)
-    /// Member has dismissed the DM settings upsell
-    | DM_SETTINGS_UPSELL_ACKNOWLEDGED = (1 <<< 9)
-
-module GuildMemberFlag =
-    let isEditable (flag: GuildMemberFlag) =
-        match flag with
-        | GuildMemberFlag.DID_REJOIN                      -> false
-        | GuildMemberFlag.COMPLETED_ONBOARDING            -> false
-        | GuildMemberFlag.BYPASSES_VERIFICATION           -> true
-        | GuildMemberFlag.STARTED_ONBOARDING              -> false
-        | GuildMemberFlag.IS_GUEST                        -> false
-        | GuildMemberFlag.STARTED_HOME_ACTIONS            -> false
-        | GuildMemberFlag.COMPLETED_HOME_ACTIONS          -> false
-        | GuildMemberFlag.AUTOMOD_QUARANTINED_USERNAME    -> false
-        | GuildMemberFlag.DM_SETTINGS_UPSELL_ACKNOWLEDGED -> false
         | _ -> false
