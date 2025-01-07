@@ -1,4 +1,4 @@
-﻿namespace FSharp.Discord.Types
+﻿namespace rec FSharp.Discord.Types
 
 open System.Text.Json
 open System.Text.Json.Serialization
@@ -174,7 +174,7 @@ type ComponentType =
     | CHANNEL_SELECT     = 8
 
 // https://discord.com/developers/docs/resources/user#connection-object-services
-[<JsonConverter(typeof<ConnectionServiceTypeConverter>)>]
+[<JsonConverter(typeof<ConnectionServiceType.Converter>)>]
 type ConnectionServiceType =
     | AMAZON_MUSIC
     | BATTLE_NET
@@ -202,9 +202,10 @@ type ConnectionServiceType =
     | TWITTER
     | XBOX
     | YOUTUBE
-with
-    override this.ToString () =
-        match this with
+
+module ConnectionServiceType =
+    let toString (connectionServiceType: ConnectionServiceType) =
+        match connectionServiceType with
         | ConnectionServiceType.AMAZON_MUSIC -> "amazon-music"
         | ConnectionServiceType.BATTLE_NET -> "battlenet"
         | ConnectionServiceType.BLUESKY -> "bluesky"
@@ -232,7 +233,7 @@ with
         | ConnectionServiceType.XBOX -> "xbox"
         | ConnectionServiceType.YOUTUBE -> "youtube"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "amazon-music" -> Some ConnectionServiceType.AMAZON_MUSIC
         | "battlenet" -> Some ConnectionServiceType.BATTLE_NET
@@ -262,16 +263,16 @@ with
         | "youtube" -> Some ConnectionServiceType.YOUTUBE
         | _ -> None
 
-and ConnectionServiceTypeConverter () =
-    inherit JsonConverter<ConnectionServiceType> ()
+    type Converter () =
+        inherit JsonConverter<ConnectionServiceType> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> ConnectionServiceType.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected ConnectionServiceType type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected ConnectionServiceType type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
 type EntitlementType =
     | PURCHASE                 = 1
@@ -284,38 +285,39 @@ type EntitlementType =
     | APPLICATION_SUBSCRIPTION = 8
 
 // https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
-[<JsonConverter(typeof<GuildIntegrationTypeConverter>)>]
+[<JsonConverter(typeof<GuildIntegrationType.Converter>)>]
 type GuildIntegrationType =
     | TWITCH
     | YOUTUBE
     | DISCORD
     | GUILD_SUBSCRIPTION
-with
-    override this.ToString () =
-        match this with
+
+module GuildIntegrationType =
+    let toString (guildIntegrationType: GuildIntegrationType) =
+        match guildIntegrationType with
         | GuildIntegrationType.TWITCH -> "twitch"
         | GuildIntegrationType.YOUTUBE -> "youtube"
         | GuildIntegrationType.DISCORD -> "discord"
         | GuildIntegrationType.GUILD_SUBSCRIPTION -> "guild_subscription"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "twitch" -> Some GuildIntegrationType.TWITCH
         | "youtube" -> Some GuildIntegrationType.YOUTUBE
         | "discord" -> Some GuildIntegrationType.DISCORD
         | "guild_subscription" -> Some GuildIntegrationType.GUILD_SUBSCRIPTION
         | _ -> None
+    
+    type Converter () =
+        inherit JsonConverter<GuildIntegrationType> ()
 
-and GuildIntegrationTypeConverter () =
-    inherit JsonConverter<GuildIntegrationType> ()
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildIntegrationType type")
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> GuildIntegrationType.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildIntegrationType type")
-
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
 type InteractionCallbackType = 
     | PONG                                    = 1
@@ -467,32 +469,33 @@ type StickerType =
     | GUILD    = 2
 
 // https://discord.com/developers/docs/events/webhook-events#event-types
-[<JsonConverter(typeof<WebhookEventTypeConverter>)>]
+[<JsonConverter(typeof<WebhookEventType.Converter>)>]
 type WebhookEventType =
     | APPLICATION_AUTHORIZED
     | ENTITLEMENT_CREATE
-with
-    override this.ToString () =
-        match this with
+
+module WebhookEventType =
+    let toString (webhookEventType: WebhookEventType) =
+        match webhookEventType with
         | WebhookEventType.APPLICATION_AUTHORIZED -> "APPLICATION_AUTHORIZED"
         | WebhookEventType.ENTITLEMENT_CREATE -> "ENTITLEMENT_CREATE"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "APPLICATION_AUTHORIZED" -> Some WebhookEventType.APPLICATION_AUTHORIZED
         | "ENTITLEMENT_CREATE" -> Some WebhookEventType.ENTITLEMENT_CREATE
         | _ -> None
 
-and WebhookEventTypeConverter () =
-    inherit JsonConverter<WebhookEventType> ()
+    type Converter () =
+        inherit JsonConverter<WebhookEventType> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> WebhookEventType.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected WebhookEventType type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected WebhookEventType type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/events/webhook-events#webhook-types
 type WebhookPayloadType =
