@@ -15,6 +15,15 @@
 		<Compile Include="Enums\Flags.fs" />
 		<Compile Include="Enums.fs" />
 		<Compile Include="Structures.fs" />
+		<Compile Include="Structures\Rest.fs" />
+		<Compile Include="Structures\GatewayEvents.fs" />
+		<Compile Include="Structures\InteractionEvents.fs" />
+		<Compile Include="Structures\WebhookEvents.fs" />
+		<Compile Include="Events\GatewayReceiveEvent.fs" />
+		<Compile Include="Events\GatewaySendEvent.fs" />
+		<Compile Include="Events\InteractionReceiveEvent.fs" />
+		<Compile Include="Events\InteractionResponseEvent.fs" />
+		<Compile Include="Events\WebhookReceiveEvent.fs" />
 	</ItemGroup>
 
 	<ItemGroup>

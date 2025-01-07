@@ -1,6 +1,5 @@
-﻿namespace FSharp.Discord.Gateway.Types
+﻿namespace FSharp.Discord.Types
 
-open FSharp.Discord.Types
 open System
 open System.Text.Json
 open System.Text.Json.Serialization

@@ -1,21 +1,20 @@
-﻿namespace FSharp.Discord.Webhook.Types
+﻿namespace FSharp.Discord.Types
 
-open FSharp.Discord.Types
 open System.Text.Json
 open System.Text.Json.Serialization
 
-[<JsonConverter(typeof<WebhookEventConverter>)>]
-type WebhookEvent =
-    | PING                   of WebhookEventPayload<unit>
-    | ENTITLEMENT_CREATE     of WebhookEventPayload<WebhookEventBody<EntitlementCreateEvent>>
-    | APPLICATION_AUTHORIZED of WebhookEventPayload<WebhookEventBody<ApplicationAuthorizedEvent>>
+[<JsonConverter(typeof<WebhookReceiveEventConverter>)>]
+type WebhookReceiveEvent =
+    | PING                   of WebhookReceiveEventPayload<unit>
+    | ENTITLEMENT_CREATE     of WebhookReceiveEventPayload<WebhookReceiveEventBody<EntitlementCreateEvent>>
+    | APPLICATION_AUTHORIZED of WebhookReceiveEventPayload<WebhookReceiveEventBody<ApplicationAuthorizedEvent>>
 
-and WebhookEventConverter () =
-    inherit JsonConverter<WebhookEvent> ()
+and WebhookReceiveEventConverter () =
+    inherit JsonConverter<WebhookReceiveEvent> ()
 
-    override __.Read (reader, typeToConvert, options) =
-        let success, document = JsonDocument.TryParseValue(&reader)
-        if not success then raise (JsonException())
+    override __.Read (reader, _, _) =
+        let success, document = JsonDocument.TryParseValue &reader
+        JsonException.raiseIf (not success)
 
         let webhookType =
             document.RootElement.GetProperty "type"
@@ -37,9 +36,9 @@ and WebhookEventConverter () =
         | WebhookPayloadType.PING, _ -> PING <| Json.deserializeF json
         | WebhookPayloadType.EVENT, Some WebhookEventType.ENTITLEMENT_CREATE -> ENTITLEMENT_CREATE <| Json.deserializeF json
         | WebhookPayloadType.EVENT, Some WebhookEventType.APPLICATION_AUTHORIZED -> APPLICATION_AUTHORIZED <| Json.deserializeF json
-        | _ -> failwith "Unexpected WebhookPayloadType and/or WebhookEventType provided" // TODO: Handle gracefully for unfamiliar events
+        | _ -> JsonException.raise "Unexpected WebhookPayloadType and/or WebhookEventType provided" // TODO: Handle gracefully for unfamiliar events
                 
-    override __.Write (writer, value, options) =
+    override __.Write (writer, value, _) =
         match value with
         | PING p -> Json.serializeF p |> writer.WriteRawValue
         | ENTITLEMENT_CREATE e -> Json.serializeF e |> writer.WriteRawValue

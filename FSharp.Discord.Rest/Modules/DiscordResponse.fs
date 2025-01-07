@@ -1,9 +1,26 @@
 ﻿namespace FSharp.Discord.Rest
 
-open FSharp.Discord.Rest.Types
+open FSharp.Discord.Types
 open System
+open System.Net
 open System.Net.Http
 open System.Text.Json
+
+type RateLimitHeaders = {
+    Limit: int option
+    Remaining: int option
+    Reset: DateTime option
+    ResetAfter: double option
+    Bucket: string option
+    Global: bool option
+    Scope: RateLimitScope option
+}
+
+type ResponseWithMetadata<'a> = {
+    Data: 'a
+    RateLimitHeaders: RateLimitHeaders
+    Status: HttpStatusCode
+}
 
 type DiscordResponse<'a> = Result<ResponseWithMetadata<'a>, ResponseWithMetadata<DiscordError>>
 
@@ -23,7 +40,7 @@ module DiscordResponse =
                 ResetAfter = res |> getOptionalHeader "X-RateLimit-ResetAfter" >>. double
                 Bucket = res |> getOptionalHeader "X-RateLimit-Bucket"
                 Global = res |> getOptionalHeader "X-RateLimit-Global" >>. bool.Parse
-                Scope = res |> getOptionalHeader "X-RateLimit-Scope" >>. RateLimitScope.FromString
+                Scope = res |> getOptionalHeader "X-RateLimit-Scope" >>= RateLimitScope.FromString
             }
             Status = res.StatusCode
         }

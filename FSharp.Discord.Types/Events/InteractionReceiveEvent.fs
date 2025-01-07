@@ -1,6 +1,5 @@
-﻿namespace FSharp.Discord.Webhook.Types
+﻿namespace FSharp.Discord.Types
 
-open FSharp.Discord.Types
 open System.Text.Json
 open System.Text.Json.Serialization
 
@@ -15,9 +14,9 @@ type InteractionReceiveEvent =
 and InteractionReceiveEventConverter () =
     inherit JsonConverter<InteractionReceiveEvent> ()
 
-    override __.Read (reader, typeToConvert, options) =
-        let success, document = JsonDocument.TryParseValue(&reader)
-        if not success then raise (JsonException())
+    override __.Read (reader, _, _) =
+        let success, document = JsonDocument.TryParseValue &reader
+        JsonException.raiseIf (not success)
 
         let interactionType =
             document.RootElement.GetProperty "type"
@@ -32,9 +31,9 @@ and InteractionReceiveEventConverter () =
         | InteractionType.MESSAGE_COMPONENT -> MESSAGE_COMPONENT <| Json.deserializeF json
         | InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE -> APPLICATION_COMMAND_AUTOCOMPLETE <| Json.deserializeF json
         | InteractionType.MODAL_SUBMIT -> MODAL_SUBMIT <| Json.deserializeF json
-        | _ -> failwith "Unexpected InteractionType provided" // TODO: Handle gracefully for unfamiliar events
+        | _ -> JsonException.raise "Unexpected InteractionType provided" // TODO: Handle gracefully for unfamiliar events
                 
-    override __.Write (writer, value, options) =
+    override __.Write (writer, value, _) =
         match value with
         | PING p -> Json.serializeF p |> writer.WriteRawValue
         | APPLICATION_COMMAND a -> Json.serializeF a |> writer.WriteRawValue

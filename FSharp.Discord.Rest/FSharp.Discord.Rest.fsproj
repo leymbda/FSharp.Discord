@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Compile Include="Common\Constants.fs" />
-    <Compile Include="Types\RestTypes.fs" />
     <Compile Include="Modules\Payload.fs" />
     <Compile Include="Modules\RequestBuilder.fs" />
     <Compile Include="Modules\HttpClient.fs" />

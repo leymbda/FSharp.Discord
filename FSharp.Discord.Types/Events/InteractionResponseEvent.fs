@@ -1,11 +1,10 @@
-﻿namespace FSharp.Discord.Webhook.Types
+﻿namespace FSharp.Discord.Types
 
-open FSharp.Discord.Types
 open System.Text.Json
 open System.Text.Json.Serialization
 
-[<JsonConverter(typeof<InteractionRespondEventConverter>)>]
-type InteractionRespondEvent =
+[<JsonConverter(typeof<InteractionResponseEventConverter>)>]
+type InteractionResponseEvent =
     | PONG                                    of InteractionResponsePayload<PongResponseEvent>
     | CHANNEL_MESSAGE_WITH_SOURCE             of InteractionResponsePayload<ChannelMessageWithSourceResponseEvent>
     | DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE    of InteractionResponsePayload<DeferredChannelMessageWithSourceResponseEvent>
@@ -15,12 +14,12 @@ type InteractionRespondEvent =
     | MODAL                                   of InteractionResponsePayload<ModalResponseEvent>
     | LAUNCH_ACTIVITY                         of InteractionResponsePayload<LaunchActivityResponseEvent>
 
-and InteractionRespondEventConverter () =
-    inherit JsonConverter<InteractionRespondEvent> ()
+and InteractionResponseEventConverter () =
+    inherit JsonConverter<InteractionResponseEvent> ()
 
-    override __.Read (reader, typeToConvert, options) =
-        let success, document = JsonDocument.TryParseValue(&reader)
-        if not success then raise (JsonException())
+    override __.Read (reader, _, _) =
+        let success, document = JsonDocument.TryParseValue &reader
+        JsonException.raiseIf (not success)
 
         let interactionType =
             document.RootElement.GetProperty "type"
@@ -38,9 +37,9 @@ and InteractionRespondEventConverter () =
         | InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT -> APPLICATION_COMMAND_AUTOCOMPLETE_RESULT <| Json.deserializeF json
         | InteractionCallbackType.MODAL -> MODAL <| Json.deserializeF json
         | InteractionCallbackType.LAUNCH_ACTIVITY -> LAUNCH_ACTIVITY <| Json.deserializeF json
-        | _ -> failwith "Unexpected InteractionCallbackType provided" // TODO: Handle gracefully for unfamiliar events
+        | _ -> JsonException.raise "Unexpected InteractionCallbackType provided" // TODO: Handle gracefully for unfamiliar events
                 
-    override __.Write (writer, value, options) =
+    override __.Write (writer, value, _) =
         match value with
         | PONG p -> Json.serializeF p |> writer.WriteRawValue
         | CHANNEL_MESSAGE_WITH_SOURCE c -> Json.serializeF c |> writer.WriteRawValue

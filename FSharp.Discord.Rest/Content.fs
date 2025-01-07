@@ -1,6 +1,5 @@
 ﻿namespace FSharp.Discord.Rest
 
-open FSharp.Discord.Rest.Types
 open FSharp.Discord.Types
 open System
 open System.Collections.Generic
@@ -472,6 +471,11 @@ type StartThreadFromMessagePayload (
             optional "auto_archive_duration" auto_archive_duration
             optional "rate_limit_per_user" rate_limit_per_user
         }
+
+type ThreadType =
+    | ANNOUNCEMENT_THREAD = 10
+    | PUBLIC_THREAD = 11
+    | PRIVATE_THREAD = 12
 
 type StartThreadWithoutMessagePayload (
     name:                   string,

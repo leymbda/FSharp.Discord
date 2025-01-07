@@ -1,7 +1,6 @@
 ﻿[<AutoOpen>]
-module FSharp.Discord.Rest.Modules.RequestBuilder
+module FSharp.Discord.Rest.RequestBuilder
 
-open FSharp.Discord.Rest.Common
 open System
 open System.Web
 open System.Net.Http

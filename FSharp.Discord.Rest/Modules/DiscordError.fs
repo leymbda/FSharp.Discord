@@ -1,6 +1,6 @@
 ﻿namespace FSharp.Discord.Rest
 
-open FSharp.Discord.Rest.Types
+open FSharp.Discord.Types
 open System.Net
 open System.Text.Json
 

@@ -1,7 +1,6 @@
-﻿namespace FSharp.Discord.Gateway.Clients
+﻿namespace FSharp.Discord.Gateway
 
-open FSharp.Discord.Gateway.Modules
-open FSharp.Discord.Gateway.Types
+open FSharp.Discord.Types
 open System
 open System.Net.WebSockets
 open System.Threading

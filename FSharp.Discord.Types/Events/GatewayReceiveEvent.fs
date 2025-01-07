@@ -1,6 +1,5 @@
-﻿namespace FSharp.Discord.Gateway.Types
+﻿namespace FSharp.Discord.Types
 
-open FSharp.Discord.Types
 open System.Text.Json
 open System.Text.Json.Serialization
 
@@ -86,9 +85,9 @@ type GatewayReceiveEvent =
 and GatewayReceiveEventConverter () =
     inherit JsonConverter<GatewayReceiveEvent> ()
 
-    override __.Read (reader, typeToConvert, options) =
+    override __.Read (reader, _, _) =
         let success, document = JsonDocument.TryParseValue &reader
-        if not success then raise (JsonException())
+        JsonException.raiseIf (not success)
 
         let opcode =
             document.RootElement.GetProperty "op"
@@ -179,7 +178,7 @@ and GatewayReceiveEventConverter () =
         | GatewayOpcode.DISPATCH, Some (nameof SUBSCRIPTION_DELETE) -> SUBSCRIPTION_DELETE <| Json.deserializeF json
         | GatewayOpcode.DISPATCH, Some (nameof MESSAGE_POLL_VOTE_ADD) -> MESSAGE_POLL_VOTE_ADD <| Json.deserializeF json
         | GatewayOpcode.DISPATCH, Some (nameof MESSAGE_POLL_VOTE_REMOVE) -> MESSAGE_POLL_VOTE_REMOVE <| Json.deserializeF json
-        | _ -> failwith "Unexpected GatewayOpcode and/or EventName provided" // TODO: Handle gracefully so bot doesnt crash on unfamiliar events
+        | _ -> JsonException.raise "Unexpected GatewayOpcode and/or EventName provided" // TODO: Handle gracefully so bot doesnt crash on unfamiliar events
                 
     override __.Write (writer, value, options) =
         match value with

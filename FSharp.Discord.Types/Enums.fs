@@ -972,7 +972,24 @@ and StatusConverter () =
 
     override _.Write (writer, value, _) = 
         value.ToString() |> writer.WriteStringValue
+        
+type RateLimitScope =
+    | USER
+    | GLOBAL
+    | SHARED
+with
+    override this.ToString () =
+        match this with
+        | USER -> "user"
+        | GLOBAL -> "global"
+        | SHARED -> "shared"
 
+    static member FromString (str: string) =
+        match str with
+        | "user" -> Some RateLimitScope.USER
+        | "global" -> Some RateLimitScope.GLOBAL
+        | "shared" -> Some RateLimitScope.SHARED
+        | _ -> None
 
 // TODO: Sort alphabetically and extract more into separate files in enums folder
 // TODO: Add missing documentation links

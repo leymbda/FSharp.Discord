@@ -1,19 +1,18 @@
-﻿namespace FSharp.Discord.Webhook.Types
+﻿namespace FSharp.Discord.Types
 
-open FSharp.Discord.Types
 open System
 open System.Text.Json
 open System.Text.Json.Serialization
 
 // https://discord.com/developers/docs/events/webhook-events#event-body-object
-type WebhookEventBody<'a> = {
+type WebhookReceiveEventBody<'a> = {
     [<JsonPropertyName "type">] Type: WebhookEventType
     [<JsonPropertyName "timestamp">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] Timestamp: DateTime
     [<JsonPropertyName "data">] Data: 'a
 }
 
 // https://discord.com/developers/docs/events/webhook-events#payload-structure
-type WebhookEventPayload<'a> = {
+type WebhookReceiveEventPayload<'a> = {
     [<JsonPropertyName "version">] Version: int
     [<JsonPropertyName "application_id">] ApplicationId: string
     [<JsonPropertyName "type">] Type: WebhookType

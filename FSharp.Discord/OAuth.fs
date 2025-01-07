@@ -1,8 +1,6 @@
 ﻿namespace FSharp.Discord
 
 open FSharp.Discord.Rest
-open FSharp.Discord.Rest.Modules
-open FSharp.Discord.Types
 
 type OAuthGetGuildsParams =
     | Origin of PaginationOrigin

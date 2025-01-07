@@ -1,7 +1,4 @@
-﻿namespace FSharp.Discord.Webhook.Types
-
-open FSharp.Discord.Types
-open System.Text.Json
+﻿namespace FSharp.Discord.Types
 
 type PongResponseEvent = unit
 

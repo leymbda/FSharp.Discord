@@ -33,8 +33,14 @@ module Json =
     // TODO: Remove this module if STJ works as expected
 
 module JsonException =
-    let raiseThunk message () =
+    let raise message =
         raise (JsonException message)
+
+    let raiseThunk message =
+        fun () -> raise message
+
+    let raiseIf (condition: bool) =
+        if condition then raise "An error occurred while processing JSON data"
 
 module JsonConverter =
     type UnixEpoch () =

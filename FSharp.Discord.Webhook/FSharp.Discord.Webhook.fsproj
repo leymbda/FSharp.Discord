@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Types\WebhookEventTypes.fs" />
-    <Compile Include="Types\InteractionEventTypes.fs" />
-    <Compile Include="Types\WebhookEvent.fs" />
-    <Compile Include="Types\InteractionReceiveEvent.fs" />
-    <Compile Include="Types\InteractionRespondEvent.fs" />
     <Compile Include="Modules\Ed25519.fs" />
   </ItemGroup>
 

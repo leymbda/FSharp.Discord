@@ -1,6 +1,5 @@
 ﻿module FSharp.Discord.Rest.Rest
 
-open FSharp.Discord.Rest.Modules
 open FSharp.Discord.Types
 open System
 open System.Net.Http

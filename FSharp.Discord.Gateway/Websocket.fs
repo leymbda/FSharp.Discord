@@ -1,4 +1,4 @@
-﻿namespace FSharp.Discord.Gateway.Modules
+﻿namespace FSharp.Discord.Gateway
 
 open System
 open System.IO

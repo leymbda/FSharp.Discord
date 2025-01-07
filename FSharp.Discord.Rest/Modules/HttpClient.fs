@@ -1,4 +1,4 @@
-﻿namespace FSharp.Discord.Rest.Modules
+﻿namespace FSharp.Discord.Rest
 
 open System
 open System.Net.Http
