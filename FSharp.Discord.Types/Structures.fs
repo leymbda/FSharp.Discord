@@ -262,10 +262,10 @@ type StickerPack = {
 type RoleTags = {
     [<JsonPropertyName "bot_id">] BotId: string option
     [<JsonPropertyName "integration_id">] IntegrationId: string option
-    [<JsonPropertyName "premium_subscriber">] [<JsonConverter(typeof<Converters.NullUndefinedAsBool>)>] PremiumSubscriber: bool
+    [<JsonPropertyName "premium_subscriber">] [<JsonConverter(typeof<JsonConverter.NullUndefinedAsBool>)>] PremiumSubscriber: bool
     [<JsonPropertyName "subscription_listing_id">] SubscriptionListingId: string option
-    [<JsonPropertyName "available_for_purchase">] [<JsonConverter(typeof<Converters.NullUndefinedAsBool>)>] AvailableForPurchase: bool
-    [<JsonPropertyName "guild_connections">] [<JsonConverter(typeof<Converters.NullUndefinedAsBool>)>] GuildConnections: bool
+    [<JsonPropertyName "available_for_purchase">] [<JsonConverter(typeof<JsonConverter.NullUndefinedAsBool>)>] AvailableForPurchase: bool
+    [<JsonPropertyName "guild_connections">] [<JsonConverter(typeof<JsonConverter.NullUndefinedAsBool>)>] GuildConnections: bool
 }
 
 type Role = {
@@ -1456,8 +1456,8 @@ type ApplicationRoleConnection = {
 }
 
 type ActivityTimestamps = {
-    [<JsonPropertyName "start">] [<JsonConverter(typeof<Converters.UnixEpoch>)>] Start: DateTime option
-    [<JsonPropertyName "end">] [<JsonConverter(typeof<Converters.UnixEpoch>)>] End: DateTime option
+    [<JsonPropertyName "start">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] Start: DateTime option
+    [<JsonPropertyName "end">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] End: DateTime option
 }
 
 type ActivityEmoji = {
@@ -1494,7 +1494,7 @@ type Activity = {
     [<JsonPropertyName "name">] Name: string
     [<JsonPropertyName "type">] Type: ActivityType
     [<JsonPropertyName "url">] Url: string option
-    [<JsonPropertyName "created_at">] [<JsonConverter(typeof<Converters.UnixEpoch>)>] CreatedAt: DateTime option
+    [<JsonPropertyName "created_at">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] CreatedAt: DateTime option
     [<JsonPropertyName "timestamps">] Timestamps: ActivityTimestamps option
     [<JsonPropertyName "application_id">] ApplicationId: string option
     [<JsonPropertyName "details">] Details: string option

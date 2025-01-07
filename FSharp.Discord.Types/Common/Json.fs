@@ -30,11 +30,13 @@ module Json =
 
         res.ToJsonString()
 
+    // TODO: Remove this module if STJ works as expected
+
 module JsonException =
     let raiseThunk message () =
         raise (JsonException message)
 
-module Converters =
+module JsonConverter =
     type UnixEpoch () =
         inherit JsonConverter<DateTime> () with
             override _.Read (reader, typeToConvert, options) =
@@ -53,6 +55,3 @@ module Converters =
 
             override _.Write (writer, value, options) =
                 raise (NotImplementedException())
-
-/// Used to represent a non-existent value for when used in a generic for JSON serialization.
-type Empty = obj option

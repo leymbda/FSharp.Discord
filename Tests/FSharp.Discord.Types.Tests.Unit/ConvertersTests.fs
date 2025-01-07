@@ -6,11 +6,11 @@ open System.Text.Json
 open System.Text.Json.Serialization
 
 type UnixEpochRecord = {
-    [<JsonConverter(typeof<Converters.UnixEpoch>)>] Timestamp: DateTime
+    [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] Timestamp: DateTime
 }
 
 type NullUndefinedAsBoolRecord = {
-    [<JsonConverter(typeof<Converters.NullUndefinedAsBool>)>] State: bool
+    [<JsonConverter(typeof<JsonConverter.NullUndefinedAsBool>)>] State: bool
 }
 
 [<TestClass>]

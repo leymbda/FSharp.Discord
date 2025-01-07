@@ -161,10 +161,10 @@ and PartialUpdatePresenceSendEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway#connection-lifecycle
-type HeartbeatReceiveEvent = Empty
+type HeartbeatReceiveEvent = unit
 
 // https://discord.com/developers/docs/events/gateway#connection-lifecycle
-type HeartbeatAckReceiveEvent = Empty
+type HeartbeatAckReceiveEvent = unit
 
 // https://discord.com/developers/docs/topics/gateway#hello-event-example-hello-event
 type HelloReceiveEvent = {
@@ -183,10 +183,10 @@ type ReadyReceiveEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#resumed
-type ResumedReceiveEvent = Empty
+type ResumedReceiveEvent = unit
 
 // https://discord.com/developers/docs/events/gateway-events#reconnect
-type ReconnectReceiveEvent = Empty
+type ReconnectReceiveEvent = unit
 
 // https://discord.com/developers/docs/topics/gateway-events#invalid-session
 type InvalidSessionReceiveEvent = bool
@@ -322,7 +322,7 @@ type ThreadMembersUpdateReceiveEvent = {
 type ChannelPinsUpdateReceiveEvent = {
     [<JsonPropertyName "guild_id">] GuildId: string option
     [<JsonPropertyName "channel_id">] ChannelIds: string
-    [<JsonPropertyName "last_pin_timestamp">] [<JsonConverter(typeof<Converters.UnixEpoch>)>] LastPinTimestamp: DateTime option
+    [<JsonPropertyName "last_pin_timestamp">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] LastPinTimestamp: DateTime option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#entitlement-create
@@ -341,7 +341,7 @@ type GuildCreateReceiveEventAvailableGuild = {
 }
 
 and GuildCreateReceiveEventAvailableGuildExtraFields = {
-    [<JsonPropertyName "joined_at">] [<JsonConverter(typeof<Converters.UnixEpoch>)>] JoinedAt: DateTime
+    [<JsonPropertyName "joined_at">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] JoinedAt: DateTime
     [<JsonPropertyName "large">] Large: bool
     [<JsonPropertyName "unavailable">] Unavailable: bool
     [<JsonPropertyName "member_count">] MemberCount: int

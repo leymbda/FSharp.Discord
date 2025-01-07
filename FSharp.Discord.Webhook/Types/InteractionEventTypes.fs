@@ -3,13 +3,13 @@
 open FSharp.Discord.Types
 open System.Text.Json
 
-type PongResponseEvent = Empty
+type PongResponseEvent = unit
 
 type ChannelMessageWithSourceResponseEvent = MessageInteractionResponse
 
-type DeferredChannelMessageWithSourceResponseEvent = Empty
+type DeferredChannelMessageWithSourceResponseEvent = unit
 
-type DeferredUpdateMessageResponseEvent = Empty
+type DeferredUpdateMessageResponseEvent = unit
 
 type UpdateMessageResponseEvent = MessageInteractionResponse
 
@@ -17,4 +17,4 @@ type ApplicationCommandAutocompleteResponseEvent = AutocompleteInteractionRespon
 
 type ModalResponseEvent = ModalInteractionResponse
 
-type LaunchActivityResponseEvent = Empty
+type LaunchActivityResponseEvent = unit

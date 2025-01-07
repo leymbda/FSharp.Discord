@@ -44,7 +44,7 @@ module DiscordResponse =
     // Used in requests that do not return content in a success result
     let asEmpty (res: HttpResponseMessage) = task {
         match int res.StatusCode with
-        | _ when res.IsSuccessStatusCode -> return Option<Empty>.None |> withMetadata res |> Ok
+        | _ when res.IsSuccessStatusCode -> return () |> withMetadata res |> Ok
         | v when v = 429 -> return! RateLimit <? (toJson res) ?> withMetadata res ?> Error
         | v when v >= 400 && v < 500 -> return! ClientError <? (toJson res) ?> withMetadata res ?> Error
         | _ -> return Unexpected (res.StatusCode) |> withMetadata res |> Error
@@ -54,7 +54,7 @@ module DiscordResponse =
     let asOptionalJson<'a> (res: HttpResponseMessage) = task {
         match int res.StatusCode with
         | _ when res.IsSuccessStatusCode ->
-            let length = res.Content.Headers.ContentLength |> Nullable.toOption
+            let length = res.Content.Headers.ContentLength |> Option.ofNullable
 
             match length with
             | Some l when l = 0L -> return Option<'a>.None |> withMetadata res |> Ok

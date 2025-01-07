@@ -7,7 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="Common\Nullable.fs" />
 		<Compile Include="Common\Task.fs" />
 		<Compile Include="Common\Json.fs" />
 		<Compile Include="Common\Overloads.fs" />

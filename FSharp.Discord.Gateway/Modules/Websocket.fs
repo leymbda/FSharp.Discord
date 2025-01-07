@@ -28,7 +28,7 @@ module Websocket =
                 match res.MessageType with
                 | WebSocketMessageType.Close ->
                     let status =
-                        Nullable.toOption res.CloseStatus
+                        Option.ofNullable res.CloseStatus
                         |> Option.map int
 
                     return WebsocketReadResponse.Close status

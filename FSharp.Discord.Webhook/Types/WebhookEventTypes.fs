@@ -8,7 +8,7 @@ open System.Text.Json.Serialization
 // https://discord.com/developers/docs/events/webhook-events#event-body-object
 type WebhookEventBody<'a> = {
     [<JsonPropertyName "type">] Type: WebhookEventType
-    [<JsonPropertyName "timestamp">] [<JsonConverter(typeof<Converters.UnixEpoch>)>] Timestamp: DateTime
+    [<JsonPropertyName "timestamp">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] Timestamp: DateTime
     [<JsonPropertyName "data">] Data: 'a
 }
 

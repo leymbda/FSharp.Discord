@@ -6,7 +6,7 @@ open System.Text.Json.Serialization
 
 [<JsonConverter(typeof<WebhookEventConverter>)>]
 type WebhookEvent =
-    | PING                   of WebhookEventPayload<Empty>
+    | PING                   of WebhookEventPayload<unit>
     | ENTITLEMENT_CREATE     of WebhookEventPayload<WebhookEventBody<EntitlementCreateEvent>>
     | APPLICATION_AUTHORIZED of WebhookEventPayload<WebhookEventBody<ApplicationAuthorizedEvent>>
 
