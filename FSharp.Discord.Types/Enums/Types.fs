@@ -391,6 +391,49 @@ type MessageType =
     | GUILD_INCIDENT_REPORT_RAID                   = 38
     | GUILD_INCIDENT_REPORT_FALSE_ALARM            = 39
     | PURCHASE_NOTIFICATION                        = 44
+    | POLL_RESULT                                  = 46
+
+module MessageType =
+    let isDeletable (messageType: MessageType) =
+        match messageType with
+        | MessageType.DEFAULT                                      -> true
+        | MessageType.RECIPIENT_ADD                                -> false
+        | MessageType.RECIPIENT_REMOVE                             -> false
+        | MessageType.CALL                                         -> false
+        | MessageType.CHANNEL_NAME_CHANGE                          -> false
+        | MessageType.CHANNEL_ICON_CHANGE                          -> false
+        | MessageType.CHANNEL_PINNED_MESSAGE                       -> true
+        | MessageType.USER_JOIN                                    -> true
+        | MessageType.GUILD_BOOST                                  -> true
+        | MessageType.GUILD_BOOST_TIER_1                           -> true
+        | MessageType.GUILD_BOOST_TIER_2                           -> true
+        | MessageType.GUILD_BOOST_TIER_3                           -> true
+        | MessageType.CHANNEL_FOLLOW_ADD                           -> true
+        | MessageType.GUILD_DISCOVERY_DISQUALIFIED                 -> true
+        | MessageType.GUILD_DISCOVERY_REQUALIFIED                  -> true
+        | MessageType.GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING -> true
+        | MessageType.GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING   -> true
+        | MessageType.THREAD_CREATED                               -> true
+        | MessageType.REPLY                                        -> true
+        | MessageType.CHAT_INPUT_COMMAND                           -> true
+        | MessageType.THREAD_STARTER_MESSAGE                       -> false
+        | MessageType.GUILD_INVITE_REMINDER                        -> true
+        | MessageType.CONTEXT_MENU_COMMAND                         -> true
+        | MessageType.AUTO_MODERATION_ACTION                       -> true // only with MANAGE_MESSAGES permission
+        | MessageType.ROLE_SUBSCRIPTION_PURCHASE                   -> true
+        | MessageType.INTERACTION_PREMIUM_UPSELL                   -> true
+        | MessageType.STAGE_START                                  -> true
+        | MessageType.STAGE_END                                    -> true
+        | MessageType.STAGE_SPEAKER                                -> true
+        | MessageType.STAGE_TOPIC                                  -> true
+        | MessageType.GUILD_APPLICATION_PREMIUM_SUBSCRIPTION       -> true
+        | MessageType.GUILD_INCIDENT_ALERT_MODE_ENABLED            -> true
+        | MessageType.GUILD_INCIDENT_ALERT_MODE_DISABLED           -> true
+        | MessageType.GUILD_INCIDENT_REPORT_RAID                   -> true
+        | MessageType.GUILD_INCIDENT_REPORT_FALSE_ALARM            -> true
+        | MessageType.PURCHASE_NOTIFICATION                        -> true
+        | MessageType.POLL_RESULT                                  -> true
+        | _                                                        -> false
 
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-prompt-types
 type OnboardingPromptType =
