@@ -291,7 +291,7 @@ type EntityMetadata = {
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule-nweekday-structure
 type RecurrenceRuleNWeekday = {
     [<JsonPropertyName "n">] N: int
-    [<JsonPropertyName "day">] Day: RecurrenceRuleWeekdayType
+    [<JsonPropertyName "day">] Day: RecurrenceRuleWeekday
 }
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object
@@ -688,7 +688,7 @@ type EmbedFooter = {
     [<JsonPropertyName "proxy_icon_url">] ProxyIconUrl: string option
 }
 with
-    static member build(
+    static member create(
         Text: string,
         ?IconUrl: string,
         ?ProxyIconUrl: string
@@ -705,7 +705,7 @@ type EmbedImage = {
     [<JsonPropertyName "width">] Width: int option
 }
 with
-    static member build(
+    static member create(
         Url: string,
         ?ProxyUrl: string,
         ?Height: int,
@@ -724,7 +724,7 @@ type EmbedThumbnail = {
     [<JsonPropertyName "width">] Width: int option
 }
 with
-    static member build(
+    static member create(
         Url: string,
         ?ProxyUrl: string,
         ?Height: int,
@@ -743,7 +743,7 @@ type EmbedVideo = {
     [<JsonPropertyName "width">] Width: int option
 }
 with
-    static member build(
+    static member create(
         ?Url: string,
         ?ProxyUrl: string,
         ?Height: int,
@@ -760,7 +760,7 @@ type EmbedProvider = {
     [<JsonPropertyName "url">] Url: string option
 }
 with
-    static member build(
+    static member create(
         ?Name: string,
         ?Url: string
     ) = {
@@ -775,7 +775,7 @@ type EmbedAuthor = {
     [<JsonPropertyName "proxy_icon_url">] ProxyIconUrl: string option
 }
 with
-    static member build(
+    static member create(
         Name: string,
         ?Url: string,
         ?IconUrl: string,
@@ -793,7 +793,7 @@ type EmbedField = {
     [<JsonPropertyName "inline">] Inline: bool option
 }
 with
-    static member build(
+    static member create(
         Name: string,
         Value: string,
         ?Inline: bool
@@ -819,7 +819,7 @@ type Embed = {
     [<JsonPropertyName "fields">] Fields: EmbedField list option
 }
 with
-    static member build(
+    static member create(
         ?Title: string,
         ?Type: string,
         ?Description: string,
@@ -1019,7 +1019,7 @@ type AllowedMentions = {
     [<JsonPropertyName "replied_user">] RepliedUser: bool option
 }
 with
-    static member build(
+    static member create(
         Parse: AllowedMentionsParseType list,
         ?Roles: string list,
         ?Users: string list,
@@ -1353,7 +1353,7 @@ type ApplicationCommandOption = {
     [<JsonPropertyName "autocomplete">] Autocomplete: bool option
 }
 with
-    static member build(
+    static member create(
         Type: ApplicationCommandOptionType,
         Name: string,
         Description: string,
@@ -1433,7 +1433,7 @@ type ApplicationRoleConnectionMetadata = {
     [<JsonPropertyName "description_localizations">] DescriptionLocalizations: IDictionary<string, string> option
 }
 with
-    static member build(
+    static member create(
         Type: ApplicationRoleConnectionMetadataType,
         Key: string,
         Name: string,
@@ -1508,7 +1508,7 @@ type Activity = {
     [<JsonPropertyName "buttons">] Buttons: ActivityButton list option
 }
 with
-    static member build (
+    static member create (
         Type: ActivityType,
         Name: string,
         ?Url: string,
@@ -1637,7 +1637,7 @@ type CommandInteractionDataOption = {
     [<JsonPropertyName "focused">] Focused: bool option
 }
 with
-    static member build(
+    static member create(
         Name: string,
         Type: ApplicationCommandOptionType,
         ?Value: CommandInteractionDataOptionValue,
@@ -1661,7 +1661,7 @@ type InteractionData = {
     [<JsonPropertyName "target_it">] TargetId: string option
 }
 with
-    static member build(
+    static member create(
         Id: string,
         Name: string,
         Type: ApplicationCommandType,
@@ -1701,7 +1701,7 @@ type Interaction = {
     [<JsonPropertyName "context">] Context: InteractionContextType option
 }
 with
-    static member build(
+    static member create(
         Id: string,
         ApplicationId: string,
         Type: InteractionType,
@@ -1914,7 +1914,7 @@ type ConnectionProperties = {
     [<JsonPropertyName "device">] Device: string
 }
 with
-    static member build(
+    static member create (
         OperatingSystem: string,
         Browser: string,
         Device: string
@@ -1924,14 +1924,12 @@ with
         Device = Device;
     }
 
-    static member build(OperatingSystem: string) =
-        ConnectionProperties.build(OperatingSystem, "FSharp.Discord", "FSharp.Discord")
+    static member create (os: string) =
+        ConnectionProperties.create(os, "FSharp.Discord", "FSharp.Discord")
 
-    static member build() =
-        let operatingSystem =
-            match Environment.OSVersion.Platform with
-            | PlatformID.Win32NT -> "Windows"
-            | PlatformID.Unix -> "Linux"
-            | _ -> "Unknown OS"
-
-        ConnectionProperties.build(operatingSystem)
+    static member create () =
+        match Environment.OSVersion.Platform with
+        | PlatformID.Win32NT -> "Windows"
+        | PlatformID.Unix -> "Linux"
+        | _ -> "Unknown OS"
+        |> ConnectionProperties.create

@@ -15,7 +15,7 @@ type GatewayEventPayload<'a> = {
     [<JsonPropertyName "t">] EventName: string option
 }
 with
-    static member build(
+    static member create (
         Opcode: GatewayOpcode,
         Data: 'a,
         ?Sequence: int,
@@ -38,7 +38,7 @@ type IdentifySendEvent = {
     [<JsonPropertyName "intents">] Intents: int
 }
 with
-    static member build(
+    static member create (
         Token: string,
         Intents: int,
         Properties: ConnectionProperties,
@@ -63,7 +63,7 @@ and ResumeSendEvent = {
     [<JsonPropertyName "seq">] Sequence: int
 }
 with
-    static member build(
+    static member create (
         Token: string,
         SessionId: string,
         Sequence: int
@@ -86,7 +86,7 @@ and RequestGuildMembersSendEvent = {
     [<JsonPropertyName "nonce">] Nonce: string option
 }
 with
-    static member build(
+    static member create (
         GuildId: string,
         Limit: int,
         ?Presences: bool,
@@ -110,7 +110,7 @@ and UpdateVoiceStateSendEvent = {
     [<JsonPropertyName "self_deaf">] SelfDeaf: bool
 }
 with
-    static member build(
+    static member create (
         GuildId: string,
         ChannelId: string option,
         SelfMute: bool,
@@ -127,7 +127,7 @@ and RequestSoundboardSoundsSendEvent = {
     [<JsonPropertyName "guild_ids">] GuildIds: string list 
 }
 with
-    static member build(
+    static member create (
         GuildIds: string list
     ) = {
         GuildIds = GuildIds;
@@ -141,7 +141,7 @@ and UpdatePresenceSendEvent = {
     [<JsonPropertyName "afk">] Afk: bool
 }
 with
-    static member build(
+    static member create (
         Status: Status,
         ?Activities: Activity list,
         ?Afk: bool,

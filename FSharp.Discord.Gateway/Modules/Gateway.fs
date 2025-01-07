@@ -11,37 +11,37 @@ open System.Threading.Tasks
 module Gateway =
     let identify (payload: IdentifySendEvent) ws =
         ws |> Websocket.write (
-            GatewayEventPayload.build(Opcode = GatewayOpcode.IDENTIFY, Data = payload) |> Json.serializeF
+            GatewayEventPayload.create(GatewayOpcode.IDENTIFY, payload) |> Json.serializeF
         )
         
     let resume (payload: ResumeSendEvent) ws =
         ws |> Websocket.write (
-            GatewayEventPayload.build(Opcode = GatewayOpcode.RESUME, Data = payload) |> Json.serializeF
+            GatewayEventPayload.create(GatewayOpcode.RESUME, payload) |> Json.serializeF
         )
 
     let heartbeat (payload: HeartbeatSendEvent) ws =
         ws |> Websocket.write (
-            GatewayEventPayload.build(Opcode = GatewayOpcode.HEARTBEAT, Data = payload) |> Json.serializeF
+            GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, payload) |> Json.serializeF
         )
 
     let requestGuildMembers (payload: RequestGuildMembersSendEvent) ws =
         ws |> Websocket.write (
-            GatewayEventPayload.build(Opcode = GatewayOpcode.REQUEST_GUILD_MEMBERS, Data = payload) |> Json.serializeF
+            GatewayEventPayload.create(GatewayOpcode.REQUEST_GUILD_MEMBERS, payload) |> Json.serializeF
         )
 
     let requestSoundboardSounds (payload: RequestSoundboardSoundsSendEvent) ws =
         ws |> Websocket.write (
-            GatewayEventPayload.build(Opcode = GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, Data = payload) |> Json.serializeF
+            GatewayEventPayload.create(GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, payload) |> Json.serializeF
         )
 
     let updateVoiceState (payload: UpdateVoiceStateSendEvent) ws =
         ws |> Websocket.write (
-            GatewayEventPayload.build(Opcode = GatewayOpcode.VOICE_STATE_UPDATE, Data = payload) |> Json.serializeF
+            GatewayEventPayload.create(GatewayOpcode.VOICE_STATE_UPDATE, payload) |> Json.serializeF
         )
 
     let updatePresence (payload: UpdatePresenceSendEvent) ws =
         ws |> Websocket.write (
-            GatewayEventPayload.build(Opcode = GatewayOpcode.PRESENCE_UPDATE, Data = payload) |> Json.serializeF
+            GatewayEventPayload.create(GatewayOpcode.PRESENCE_UPDATE, payload) |> Json.serializeF
         )
     
     let shouldReconnect (code: GatewayCloseEventCode option) =
@@ -118,7 +118,7 @@ module Gateway =
 
                     let sendEvent =
                         match state.SessionId, state.SequenceId with
-                        | Some sessionId, Some sequenceId -> resume (ResumeSendEvent.build(id.Token, sessionId, sequenceId))
+                        | Some sessionId, Some sequenceId -> resume (ResumeSendEvent.create(id.Token, sessionId, sequenceId))
                         | _ -> identify id
 
                     ws |> sendEvent |> ignore

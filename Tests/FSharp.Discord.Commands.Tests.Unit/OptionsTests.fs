@@ -11,7 +11,7 @@ type OptionsTests () =
         let name = "command"
 
         let expectedSubcommandOptions = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = "option",
                 Type = ApplicationCommandOptionType.STRING,
                 Value = CommandInteractionDataOptionValue.String "option"
@@ -19,7 +19,7 @@ type OptionsTests () =
         ]
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.SUB_COMMAND,
                 Options = expectedSubcommandOptions
@@ -41,7 +41,7 @@ type OptionsTests () =
         let name = "subcommand"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -79,7 +79,7 @@ type OptionsTests () =
         let name = "command"
 
         let expectedSubcommandOptions = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = "option",
                 Type = ApplicationCommandOptionType.STRING,
                 Value = CommandInteractionDataOptionValue.String "option"
@@ -87,7 +87,7 @@ type OptionsTests () =
         ]
 
         let expectedSubcommandGroupOptions = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = "subcommand",
                 Type = ApplicationCommandOptionType.SUB_COMMAND,
                 Options = expectedSubcommandOptions
@@ -95,7 +95,7 @@ type OptionsTests () =
         ]
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.SUB_COMMAND_GROUP,
                 Options = expectedSubcommandGroupOptions
@@ -117,7 +117,7 @@ type OptionsTests () =
         let name = "subcommandGroup"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -156,7 +156,7 @@ type OptionsTests () =
         let value = "string"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.STRING,
                 Value = CommandInteractionDataOptionValue.String value
@@ -178,7 +178,7 @@ type OptionsTests () =
         let name = "string"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -217,7 +217,7 @@ type OptionsTests () =
         let value = 1
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.INTEGER,
                 Value = CommandInteractionDataOptionValue.Int value
@@ -239,7 +239,7 @@ type OptionsTests () =
         let name = "integer"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -278,7 +278,7 @@ type OptionsTests () =
         let value = true
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.BOOLEAN,
                 Value = CommandInteractionDataOptionValue.Bool value
@@ -300,7 +300,7 @@ type OptionsTests () =
         let name = "boolean"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -339,7 +339,7 @@ type OptionsTests () =
         let value = "userId"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.USER,
                 Value = CommandInteractionDataOptionValue.String value
@@ -361,7 +361,7 @@ type OptionsTests () =
         let name = "user"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -400,7 +400,7 @@ type OptionsTests () =
         let value = "channelId"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.CHANNEL,
                 Value = CommandInteractionDataOptionValue.String value
@@ -422,7 +422,7 @@ type OptionsTests () =
         let name = "channel"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -461,7 +461,7 @@ type OptionsTests () =
         let value = "roleId"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String value
@@ -483,7 +483,7 @@ type OptionsTests () =
         let name = "role"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.CHANNEL,
                 Value = CommandInteractionDataOptionValue.String "channelId"
@@ -522,7 +522,7 @@ type OptionsTests () =
         let value = "mentionableId"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.MENTIONABLE,
                 Value = CommandInteractionDataOptionValue.String value
@@ -544,7 +544,7 @@ type OptionsTests () =
         let name = "mentionable"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -583,7 +583,7 @@ type OptionsTests () =
         let value = 12.34
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.NUMBER,
                 Value = CommandInteractionDataOptionValue.Double value
@@ -605,7 +605,7 @@ type OptionsTests () =
         let name = "number"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -644,7 +644,7 @@ type OptionsTests () =
         let value = "attachmentId"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ATTACHMENT,
                 Value = CommandInteractionDataOptionValue.String value
@@ -666,7 +666,7 @@ type OptionsTests () =
         let name = "attachment"
 
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = name,
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId"
@@ -702,17 +702,17 @@ type OptionsTests () =
     member _.Options_FetchesMultipleOptions () =
         // Arrange
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = "role1",
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId1"
             );
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = "role2",
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId2"
             );
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = "channel",
                 Type = ApplicationCommandOptionType.CHANNEL,
                 Value = CommandInteractionDataOptionValue.String "channelId"
@@ -739,12 +739,12 @@ type OptionsTests () =
     member _.Options_FailsWhenAtLeastOneOptionNotAvailable () =
         // Arrange
         let options = [
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = "role1",
                 Type = ApplicationCommandOptionType.ROLE,
                 Value = CommandInteractionDataOptionValue.String "roleId1"
             );
-            CommandInteractionDataOption.build(
+            CommandInteractionDataOption.create(
                 Name = "channel",
                 Type = ApplicationCommandOptionType.CHANNEL,
                 Value = CommandInteractionDataOptionValue.String "channelId"
