@@ -16,6 +16,21 @@ type GatewayCloseEventCode =
     | INVALID_API_VERSION   = 4012
     | INVALID_INTENTS       = 4013
     | DISALLOWED_INTENTS    = 4014
+
+// https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-opcodes
+type GatewayOpcode =
+    | DISPATCH                  = 0
+    | HEARTBEAT                 = 1
+    | IDENTIFY                  = 2
+    | PRESENCE_UPDATE           = 3
+    | VOICE_STATE_UPDATE        = 4
+    | RESUME                    = 6
+    | RECONNECT                 = 7
+    | REQUEST_GUILD_MEMBERS     = 8
+    | INVALID_SESSION           = 9
+    | HELLO                     = 10
+    | HEARTBEAT_ACK             = 11
+    | REQUEST_SOUNDBOARD_SOUNDS = 31
     
 // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes
 type JsonErrorCode =

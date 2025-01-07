@@ -27,7 +27,7 @@ type User = {
     [<JsonPropertyName "verified">] Verified: bool option
     [<JsonPropertyName "email">] Email: string option
     [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "premium_type">] PremiumType: UserPremiumType option
+    [<JsonPropertyName "premium_type">] PremiumType: UserPremiumTier option
     [<JsonPropertyName "public_flags">] PublicFlags: int option
     [<JsonPropertyName "avatar_decoration_data">] AvatarDecorationData: AvatarDecorationData option
 }
@@ -47,7 +47,7 @@ type PartialUser = {
     [<JsonPropertyName "verified">] Verified: bool option
     [<JsonPropertyName "email">] Email: string option
     [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "premium_type">] PremiumType: UserPremiumType option
+    [<JsonPropertyName "premium_type">] PremiumType: UserPremiumTier option
     [<JsonPropertyName "public_flags">] PublicFlags: int option
     [<JsonPropertyName "avatar_decoration_data">] AvatarDecorationData: AvatarDecorationData option
 }
@@ -156,7 +156,7 @@ type Channel = {
     [<JsonPropertyName "member_count">] MemberCount: int option
     [<JsonPropertyName "thread_metadata">] ThreadMetadata: ThreadMetadata option
     [<JsonPropertyName "member">] Member: ThreadMember option
-    [<JsonPropertyName "default_auto_archive_duration">] DefaultAutoArchiveDuration: AutoArchiveDurationType option
+    [<JsonPropertyName "default_auto_archive_duration">] DefaultAutoArchiveDuration: AutoArchiveDuration option
     [<JsonPropertyName "permissions">] Permissions: string option
     [<JsonPropertyName "flags">] Flags: int option
     [<JsonPropertyName "total_messages_sent">] TotalMessagesSent: int option
@@ -165,7 +165,7 @@ type Channel = {
     [<JsonPropertyName "default_reaction_emoji">] DefaultReactionEmoji: DefaultReaction option
     [<JsonPropertyName "default_thread_rate_limit_per_user">] DefaultThreadRateLimitPerUser: int option
     [<JsonPropertyName "default_sort_order">] DefaultSortOrder: ChannelSortOrder option
-    [<JsonPropertyName "default_forum_layout">] DefaultForumLayout: ChannelForumLayout option
+    [<JsonPropertyName "default_forum_layout">] DefaultForumLayout: ForumLayout option
 }
 
 // TODO: Create DU for different channel types
@@ -196,7 +196,7 @@ type PartialChannel = {
     [<JsonPropertyName "member_count">] MemberCount: int option
     [<JsonPropertyName "thread_metadata">] ThreadMetadata: ThreadMetadata option
     [<JsonPropertyName "member">] Member: ThreadMember option
-    [<JsonPropertyName "default_auto_archive_duration">] DefaultAutoArchiveDuration: AutoArchiveDurationType option
+    [<JsonPropertyName "default_auto_archive_duration">] DefaultAutoArchiveDuration: AutoArchiveDuration option
     [<JsonPropertyName "permissions">] Permissions: string option
     [<JsonPropertyName "flags">] Flags: int option
     [<JsonPropertyName "total_messages_sent">] TotalMessagesSent: int option
@@ -205,7 +205,7 @@ type PartialChannel = {
     [<JsonPropertyName "default_reaction_emoji">] DefaultReactionEmoji: DefaultReaction option
     [<JsonPropertyName "default_thread_rate_limit_per_user">] DefaultThreadRateLimitPerUser: int option
     [<JsonPropertyName "default_sort_order">] DefaultSortOrder: ChannelSortOrder option
-    [<JsonPropertyName "default_forum_layout">] DefaultForumLayout: ChannelForumLayout option
+    [<JsonPropertyName "default_forum_layout">] DefaultForumLayout: ForumLayout option
 }
 
 type FollowedChannel = {
@@ -234,7 +234,7 @@ type Sticker = {
     [<JsonPropertyName "description">] Description: string option
     [<JsonPropertyName "tags">] Tags: string
     [<JsonPropertyName "type">] Type: StickerType
-    [<JsonPropertyName "format_type">] FormatType: StickerFormatType
+    [<JsonPropertyName "format_type">] FormatType: StickerFormat
     [<JsonPropertyName "available">] Available: bool option
     [<JsonPropertyName "guild_id">] GuildId: string option
     [<JsonPropertyName "user">] User: User option
@@ -245,7 +245,7 @@ type Sticker = {
 type StickerItem = {
     [<JsonPropertyName "id">] Id: string
     [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "format_type">] FormatType: StickerFormatType
+    [<JsonPropertyName "format_type">] FormatType: StickerFormat
 }
 
 // https://discord.com/developers/docs/resources/sticker#sticker-pack-object
@@ -298,11 +298,11 @@ type RecurrenceRuleNWeekday = {
 type RecurrenceRule = {
     [<JsonPropertyName "start">] Start: string
     [<JsonPropertyName "end">] End: string option
-    [<JsonPropertyName "frequency">] Frequency: RecurrenceRuleFrequencyType
+    [<JsonPropertyName "frequency">] Frequency: RecurrenceRuleFrequency
     [<JsonPropertyName "interval">] Interval: int
-    [<JsonPropertyName "by_weekday">] ByWeekday: RecurrenceRuleWeekdayType list option
+    [<JsonPropertyName "by_weekday">] ByWeekday: RecurrenceRuleWeekday list option
     [<JsonPropertyName "by_weekend">] ByWeekend: RecurrenceRuleNWeekday list option
-    [<JsonPropertyName "by_month">] ByMonth: RecurrenceRuleMonthType list option
+    [<JsonPropertyName "by_month">] ByMonth: RecurrenceRuleMonth list option
     [<JsonPropertyName "by_month_day">] ByMonthDay: int list option
     [<JsonPropertyName "by_year_day">] ByYearDay: int list option
     [<JsonPropertyName "count">] Count: int option
@@ -318,8 +318,8 @@ type GuildScheduledEvent = {
     [<JsonPropertyName "description">] Description: string option
     [<JsonPropertyName "scheduled_start_time">] ScheduledStartTime: DateTime option
     [<JsonPropertyName "scheduled_end_time">] ScheduledEndTime: DateTime option
-    [<JsonPropertyName "privacy_level">] PrivacyLevel: PrivacyLevelType
-    [<JsonPropertyName "event_status">] EventStatus: EventStatusType
+    [<JsonPropertyName "privacy_level">] PrivacyLevel: PrivacyLevel
+    [<JsonPropertyName "event_status">] EventStatus: EventStatus
     [<JsonPropertyName "entity_type">] EntityType: ScheduledEntityType
     [<JsonPropertyName "entity_id">] EntityId: string option
     [<JsonPropertyName "entity_metadata">] EntityMetadata: EntityMetadata option
@@ -396,13 +396,13 @@ type Guild = {
     [<JsonPropertyName "afk_timeout">] AfkTimeout: int
     [<JsonPropertyName "widget_enabled">] WidgetEnabled: bool option
     [<JsonPropertyName "widget_channel_id">] WidgetChannelId: string option
-    [<JsonPropertyName "verification_level">] VerificationLevel: GuildVerificationLevel
-    [<JsonPropertyName "default_message_notifications">] DefaultMessageNotifications: GuildMessageNotificationLevel
-    [<JsonPropertyName "explicit_content_filter">] ExplicitContentFilter: GuildExplicitContentFilterLevel
+    [<JsonPropertyName "verification_level">] VerificationLevel: VerificationLevel
+    [<JsonPropertyName "default_message_notifications">] DefaultMessageNotifications: MessageNotificationLevel
+    [<JsonPropertyName "explicit_content_filter">] ExplicitContentFilter: ExplicitContentFilterLevel
     [<JsonPropertyName "roles">] Roles: Role list
     [<JsonPropertyName "emojis">] Emojis: Emoji list
     [<JsonPropertyName "features">] Features: GuildFeature list
-    [<JsonPropertyName "mfa_level">] MfaLevel: GuildMfaLevel
+    [<JsonPropertyName "mfa_level">] MfaLevel: MfaLevel
     [<JsonPropertyName "application_id">] ApplicationId: string option
     [<JsonPropertyName "system_channel_id">] SystemChannelId: string option
     [<JsonPropertyName "system_channel_flags">] SystemChannelFlags: int
@@ -421,7 +421,7 @@ type Guild = {
     [<JsonPropertyName "approximate_member_count">] ApproximateMemberCount: int option
     [<JsonPropertyName "approximate_presence_count">] ApproximatePresenceCount: int option
     [<JsonPropertyName "welcome_screen">] WelcomeScreen: WelcomeScreen option
-    [<JsonPropertyName "nsfw_level">] NsfwLevel: GuildNsfwLevel
+    [<JsonPropertyName "nsfw_level">] NsfwLevel: NsfwLevel
     [<JsonPropertyName "stickers">] Stickers: Sticker list option
     [<JsonPropertyName "premium_progress_bar_enabled">] PremiumProgressBarEnabled: bool
     [<JsonPropertyName "safety_alerts_channel_id">] SafetyAlertsChannelId: string option
@@ -441,13 +441,13 @@ type PartialGuild = {
     [<JsonPropertyName "afk_timeout">] AfkTimeout: int option
     [<JsonPropertyName "widget_enabled">] WidgetEnabled: bool option
     [<JsonPropertyName "widget_channel_id">] WidgetChannelId: string option
-    [<JsonPropertyName "verification_level">] VerificationLevel: GuildVerificationLevel option
-    [<JsonPropertyName "default_message_notifications">] DefaultMessageNotifications: GuildMessageNotificationLevel option
-    [<JsonPropertyName "explicit_content_filter">] ExplicitContentFilter: GuildExplicitContentFilterLevel option
+    [<JsonPropertyName "verification_level">] VerificationLevel: VerificationLevel option
+    [<JsonPropertyName "default_message_notifications">] DefaultMessageNotifications: MessageNotificationLevel option
+    [<JsonPropertyName "explicit_content_filter">] ExplicitContentFilter: ExplicitContentFilterLevel option
     [<JsonPropertyName "roles">] Roles: Role list option
     [<JsonPropertyName "emojis">] Emojis: Emoji list option
     [<JsonPropertyName "features">] Features: GuildFeature list option
-    [<JsonPropertyName "mfa_level">] MfaLevel: GuildMfaLevel option
+    [<JsonPropertyName "mfa_level">] MfaLevel: MfaLevel option
     [<JsonPropertyName "application_id">] ApplicationId: string option
     [<JsonPropertyName "system_channel_id">] SystemChannelId: string option
     [<JsonPropertyName "system_channel_flags">] SystemChannelFlags: int option
@@ -466,7 +466,7 @@ type PartialGuild = {
     [<JsonPropertyName "approximate_member_count">] ApproximateMemberCount: int option
     [<JsonPropertyName "approximate_presence_count">] ApproximatePresenceCount: int option
     [<JsonPropertyName "welcome_screen">] WelcomeScreen: WelcomeScreen option
-    [<JsonPropertyName "nsfw_level">] NsfwLevel: GuildNsfwLevel option
+    [<JsonPropertyName "nsfw_level">] NsfwLevel: NsfwLevel option
     [<JsonPropertyName "stickers">] Stickers: Sticker list option
     [<JsonPropertyName "premium_progress_bar_enabled">] PremiumProgressBarEnabled: bool option
     [<JsonPropertyName "safety_alerts_channel_id">] SafetyAlertsChannelId: string option
@@ -535,7 +535,7 @@ type StageInstance = {
     [<JsonPropertyName "guild_id">] GuildId: string
     [<JsonPropertyName "channel_id">] ChannelId: string
     [<JsonPropertyName "topic">] Topic: string
-    [<JsonPropertyName "privacy_level">] PrivacyLevel: PrivacyLevelType
+    [<JsonPropertyName "privacy_level">] PrivacyLevel: PrivacyLevel
     [<JsonPropertyName "discoverable_enabled">] DiscoverableEnabled: bool
     [<JsonPropertyName "guild_scheduled_event_id">] GuildScheduledEventId: string option
 }
@@ -604,7 +604,7 @@ type ApplicationIntegrationTypeConfiguration = {
 }
 
 type TeamMember = {
-    [<JsonPropertyName "membership_state">] MembershipState: TeamMembershipState
+    [<JsonPropertyName "membership_state">] MembershipState: MembershipState
     [<JsonPropertyName "team_id">] TeamId: string
     [<JsonPropertyName "user">] User: PartialUser // avatar, discriminator, id, username
     [<JsonPropertyName "role">] Role: string
@@ -875,7 +875,7 @@ type Poll = {
     [<JsonPropertyName "answers">] Answers: PollAnswer list
     [<JsonPropertyName "expiry">] Expiry: DateTime option
     [<JsonPropertyName "allow_multiselect">] AllowMultiselect: bool
-    [<JsonPropertyName "layout_type">] LayoutType: PollLayoutType
+    [<JsonPropertyName "layout_type">] LayoutType: PollLayout
     [<JsonPropertyName "results">] Results: PollResults option
 }
 
@@ -1325,7 +1325,7 @@ type Subscription = {
     [<JsonPropertyName "renewal_sku_ids">] RenewalSkuIds: string list option
     [<JsonPropertyName "current_period_start">] CurrentPeriodStart: DateTime
     [<JsonPropertyName "current_period_end">] CurrentPeriodEnd: DateTime
-    [<JsonPropertyName "status">] Status: SubscriptionStatusType
+    [<JsonPropertyName "status">] Status: SubscriptionStatus
     [<JsonPropertyName "created_at">] CanceledAt: DateTime option
     [<JsonPropertyName "country">] Country: string option
 }
@@ -1583,7 +1583,7 @@ type GuildIntegration = {
     [<JsonPropertyName "syncing">] Syncing: bool option
     [<JsonPropertyName "role_id">] RoleId: string option
     [<JsonPropertyName "enable_emoticons">] EnableEmoticons: bool option
-    [<JsonPropertyName "expire_behavior">] ExpireBehavior: IntegrationExpireBehaviorType option
+    [<JsonPropertyName "expire_behavior">] ExpireBehavior: IntegrationExpireBehavior option
     [<JsonPropertyName "expire_grace_period">] ExpireGracePeriod: int option
     [<JsonPropertyName "user">] User: User option
     [<JsonPropertyName "account">] Account: GuildIntegrationAccount
@@ -1602,7 +1602,7 @@ type PartialGuildIntegration = {
     [<JsonPropertyName "syncing">] Syncing: bool option
     [<JsonPropertyName "role_id">] RoleId: string option
     [<JsonPropertyName "enable_emoticons">] EnableEmoticons: bool option
-    [<JsonPropertyName "expire_behavior">] ExpireBehavior: IntegrationExpireBehaviorType option
+    [<JsonPropertyName "expire_behavior">] ExpireBehavior: IntegrationExpireBehavior option
     [<JsonPropertyName "expire_grace_period">] ExpireGracePeriod: int option
     [<JsonPropertyName "user">] User: User option
     [<JsonPropertyName "account">] Account: GuildIntegrationAccount option
@@ -1626,7 +1626,7 @@ type Connection = {
     [<JsonPropertyName "friend_sync">] FriendSync: bool
     [<JsonPropertyName "show_activity">] ShowActivity: bool
     [<JsonPropertyName "two_way_link">] TwoWayLink: bool
-    [<JsonPropertyName "visibility">] Visibility: ConnectionVisibilityType
+    [<JsonPropertyName "visibility">] Visibility: ConnectionVisibility
 }
 
 type CommandInteractionDataOption = {
@@ -1811,7 +1811,7 @@ type InteractionCallbackResponse = {
 type AutoModerationTriggerMetadata = {
     [<JsonPropertyName "keyword_filter">] KeywordFilter: string list option
     [<JsonPropertyName "regex_patterns">] RegexPatterns: string list option
-    [<JsonPropertyName "presets">] Presets: AutoModerationKeywordPresetType option
+    [<JsonPropertyName "presets">] Presets: AutoModerationKeywordPreset option
     [<JsonPropertyName "allow_list">] AllowList: string list option
     [<JsonPropertyName "mention_total_limit">] MentionTotalLimit: int option
     [<JsonPropertyName "mention_raid_protection_enabled">] MentionRaidProtectionEnabled: bool option

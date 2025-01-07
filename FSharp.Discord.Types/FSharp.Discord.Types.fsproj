@@ -11,9 +11,9 @@
 		<Compile Include="Common\Task.fs" />
 		<Compile Include="Common\Json.fs" />
 		<Compile Include="Common\Overloads.fs" />
-		<Compile Include="Enums\Errors.fs" />
+		<Compile Include="Enums\Types.fs" />
+		<Compile Include="Enums\Codes.fs" />
 		<Compile Include="Enums\Flags.fs" />
-		<Compile Include="Enums\Gateway.fs" />
 		<Compile Include="Enums.fs" />
 		<Compile Include="Structures.fs" />
 	</ItemGroup>

@@ -1212,7 +1212,7 @@ let modifyGuildMfaLevel
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildMfaLevel>
+        ?>> DiscordResponse.asJson<MfaLevel>
 
 let deleteGuildRole
     (guildId: string)

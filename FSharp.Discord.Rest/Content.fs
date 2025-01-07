@@ -360,7 +360,7 @@ and ModifyGuildChannelPayload(
     ?default_reaction_emoji:             DefaultReaction option,
     ?default_thread_rate_limit_per_user: int,
     ?default_sort_order:                 ChannelSortOrder option,
-    ?default_forum_layout:               ChannelForumLayout
+    ?default_forum_layout:               ForumLayout
 ) =
     inherit Payload() with
         override _.Content = json {
@@ -406,6 +406,10 @@ and ModifyThreadChannelPayload (
             optional "flags" flags
             optional "applied_tags" applied_tags
         }
+
+type EditChannelPermissionsType =
+    | ROLE   = 0
+    | MEMBER = 1
 
 type EditChannelPermissionsPayload (
     ``type``: EditChannelPermissionsType,
@@ -614,6 +618,11 @@ type ModifyApplicationEmojiPayload(
 
 // ----- Entitlement -----
 
+// https://discord.com/developers/docs/resources/entitlement#create-test-entitlement-json-params
+type EntitlementOwnerType =
+    | GUILD_SUBSCRIPTION = 1
+    | USER_SUBSCRIPTION  = 2
+
 type CreateTestEntitlementPayload (
     sku_id:     string,
     owner_id:   string,
@@ -631,9 +640,9 @@ type CreateTestEntitlementPayload (
 type CreateGuildPayload(
     name:                           string,
     ?icon:                          string,
-    ?verification_level:            GuildVerificationLevel,
-    ?default_message_notifications: GuildMessageNotificationLevel,
-    ?explicit_content_filter:       GuildExplicitContentFilterLevel,
+    ?verification_level:            VerificationLevel,
+    ?default_message_notifications: MessageNotificationLevel,
+    ?explicit_content_filter:       ExplicitContentFilterLevel,
     ?roles:                         Role list,
     ?channels:                      PartialChannel list,
     ?afk_channel_id:                string,
@@ -658,9 +667,9 @@ type CreateGuildPayload(
 
 type ModifyGuildPayload(
     ?name:                          string,
-    ?verification_level:            GuildVerificationLevel option,
-    ?default_message_notifications: GuildMessageNotificationLevel option,
-    ?explicit_content_filter:       GuildExplicitContentFilterLevel option,
+    ?verification_level:            VerificationLevel option,
+    ?default_message_notifications: MessageNotificationLevel option,
+    ?explicit_content_filter:       ExplicitContentFilterLevel option,
     ?afk_channel_id:                string option,
     ?afk_timeout:                   int,
     ?icon:                          string option,
@@ -719,7 +728,7 @@ type CreateGuildChannelPayload(
     ?default_reaction_emoji:             DefaultReaction option,
     ?available_tags:                     ChannelTag list option,
     ?default_sort_order:                 ChannelSortOrder option,
-    ?default_forum_layout:               ChannelForumLayout option,
+    ?default_forum_layout:               ForumLayout option,
     ?default_thread_rate_limit_per_user: int option
 ) =
     inherit Payload() with
@@ -886,7 +895,7 @@ type ModifyGuildRolePayload(
         }
 
 type ModifyGuildMfaLevelPayload(
-    level: GuildMfaLevel
+    level: MfaLevel
 ) =
     inherit Payload() with
         override _.Content = json {
@@ -960,7 +969,7 @@ type ModifyGuildOnboardingPayload(
 
 type CreateGuildScheduledEventPayload (
     name:                 string,
-    privacy_level:        PrivacyLevelType,
+    privacy_level:        PrivacyLevel,
     scheduled_start_time: DateTime,
     entity_type:          ScheduledEntityType,
     ?channel_id:          string,
@@ -988,7 +997,7 @@ type ModifyGuildScheduledEventPayload (
     ?channel_id:           string option,
     ?entity_metadata:      EntityMetadata option,
     ?name:                 string,
-    ?privacy_level:        PrivacyLevelType,
+    ?privacy_level:        PrivacyLevel,
     ?scheduled_start_time: DateTime,
     ?scheduled_end_time:   DateTime,
     ?description:          string option,
@@ -1184,7 +1193,7 @@ type ModifyGuildSoundboardSoundPayload (
 type CreateStageInstancePayload (
     channel_id:                string,
     topic:                     string,
-    ?privacy_level:            PrivacyLevelType,
+    ?privacy_level:            PrivacyLevel,
     ?send_start_notification:  bool,
     ?guild_scheduled_event_id: string
 ) =
@@ -1199,7 +1208,7 @@ type CreateStageInstancePayload (
 
 type ModifyStageInstancePayload (
     ?topic:         string,
-    ?privacy_level: PrivacyLevelType
+    ?privacy_level: PrivacyLevel
 ) =
     inherit Payload() with
         override _.Content = json {

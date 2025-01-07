@@ -137,12 +137,12 @@ with
 and UpdatePresenceSendEvent = {
     [<JsonPropertyName "since">] Since: int option
     [<JsonPropertyName "activities">] Activities: Activity list
-    [<JsonPropertyName "status">] Status: StatusType
+    [<JsonPropertyName "status">] Status: Status
     [<JsonPropertyName "afk">] Afk: bool
 }
 with
     static member build(
-        Status: StatusType,
+        Status: Status,
         ?Activities: Activity list,
         ?Afk: bool,
         ?Since: int
@@ -156,7 +156,7 @@ with
 and PartialUpdatePresenceSendEvent = {
     [<JsonPropertyName "since">] Since: int option
     [<JsonPropertyName "activities">] Activities: Activity list option
-    [<JsonPropertyName "status">] Status: StatusType option
+    [<JsonPropertyName "status">] Status: Status option
     [<JsonPropertyName "afk">] Afk: bool option
 }
 
@@ -879,7 +879,7 @@ type MessageReactionRemoveEmojiReceiveEvent = {
 type PresenceUpdateReceiveEvent = {
     [<JsonPropertyName "user">] User: PartialUser
     [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "status">] Status: StatusType option
+    [<JsonPropertyName "status">] Status: Status option
     [<JsonPropertyName "activities">] Activities: Activity list option
     [<JsonPropertyName "client_status">] ClientStatus: ClientStatus option
 }
