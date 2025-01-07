@@ -266,14 +266,15 @@ with
         | _ -> None
 
 and GuildFeatureConverter () =
-    inherit JsonConverter<GuildFeature> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> GuildFeature.FromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildFeature type")
+    inherit JsonConverter<GuildFeature> ()
 
-        override _.Write (writer, value, _) = 
-            value.ToString() |> writer.WriteStringValue
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> GuildFeature.FromString
+        |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildFeature type")
+
+    override _.Write (writer, value, _) = 
+        value.ToString() |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-onboarding-mode
 type OnboardingMode =
@@ -293,21 +294,22 @@ type CommandInteractionDataOptionValue =
     | Bool   of bool
 
 and CommandInteractionDataOptionValueConverter () =
-    inherit JsonConverter<CommandInteractionDataOptionValue> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.TokenType with
-            | JsonTokenType.String -> CommandInteractionDataOptionValue.String (reader.GetString())
-            | JsonTokenType.Number -> CommandInteractionDataOptionValue.Int (reader.GetInt32())
-            | JsonTokenType.True -> CommandInteractionDataOptionValue.Bool true
-            | JsonTokenType.False -> CommandInteractionDataOptionValue.Bool false
-            | _ -> raise (JsonException "Unexpected CommandInteractionDataOptionValue value")
+    inherit JsonConverter<CommandInteractionDataOptionValue> ()
 
-        override _.Write (writer: Utf8JsonWriter, value: CommandInteractionDataOptionValue, options: JsonSerializerOptions) =
-            match value with
-            | CommandInteractionDataOptionValue.String v -> writer.WriteStringValue v
-            | CommandInteractionDataOptionValue.Int v -> writer.WriteNumberValue v
-            | CommandInteractionDataOptionValue.Bool v -> writer.WriteBooleanValue v
-            | CommandInteractionDataOptionValue.Double v -> writer.WriteNumberValue v
+    override _.Read (reader, _, _) =
+        match reader.TokenType with
+        | JsonTokenType.String -> CommandInteractionDataOptionValue.String (reader.GetString())
+        | JsonTokenType.Number -> CommandInteractionDataOptionValue.Int (reader.GetInt32())
+        | JsonTokenType.True -> CommandInteractionDataOptionValue.Bool true
+        | JsonTokenType.False -> CommandInteractionDataOptionValue.Bool false
+        | _ -> raise (JsonException "Unexpected CommandInteractionDataOptionValue value")
+
+    override _.Write (writer, value, _) =
+        match value with
+        | CommandInteractionDataOptionValue.String v -> writer.WriteStringValue v
+        | CommandInteractionDataOptionValue.Int v -> writer.WriteNumberValue v
+        | CommandInteractionDataOptionValue.Bool v -> writer.WriteBooleanValue v
+        | CommandInteractionDataOptionValue.Double v -> writer.WriteNumberValue v
 
 type ApplicationCommandType = 
     | CHAT_INPUT          = 1
@@ -374,17 +376,18 @@ type MessageNonce =
     | String of string
 
 and MessageNonceConverter () =
-    inherit JsonConverter<MessageNonce> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.TokenType with
-            | JsonTokenType.Number -> MessageNonce.Number (reader.GetInt32())
-            | JsonTokenType.String -> MessageNonce.String (reader.GetString())
-            | _ -> raise (JsonException "Unexpected MessageNonce value")
+    inherit JsonConverter<MessageNonce> ()
 
-        override _.Write (writer: Utf8JsonWriter, value: MessageNonce, options: JsonSerializerOptions) =
-            match value with
-            | MessageNonce.Number v -> writer.WriteNumberValue v
-            | MessageNonce.String v -> writer.WriteStringValue v
+    override _.Read (reader, _, _) =
+        match reader.TokenType with
+        | JsonTokenType.Number -> MessageNonce.Number (reader.GetInt32())
+        | JsonTokenType.String -> MessageNonce.String (reader.GetString())
+        | _ -> raise (JsonException "Unexpected MessageNonce value")
+
+    override _.Write (writer, value, _) =
+        match value with
+        | MessageNonce.Number v -> writer.WriteNumberValue v
+        | MessageNonce.String v -> writer.WriteStringValue v
 
 [<JsonConverter(typeof<ApplicationCommandOptionChoiceValueConverter>)>]
 type ApplicationCommandOptionChoiceValue =
@@ -393,27 +396,28 @@ type ApplicationCommandOptionChoiceValue =
     | Double of double
 
 and ApplicationCommandOptionChoiceValueConverter () =
-    inherit JsonConverter<ApplicationCommandOptionChoiceValue> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.TokenType with
-            | JsonTokenType.String -> ApplicationCommandOptionChoiceValue.String (reader.GetString())
-            | JsonTokenType.Number ->
-                let double: double = 0
-                let int: int = 0
-                if reader.TryGetInt32(ref int) then
-                    ApplicationCommandOptionChoiceValue.Int int
-                else if reader.TryGetDouble(ref double) then
-                    ApplicationCommandOptionChoiceValue.Double double
-                else
-                    raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
-                // TODO: Test if this correctly handles int and double
-            | _ -> raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
+    inherit JsonConverter<ApplicationCommandOptionChoiceValue> ()
 
-        override _.Write (writer: Utf8JsonWriter, value: ApplicationCommandOptionChoiceValue, options: JsonSerializerOptions) =
-            match value with
-            | ApplicationCommandOptionChoiceValue.String v -> writer.WriteStringValue v
-            | ApplicationCommandOptionChoiceValue.Int v -> writer.WriteNumberValue v
-            | ApplicationCommandOptionChoiceValue.Double v -> writer.WriteNumberValue v
+    override _.Read (reader, _, _) =
+        match reader.TokenType with
+        | JsonTokenType.String -> ApplicationCommandOptionChoiceValue.String (reader.GetString())
+        | JsonTokenType.Number ->
+            let double: double = 0
+            let int: int = 0
+            if reader.TryGetInt32(ref int) then
+                ApplicationCommandOptionChoiceValue.Int int
+            else if reader.TryGetDouble(ref double) then
+                ApplicationCommandOptionChoiceValue.Double double
+            else
+                raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
+            // TODO: Test if this correctly handles int and double
+        | _ -> raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
+
+    override _.Write (writer, value, _) =
+        match value with
+        | ApplicationCommandOptionChoiceValue.String v -> writer.WriteStringValue v
+        | ApplicationCommandOptionChoiceValue.Int v -> writer.WriteNumberValue v
+        | ApplicationCommandOptionChoiceValue.Double v -> writer.WriteNumberValue v
     
 [<JsonConverter(typeof<ApplicationCommandMinValueConverter>)>]
 type ApplicationCommandMinValue =
@@ -421,25 +425,26 @@ type ApplicationCommandMinValue =
     | Double of double
 
 and ApplicationCommandMinValueConverter () =
-    inherit JsonConverter<ApplicationCommandMinValue> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.TokenType with
-            | JsonTokenType.Number ->
-                let double: double = 0
-                let int: int = 0
-                if reader.TryGetInt32(ref int) then
-                    ApplicationCommandMinValue.Int int
-                else if reader.TryGetDouble(ref double) then
-                    ApplicationCommandMinValue.Double double
-                else
-                    raise (JsonException "Unexpected ApplicationCommandMinValue value")
-                // TODO: Test if this correctly handles int and double
-            | _ -> raise (JsonException "Unexpected ApplicationCommandMinValue value")
+    inherit JsonConverter<ApplicationCommandMinValue> ()
 
-        override _.Write (writer: Utf8JsonWriter, value: ApplicationCommandMinValue, options: JsonSerializerOptions) = 
-            match value with
-            | ApplicationCommandMinValue.Int v -> writer.WriteNumberValue v
-            | ApplicationCommandMinValue.Double v -> writer.WriteNumberValue v
+    override _.Read (reader, _, _) =
+        match reader.TokenType with
+        | JsonTokenType.Number ->
+            let double: double = 0
+            let int: int = 0
+            if reader.TryGetInt32(ref int) then
+                ApplicationCommandMinValue.Int int
+            else if reader.TryGetDouble(ref double) then
+                ApplicationCommandMinValue.Double double
+            else
+                raise (JsonException "Unexpected ApplicationCommandMinValue value")
+            // TODO: Test if this correctly handles int and double
+        | _ -> raise (JsonException "Unexpected ApplicationCommandMinValue value")
+
+    override _.Write (writer, value, _) = 
+        match value with
+        | ApplicationCommandMinValue.Int v -> writer.WriteNumberValue v
+        | ApplicationCommandMinValue.Double v -> writer.WriteNumberValue v
     
 [<JsonConverter(typeof<ApplicationCommandMaxValueConverter>)>]
 type ApplicationCommandMaxValue =
@@ -447,25 +452,26 @@ type ApplicationCommandMaxValue =
     | Double of double
 
 and ApplicationCommandMaxValueConverter () =
-    inherit JsonConverter<ApplicationCommandMaxValue> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.TokenType with
-            | JsonTokenType.Number ->
-                let double: double = 0
-                let int: int = 0
-                if reader.TryGetInt32(ref int) then
-                    ApplicationCommandMaxValue.Int int
-                else if reader.TryGetDouble(ref double) then
-                    ApplicationCommandMaxValue.Double double
-                else
-                    raise (JsonException "Unexpected ApplicationCommandMaxValue value")
-                // TODO: Test if this correctly handles int and double
-            | _ -> raise (JsonException "Unexpected ApplicationCommandMaxValue value")
+    inherit JsonConverter<ApplicationCommandMaxValue> ()
 
-        override _.Write (writer: Utf8JsonWriter, value: ApplicationCommandMaxValue, options: JsonSerializerOptions) = 
-            match value with
-            | ApplicationCommandMaxValue.Int v -> writer.WriteNumberValue v
-            | ApplicationCommandMaxValue.Double v -> writer.WriteNumberValue v
+    override _.Read (reader, _, _) =
+        match reader.TokenType with
+        | JsonTokenType.Number ->
+            let double: double = 0
+            let int: int = 0
+            if reader.TryGetInt32(ref int) then
+                ApplicationCommandMaxValue.Int int
+            else if reader.TryGetDouble(ref double) then
+                ApplicationCommandMaxValue.Double double
+            else
+                raise (JsonException "Unexpected ApplicationCommandMaxValue value")
+            // TODO: Test if this correctly handles int and double
+        | _ -> raise (JsonException "Unexpected ApplicationCommandMaxValue value")
+
+    override _.Write (writer, value, _) = 
+        match value with
+        | ApplicationCommandMaxValue.Int v -> writer.WriteNumberValue v
+        | ApplicationCommandMaxValue.Double v -> writer.WriteNumberValue v
 
 [<JsonConverter(typeof<AllowedMentionsParseTypeConverter>)>]
 type AllowedMentionsParseType =
@@ -487,14 +493,15 @@ with
         | _ -> None
 
 and AllowedMentionsParseTypeConverter () =
-    inherit JsonConverter<AllowedMentionsParseType> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> AllowedMentionsParseType.FromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected AllowedMentionsParseType type")
+    inherit JsonConverter<AllowedMentionsParseType> ()
 
-        override _.Write (writer, value, _) = 
-            value.ToString() |> writer.WriteStringValue
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> AllowedMentionsParseType.FromString
+        |> Option.defaultWith (JsonException.raiseThunk "Unexpected AllowedMentionsParseType type")
+
+    override _.Write (writer, value, _) = 
+        value.ToString() |> writer.WriteStringValue
 
 type ApplicationCommandHandlerType =
     | APP_HANDER              = 1
@@ -510,17 +517,18 @@ type SoundboardSoundId =
     | Int    of int
 
 and SoundboardSoundIdConverter () =
-    inherit JsonConverter<SoundboardSoundId> () with
-        override _.Read (reader: byref<Utf8JsonReader>, typeToConvert: Type, options: JsonSerializerOptions) =
-            match reader.TokenType with // TODO: Test this, sounds wrong
-            | JsonTokenType.String -> SoundboardSoundId.String (reader.GetString())
-            | JsonTokenType.Number -> SoundboardSoundId.Int (reader.GetInt32())
-            | _ -> raise (JsonException "Unexpected SoundboardSoundId value")
+    inherit JsonConverter<SoundboardSoundId> ()
 
-        override _.Write (writer: Utf8JsonWriter, value: SoundboardSoundId, options: JsonSerializerOptions) =
-            match value with
-            | SoundboardSoundId.String v -> writer.WriteStringValue v
-            | SoundboardSoundId.Int v -> writer.WriteNumberValue v
+    override _.Read (reader, _, _) =
+        match reader.TokenType with // TODO: Test this, sounds wrong
+        | JsonTokenType.String -> SoundboardSoundId.String (reader.GetString())
+        | JsonTokenType.Number -> SoundboardSoundId.Int (reader.GetInt32())
+        | _ -> raise (JsonException "Unexpected SoundboardSoundId value")
+
+    override _.Write (writer, value, _) =
+        match value with
+        | SoundboardSoundId.String v -> writer.WriteStringValue v
+        | SoundboardSoundId.Int v -> writer.WriteNumberValue v
 
 type ApplicationRoleConnectionMetadataType =
     | INTEGER_LESS_THAN_OR_EQUAL     = 1
@@ -584,17 +592,17 @@ with
         | "gc" -> Some ActivityLocationKind.GUILD_CHANNEL
         | "pc" -> Some ActivityLocationKind.PRIVATE_CHANNEL
         | _ -> None
-        
 
 and ActivityLocationKindConverter () =
-    inherit JsonConverter<ActivityLocationKind> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> ActivityLocationKind.FromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected ActivityLocationKind type")
+    inherit JsonConverter<ActivityLocationKind> ()
 
-        override _.Write (writer, value, _) = 
-            value.ToString() |> writer.WriteStringValue
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> ActivityLocationKind.FromString
+        |> Option.defaultWith (JsonException.raiseThunk "Unexpected ActivityLocationKind type")
+
+    override _.Write (writer, value, _) = 
+        value.ToString() |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-events
 type AuditLogEventType =
@@ -666,6 +674,7 @@ type AuditLogEventType =
     | HOME_SETTINGS_UPDATE                        = 191
 
 // https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
+[<JsonConverter(typeof<GuildIntegrationTypeConverter>)>]
 type GuildIntegrationType =
     | TWITCH
     | YOUTUBE
@@ -687,15 +696,16 @@ with
         | "guild_subscription" -> Some GuildIntegrationType.GUILD_SUBSCRIPTION
         | _ -> None
 
-type GuildIntegrationTypeConverter () =
-    inherit JsonConverter<GuildIntegrationType> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> GuildIntegrationType.FromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildIntegrationType type")
+and GuildIntegrationTypeConverter () =
+    inherit JsonConverter<GuildIntegrationType> ()
 
-        override _.Write (writer, value, _) = 
-            value.ToString() |> writer.WriteStringValue
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> GuildIntegrationType.FromString
+        |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildIntegrationType type")
+
+    override _.Write (writer, value, _) = 
+        value.ToString() |> writer.WriteStringValue
 
 type IntegrationExpireBehaviorType =
     | REMOVE_ROLE = 0
@@ -796,29 +806,31 @@ with
         | _ -> None
 
 and OAuth2ScopeConverter () =
-    inherit JsonConverter<OAuth2Scope> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> OAuth2Scope.FromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type")
+    inherit JsonConverter<OAuth2Scope> ()
 
-        override _.Write (writer, value, _) = 
-            value.ToString() |> writer.WriteStringValue
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> OAuth2Scope.FromString
+        |> Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type")
+
+    override _.Write (writer, value, _) = 
+        value.ToString() |> writer.WriteStringValue
 
 and OAuth2ScopeListConverter () =
-    inherit JsonConverter<OAuth2Scope list> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> _.Split(' ')
-            |> Array.map OAuth2Scope.FromString
-            |> Array.map (Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type"))
-            |> Array.toList
+    inherit JsonConverter<OAuth2Scope list> ()
 
-        override _.Write (writer, value, _) =
-            value
-            |> List.map (_.ToString())
-            |> (fun v -> String.Join(' ', v))
-            |> writer.WriteStringValue
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> _.Split(' ')
+        |> Array.map OAuth2Scope.FromString
+        |> Array.map (Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type"))
+        |> Array.toList
+
+    override _.Write (writer, value, _) =
+        value
+        |> List.map (_.ToString())
+        |> (fun v -> String.Join(' ', v))
+        |> writer.WriteStringValue
 
 [<JsonConverter(typeof<TokenTypeHintConverter>)>]
 type TokenTypeHint =
@@ -837,14 +849,15 @@ with
         | _ -> None
 
 and TokenTypeHintConverter () =
-    inherit JsonConverter<TokenTypeHint> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> TokenTypeHint.FromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected TokenTypeHint type")
+    inherit JsonConverter<TokenTypeHint> ()
 
-        override _.Write (writer, value, _) = 
-            value.ToString() |> writer.WriteStringValue
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> TokenTypeHint.FromString
+        |> Option.defaultWith (JsonException.raiseThunk "Unexpected TokenTypeHint type")
+
+    override _.Write (writer, value, _) = 
+        value.ToString() |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-types
 type WebhookType =
@@ -858,6 +871,7 @@ type EntitlementOwnerType =
     | USER_SUBSCRIPTION  = 2
 
 // https://discord.com/developers/docs/resources/guild#get-guild-widget-image-widget-style-options
+[<JsonConverter(typeof<GuildWidgetStyleConverter>)>]
 type GuildWidgetStyle =
     | SHIELD
     | BANNER_1
@@ -882,16 +896,16 @@ with
         | "banner_4" -> Some GuildWidgetStyle.BANNER_4
         | _ -> None
 
+and GuildWidgetStyleConverter () =
+    inherit JsonConverter<GuildWidgetStyle> ()
 
-type GuildWidgetStyleConverter () =
-    inherit JsonConverter<GuildWidgetStyle> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> GuildWidgetStyle.FromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildWidgetStyle type")
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> GuildWidgetStyle.FromString
+        |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildWidgetStyle type")
 
-        override _.Write (writer, value, _) = 
-            value.ToString() |> writer.WriteStringValue
+    override _.Write (writer, value, _) = 
+        value.ToString() |> writer.WriteStringValue
        
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-privacy-level
 type PrivacyLevelType =
@@ -1050,14 +1064,15 @@ with
         | _ -> None
 
 and ConnectionServiceTypeConverter () =
-    inherit JsonConverter<ConnectionServiceType> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> ConnectionServiceType.FromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected ConnectionServiceType type")
+    inherit JsonConverter<ConnectionServiceType> ()
 
-        override _.Write (writer, value, _) = 
-            value.ToString() |> writer.WriteStringValue
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> ConnectionServiceType.FromString
+        |> Option.defaultWith (JsonException.raiseThunk "Unexpected ConnectionServiceType type")
+
+    override _.Write (writer, value, _) = 
+        value.ToString() |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/user#connection-object-visibility-types
 type ConnectionVisibilityType =
@@ -1093,14 +1108,15 @@ with
         | _ -> None
 
 and WebhookEventTypeConverter () =
-    inherit JsonConverter<WebhookEventType> () with
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> WebhookEventType.FromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected WebhookEventType type")
+    inherit JsonConverter<WebhookEventType> ()
 
-        override _.Write (writer, value, _) = 
-            value.ToString() |> writer.WriteStringValue
+    override _.Read (reader, _, _) =
+        reader.GetString()
+        |> WebhookEventType.FromString
+        |> Option.defaultWith (JsonException.raiseThunk "Unexpected WebhookEventType type")
+
+    override _.Write (writer, value, _) = 
+        value.ToString() |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
 type Permission =
