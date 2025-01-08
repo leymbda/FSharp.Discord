@@ -4,6 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<IsPackable>true</IsPackable>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -24,6 +25,7 @@
 		<Compile Include="Events\InteractionReceiveEvent.fs" />
 		<Compile Include="Events\InteractionResponseEvent.fs" />
 		<Compile Include="Events\WebhookReceiveEvent.fs" />
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
 	</ItemGroup>
 
 	<ItemGroup>
