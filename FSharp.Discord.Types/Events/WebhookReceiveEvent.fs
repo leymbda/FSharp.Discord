@@ -26,7 +26,7 @@ and WebhookReceiveEventConverter () =
                 document.RootElement.GetProperty "data"
                 |> _.GetProperty("type")
                 |> _.GetString()
-                |> WebhookEventType.FromString
+                |> WebhookEventType.fromString
             with | _ ->
                 None
 
