@@ -8,9 +8,8 @@ type Version = {
 }
 
 module Version =
-  let [<Literal>] pattern = @"^v(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)$"
-
-  let tryParse (str: string) =
+  let tryParseTagRef (str: string) =
+    let pattern = @"^refs/tags/v(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)$"
     let matched = Regex.Match(str, pattern)
 
     match matched.Success with
@@ -30,6 +29,6 @@ let input =
   |> Seq.tryHead
   |> Option.defaultValue ""
 
-match Version.tryParse input with
+match Version.tryParseTagRef input with
 | Some version -> Console.WriteLine (Version.toString version)
 | None -> failwith $"Unable to parse version '{input}'"
