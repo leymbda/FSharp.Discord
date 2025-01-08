@@ -24,10 +24,9 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Get build version
-        shell: pwsh
         run: |
-          $version = dotnet fsi .\bin\ParseBuildVersion.fsx $Env:GITHUB_REF
-          echo "BUILD_VERSION=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+          version=$(dotnet fsi ./bin/ParseBuildVersion.fsx $GITHUB_REF)
+          echo "BUILD_VERSION=$version" >> $GITHUB_ENV
           echo "BUILD_VERSION=$version"
 
       - name: Restore dependencies
@@ -43,7 +42,7 @@ jobs:
         run: dotnet nuget add source --username leydel --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/leydel/index.json"
 
       - name: Pack project
-        run: dotnet pack -p:PackageVersion=${{ env.BUILD_VERSION }} --configuration $BUILD_CONFIG
+        run: dotnet pack -p:PackageVersion=$BUILD_VERSION --configuration $BUILD_CONFIG
 
       - name: Publish package
         run: |
