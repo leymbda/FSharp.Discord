@@ -7,16 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Types\Pagination.fs" />
-    <Compile Include="Bot.fs" />
-    <Compile Include="User.fs" />
-    <Compile Include="OAuth.fs" />
-    <Compile Include="OAuthFlow.fs" />
-    <Compile Include="Application.fs" />
-    <Compile Include="Guild.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FSharp.Discord.Commands\FSharp.Discord.Commands.fsproj" />
     <ProjectReference Include="..\FSharp.Discord.Gateway\FSharp.Discord.Gateway.fsproj" />
     <ProjectReference Include="..\FSharp.Discord.Rest\FSharp.Discord.Rest.fsproj" />

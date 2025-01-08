@@ -2373,7 +2373,8 @@ let getGatewayBot
 let getCurrentBotApplicationInformation
     (client: OAuthClient) =
         req {
-            get "oauth2/applications/@me"
+            host Constants.DISCORD_OAUTH_URL
+            get "applications/@me"
         }
         |> client.SendAsync
         ?>> DiscordResponse.asJson<Application>
@@ -2381,7 +2382,8 @@ let getCurrentBotApplicationInformation
 let getCurrentAuthorizationInformation
     (client: OAuthClient) =
         req {
-            get "oauth2/@me"
+            host Constants.DISCORD_OAUTH_URL
+            get "@me"
         }
         |> client.SendAsync
         ?>> DiscordResponse.asJson<GetCurrentAuthorizationInformationOkResponse>
@@ -2390,7 +2392,8 @@ let authorizationCodeGrant
     (content: AuthorizationCodeGrantPayload)
     (client: BasicClient) =
         req {
-            post "oauth2/token"
+            host Constants.DISCORD_OAUTH_URL
+            post "token"
             payload content
         }
         |> client.SendAsync
@@ -2400,7 +2403,8 @@ let refreshTokenGrant
     (content: RefreshTokenGrantPayload)
     (client: BasicClient) =
         req {
-            post "oauth2/token"
+            host Constants.DISCORD_OAUTH_URL
+            post "token"
             payload content
         }
         |> client.SendAsync
@@ -2410,7 +2414,8 @@ let revokeToken
     (content: RevokeTokenPayload)
     (client: BasicClient) =
         req {
-            post "oauth2/token/revoke"
+            host Constants.DISCORD_OAUTH_URL
+            post "token/revoke"
             payload content
         }
         |> client.SendAsync
@@ -2420,7 +2425,8 @@ let clientCredentialsGrant
     (content: ClientCredentialsGrantPayload)
     (client: BasicClient) =
         req {
-            post "oauth2/token"
+            host Constants.DISCORD_OAUTH_URL
+            post "token"
             payload content
         }
         |> client.SendAsync

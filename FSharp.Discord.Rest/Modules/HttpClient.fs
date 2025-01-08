@@ -25,13 +25,22 @@ with
         | Basic c -> c.SendAsync req
 
 module HttpClient =
+    let private setHeader key (value: string) (client: HttpClient) =
+        match client.DefaultRequestHeaders.Contains key with
+        | false -> client.DefaultRequestHeaders.Add(key, value); client
+        | true -> client
+
     let toBotClient (token: string) (client: HttpClient) =
-        client.DefaultRequestHeaders.Add("Authorization", "Bot " + token)
-        client :?> BotClient
+        client
+        |> setHeader "Authorization" ("Bot " + token)
+        |> setHeader "User-Agent" Constants.DEFAULT_USER_AGENT
+        :?> BotClient
 
     let toOAuthClient (token: string) (client: HttpClient) =
-        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token)
-        client :?> OAuthClient
+        client
+        |> setHeader "Authorization" ("Bearer " + token)
+        |> setHeader "User-Agent" Constants.DEFAULT_USER_AGENT
+        :?> OAuthClient
 
     let toBasicClient (clientId: string) (clientSecret: string) (client: HttpClient) =
         let token =
@@ -39,5 +48,9 @@ module HttpClient =
             |> Encoding.UTF8.GetBytes
             |> Convert.ToBase64String
 
-        client.DefaultRequestHeaders.Add("Authorization", "Basic " + token)
-        client :?> BasicClient
+        client
+        |> setHeader "Authorization" ("Basic " + token)
+        |> setHeader "User-Agent" Constants.DEFAULT_USER_AGENT
+        :?> BasicClient
+
+// TODO: Potentially refactor this so it isn't using HttpClient-inherited classes for distinguishing authentication types for clients

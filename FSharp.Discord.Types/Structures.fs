@@ -600,7 +600,7 @@ type OAuth2InstallParams = {
 }
 
 type ApplicationIntegrationTypeConfiguration = {
-    [<JsonPropertyName "oauth2_install_params">] Oauth2InstallParams: OAuth2InstallParams option
+    [<JsonPropertyName "oauth2_install_params">] OAuth2InstallParams: OAuth2InstallParams option
 }
 
 type TeamMember = {
@@ -1066,24 +1066,29 @@ type MessageInteractionMetadata =
 and MessageInteractionMetadataConverter () =
     inherit JsonConverter<MessageInteractionMetadata> ()
 
-    override _.Read (reader, typeToConvert, options) =
-        let success, document = JsonDocument.TryParseValue(&reader)
-        if not success then raise (JsonException())
+    override _.Read (reader, _, _) =
+        let success, document = JsonDocument.TryParseValue &reader
+        if not success then JsonException.raise "Failed to parse JSON document"
 
-        let interactionType = document.RootElement.GetProperty "type" |> _.GetInt32() |> enum<InteractionType>
+        let interactionType =
+            document.RootElement.GetProperty "type"
+            |> _.GetInt32()
+            |> enum<InteractionType>
+
         let json = document.RootElement.GetRawText()
 
         match interactionType with
         | InteractionType.APPLICATION_COMMAND -> MessageInteractionMetadata.APPLICATION_COMMAND <| Json.deserializeF<ApplicationCommandInteractionMetadata> json
         | InteractionType.MESSAGE_COMPONENT -> MessageInteractionMetadata.MESSAGE_COMPONENT <| Json.deserializeF<MessageComponentInteractionMetadata> json
         | InteractionType.MODAL_SUBMIT -> MessageInteractionMetadata.MODAL_SUBMIT <| Json.deserializeF<ModalSubmitInteractionMetadata> json
-        | _ -> raise (JsonException "Unexpected InteractionType provided")
+        | _ -> JsonException.raise "Unexpected InteractionType provided"
 
-    override _.Write (writer, value, options) =
+    override _.Write (writer, value, _) =
         match value with
-        | MessageInteractionMetadata.APPLICATION_COMMAND a -> Json.serializeF a |> writer.WriteRawValue
-        | MessageInteractionMetadata.MESSAGE_COMPONENT m -> Json.serializeF m |> writer.WriteRawValue
-        | MessageInteractionMetadata.MODAL_SUBMIT m -> Json.serializeF m |> writer.WriteRawValue
+        | MessageInteractionMetadata.APPLICATION_COMMAND a -> Json.serializeF a
+        | MessageInteractionMetadata.MESSAGE_COMPONENT m -> Json.serializeF m
+        | MessageInteractionMetadata.MODAL_SUBMIT m -> Json.serializeF m
+        |> writer.WriteRawValue
 
 and ApplicationCommandInteractionMetadata = {
     [<JsonPropertyName "id">] Id: string
@@ -1110,7 +1115,7 @@ and ModalSubmitInteractionMetadata = {
     [<JsonPropertyName "user">] User: User
     [<JsonPropertyName "authorizing_integration_owners">] AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
     [<JsonPropertyName "original_response_message_id">] OriginalResponseMessageId: string option
-    [<JsonPropertyName "triggering_interaction_metadata">] TriggeringInteractionMetadata: MessageInteractionMetadataConverter // TODO: Find way to ensure this isn't a modal submit
+    [<JsonPropertyName "triggering_interaction_metadata">] TriggeringInteractionMetadata: MessageInteractionMetadata // TODO: Make this not allowed to be a ModalSubmitInteractionMetadata
 }
 
 type MessageInteraction = {

@@ -673,7 +673,7 @@ type Permission =
     | MANAGE_CHANNELS                     = (1L <<< 4)
     /// Allows management and editing of the guild
     | MANAGE_GUILD                        = (1L <<< 5)
-    /// Allows for the addition of reactions to messages
+    /// Allows for the addition of reactions to messages. This permission does not apply to reacting with an existing reaction on a message
     | ADD_REACTIONS                       = (1L <<< 6)
     /// Allows for viewing of audit logs
     | VIEW_AUDIT_LOG                      = (1L <<< 7)
