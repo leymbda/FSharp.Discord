@@ -936,6 +936,8 @@ module GatewayIntent =
             ||| GatewayIntent.DIRECT_MESSAGE_POLLS
         )
 
+// TODO: Define locales and find where they are applicable in structures https://discord.com/developers/docs/reference#locales
+
 // https://discord.com/developers/docs/events/gateway-events#update-presence-status-types
 [<JsonConverter(typeof<StatusConverter>)>]
 type Status =
