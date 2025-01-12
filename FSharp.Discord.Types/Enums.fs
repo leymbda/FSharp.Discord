@@ -939,23 +939,24 @@ module GatewayIntent =
 // TODO: Define locales and find where they are applicable in structures https://discord.com/developers/docs/reference#locales
 
 // https://discord.com/developers/docs/events/gateway-events#update-presence-status-types
-[<JsonConverter(typeof<StatusConverter>)>]
+[<JsonConverter(typeof<Status.Converter>)>]
 type Status =
     | ONLINE
     | DND
     | IDLE
     | INVISIBLE
     | OFFLINE
-with
-    override this.ToString () =
-        match this with
+
+module Status =
+    let toString (status: Status) =
+        match status with
         | Status.ONLINE -> "online"
         | Status.DND -> "dnd"
         | Status.IDLE -> "idle"
         | Status.INVISIBLE -> "invisible"
         | Status.OFFLINE -> "offline"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "online" -> Some Status.ONLINE
         | "dnd" -> Some Status.DND
@@ -964,16 +965,18 @@ with
         | "offline" -> Some Status.OFFLINE
         | _ -> None
 
-and StatusConverter () =
-    inherit JsonConverter<Status> ()
+    type Converter () =
+        inherit JsonConverter<Status> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> Status.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected Status type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected Status type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value
+            |> toString
+            |> writer.WriteStringValue
         
 type RateLimitScope =
     | USER
