@@ -1,4 +1,4 @@
-﻿namespace FSharp.Discord.Types
+﻿namespace rec FSharp.Discord.Types
 
 open System
 open System.Text.Json

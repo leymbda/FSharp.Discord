@@ -1090,7 +1090,7 @@ let getGuildBans
             query "after" after
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildBan list>
+        ?>> DiscordResponse.asJson<Ban list>
 
 let getGuildBan
     (guildId: string)
@@ -1100,7 +1100,7 @@ let getGuildBan
             get $"guilds/{guildId}/bans/{userId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildBan>
+        ?>> DiscordResponse.asJson<Ban>
 
 let createGuildBan
     (guildId: string)
@@ -1276,7 +1276,7 @@ let getGuildIntegrations
             get $"guilds/{guildId}/integrations"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildIntegration list>
+        ?>> DiscordResponse.asJson<Integration list>
 
 let deleteGuildIntegration
     (guildId: string)

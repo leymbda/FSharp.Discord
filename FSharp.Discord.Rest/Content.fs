@@ -7,10 +7,12 @@ open System.Net.Http
 open System.Text.Json
 open System.Text.Json.Serialization
 
+// TODO: Convert all IDictionary into seqs
+
 // ----- Interaction -----
 
 type CreateInteractionResponsePayload<'a> (
-    payload: InteractionResponsePayload<'a>, // TODO: Figure out nicer way to handle this (message, modal, autocomplete)
+    payload: InteractionResponse,
     ?files: IDictionary<string, IPayloadBuilder>
 ) =
     inherit Payload() with
@@ -243,7 +245,7 @@ type EditCurrentApplicationPayload (
     ?custom_install_url:               string,
     ?description:                      string,
     ?role_connection_verification_url: string,
-    ?install_params:                   OAuth2InstallParams,
+    ?install_params:                   InstallParams,
     ?integration_types_config:         IDictionary<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>,
     ?flags:                            int,
     ?icon:                             string option,
@@ -280,7 +282,7 @@ type CreateAutoModerationRulePayload (
     event_type:        AutoModerationEventType,
     trigger_type:      AutoModerationTriggerType,
     actions:           AutoModerationAction list,
-    ?trigger_metadata: AutoModerationTriggerMetadata,
+    ?trigger_metadata: TriggerMetadata,
     ?enabled:          bool,
     ?exempt_roles:     string list,
     ?exempt_channels:  string list
@@ -300,7 +302,7 @@ type CreateAutoModerationRulePayload (
 type ModifyAutoModerationRulePayload (
     ?name:             string,
     ?event_type:       AutoModerationEventType,
-    ?trigger_metadata: AutoModerationTriggerMetadata,
+    ?trigger_metadata: TriggerMetadata,
     ?actions:          AutoModerationAction list,
     ?enabled:          bool,
     ?exempt_roles:     string list,
@@ -355,7 +357,7 @@ and ModifyGuildChannelPayload(
     ?video_quality_mode:                 VideoQualityMode option,
     ?default_auto_archive_duration:      int option,
     ?flags:                              int,
-    ?available_tags:                     ChannelTag list,
+    ?available_tags:                     ForumTag list,
     ?default_reaction_emoji:             DefaultReaction option,
     ?default_thread_rate_limit_per_user: int,
     ?default_sort_order:                 ChannelSortOrder option,
@@ -730,7 +732,7 @@ type CreateGuildChannelPayload(
     ?video_quality_mode:                 VideoQualityMode option,
     ?default_auto_archive_duration:      int option,
     ?default_reaction_emoji:             DefaultReaction option,
-    ?available_tags:                     ChannelTag list option,
+    ?available_tags:                     ForumTag list option,
     ?default_sort_order:                 ChannelSortOrder option,
     ?default_forum_layout:               ForumLayout option,
     ?default_thread_rate_limit_per_user: int option

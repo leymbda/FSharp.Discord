@@ -38,6 +38,8 @@ type Interaction = {
     [<JsonPropertyName "context">] Context: InteractionContextType option
 }
 
+// TODO: Active patterns to test for interaction type?
+
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
 type ApplicationCommandData = {
     [<JsonPropertyName "id">] Id: string
@@ -455,11 +457,14 @@ module ClientStatus =
             if not success then JsonException.raise "Failed to parse JSON document"
 
             let statusFromOption (str: string option) =
-                match Status.fromString str with
-                | Some Status.ONLINE -> Status.ONLINE
-                | Some Status.IDLE -> Status.IDLE
-                | Some Status.DND -> Status.DND
-                | _ -> Status.OFFLINE
+                match str with
+                | None -> Status.OFFLINE
+                | Some str ->
+                    match Status.fromString str with
+                    | Some Status.ONLINE -> Status.ONLINE
+                    | Some Status.IDLE -> Status.IDLE
+                    | Some Status.DND -> Status.DND
+                    | _ -> Status.OFFLINE
 
             let payload = document.Deserialize<Payload>()
 
@@ -630,6 +635,23 @@ type ApplicationIntegrationTypeConfiguration = {
 type InstallParams = {
     [<JsonPropertyName "scopes">] Scopes: string list
     [<JsonPropertyName "permissions">] Permissions: string
+}
+
+// https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-instance-object
+type ActivityInstance = {
+    [<JsonPropertyName "application_id">] ApplicationId: string
+    [<JsonPropertyName "instance_id">] InstanceId: string
+    [<JsonPropertyName "launch_id">] LaunchId: string
+    [<JsonPropertyName "location">] Location: ActivityLocation
+    [<JsonPropertyName "users">] Users: string list
+}
+
+// https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-object
+type ActivityLocation = {
+    [<JsonPropertyName "id">] Id: string
+    [<JsonPropertyName "kind">] Kind: ActivityLocationKind
+    [<JsonPropertyName "scopes">] ChannelId: string
+    [<JsonPropertyName "guild_id">] GuildId: string option
 }
 
 // ----- Resources: Application Role Connection Metadata -----
