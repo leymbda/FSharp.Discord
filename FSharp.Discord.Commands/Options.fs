@@ -3,7 +3,7 @@
 open FSharp.Discord.Types
 
 module Options =
-    let (|SubCommand|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|SubCommand|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -13,7 +13,7 @@ module Options =
             | _ -> None
         )
 
-    let (|SubCommandGroup|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|SubCommandGroup|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -23,7 +23,7 @@ module Options =
             | _ -> None
         )
 
-    let (|String|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|String|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -33,7 +33,7 @@ module Options =
             | _ -> None
         )
 
-    let (|Integer|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|Integer|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -43,7 +43,7 @@ module Options =
             | _ -> None
         )
 
-    let (|Boolean|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|Boolean|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -53,7 +53,7 @@ module Options =
             | _ -> None
         )
 
-    let (|User|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|User|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -63,7 +63,7 @@ module Options =
             | _ -> None
         )
 
-    let (|Channel|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|Channel|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -73,7 +73,7 @@ module Options =
             | _ -> None
         )
 
-    let (|Role|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|Role|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -83,7 +83,7 @@ module Options =
             | _ -> None
         )
 
-    let (|Mentionable|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|Mentionable|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -93,7 +93,7 @@ module Options =
             | _ -> None
         )
 
-    let (|Number|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|Number|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
@@ -103,7 +103,7 @@ module Options =
             | _ -> None
         )
 
-    let (|Attachment|_|) (name: string) (options: CommandInteractionDataOption list) =
+    let (|Attachment|_|) (name: string) (options: ApplicationCommandInteractionDataOption list) =
         options |> List.tryPick (fun option ->
             match option with
             | ({

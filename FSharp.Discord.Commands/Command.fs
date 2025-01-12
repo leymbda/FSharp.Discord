@@ -96,27 +96,29 @@ module Command =
 
     // TODO: Create methods to turn this into guild/user payloads to register (need to figure out how this logic should work)
 
-    let isHandler (interaction: Interaction) (command: Command) =
-        match interaction.Data with
-        | Some { Name = name; Options = (Some options) } ->
-            let rec loop (names: string list) (option: CommandInteractionDataOption) =
-                match option.Type, option.Options with
-                | ApplicationCommandOptionType.SUB_COMMAND_GROUP, Some options -> options |> List.collect (loop names) |> List.append names
-                | ApplicationCommandOptionType.SUB_COMMAND, _ -> [option.Name] |> List.append names
-                | _ -> []
+    //let isHandler (interaction: Interaction) (command: Command) =
+    //    match interaction.Data with
+    //    | Some { Name = name; Options = (Some options) } ->
+    //        let rec loop (names: string list) (option: CommandInteractionDataOption) =
+    //            match option.Type, option.Options with
+    //            | ApplicationCommandOptionType.SUB_COMMAND_GROUP, Some options -> options |> List.collect (loop names) |> List.append names
+    //            | ApplicationCommandOptionType.SUB_COMMAND, _ -> [option.Name] |> List.append names
+    //            | _ -> []
             
-            let rec compareOptions (path: string list) (options: ApplicationCommandOption list option) =
-                match options, path with
-                | Some options, path when path.Length > 0 ->
-                    match options |> List.tryFind (fun o -> o.Name = (path |> List.head)) with
-                    | Some _ when path.Length = 1 -> true
-                    | Some { Options = options } -> compareOptions path[1..] options
-                    | _ -> false
-                | None, path when path.Length = 0 -> true
-                | _ -> false
+    //        let rec compareOptions (path: string list) (options: ApplicationCommandOption list option) =
+    //            match options, path with
+    //            | Some options, path when path.Length > 0 ->
+    //                match options |> List.tryFind (fun o -> o.Name = (path |> List.head)) with
+    //                | Some _ when path.Length = 1 -> true
+    //                | Some { Options = options } -> compareOptions path[1..] options
+    //                | _ -> false
+    //            | None, path when path.Length = 0 -> true
+    //            | _ -> false
 
-            name = command.Name && compareOptions (List.collect (loop []) options) command.Options
-        | _ -> false
+    //        name = command.Name && compareOptions (List.collect (loop []) options) command.Options
+    //    | _ -> false
+
+    // TODO: Above is likely to be removed, but keeping here for now just in case
         
 [<AutoOpen>]
 module CommandBuilder =

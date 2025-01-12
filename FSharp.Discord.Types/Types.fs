@@ -274,6 +274,49 @@ module ConnectionServiceType =
         override _.Write (writer, value, _) = 
             value |> toString |> writer.WriteStringValue
 
+[<JsonConverter(typeof<EmbedType.Converter>)>]
+type EmbedType =
+    | RICH
+    | IMAGE
+    | VIDEO
+    | GIFV
+    | ARTICLE
+    | LINK
+    | POLL_RESULT
+
+module EmbedType =
+    let toString (embedType: EmbedType) =
+        match embedType with
+        | RICH -> "rich"
+        | IMAGE -> "image"
+        | VIDEO -> "video"
+        | GIFV -> "gifv"
+        | ARTICLE -> "article"
+        | LINK -> "link"
+        | POLL_RESULT -> "poll_result"
+
+    let fromString (str: string) =
+        match str with
+        | "rich" -> Some EmbedType.RICH
+        | "image" -> Some EmbedType.IMAGE
+        | "video" -> Some EmbedType.VIDEO
+        | "gifv" -> Some EmbedType.GIFV
+        | "article" -> Some EmbedType.ARTICLE
+        | "link" -> Some EmbedType.LINK
+        | "poll_result" -> Some EmbedType.POLL_RESULT
+        | _ -> None
+
+    type Converter () =
+        inherit JsonConverter<EmbedType> ()
+
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected EmbedType type")
+
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
+
 type EntitlementType =
     | PURCHASE                 = 1
     | PREMIUM_SUBSCRIPTION     = 2
@@ -334,6 +377,12 @@ type InteractionContextType =
     | BOT_DM          = 1
     | PRIVATE_CHANNEL = 2
 
+// https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-data
+type InteractionDataType =
+    | APPLICATION_COMMAND
+    | MESSAGE_COMPONENT
+    | MODAL_SUBMIT
+
 type InteractionType = 
     | PING                             = 1
     | APPLICATION_COMMAND              = 2
@@ -355,6 +404,11 @@ type MessageActivityType =
     | SPECTATE     = 2
     | LISTEN       = 3
     | JOIN_REQUEST = 5
+
+// https://discord.com/developers/docs/resources/message#message-reference-types
+type MessageReferenceType =
+    | DEFAULT = 0
+    | FORWARD = 1
 
 type MessageType =
     | DEFAULT                                      = 0

@@ -12,21 +12,14 @@
 		<Compile Include="Common\Task.fs" />
 		<Compile Include="Common\Json.fs" />
 		<Compile Include="Common\Overloads.fs" />
-		<Compile Include="Enums\Types.fs" />
-		<Compile Include="Enums\Codes.fs" />
-		<Compile Include="Enums\Flags.fs" />
+		<Compile Include="Types.fs" />
+		<Compile Include="Codes.fs" />
+		<Compile Include="Flags.fs" />
 		<Compile Include="Enums.fs" />
 		<Compile Include="Structures.fs" />
-		<Compile Include="Structures\Rest.fs" />
-		<Compile Include="Structures\GatewayEvents.fs" />
-		<Compile Include="Structures\InteractionEvents.fs" />
-		<Compile Include="Structures\WebhookEvents.fs" />
-		<Compile Include="Events\GatewayReceiveEvent.fs" />
-		<Compile Include="Events\GatewaySendEvent.fs" />
-		<Compile Include="Events\InteractionReceiveEvent.fs" />
-		<Compile Include="Events\InteractionResponseEvent.fs" />
-		<Compile Include="Events\WebhookReceiveEvent.fs" />
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+		<Compile Include="GatewayEvents.fs" />
+		<Compile Include="WebhookEvents.fs" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
