@@ -27,8 +27,6 @@ module Cdn =
     let userDefaultAvatar (index: int) =
         IMAGE_BASE_URL + $"embed/avatars/{index}.png"
 
-    // TODO: Make function to nicely find a user's index (User.getAvatarIndex ?)
-
     let userAvatar (userId: string) (userAvatarHash: string) =
         IMAGE_BASE_URL + $"avatars/{userId}/{userAvatarHash}.png"
 

@@ -1,4 +1,4 @@
-﻿namespace FSharp.Discord.Utils
+﻿namespace rec FSharp.Discord.Utils
 
 open System
 
@@ -10,9 +10,13 @@ type TimestampStyle =
     | SHORT_DATE_TIME
     | LONG_DATE_TIME
     | RELATIVE_TIME
-with
-    override this.ToString () =
-        match this with
+
+module TimestampStyle =
+    /// Default timestamp style, to use instead of format without style <t:TIMESTAMP>
+    let zero () = TimestampStyle.SHORT_DATE_TIME
+
+    let toString (style: TimestampStyle) =
+        match style with
         | SHORT_TIME -> "t"
         | LONG_TIME -> "T"
         | SHORT_DATE -> "d"
@@ -21,19 +25,16 @@ with
         | LONG_DATE_TIME -> "F"
         | RELATIVE_TIME -> "R"
 
-    /// Default timestamp style, to use instead of format without style <t:TIMESTAMP>
-    static member zero () =
-        TimestampStyle.SHORT_DATE_TIME
-
 type GuildNavigationType =
     | CUSTOMIZE
     | BROWSE
     | GUIDE
     | LINKED_ROLES
     | LINKED_ROLE of roleId: string
-with
-    override this.ToString () =
-        match this with
+
+module GuildNavigationStyle =
+    let toString (``type``: GuildNavigationType) =
+        match ``type`` with
         | CUSTOMIZE -> "customize"
         | BROWSE -> "browse"
         | GUIDE -> "guide"
@@ -41,20 +42,20 @@ with
         | LINKED_ROLE roleId -> $"linked-roles:{roleId}"
 
 module MessageFormat =
-    let user (id: string) = $"<@{id}>"
+    let user (userId: string) = $"<@{userId}>"
 
-    let channel (id: string) = $"<#{id}>"
+    let channel (channelId: string) = $"<#{channelId}>"
 
-    let role (id: string) = $"<@&{id}>"
+    let role (roleId: string) = $"<@&{roleId}>"
 
     /// Commands with subcommands and subcommand groups are separated by spaces in name. E.g.: "command subcommandgroup subcommand"
-    let slashCommand (name: string) (id: string) = $"</{name}:{id}>"
+    let slashCommand (name: string) (commandId: string) = $"</{name}:{commandId}>"
 
-    let customEmoji (name: string) (id: string) = $"<:{name}:{id}>"
+    let customEmoji (name: string) (emojiId: string) = $"<:{name}:{emojiId}>"
 
-    let customAnimatedEmoji (name: string) (id: string) = $"<a:{name}:{id}>"
+    let customAnimatedEmoji (name: string) (emojiId: string) = $"<a:{name}:{emojiId}>"
 
     /// Default style can be used through `TimestampStyle.zero()`
     let timestamp (timestamp: DateTime) (style: TimestampStyle) = $"<t:{Math.Floor(timestamp.Subtract(DateTime.UnixEpoch).TotalMilliseconds)}:{style}>"
 
-    let guildNavigation (id: string) (``type``: GuildNavigationType) = $"<{id}:{``type``}>"
+    let guildNavigation (guildId: string) (``type``: GuildNavigationType) = $"<{guildId}:{``type``}>"

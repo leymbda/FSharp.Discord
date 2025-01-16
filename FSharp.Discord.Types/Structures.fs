@@ -1913,6 +1913,13 @@ and PartialUser = {
     [<JsonPropertyName "avatar_decoration_data">] AvatarDecorationData: AvatarDecorationData option
 }
 
+module User =
+    /// Get the avatar index for the user to fetch their default avatar if no custom avatar is set
+    let getAvatarIndex (user: User) =
+        match int user.Discriminator, Int64.Parse user.Id with
+        | 0, id -> (int (id >>> 22)) % 6
+        | discriminator, _ -> discriminator % 5
+
 // https://discord.com/developers/docs/resources/user#avatar-decoration-data-object-avatar-decoration-data-structure
 type AvatarDecorationData = {
     [<JsonPropertyName "asset">] Asset: string
