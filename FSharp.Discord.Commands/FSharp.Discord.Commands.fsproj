@@ -9,9 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Patterns\InteractionPattern.fs" />
     <Compile Include="Options.fs" />
     <Compile Include="Command.fs" />
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
