@@ -5,9 +5,8 @@ open System.Web
 
 let withAuditLogReason (auditLogReason: string option) (req: HttpRequestMessage) =
     match auditLogReason with
-    | None -> ()
+    | None -> req
     | Some auditLogReason ->
         let urlencoded = HttpUtility.UrlEncode auditLogReason
         req.Headers.Add("X-Audit-Log-Reason", urlencoded)
-
-    req
+        req

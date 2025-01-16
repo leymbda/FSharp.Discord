@@ -7,7 +7,7 @@ open System.Text.Json
 // TODO: Create alternative approach for creating payloads (operation to add record directly?)
 
 [<AutoOpen>]
-module Payload =
+module PayloadBuilder =
     type IPayloadBuilder =
         abstract member ToContent: unit -> HttpContent
     

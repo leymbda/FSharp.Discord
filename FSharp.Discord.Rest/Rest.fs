@@ -11,7 +11,7 @@ let createInteractionResponse
     (interactionToken: string)
     (withResponse: bool option)
     (content: CreateInteractionResponsePayload<'a>)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"interactions/{interactionId}/{interactionToken}/callback"
             query "with_response" (withResponse >>. _.ToString())
@@ -23,7 +23,7 @@ let createInteractionResponse
 let getOriginalInteractionResponse
     (interactionId: string)
     (interactionToken: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"webhooks/{interactionId}/{interactionToken}/messages/@original"
         }
@@ -34,7 +34,7 @@ let editOriginalInteractionResponse
     (interactionId: string)
     (interactionToken: string)
     (content: EditOriginalInteractionResponsePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"webhooks/{interactionId}/{interactionToken}/messages/@original"
             payload content
@@ -45,7 +45,7 @@ let editOriginalInteractionResponse
 let deleteOriginalInteractionResponse
     (interactionId: string)
     (interactionToken: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"webhooks/{interactionId}/{interactionToken}/messages/@original"
         }
@@ -56,7 +56,7 @@ let createFollowUpMessage
     (applicationId: string)
     (interactionToken: string)
     (content: CreateFollowUpMessagePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"webhooks/{applicationId}/{interactionToken}"
             payload content
@@ -68,7 +68,7 @@ let getFollowUpMessage
     (applicationId: string)
     (interactionToken: string)
     (messageId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"webhooks/{applicationId}/{interactionToken}/messages/{messageId}"
         }
@@ -80,7 +80,7 @@ let editFollowUpMessage
     (interactionToken: string)
     (messageId: string)
     (content: EditFollowUpMessagePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"webhooks/{applicationId}/{interactionToken}/messages/{messageId}"
             payload content
@@ -92,7 +92,7 @@ let deleteFollowUpMessage
     (applicationId: string)
     (interactionToken: string)
     (messageId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"webhooks/{applicationId}/{interactionToken}/messages/{messageId}"
         }
@@ -104,7 +104,7 @@ let deleteFollowUpMessage
 let getGlobalApplicationCommands
     (applicationId: string)
     (withLocalizations: bool option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/commands"
             query "with_localizations" (withLocalizations >>. _.ToString())
@@ -115,7 +115,7 @@ let getGlobalApplicationCommands
 let createGlobalApplicationCommand
     (applicationId: string)
     (content: CreateGlobalApplicationCommandPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"applications/{applicationId}/commands"
             payload content
@@ -126,7 +126,7 @@ let createGlobalApplicationCommand
 let getGlobalApplicationCommand
     (applicationId: string)
     (commandId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/commands/{commandId}"
         }
@@ -137,7 +137,7 @@ let editGlobalApplicationCommand
     (applicationId: string)
     (commandId: string)
     (content: EditGlobalApplicationCommandPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"applications/{applicationId}/commands/{commandId}"
             payload content
@@ -148,7 +148,7 @@ let editGlobalApplicationCommand
 let deleteGlobalApplicationCommand
     (applicationId: string)
     (commandId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"applications/{applicationId}/commands/{commandId}"
         }
@@ -158,7 +158,7 @@ let deleteGlobalApplicationCommand
 let bulkOverwriteGlobalApplicationCommands
     (applicationId: string)
     (content: BulkOverwriteGlobalApplicationCommandsPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"applications/{applicationId}/commands"
             payload content
@@ -170,7 +170,7 @@ let getGuildApplicationCommands
     (applicationId: string)
     (guildId: string)
     (withLocalizations: bool option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/guilds/{guildId}/commands"
             query "with_localizations" (withLocalizations >>. _.ToString())
@@ -182,7 +182,7 @@ let createGuildApplicationCommand
     (applicationId: string)
     (guildId: string)
     (content: CreateGuildApplicationCommandPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"applications/{applicationId}/guilds/{guildId}/commands"
             payload content
@@ -194,7 +194,7 @@ let getGuildApplicationCommand
     (applicationId: string)
     (guildId: string)
     (commandId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/guilds/{guildId}/commands/{commandId}"
         }
@@ -206,7 +206,7 @@ let editGuildApplicationCommand
     (guildId: string)
     (commandId: string)
     (content: EditGuildApplicationCommandPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"applications/{applicationId}/guilds/{guildId}/commands/{commandId}"
             payload content
@@ -218,7 +218,7 @@ let deleteGuildApplicationCommand
     (applicationId: string)
     (guildId: string)
     (commandId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"applications/{applicationId}/guilds/{guildId}/commands/{commandId}"
         }
@@ -229,7 +229,7 @@ let bulkOverwriteGuildApplicationCommands
     (applicationId: string)
     (guildId: string)
     (content: BulkOverwriteGlobalApplicationCommandsPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"applications/{applicationId}/guilds/{guildId}/commands"
             payload content
@@ -240,7 +240,7 @@ let bulkOverwriteGuildApplicationCommands
 let getGuildApplicationCommandsPermissions
     (applicationId: string)
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/guilds/{guildId}/commands/permissions"
         }
@@ -251,7 +251,7 @@ let getGuildApplicationCommandPermissions
     (applicationId: string)
     (guildId: string)
     (commandId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/guilds/{guildId}/commands/{commandId}/permissions"
         }
@@ -263,7 +263,7 @@ let editApplicationCommandPermissions
     (guildId: string)
     (commandId: string)
     (content: EditApplicationCommandPermissions)
-    (client: OAuthClient) =
+    (client: IOAuthClient) =
         req {
             put $"applications/{applicationId}/guilds/{guildId}/commands/{commandId}/permissions"
             payload content
@@ -274,7 +274,7 @@ let editApplicationCommandPermissions
 // ----- Application -----
 
 let getCurrentApplication
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get "applications/@me"
         }
@@ -283,7 +283,7 @@ let getCurrentApplication
 
 let editCurrentApplication
     (content: EditCurrentApplicationPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch "applications/@me"
             payload content
@@ -294,7 +294,7 @@ let editCurrentApplication
 let getApplicationActivityInstance
     (applicationId: string)
     (instanceId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"applications/{applicationId}/activity-instances/{instanceId}"
         }
@@ -310,7 +310,7 @@ let getGuildAuditLog
     (before: string option)
     (after: string option)
     (limit: int option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/audit-logs"
             query "user_id" userId
@@ -326,7 +326,7 @@ let getGuildAuditLog
 
 let listAutoModerationRulesForGuild
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/auto-moderation/rules"
         }
@@ -336,7 +336,7 @@ let listAutoModerationRulesForGuild
 let getAutoModerationRule
     (guildId: string)
     (autoModerationRuleId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/auto-moderation/rules/{autoModerationRuleId}"
         }
@@ -347,7 +347,7 @@ let createAutoModerationRule
     (guildId: string)
     (auditLogReason: string option)
     (content: CreateAutoModerationRulePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/auto-moderation/rules"
             payload content
@@ -361,7 +361,7 @@ let modifyAutoModerationRule
     (autoModerationRuleId: string)
     (auditLogReason: string option)
     (content: ModifyAutoModerationRulePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/auto-moderation/rules/{autoModerationRuleId}"
             payload content
@@ -374,7 +374,7 @@ let deleteAutoModerationRule
     (guildId: string)
     (autoModerationRuleId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/auto-moderation/rules/{autoModerationRuleId}"
         }
@@ -386,7 +386,7 @@ let deleteAutoModerationRule
 
 let getChannel
     (channelId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}"
         }
@@ -397,7 +397,7 @@ let modifyChannel
     (channelId: string)
     (auditLogReason: string option)
     (content: ModifyChannelPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"channels/{channelId}"
             payload (content.Payload)
@@ -409,7 +409,7 @@ let modifyChannel
 let deleteChannel
     (channelId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}"
         }
@@ -422,7 +422,7 @@ let editChannelPermissions
     (overwriteId: string)
     (auditLogReason: string option)
     (content: EditChannelPermissionsPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"channels/{channelId}/permissions/{overwriteId}"
             payload content
@@ -433,7 +433,7 @@ let editChannelPermissions
 
 let getChannelInvites
     (channelId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/invites"
         }
@@ -444,7 +444,7 @@ let createChannelInvite
     (channelId: string)
     (auditLogReason: string option)
     (content: CreateChannelInvitePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/invites"
             payload content
@@ -457,7 +457,7 @@ let deleteChannelPermission
     (channelId: string)
     (overwriteId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/permissions/{overwriteId}"
         }
@@ -469,7 +469,7 @@ let followAnnouncementChannel
     (channelId: string)
     (auditLogReason: string option)
     (content: FollowAnnouncementChannelPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/followers"
             payload content
@@ -480,7 +480,7 @@ let followAnnouncementChannel
 
 let triggerTypingIndicator
     (channelId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/typing"
         }
@@ -489,7 +489,7 @@ let triggerTypingIndicator
 
 let getPinnedMessages
     (channelId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/pins"
         }
@@ -500,7 +500,7 @@ let pinMessage
     (channelId: string)
     (messageId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"channels/{channelId}/pins/{messageId}"
         }
@@ -512,7 +512,7 @@ let unpinMessage
     (channelId: string)
     (messageId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/pins/{messageId}"
         }
@@ -524,7 +524,7 @@ let groupDmAddRecipient
     (channelId: string)
     (userId: string)
     (content: GroupDmAddRecipientPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"channels/{channelId}/recipients/{userId}"
             payload content
@@ -535,7 +535,7 @@ let groupDmAddRecipient
 let groupDmRemoveRecipient
     (channelId: string)
     (userId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/recipients/{userId}"
         }
@@ -547,7 +547,7 @@ let startThreadFromMessage
     (messageId: string)
     (auditLogReason: string option)
     (content: StartThreadFromMessagePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/messages/{messageId}/threads"
             payload content
@@ -560,7 +560,7 @@ let startThreadWithoutMessage
     (channelId: string)
     (auditLogReason: string option)
     (content: StartThreadWithoutMessagePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/threads"
             payload content
@@ -573,7 +573,7 @@ let startThreadInForumOrMediaChannel
     (channelId: string)
     (auditLogReason: string option)
     (content: StartThreadWithoutMessagePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/threads"
             payload content
@@ -584,7 +584,7 @@ let startThreadInForumOrMediaChannel
 
 let joinThread
     (channelId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"channels/{channelId}/thread-members/@me"
         }
@@ -594,7 +594,7 @@ let joinThread
 let addThreadMember
     (channelId: string)
     (userId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"channels/{channelId}/thread-members/{userId}"
         }
@@ -603,7 +603,7 @@ let addThreadMember
 
 let leaveThread
     (channelId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/thread-members/@me"
         }
@@ -613,7 +613,7 @@ let leaveThread
 let removeThreadMember
     (channelId: string)
     (userId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/thread-members/{userId}"
         }
@@ -624,7 +624,7 @@ let getThreadMember
     (channelId: string)
     (userId: string)
     (withMember: bool option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/thread-members/{userId}"
             query "with_member" (match withMember with | Some true -> Some "true" | _ -> None)
@@ -637,7 +637,7 @@ let listThreadMembers
     (withMember: bool option)
     (after: string option)
     (limit: int option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/thread-members"
             query "with_member" (match withMember with | Some true -> Some "true" | _ -> None)
@@ -653,7 +653,7 @@ let listPublicArchivedThreads
     (channelId: string)
     (before: DateTime option)
     (limit: int option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/threads/archived/public"
             query "before" (before >>. _.ToString())
@@ -666,7 +666,7 @@ let listPrivateArchivedThreads
     (channelId: string)
     (before: DateTime option)
     (limit: int option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/threads/archived/private"
             query "before" (before >>. _.ToString())
@@ -679,7 +679,7 @@ let listJoinedPrivateArchivedThreads
     (channelId: string)
     (before: DateTime option)
     (limit: int option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/users/@me/threads/archived/private"
             query "before" (before >>. _.ToString())
@@ -692,7 +692,7 @@ let listJoinedPrivateArchivedThreads
 
 let listGuildEmojis
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/emojis"
         }
@@ -702,7 +702,7 @@ let listGuildEmojis
 let getGuildEmoji
     (guildId: string)
     (emojiId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/emojis/{emojiId}"
         }
@@ -713,7 +713,7 @@ let createGuildEmoji
     (guildId: string)
     (auditLogReason: string option)
     (content: CreateGuildEmojiPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/emojis"
             payload content
@@ -727,7 +727,7 @@ let modifyGuildEmoji
     (emojiId: string)
     (auditLogReason: string option)
     (content: ModifyGuildEmojiPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/emojis/{emojiId}"
             payload content
@@ -740,7 +740,7 @@ let deleteGuildEmoji
     (guildId: string)
     (emojiId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/emojis/{emojiId}"
         }
@@ -750,7 +750,7 @@ let deleteGuildEmoji
         
 let listApplicationEmojis
     (applicationId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/emojis"
         }
@@ -760,7 +760,7 @@ let listApplicationEmojis
 let getApplicationEmoji
     (applicationId: string)
     (emojiId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/emojis/{emojiId}"
         }
@@ -770,7 +770,7 @@ let getApplicationEmoji
 let createApplicationEmoji
     (applicationId: string)
     (content: CreateApplicationEmojiPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"applications/{applicationId}/emojis"
             payload content
@@ -782,7 +782,7 @@ let modifyApplicationEmoji
     (applicationId: string)
     (emojiId: string)
     (content: ModifyApplicationEmojiPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"applications/{applicationId}/emojis/{emojiId}"
             payload content
@@ -793,7 +793,7 @@ let modifyApplicationEmoji
 let deleteApplicationEmoji
     (applicationId: string)
     (emojiId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"applications/{applicationId}/emojis/{emojiId}"
         }
@@ -812,7 +812,7 @@ let listEntitlements
     (guildId: string option)
     (excludeEnded: bool option)
     (excludeDeleted: bool option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/entitlements"
             query "user_id" userId
@@ -830,7 +830,7 @@ let listEntitlements
 let getEntitlement
     (applicationId: string)
     (entitlementId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/entitlements/{entitlementId}"
         }
@@ -840,7 +840,7 @@ let getEntitlement
 let consumeEntitlement
     (applicationId: string)
     (entitlementId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"applications/{applicationId}/entitlements/{entitlementId}/consume"
         }
@@ -850,7 +850,7 @@ let consumeEntitlement
 let createTestEntitlement
     (applicationId: string)
     (content: CreateTestEntitlementPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"applications/{applicationId}/entitlements"
             payload content
@@ -861,7 +861,7 @@ let createTestEntitlement
 let deleteTestEntitlement
     (applicationId: string)
     (entitlementId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"applications/{applicationId}/entitlements/{entitlementId}"
         }
@@ -872,7 +872,7 @@ let deleteTestEntitlement
 
 let createGuild
     (content: CreateGuildPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post "guilds"
             payload content
@@ -883,7 +883,7 @@ let createGuild
 let getGuild
     (guildId: string)
     (withCounts: bool option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}"
             query "with_counts" (withCounts >>. _.ToString())
@@ -893,7 +893,7 @@ let getGuild
 
 let getGuildPreview
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/preview"
         }
@@ -904,7 +904,7 @@ let modifyGuild
     (guildId: string)
     (auditLogReason: string option)
     (content: ModifyGuildPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}"
             payload content
@@ -915,7 +915,7 @@ let modifyGuild
 
 let deleteGuild
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}"
         }
@@ -924,7 +924,7 @@ let deleteGuild
 
 let getGuildChannels
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/channels"
         }
@@ -935,7 +935,7 @@ let createGuildChannel
     (guildId: string)
     (auditLogReason: string option)
     (content: CreateGuildChannelPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/channels"
             payload content
@@ -947,7 +947,7 @@ let createGuildChannel
 let modifyGuildChannelPositions
     (guildId: string)
     (content: ModifyGuildChannelPositionsPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/channels"
             payload content
@@ -957,7 +957,7 @@ let modifyGuildChannelPositions
 
 let listActiveGuildThreads
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/threads/active"
         }
@@ -967,7 +967,7 @@ let listActiveGuildThreads
 let getGuildMember
     (guildId: string)
     (userId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/members/{userId}"
         }
@@ -978,7 +978,7 @@ let listGuildMembers
     (guildId: string)
     (limit: int option)
     (after: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/members"
             query "limit" (limit >>. _.ToString())
@@ -991,7 +991,7 @@ let searchGuildMembers
     (guildId: string)
     (q: string) // query (cannot name same due to req ce)
     (limit: int option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/members/search"
             query "query" q
@@ -1004,7 +1004,7 @@ let addGuildMember
     (guildId: string)
     (userId: string)
     (content: AddGuildMemberPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"guilds/{guildId}/members/{userId}"
             payload content
@@ -1017,7 +1017,7 @@ let modifyGuildMember
     (userId: string)
     (auditLogReason: string option)
     (content: ModifyGuildMemberPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/members/{userId}"
             payload content
@@ -1030,7 +1030,7 @@ let modifyCurrentMember
     (guildId: string)
     (auditLogReason: string option)
     (content: ModifyCurrentMemberPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/members/@me"
             payload content
@@ -1044,7 +1044,7 @@ let addGuildMemberRole
     (userId: string)
     (roleId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"guilds/{guildId}/members/{userId}/roles/{roleId}"
         }
@@ -1057,7 +1057,7 @@ let removeGuildMemberRole
     (userId: string)
     (roleId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/members/{userId}/roles/{roleId}"
         }
@@ -1069,7 +1069,7 @@ let removeGuildMember
     (guildId: string)
     (userId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/members/{userId}"
         }
@@ -1082,7 +1082,7 @@ let getGuildBans
     (limit: int option)
     (before: string option)
     (after: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/bans"
             query "limit" (limit >>. _.ToString())
@@ -1095,7 +1095,7 @@ let getGuildBans
 let getGuildBan
     (guildId: string)
     (userId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/bans/{userId}"
         }
@@ -1107,7 +1107,7 @@ let createGuildBan
     (userId: string)
     (auditLogReason: string option)
     (content: CreateGuildBanPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"guilds/{guildId}/bans/{userId}"
             payload content
@@ -1120,7 +1120,7 @@ let removeGuildBan
     (guildId: string)
     (userId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/bans/{userId}"
         }
@@ -1132,7 +1132,7 @@ let bulkGuildBan
     (guildId: string)
     (auditLogReason: string option)
     (content: BulkGuildBanPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/bulk-ban"
             payload content
@@ -1143,7 +1143,7 @@ let bulkGuildBan
 
 let getGuildRoles
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/roles"
         }
@@ -1153,7 +1153,7 @@ let getGuildRoles
 let getGuildRole
     (guildId: string)
     (roleId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/roles/{roleId}"
         }
@@ -1164,7 +1164,7 @@ let createGuildRole
     (guildId: string)
     (auditLogReason: string option)
     (content: CreateGuildRolePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/roles"
             payload content
@@ -1177,7 +1177,7 @@ let modifyGuildRolePositions
     (guildId: string)
     (auditLogReason: string option)
     (content: ModifyGuildRolePositionsPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/channels"
             payload content
@@ -1191,7 +1191,7 @@ let modifyGuildRole
     (roleId: string)
     (auditLogReason: string option)
     (content: ModifyGuildRolePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/roles/{roleId}"
             payload content
@@ -1204,7 +1204,7 @@ let modifyGuildMfaLevel
     (guildId: string)
     (auditLogReason: string option)
     (content: ModifyGuildMfaLevelPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/mfa"
             payload content
@@ -1217,7 +1217,7 @@ let deleteGuildRole
     (guildId: string)
     (roleId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/roles/{roleId}"
         }
@@ -1229,7 +1229,7 @@ let getGuildPruneCount
     (guildId: string)
     (days: int option)
     (includeRoles: string list option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/prune"
             query "days" (days >>. _.ToString())
@@ -1242,7 +1242,7 @@ let beginGuildPrune
     (guildId: string)
     (auditLogReason: string option)
     (content: BeginGuildPrunePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/prune"
             payload content
@@ -1253,7 +1253,7 @@ let beginGuildPrune
 
 let getGuildVoiceRegions
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/regions"
         }
@@ -1262,7 +1262,7 @@ let getGuildVoiceRegions
 
 let getGuildInvites
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/invites"
         }
@@ -1271,7 +1271,7 @@ let getGuildInvites
 
 let getGuildIntegrations
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/integrations"
         }
@@ -1282,7 +1282,7 @@ let deleteGuildIntegration
     (guildId: string)
     (integrationId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/integrations/{integrationId}"
         }
@@ -1292,7 +1292,7 @@ let deleteGuildIntegration
 
 let getGuildWidgetSettings
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/widget"
         }
@@ -1303,7 +1303,7 @@ let modifyGuildWidget
     (guildId: string)
     (auditLogReason: string option)
     (content: ModifyGuildWidgetPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/widget"
             payload content
@@ -1314,7 +1314,7 @@ let modifyGuildWidget
 
 let getGuildWidget
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/widget.json"
         }
@@ -1323,7 +1323,7 @@ let getGuildWidget
 
 let getGuildVanityUrl
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/vanity-url"
         }
@@ -1333,7 +1333,7 @@ let getGuildVanityUrl
 let getGuildWidgetImage
     (guildId: string)
     (style: GuildWidgetStyle option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/widget.png"
             query "style" (style >>. _.ToString())
@@ -1343,7 +1343,7 @@ let getGuildWidgetImage
 
 let getGuildWelcomeScreen
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/welcome-screen"
         }
@@ -1354,7 +1354,7 @@ let modifyGuildWelcomeScreen
     (guildId: string)
     (auditLogReason: string option)
     (content: ModifyGuildWelcomeScreenPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/welcome-screen"
             payload content
@@ -1365,7 +1365,7 @@ let modifyGuildWelcomeScreen
 
 let getGuildOnboarding
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/onboarding"
         }
@@ -1376,7 +1376,7 @@ let modifyGuildOnboarding
     (guildId: string)
     (auditLogReason: string option)
     (content: ModifyGuildOnboardingPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"guilds/{guildId}/onboarding"
             payload content
@@ -1390,7 +1390,7 @@ let modifyGuildOnboarding
 let listGuildScheduledEvents
     (guildId: string)
     (withUserCount: bool option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/scheduled-events"
             query "with_user_count" (withUserCount >>. _.ToString())
@@ -1402,7 +1402,7 @@ let createGuildScheduledEvent
     (guildId: string)
     (auditLogReason: string option)
     (content: CreateGuildScheduledEventPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/scheduled-events"
             payload content
@@ -1415,7 +1415,7 @@ let getGuildScheduledEvent
     (guildId: string)
     (guildScheduledEventId: string)
     (withUserCount: bool option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/scheduled-events/{guildScheduledEventId}"
             query "with_user_count" (withUserCount >>. _.ToString())
@@ -1428,7 +1428,7 @@ let modifyGuildScheduledEvent
     (guildScheduledEventId: string)
     (auditLogReason: string option)
     (content: ModifyGuildScheduledEventPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/scheduled-events/{guildScheduledEventId}"
             payload content
@@ -1441,7 +1441,7 @@ let deleteGuildScheduledEvent
     (guildId: string)
     (guildScheduledEventId: string)
     //(auditLogReason: string option) // TODO: Check if audit log is supposed to be available for this
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/scheduled-events/{guildScheduledEventId}"
         }
@@ -1455,7 +1455,7 @@ let getGuildScheduledEventUsers
     (withMember: bool option)
     (before: string option)
     (after: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/scheduled-events/{guildScheduledEventId}/users"
             query "limit" (limit >>. _.ToString())
@@ -1470,7 +1470,7 @@ let getGuildScheduledEventUsers
 
 let getGuildTemplate
     (templateCode: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/templates/{templateCode}"
         }
@@ -1480,7 +1480,7 @@ let getGuildTemplate
 let createGuildFromTemplate
     (templateCode: string)
     (content: CreateGuildFromTemplatePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/templates/{templateCode}"
             payload content
@@ -1490,7 +1490,7 @@ let createGuildFromTemplate
 
 let getGuildTemplates
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/templates"
         }
@@ -1500,7 +1500,7 @@ let getGuildTemplates
 let createGuildTemplate
     (guildId: string)
     (content: CreateGuildTemplatePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/templates"
             payload content
@@ -1511,7 +1511,7 @@ let createGuildTemplate
 let syncGuildTemplate
     (guildId: string)
     (templateCode: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"guilds/{guildId}/templates/{templateCode}"
         }
@@ -1522,7 +1522,7 @@ let modifyGuildTemplate
     (guildId: string)
     (templateCode: string)
     (content: ModifyGuildTemplatePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/templates/{templateCode}"
             payload content
@@ -1533,7 +1533,7 @@ let modifyGuildTemplate
 let deleteGuildTemplate
     (guildId: string)
     (templateCode: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/templates/{templateCode}"
         }
@@ -1547,7 +1547,7 @@ let getInvite
     (withCounts: bool option)
     (withExpiration: bool option)
     (guildScheduledEventId: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"invites/{inviteCode}"
             query "with_counts" (withCounts >>. _.ToString())
@@ -1560,7 +1560,7 @@ let getInvite
 let deleteInvite
     (inviteCode: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"invites/{inviteCode}"
         }
@@ -1576,7 +1576,7 @@ let getChannelMessages
     (before: string option)
     (after: string option)
     (limit: int option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/messages"
             query "around" around
@@ -1590,7 +1590,7 @@ let getChannelMessages
 let getChannelMessage
     (channelId: string)
     (messageId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/messages/{messageId}"
         }
@@ -1600,7 +1600,7 @@ let getChannelMessage
 let createMessage
     (channelId: string)
     (content: CreateMessagePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/messages"
             payload content
@@ -1611,7 +1611,7 @@ let createMessage
 let crosspostMessage
     (channelId: string)
     (messageId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/messages/{messageId}/crosspost"
         }
@@ -1622,7 +1622,7 @@ let createReaction
     (channelId: string)
     (messageId: string)
     (emoji: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/messages/{messageId}/reactions/{emoji}/@me"
         }
@@ -1633,7 +1633,7 @@ let deleteOwnReaction
     (channelId: string)
     (messageId: string)
     (emoji: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/messages/{messageId}/reactions/{emoji}/@me"
         }
@@ -1645,7 +1645,7 @@ let deleteUserReaction
     (messageId: string)
     (emoji: string)
     (userId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/messages/{messageId}/reactions/{emoji}/{userId}"
         }
@@ -1659,7 +1659,7 @@ let getReactions
     (``type``: ReactionType option)
     (after: string option)
     (limit: int option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/messages/{messageId}/reactions/{emoji}"
             query "type" (``type`` >>. int >>. _.ToString())
@@ -1672,7 +1672,7 @@ let getReactions
 let deleteAllReactions
     (channelId: string)
     (messageId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/messages/{messageId}/reactions"
         }
@@ -1683,7 +1683,7 @@ let deleteAllReactionsForEmoji
     (channelId: string)
     (messageId: string)
     (emoji: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/messages/{messageId}/reactions/{emoji}"
         }
@@ -1694,7 +1694,7 @@ let editMessage
     (channelId: string)
     (messageId: string)
     (content: EditMessagePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"channels/{channelId}/messages/{messageId}"
             payload content
@@ -1706,7 +1706,7 @@ let deleteMessage
     (channelId: string)
     (messageId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"channels/{channelId}/messages/{messageId}"
         }
@@ -1718,7 +1718,7 @@ let bulkDeleteMessages
     (channelId: string)
     (auditLogReason: string option)
     (content: BulkDeleteMessagesPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/messages/bulk-delete"
             payload content
@@ -1735,7 +1735,7 @@ let getAnswerVoters
     (answerId: string)
     (after: string option)
     (limit: int option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/polls/{messageId}/answers/{answerId}"
             query "after" after
@@ -1747,7 +1747,7 @@ let getAnswerVoters
 let endPoll
     (channelId: string)
     (messageId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/polls/{messageId}/expire"
         }
@@ -1758,7 +1758,7 @@ let endPoll
 
 let getApplicationRoleConnectionMetadataRecords
     (applicationId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/role-connections/metadata"
         }
@@ -1768,7 +1768,7 @@ let getApplicationRoleConnectionMetadataRecords
 let updateApplicationRoleConnectionMetadataRecords
     (applicationId: string)
     (content: UpdateApplicationRoleConnectionMetadataRecordsPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             put $"applications/{applicationId}/role-connections/metadata"
             payload content
@@ -1780,7 +1780,7 @@ let updateApplicationRoleConnectionMetadataRecords
 
 let listSkus
     (applicationId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"applications/{applicationId}/skus"
         }
@@ -1792,7 +1792,7 @@ let listSkus
 let sendSoundboardSound
     (channelId: string)
     (content: SendSoundboardSoundPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/send-soundboard-sound"
             payload content
@@ -1801,7 +1801,7 @@ let sendSoundboardSound
         ?>> DiscordResponse.asEmpty
 
 let listDefaultSoundboardSounds
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get "soundboard-default-sounds"
         }
@@ -1810,7 +1810,7 @@ let listDefaultSoundboardSounds
 
 let listGuildSoundboardSounds
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/soundboard-sounds"
         }
@@ -1820,7 +1820,7 @@ let listGuildSoundboardSounds
 let getGuildSoundboardSound
     (guildId: string)
     (soundId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/soundboard-sounds/{soundId}"
         }
@@ -1831,7 +1831,7 @@ let createGuildSoundboardSound
     (guildId: string)
     (auditLogReason: string option)
     (content: CreateGuildSoundboardSoundPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/soundboard-sounds"
             payload content
@@ -1845,7 +1845,7 @@ let modifyGuildSoundboardSound
     (soundId: string)
     (auditLogReason: string option)
     (content: ModifyGuildSoundboardSoundPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/soundboard-sounds/{soundId}"
             payload content
@@ -1858,7 +1858,7 @@ let deleteGuildSoundboardSound
     (guildId: string)
     (soundId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/soundboard-sounds/{soundId}"
         }
@@ -1871,7 +1871,7 @@ let deleteGuildSoundboardSound
 let createStageInstance
     (auditLogReason: string option)
     (content: CreateStageInstancePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post "stage_instances"
             payload content
@@ -1882,7 +1882,7 @@ let createStageInstance
 
 let getStanceInstance
     (channelId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"stage-instances/{channelId}"
         }
@@ -1893,7 +1893,7 @@ let modifyStageInstance
     (channelId: string)
     (auditLogReason: string option)
     (content: ModifyStageInstancePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"stage-instances/{channelId}"
             payload content
@@ -1905,7 +1905,7 @@ let modifyStageInstance
 let deleteStageInstance
     (channelId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"stage-instances/{channelId}"
         }
@@ -1916,7 +1916,7 @@ let deleteStageInstance
 // ----- Sticker -----
 
 let listStickerPacks
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get "sticker-packs"
         }
@@ -1925,7 +1925,7 @@ let listStickerPacks
 
 let getStickerPack
     (packId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"sticker-packs/{packId}"
         }
@@ -1934,7 +1934,7 @@ let getStickerPack
 
 let listGuildStickers
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/stickers"
         }
@@ -1944,7 +1944,7 @@ let listGuildStickers
 let getGuildSticker
     (guildId: string)
     (stickerId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/stickers/{stickerId}"
         }
@@ -1955,7 +1955,7 @@ let createGuildSticker
     (guildId: string)
     (auditLogReason: string option)
     (content: CreateGuildStickerPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"guilds/{guildId}/stickers"
             payload content
@@ -1969,7 +1969,7 @@ let modifyGuildSticker
     (stickerId: string)
     (auditLogReason: string option)
     (content: CreateGuildStickerPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/stickers/{stickerId}"
             payload content
@@ -1982,7 +1982,7 @@ let deleteGuildSticker
     (guildId: string)
     (stickerId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"guilds/{guildId}/stickers/{stickerId}"
         }
@@ -1998,7 +1998,7 @@ let listSkuSubscriptions
     (after: string option)
     (limit: int option)
     (userId: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"skus/{skuId}/subscriptions"
             query "before" before
@@ -2012,7 +2012,7 @@ let listSkuSubscriptions
 let getSkuSubscription
     (skuId: string)
     (subscriptionId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"skus/{skuId}/subscriptions/{subscriptionId}"
         }
@@ -2026,12 +2026,12 @@ let getCurrentUser
         req {
             get "users/@me"
         }
-        |> client.SendAsync
+        |> DiscordClient.sendAsync <| client
         ?>> DiscordResponse.asJson<User>
 
 let getUser
     (userId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"users/{userId}"
         }
@@ -2040,7 +2040,7 @@ let getUser
 
 let modifyCurrentUser
     (content: ModifyCurrentUserPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch "users/@me"
             payload content
@@ -2061,7 +2061,7 @@ let getCurrentUserGuilds
             query "limit" (limit >>. _.ToString())
             query "with_counts" (withCounts >>. _.ToString())
         }
-        |> client.SendAsync
+        |> DiscordClient.sendAsync <| client
         ?>> DiscordResponse.asJson<PartialGuild list>
 
 let getCurrentUserGuildMember
@@ -2070,12 +2070,12 @@ let getCurrentUserGuildMember
         req {
             get $"users/@me/guilds/{guildId}/member"
         }
-        |> client.SendAsync
+        |> DiscordClient.sendAsync <| client
         ?>> DiscordResponse.asJson<GuildMember>
 
 let leaveGuild
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"users/@me/guilds/{guildId}"
         }
@@ -2084,7 +2084,7 @@ let leaveGuild
 
 let createDm
     (content: CreateDmPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post "users/@me/channels"
             payload content
@@ -2094,7 +2094,7 @@ let createDm
 
 let createGroupDm
     (content: CreateGroupDmPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post "users/@me/channels"
             payload content
@@ -2103,7 +2103,7 @@ let createGroupDm
         ?>> DiscordResponse.asJson<Channel>
 
 let getCurrentUserConnections
-    (client: OAuthClient) =
+    (client: IOAuthClient) =
         req {
             get "users/@me/connections"
         }
@@ -2112,7 +2112,7 @@ let getCurrentUserConnections
 
 let getCurrentUserApplicationRoleConnection
     (applicationId: string)
-    (client: OAuthClient) =
+    (client: IOAuthClient) =
         req {
             get $"users/@me/applications/{applicationId}/role-connection"
         }
@@ -2122,7 +2122,7 @@ let getCurrentUserApplicationRoleConnection
 let updateCurrentUserApplicationRoleConnection
     (applicationId: string)
     (content: UpdateCurrentUserApplicationRoleConnectionPayload)
-    (client: OAuthClient) =
+    (client: IOAuthClient) =
         req {
             put $"users/@me/applications/{applicationId}/role-connection"
             payload content
@@ -2133,7 +2133,7 @@ let updateCurrentUserApplicationRoleConnection
 // ----- Voice -----
 
 let listVoiceRegions
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get "voice/regions"
         }
@@ -2142,7 +2142,7 @@ let listVoiceRegions
 
 let getCurrentUserVoiceState
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/voice-states/@me"
         }
@@ -2152,7 +2152,7 @@ let getCurrentUserVoiceState
 let getUserVoiceState
     (guildId: string)
     (userId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/voice-states/{userId}"
         }
@@ -2162,7 +2162,7 @@ let getUserVoiceState
 let modifyCurrentUserVoiceState
     (guildId: string)
     (content: ModifyCurrentUserVoiceStatePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/voice-states/@me"
             payload content
@@ -2174,7 +2174,7 @@ let modifyUserVoiceState
     (guildId: string)
     (userId: string)
     (content: ModifyUserVoiceStatePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"guilds/{guildId}/voice-states/{userId}"
             payload content
@@ -2188,7 +2188,7 @@ let createWebhook
     (channelId: string)
     (auditLogReason: string option)
     (content: CreateWebhookPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"channels/{channelId}/webhooks"
             payload content
@@ -2199,7 +2199,7 @@ let createWebhook
 
 let getChannelWebhooks
     (channelId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"channels/{channelId}/webhooks"
         }
@@ -2208,7 +2208,7 @@ let getChannelWebhooks
 
 let getGuildWebhooks
     (guildId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"guilds/{guildId}/webhooks"
         }
@@ -2217,7 +2217,7 @@ let getGuildWebhooks
 
 let getWebhook
     (webhookId: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"webhooks/{webhookId}"
         }
@@ -2227,7 +2227,7 @@ let getWebhook
 let getWebhookWithToken
     (webhookId: string)
     (webhookToken: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"webhooks/{webhookId}/{webhookToken}"
         }
@@ -2238,7 +2238,7 @@ let modifyWebhook
     (webhookId: string)
     (auditLogReason: string option)
     (content: ModifyWebhookPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"webhooks/{webhookId}"
             payload content
@@ -2251,7 +2251,7 @@ let modifyWebhookWithToken
     (webhookId: string)
     (webhookToken: string)
     (content: ModifyWebhookWithTokenPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"webhooks/{webhookId}/{webhookToken}"
             payload content
@@ -2262,7 +2262,7 @@ let modifyWebhookWithToken
 let deleteWebhook
     (webhookId: string)
     (auditLogReason: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"webhooks/{webhookId}"
         }
@@ -2273,7 +2273,7 @@ let deleteWebhook
 let deleteWebhookWithToken
     (webhookId: string)
     (webhookToken: string)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             delete $"webhooks/{webhookId}/{webhookToken}"
         }
@@ -2286,7 +2286,7 @@ let executeWebhook
     (wait: bool option)
     (threadId: string option)
     (content: ExecuteWebhookPayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             post $"webhooks/{webhookId}/{webhookToken}"
             query "wait" (wait >>. _.ToString())
@@ -2301,7 +2301,7 @@ let getWebhookMessage
     (webhookToken: string)
     (messageId: string)
     (threadId: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get $"webhooks/{webhookId}/{webhookToken}/messages/{messageId}"
             query "thread_id" threadId
@@ -2315,7 +2315,7 @@ let editWebhookMessage
     (messageId: string)
     (threadId: string option)
     (content: EditWebhookMessagePayload)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"webhooks/{webhookId}/{webhookToken}/messages/{messageId}"
             query "thread_id" threadId
@@ -2329,7 +2329,7 @@ let deleteWebhookMessage
     (webhookToken: string)
     (messageId: string)
     (threadId: string option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             patch $"webhooks/{webhookId}/{webhookToken}/messages/{messageId}"
             query "thread_id" threadId
@@ -2357,7 +2357,7 @@ let getGatewayBot
     (version: string)
     (encoding: GatewayEncoding)
     (compression: GatewayCompression option)
-    (client: BotClient) =
+    (client: IBotClient) =
         req {
             get "gateway/bot"
             query "v" version
@@ -2366,12 +2366,11 @@ let getGatewayBot
         }
         |> client.SendAsync
         ?>> DiscordResponse.asJson<GetGatewayBotOkResponse>
-        
 
 // ----- OAuth2 -----
 
 let getCurrentBotApplicationInformation
-    (client: OAuthClient) =
+    (client: IOAuthClient) =
         req {
             host Constants.DISCORD_OAUTH_URL
             get "applications/@me"
@@ -2380,7 +2379,7 @@ let getCurrentBotApplicationInformation
         ?>> DiscordResponse.asJson<Application>
 
 let getCurrentAuthorizationInformation
-    (client: OAuthClient) =
+    (client: IOAuthClient) =
         req {
             host Constants.DISCORD_OAUTH_URL
             get "@me"
@@ -2390,7 +2389,7 @@ let getCurrentAuthorizationInformation
 
 let authorizationCodeGrant
     (content: AuthorizationCodeGrantPayload)
-    (client: BasicClient) =
+    (client: IBasicClient) =
         req {
             host Constants.DISCORD_OAUTH_URL
             post "token"
@@ -2401,7 +2400,7 @@ let authorizationCodeGrant
 
 let refreshTokenGrant
     (content: RefreshTokenGrantPayload)
-    (client: BasicClient) =
+    (client: IBasicClient) =
         req {
             host Constants.DISCORD_OAUTH_URL
             post "token"
@@ -2412,7 +2411,7 @@ let refreshTokenGrant
 
 let revokeToken
     (content: RevokeTokenPayload)
-    (client: BasicClient) =
+    (client: IBasicClient) =
         req {
             host Constants.DISCORD_OAUTH_URL
             post "token/revoke"
@@ -2423,7 +2422,7 @@ let revokeToken
 
 let clientCredentialsGrant
     (content: ClientCredentialsGrantPayload)
-    (client: BasicClient) =
+    (client: IBasicClient) =
         req {
             host Constants.DISCORD_OAUTH_URL
             post "token"
