@@ -9,12 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Events\WebhookReceiveEvent.fs" />
     <Compile Include="Modules\Ed25519.fs" />
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="TweetNaclSharp" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FSharp.Discord.Types\FSharp.Discord.Types.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

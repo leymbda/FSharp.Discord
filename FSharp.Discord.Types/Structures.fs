@@ -38,8 +38,6 @@ type Interaction = {
     [<JsonPropertyName "context">] Context: InteractionContextType option
 }
 
-// TODO: Active patterns to test for interaction type?
-
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
 type ApplicationCommandData = {
     [<JsonPropertyName "id">] Id: string

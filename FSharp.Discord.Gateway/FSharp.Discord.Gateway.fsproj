@@ -9,10 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Events\GatewayReceiveEvent.fs" />
+    <Compile Include="Events\GatewaySendEvent.fs" />
     <Compile Include="Websocket.fs" />
     <Compile Include="Gateway.fs" />
     <Compile Include="GatewayClient.fs" />
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
