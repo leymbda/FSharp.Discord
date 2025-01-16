@@ -32,7 +32,7 @@ type GuildNavigationType =
     | LINKED_ROLES
     | LINKED_ROLE of roleId: string
 
-module GuildNavigationStyle =
+module GuildNavigationType =
     let toString (``type``: GuildNavigationType) =
         match ``type`` with
         | CUSTOMIZE -> "customize"
@@ -56,6 +56,6 @@ module MessageFormat =
     let customAnimatedEmoji (name: string) (emojiId: string) = $"<a:{name}:{emojiId}>"
 
     /// Default style can be used through `TimestampStyle.zero()`
-    let timestamp (timestamp: DateTime) (style: TimestampStyle) = $"<t:{Math.Floor(timestamp.Subtract(DateTime.UnixEpoch).TotalMilliseconds)}:{style}>"
+    let timestamp (timestamp: DateTime) (style: TimestampStyle) = $"<t:{Math.Floor(timestamp.Subtract(DateTime.UnixEpoch).TotalMilliseconds)}:{TimestampStyle.toString style}>"
 
-    let guildNavigation (guildId: string) (``type``: GuildNavigationType) = $"<{guildId}:{``type``}>"
+    let guildNavigation (guildId: string) (``type``: GuildNavigationType) = $"<{guildId}:{GuildNavigationType.toString ``type``}>"

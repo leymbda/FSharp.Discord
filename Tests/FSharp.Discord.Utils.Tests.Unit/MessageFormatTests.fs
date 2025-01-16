@@ -19,7 +19,7 @@ type TimestampStyleTests () =
         ]
 
         // Act
-        let res = styles |> List.map (fun (style, str) -> (style.ToString(), str))
+        let res = styles |> List.map (fun (style, str) -> (TimestampStyle.toString style, str))
 
         // Assert
         for value, str in res do Assert.AreEqual<string>(str, value)
@@ -49,7 +49,7 @@ type GuildNavigationTypeTests () =
         ]
 
         // Act
-        let res = types |> List.map (fun (navType, str) -> (navType.ToString(), str))
+        let res = types |> List.map (fun (navType, str) -> (GuildNavigationType.toString navType, str))
 
         // Assert
         for value, str in res do Assert.AreEqual<string>(str, value)
