@@ -7,36 +7,39 @@ open System.Threading
 open System.Threading.Tasks
 
 type IGatewayClient =
-    abstract member RunAsync:
+    abstract RunAsync:
         gatewayUrl: string ->
         identifyEvent: IdentifySendEvent ->
         handler: (string -> Task<unit>) ->
         ct: CancellationToken ->
         Task<GatewayCloseEventCode option>
 
-    abstract member RequestGuildMembers:
+    abstract RequestGuildMembers:
         RequestGuildMembersSendEvent ->
         Task<bool>
 
-    abstract member RequestSoundboardSounds:
+    abstract RequestSoundboardSounds:
         RequestSoundboardSoundsSendEvent ->
         Task<bool>
 
-    abstract member UpdateVoiceState:
+    abstract UpdateVoiceState:
         UpdateVoiceStateSendEvent ->
         Task<bool>
 
-    abstract member UpdatePresence:
+    abstract UpdatePresence:
         UpdatePresenceSendEvent ->
         Task<bool>
 
 type GatewayClient () =
     let _ws: ClientWebSocket option ref = ref None
+    let mutable _ct: CancellationToken = CancellationToken.None
 
     interface IGatewayClient with
         member _.RunAsync gatewayUrl identifyEvent handler ct =
+            _ct <- ct
+
             let state = ConnectState.zero gatewayUrl identifyEvent
-            Gateway.connect state handler _ws ct
+            Gateway.connect state handler _ws _ct
 
         member _.RequestGuildMembers payload = task {
             let event =
@@ -45,7 +48,7 @@ type GatewayClient () =
 
             return!
                 _ws.Value
-                |> Option.map (fun ws -> ws |> Gateway.send event |> Task.map (fun _ -> true))
+                |> Option.map (fun ws -> Gateway.send event ws _ct |> Task.map (fun _ -> true))
                 |> Option.defaultValue (Task.FromResult false)
         }
 
@@ -56,7 +59,7 @@ type GatewayClient () =
 
             return!
                 _ws.Value
-                |> Option.map (fun ws -> ws |> Gateway.send event |> Task.map (fun _ -> true))
+                |> Option.map (fun ws -> Gateway.send event ws _ct |> Task.map (fun _ -> true))
                 |> Option.defaultValue (Task.FromResult false)
         }
 
@@ -67,7 +70,7 @@ type GatewayClient () =
 
             return!
                 _ws.Value
-                |> Option.map (fun ws -> ws |> Gateway.send event |> Task.map (fun _ -> true))
+                |> Option.map (fun ws -> Gateway.send event ws _ct |> Task.map (fun _ -> true))
                 |> Option.defaultValue (Task.FromResult false)
         }
 
@@ -78,7 +81,7 @@ type GatewayClient () =
 
             return!
                 _ws.Value
-                |> Option.map (fun ws -> ws |> Gateway.send event |> Task.map (fun _ -> true))
+                |> Option.map (fun ws -> Gateway.send event ws _ct |> Task.map (fun _ -> true))
                 |> Option.defaultValue (Task.FromResult false)
         }
 

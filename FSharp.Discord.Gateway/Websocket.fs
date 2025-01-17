@@ -11,48 +11,45 @@ type WebsocketReadResponse =
     | Close of int option
 
 module Websocket =
-    let readNext ws = task {
-        let rec loop (ms: MemoryStream) (ws: ClientWebSocket) = task {
-            let buffer = Array.zeroCreate<byte> 4096 |> ArraySegment
-            let! res = ws.ReceiveAsync(buffer, CancellationToken.None)
-            ms.Write(buffer.Array, buffer.Offset, res.Count)
-
-            match res.EndOfMessage with
-            | false ->
-                return! loop ms ws
-            | true ->
-                ms.Seek(0, SeekOrigin.Begin) |> ignore
-                use sr = new StreamReader(ms)
-                let! message = sr.ReadToEndAsync()
-
-                match res.MessageType with
-                | WebSocketMessageType.Close ->
-                    let status =
-                        Option.ofNullable res.CloseStatus
-                        |> Option.map int
-
-                    return WebsocketReadResponse.Close status
-                | _ ->
-                    return WebsocketReadResponse.Message message
-        }
-
+    let readNext (ws: ClientWebSocket) (ct: CancellationToken) = task {
         use ms = new MemoryStream()
-        return! loop ms ws
+
+        let mutable messageType = WebSocketMessageType.Text
+        let mutable closeStatus: int option = None
+        let mutable isEndOfMessage = false
+
+        while not isEndOfMessage do
+            let buffer = Array.zeroCreate<byte> 4096 |> ArraySegment
+            let! res = ws.ReceiveAsync(buffer, ct)
+
+            ms.Write(buffer.Array, buffer.Offset, res.Count)
+            messageType <- res.MessageType
+            closeStatus <- res.CloseStatus |> Option.ofNullable |> Option.map int
+            isEndOfMessage <- res.EndOfMessage
+
+        ms.Seek(0, SeekOrigin.Begin) |> ignore
+        use sr = new StreamReader(ms)
+        let! message = sr.ReadToEndAsync()
+
+        match messageType with
+        | WebSocketMessageType.Close -> return WebsocketReadResponse.Close closeStatus
+        | _ -> return WebsocketReadResponse.Message message
     }
 
-    let write (message: string) (ws: ClientWebSocket) = task {
-        let rec loop (bytes: byte array) (size: int) (offset: int) (ws: ClientWebSocket) = task {
+    let write (message: string) (ws: ClientWebSocket) (ct: CancellationToken) = task {
+        let bytes = Encoding.UTF8.GetBytes message
+        let size = 4096
 
-            let isEndOfMessage = offset + size >= bytes.Length
+        let mutable offset = 0
+        let mutable isEndOfMessage = false
+
+        while not isEndOfMessage do
             let count = Math.Min(size, bytes.Length - offset)
             let buffer = ArraySegment(bytes, offset, count)
+            offset <- offset + size
+            isEndOfMessage <- offset >= bytes.Length
 
-            do! ws.SendAsync(buffer, WebSocketMessageType.Text, isEndOfMessage, CancellationToken.None)
-
-            match isEndOfMessage with
-            | false -> return! loop bytes size (offset + size) ws
-            | true -> return ()
-        }
-
-        do! loop (Encoding.UTF8.GetBytes message) 4096 0 ws
+            do! ws.SendAsync(buffer, WebSocketMessageType.Text, isEndOfMessage, ct)
     }
+
+    // TODO: Can above functions be rewritten as tail recursive functions without all this mutable mess?

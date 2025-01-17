@@ -52,8 +52,8 @@ module ConnectState =
         |> Uri
 
 module Gateway = 
-    let send (event: GatewaySendEvent) ws =
-        ws |> Websocket.write (Json.serializeF event)
+    let send (event: GatewaySendEvent) ws ct =
+        Websocket.write (Json.serializeF event) ws ct
 
     let rec lifecycle (state: LifecycleState) handler ws (ct: CancellationToken) = task {
         match ct.IsCancellationRequested with
@@ -66,7 +66,7 @@ module Gateway =
                 |> Task.Delay
 
             let event =
-                ws |> Websocket.readNext ?> function
+                Websocket.readNext ws ct ?> function
                 | WebsocketReadResponse.Close code -> Error (Option.map enum<GatewayCloseEventCode> code)
                 | WebsocketReadResponse.Message message -> Ok (Json.deserializeF<GatewayReceiveEvent> message, message)
 
@@ -80,7 +80,7 @@ module Gateway =
 
             | winner, true when winner = timeout ->
                 let sendEvent = GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, state.SequenceId) |> GatewaySendEvent.HEARTBEAT
-                ws |> send sendEvent |> ignore
+                send sendEvent ws ct |> ignore
 
                 return! lifecycle { state with HeartbeatAcked = false } handler ws ct
             
@@ -105,7 +105,7 @@ module Gateway =
                         | Some sessionId, Some sequenceId -> GatewayEventPayload.create(GatewayOpcode.RESUME, ResumeSendEvent.create(state.IdentifyEvent.Token, sessionId, sequenceId)) |> GatewaySendEvent.RESUME
                         | _ -> GatewayEventPayload.create(GatewayOpcode.IDENTIFY, state.IdentifyEvent) |> GatewaySendEvent.IDENTIFY
 
-                    ws |> send sendEvent |> ignore
+                    send sendEvent ws ct |> ignore
 
                     return! lifecycle { state with Interval = interval } handler ws ct
 
@@ -113,7 +113,7 @@ module Gateway =
                     let freshHeartbeat = state.Interval |> Option.map (fun i -> DateTime.UtcNow.AddMilliseconds(i))
                 
                     let sendEvent = GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, state.SequenceId) |> GatewaySendEvent.HEARTBEAT
-                    ws |> send sendEvent |> ignore
+                    send sendEvent ws ct |> ignore
 
                     return! lifecycle { state with Heartbeat = freshHeartbeat } handler ws ct
 
@@ -167,3 +167,5 @@ module Gateway =
             do! ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None)
             return code
     }
+
+    // TODO: Handle jitter (where it should be done TBD)
