@@ -34,7 +34,8 @@ module GatewayCloseEventCode =
         | GatewayCloseEventCode.INVALID_API_VERSION -> false
         | GatewayCloseEventCode.INVALID_INTENTS -> false
         | GatewayCloseEventCode.DISALLOWED_INTENTS -> false
-        | _ -> false
+        | v when int v = 1000 || int v = 1001 -> false
+        | _ -> true
 
 // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-opcodes
 type GatewayOpcode =
