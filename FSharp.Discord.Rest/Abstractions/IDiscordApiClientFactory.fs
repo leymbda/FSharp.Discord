@@ -17,6 +17,10 @@ type IBasicClient =
 
 [<Interface>]
 type IDiscordApiClientFactory =
-    abstract BotClient: token: string -> IBotClient
-    abstract OAuthClient: token: string -> IOAuthClient
-    abstract BasicClient: clientId: string -> clientSecret: string -> IBasicClient
+    abstract CreateBotClient: token: string -> IBotClient
+    abstract CreateOAuthClient: token: string -> IOAuthClient
+    abstract CreateBasicClient: clientId: string -> clientSecret: string -> IBasicClient
+
+[<Interface>]
+type IDiscordApiClientFactoryEnv =
+    abstract DiscordApiClientFactory: IDiscordApiClientFactory
