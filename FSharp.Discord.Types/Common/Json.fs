@@ -45,19 +45,19 @@ module JsonException =
 module JsonConverter =
     type UnixEpoch () =
         inherit JsonConverter<DateTime> () with
-            override _.Read (reader, typeToConvert, options) =
+            override _.Read (reader, _, _) =
                 DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64()).DateTime
 
-            override _.Write (writer, value, options) =
+            override _.Write (writer, value, _) =
                 DateTimeOffset(value).ToUnixTimeMilliseconds() |> writer.WriteNumberValue
 
     type NullUndefinedAsBool() =
         inherit JsonConverter<bool> () with
-            override _.Read (reader, typeToConvert, options) =
+            override _.Read (reader, _, _) =
                 match reader.TokenType with
                 | JsonTokenType.Null -> true
                 | JsonTokenType.None -> false
-                | _ -> raise (JsonException "Unexpected token received in NullUndefinedAsBoolConverter")
+                | _ -> JsonException.raise "Unexpected token received in NullUndefinedAsBoolConverter"
 
             override _.Write (writer, value, options) =
-                raise (NotImplementedException())
+                raise (NotImplementedException "Serializing property using null/undefined as bool convert is not possible")
