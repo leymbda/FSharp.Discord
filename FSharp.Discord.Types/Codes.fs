@@ -17,6 +17,25 @@ type GatewayCloseEventCode =
     | INVALID_INTENTS       = 4013
     | DISALLOWED_INTENTS    = 4014
 
+module GatewayCloseEventCode =
+    let shouldReconnect (code: GatewayCloseEventCode) =
+        match code with
+        | GatewayCloseEventCode.UNKNOWN_ERROR -> true
+        | GatewayCloseEventCode.UNKNOWN_OPCODE -> true
+        | GatewayCloseEventCode.DECODE_ERROR -> true
+        | GatewayCloseEventCode.NOT_AUTHENTICATED -> true
+        | GatewayCloseEventCode.AUTHENTICATION_FAILED -> false
+        | GatewayCloseEventCode.ALREADY_AUTHENTICATED -> true
+        | GatewayCloseEventCode.INVALID_SEQ -> true
+        | GatewayCloseEventCode.RATE_LIMITED -> true
+        | GatewayCloseEventCode.SESSION_TIMED_OUT -> true
+        | GatewayCloseEventCode.INVALID_SHARD -> false
+        | GatewayCloseEventCode.SHARDING_REQUIRED -> false
+        | GatewayCloseEventCode.INVALID_API_VERSION -> false
+        | GatewayCloseEventCode.INVALID_INTENTS -> false
+        | GatewayCloseEventCode.DISALLOWED_INTENTS -> false
+        | _ -> false
+
 // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-opcodes
 type GatewayOpcode =
     | DISPATCH                  = 0

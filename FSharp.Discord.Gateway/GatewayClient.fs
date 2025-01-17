@@ -7,70 +7,79 @@ open System.Threading
 open System.Threading.Tasks
 
 type IGatewayClient =
-    abstract member Connect:
+    abstract member RunAsync:
         gatewayUrl: string ->
-        identify: IdentifySendEvent ->
+        identifyEvent: IdentifySendEvent ->
         handler: (string -> Task<unit>) ->
         ct: CancellationToken ->
-        Task<unit>
+        Task<GatewayCloseEventCode option>
 
     abstract member RequestGuildMembers:
         RequestGuildMembersSendEvent ->
-        Task<Result<unit, unit>>
+        Task<bool>
 
     abstract member RequestSoundboardSounds:
         RequestSoundboardSoundsSendEvent ->
-        Task<Result<unit, unit>>
+        Task<bool>
 
     abstract member UpdateVoiceState:
         UpdateVoiceStateSendEvent ->
-        Task<Result<unit, unit>>
+        Task<bool>
 
     abstract member UpdatePresence:
         UpdatePresenceSendEvent ->
-        Task<Result<unit, unit>>
+        Task<bool>
 
 type GatewayClient () =
     let _ws: ClientWebSocket option ref = ref None
 
     interface IGatewayClient with
-        member _.Connect gatewayUrl identify handler ct =
-            Gateway.connect gatewayUrl None identify handler _ws ct
+        member _.RunAsync gatewayUrl identifyEvent handler ct =
+            let state = ConnectState.zero gatewayUrl identifyEvent
+            Gateway.connect state handler _ws ct
 
         member _.RequestGuildMembers payload = task {
-            match _ws.Value with
-            | Some ws ->
-                do! Gateway.requestGuildMembers payload ws
-                return Ok ()
-            | None ->
-                return Error ()
+            let event =
+                GatewayEventPayload.create(GatewayOpcode.REQUEST_GUILD_MEMBERS, payload)
+                |> GatewaySendEvent.REQUEST_GUILD_MEMBERS
+
+            return!
+                _ws.Value
+                |> Option.map (fun ws -> ws |> Gateway.send event |> Task.map (fun _ -> true))
+                |> Option.defaultValue (Task.FromResult false)
         }
 
         member _.RequestSoundboardSounds payload = task {
-            match _ws.Value with
-            | Some ws ->
-                do! Gateway.requestSoundboardSounds payload ws
-                return Ok ()
-            | None ->
-                return Error ()
+            let event =
+                GatewayEventPayload.create(GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, payload)
+                |> GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS
+
+            return!
+                _ws.Value
+                |> Option.map (fun ws -> ws |> Gateway.send event |> Task.map (fun _ -> true))
+                |> Option.defaultValue (Task.FromResult false)
         }
 
         member _.UpdateVoiceState payload = task {
-            match _ws.Value with
-            | Some ws ->
-                do! Gateway.updateVoiceState payload ws
-                return Ok ()
-            | None ->
-                return Error ()
+            let event =
+                GatewayEventPayload.create(GatewayOpcode.VOICE_STATE_UPDATE, payload)
+                |> GatewaySendEvent.UPDATE_VOICE_STATE
+
+            return!
+                _ws.Value
+                |> Option.map (fun ws -> ws |> Gateway.send event |> Task.map (fun _ -> true))
+                |> Option.defaultValue (Task.FromResult false)
         }
 
         member _.UpdatePresence payload = task {
-            match _ws.Value with
-            | Some ws ->
-                do! Gateway.updatePresence payload ws
-                return Ok ()
-            | None ->
-                return Error ()
+            let event =
+                GatewayEventPayload.create(GatewayOpcode.PRESENCE_UPDATE, payload)
+                |> GatewaySendEvent.UPDATE_PRESENCE
+
+            return!
+                _ws.Value
+                |> Option.map (fun ws -> ws |> Gateway.send event |> Task.map (fun _ -> true))
+                |> Option.defaultValue (Task.FromResult false)
         }
 
     interface IDisposable with
