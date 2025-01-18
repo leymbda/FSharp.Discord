@@ -25,9 +25,15 @@ let private addQueryString key value (req: HttpRequestMessage) =
         req.RequestUri <- uriBuilder.Uri
         req
     | None -> req
-
-let private addPayload (payload: Payload) (req: HttpRequestMessage) =
+    
+let private addPayloadOld (payload: Payload) (req: HttpRequestMessage) =
     let content = payload.Content.ToContent()
+    addHeader "Content-Type" (Some content.Headers.ContentType.MediaType) req |> ignore
+    req.Content <- content
+    req
+
+let private addPayload (payload: IPayload) (req: HttpRequestMessage) =
+    let content = payload.Content
     addHeader "Content-Type" (Some content.Headers.ContentType.MediaType) req |> ignore
     req.Content <- content
     req
@@ -81,7 +87,12 @@ type RequestBuilder (host) =
         addQueryString key (Some value) req
 
     [<CustomOperation>]
+    [<Obsolete>]
     member _.payload(req: HttpRequestMessage, payload: Payload) =
+        addPayloadOld payload req
+
+    [<CustomOperation>]
+    member _.payload(req: HttpRequestMessage, payload: IPayload) =
         addPayload payload req
 
 let req = RequestBuilder(Constants.DISCORD_API_URL)

@@ -1,13 +1,79 @@
-﻿namespace System.Net.Http
+﻿namespace FSharp.Discord.Rest
 
 open System.Collections.Generic
+open System.Net.Http
 open System.Net.Http.Headers
 open System.Text.Json
 
-// TODO: Create alternative approach for creating payloads (operation to add record directly?)
+type Payload = (string * obj) seq
+
+module Payload =
+    let toJsonContent (p: Payload) =
+        new StringContent(Json.serializeF p, MediaTypeHeaderValue("application/json"))
+
+    let toFormContent (p: Payload) =
+        new FormUrlEncodedContent(p |> Seq.map (fun (k, v) -> KeyValuePair(k, v.ToString())))
+
+type File = {
+    Content: string
+    Type: string
+    Name: string
+}
+
+module File =
+    let toContent (file: File) =
+        new StringContent(file.Content, MediaTypeHeaderValue(file.Type))
 
 [<AutoOpen>]
 module PayloadBuilder =
+    type PayloadBuilder () =
+        member _.Yield (_: unit) = Seq.empty<string * obj>
+        member _.Yield (p: Payload) = p
+
+        [<CustomOperation>]
+        member _.required (p: Payload, key: string, value: obj) =
+            Seq.append [key, value] p
+
+        [<CustomOperation>]
+        member _.optional (p: Payload, key: string, value: obj option) =
+            match value with
+            | Some v -> Seq.append [key, v] p
+            | None -> p
+
+    let payload = PayloadBuilder ()
+    
+[<AutoOpen>]
+module MultipartBuilder =
+    type MultipartBuilder () =
+        let mutable fileCount = 0
+
+        member _.Yield (_: unit) = new MultipartFormDataContent()
+        member _.Yield (m: MultipartFormDataContent) = m
+
+        [<CustomOperation>]
+        member _.json (m: MultipartFormDataContent, name: string, value: Payload) =
+            m.Add(Payload.toJsonContent value, name)
+            m
+
+        [<CustomOperation>]
+        member _.file (m: MultipartFormDataContent, file: File) =
+            m.Add(File.toContent file, $"files[{fileCount}", file.Name)
+            fileCount <- fileCount + 1
+            m
+
+        [<CustomOperation>]
+        member this.files (m: MultipartFormDataContent, files: File list) =
+            List.fold (fun acc file -> this.file (acc, file)) m files
+
+    let multipart = MultipartBuilder ()
+
+type IPayload =
+    abstract Content: HttpContent
+
+// TODO: Replace usage of old code below then delete it
+
+[<AutoOpen>]
+module PayloadBuilderOld =
     type IPayloadBuilder =
         abstract member ToContent: unit -> HttpContent
     
@@ -113,6 +179,7 @@ module PayloadBuilder =
     let multipart = MultipartPayloadBuilder()
 
     [<AbstractClass>]
+    [<System.Obsolete>]
     type Payload() =
         abstract member Content: IPayloadBuilder
 
@@ -123,5 +190,3 @@ module PayloadBuilder =
 
     let fromObj<'a> (value: 'a) =
         JsonPayloadImpl value :> Payload
-
-    // TODO: Refactor/rewrite these payloads to clean up usage
