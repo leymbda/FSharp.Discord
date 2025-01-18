@@ -3,24 +3,19 @@
 open System.Net.Http
 open System.Threading.Tasks
 
-[<Interface>]
+type IDiscordClient =
+    abstract SendAsync: HttpRequestMessage -> Task<HttpResponseMessage>
+
 type IBotClient =
-    abstract SendAsync: HttpRequestMessage -> Task<HttpResponseMessage>
+    inherit IDiscordClient
 
-[<Interface>]
 type IOAuthClient =
-    abstract SendAsync: HttpRequestMessage -> Task<HttpResponseMessage>
+    inherit IDiscordClient
 
-[<Interface>]
 type IBasicClient =
-    abstract SendAsync: HttpRequestMessage -> Task<HttpResponseMessage>
+    inherit IDiscordClient
 
-[<Interface>]
-type IDiscordApiClientFactory =
+type IDiscordClientFactory =
     abstract CreateBotClient: token: string -> IBotClient
     abstract CreateOAuthClient: token: string -> IOAuthClient
     abstract CreateBasicClient: clientId: string -> clientSecret: string -> IBasicClient
-
-[<Interface>]
-type IDiscordApiClientFactoryEnv =
-    abstract DiscordApiClientFactory: IDiscordApiClientFactory

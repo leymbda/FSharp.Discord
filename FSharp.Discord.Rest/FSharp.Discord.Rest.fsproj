@@ -14,11 +14,10 @@
 
   <ItemGroup>
     <Compile Include="Common\Constants.fs" />
-    <Compile Include="Abstractions\IDiscordApiClientFactory.fs" />
-    <Compile Include="Clients\DiscordClient.fs" />
-    <Compile Include="Clients\HttpClient.fs" />
+    <Compile Include="Abstractions\IDiscordClientFactory.fs" />
     <Compile Include="Builders\PayloadBuilder.fs" />
     <Compile Include="Builders\RequestBuilder.fs" />
+    <Compile Include="Modules\HttpClient.fs" />
     <Compile Include="Modules\DiscordError.fs" />
     <Compile Include="Modules\DiscordRequest.fs" />
     <Compile Include="Modules\DiscordResponse.fs" />

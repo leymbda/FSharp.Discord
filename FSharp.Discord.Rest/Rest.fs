@@ -2022,13 +2022,12 @@ let getSkuSubscription
 // ----- User -----
 
 let getCurrentUser
-    (client: DiscordClient) =
+    (client: IDiscordClient) =
         req {
             get "users/@me"
         }
-        |> DiscordClient.sendAsync <| client
+        |> client.SendAsync
         ?>> DiscordResponse.asJson<User>
-
 let getUser
     (userId: string)
     (client: IBotClient) =
@@ -2053,7 +2052,7 @@ let getCurrentUserGuilds
     (after: string option)
     (limit: int option)
     (withCounts: bool option)
-    (client: DiscordClient) =
+    (client: IDiscordClient) =
         req {
             get "users/@me/guilds"
             query "before" before
@@ -2061,16 +2060,16 @@ let getCurrentUserGuilds
             query "limit" (limit >>. _.ToString())
             query "with_counts" (withCounts >>. _.ToString())
         }
-        |> DiscordClient.sendAsync <| client
+        |> client.SendAsync
         ?>> DiscordResponse.asJson<PartialGuild list>
 
 let getCurrentUserGuildMember
     (guildId: string)
-    (client: DiscordClient) =
+    (client: IDiscordClient) =
         req {
             get $"users/@me/guilds/{guildId}/member"
         }
-        |> DiscordClient.sendAsync <| client
+        |> client.SendAsync
         ?>> DiscordResponse.asJson<GuildMember>
 
 let leaveGuild
@@ -2343,7 +2342,7 @@ let getGateway
     (version: string)
     (encoding: GatewayEncoding)
     (compression: GatewayCompression option)
-    (client: HttpClient) =
+    (client: HttpClient) = // TODO: Should this use the concrete HttpClient type?
         req {
             get "gateway"
             query "v" version
