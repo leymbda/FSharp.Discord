@@ -400,7 +400,12 @@ let modifyChannel
     (client: IBotClient) =
         req {
             patch $"channels/{channelId}"
-            payload (content.Payload)
+            payload (
+                match content with
+                | ModifyChannelPayload.GroupDm g -> g :> IPayload
+                | ModifyChannelPayload.Guild g -> g :> IPayload
+                | ModifyChannelPayload.Thread t -> t :> IPayload
+            )
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync

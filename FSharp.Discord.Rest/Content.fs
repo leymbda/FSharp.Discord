@@ -257,7 +257,7 @@ type EditCurrentApplicationPayload (
     ?description:                      string,
     ?role_connection_verification_url: string,
     ?install_params:                   InstallParams,
-    ?integration_types_config:         IDictionary<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>,
+    ?integration_types_config:         (ApplicationIntegrationType * ApplicationIntegrationTypeConfiguration) seq,
     ?flags:                            int,
     ?icon:                             string option,
     ?cover_image:                      string option,
@@ -267,24 +267,25 @@ type EditCurrentApplicationPayload (
     ?event_webhooks_status:            WebhookEventStatus,
     ?event_webhooks_types:             WebhookEventType list
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "custom_install_url" custom_install_url
-            optional "description" description
-            optional "role_connection_verification_url" role_connection_verification_url
-            optional "install_params" install_params
-            optional "integration_types_config" integration_types_config
-            optional "flags" flags
-            optional "icon" icon
-            optional "cover_image" cover_image
-            optional "interactions_endpoint_url" interactions_endpoint_url
-            optional "tags" tags
-            optional "event_webhooks_url" event_webhooks_url
-            optional "event_webhooks_status" event_webhooks_status
-            optional "event_webhooks_types" event_webhooks_types
-        }
-
-// ----- Audit Log -----
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "custom_install_url" custom_install_url
+                optional "description" description
+                optional "role_connection_verification_url" role_connection_verification_url
+                optional "install_params" install_params
+                optional "integration_types_config" (integration_types_config |> Option.map dict)
+                optional "flags" flags
+                optional "icon" icon
+                optional "cover_image" cover_image
+                optional "interactions_endpoint_url" interactions_endpoint_url
+                optional "tags" tags
+                optional "event_webhooks_url" event_webhooks_url
+                optional "event_webhooks_status" event_webhooks_status
+                optional "event_webhooks_types" event_webhooks_types
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Auto Moderation -----
 
@@ -298,17 +299,20 @@ type CreateAutoModerationRulePayload (
     ?exempt_roles:     string list,
     ?exempt_channels:  string list
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            required "event_type" event_type
-            required "trigger_type" trigger_type
-            optional "trigger_metadata" trigger_metadata
-            required "actions" actions
-            optional "enabled" enabled
-            optional "exempt_roles" exempt_roles
-            optional "exempt_channels" exempt_channels
-        }
+    interface IPayload with
+        override _.Content =
+            payload {
+                required "name" name
+                required "event_type" event_type
+                required "trigger_type" trigger_type
+                optional "trigger_metadata" trigger_metadata
+                required "actions" actions
+                optional "enabled" enabled
+                optional "exempt_roles" exempt_roles
+                optional "exempt_channels" exempt_channels
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ModifyAutoModerationRulePayload (
     ?name:             string,
@@ -319,41 +323,36 @@ type ModifyAutoModerationRulePayload (
     ?exempt_roles:     string list,
     ?exempt_channels:  string list
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "event_type" event_type
-            optional "trigger_metadata" trigger_metadata
-            optional "actions" actions
-            optional "enabled" enabled
-            optional "exempt_roles" exempt_roles
-            optional "exempt_channels" exempt_channels
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "event_type" event_type
+                optional "trigger_metadata" trigger_metadata
+                optional "actions" actions
+                optional "enabled" enabled
+                optional "exempt_roles" exempt_roles
+                optional "exempt_channels" exempt_channels
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Channel -----
 
-type ModifyChannelPayload =
-    | GroupDm of ModifyGroupDmChannelPayload
-    | Guild of ModifyGuildChannelPayload
-    | Thread of ModifyThreadChannelPayload
-with
-    member this.Payload =
-        match this with
-        | ModifyChannelPayload.GroupDm groupdm -> groupdm :> Payload
-        | ModifyChannelPayload.Guild guild -> guild :> Payload
-        | ModifyChannelPayload.Thread thread -> thread :> Payload
-
-and ModifyGroupDmChannelPayload(
+type ModifyGroupDmChannelPayload(
     ?name: string,
     ?icon: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "icon" icon
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "icon" icon
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-and ModifyGuildChannelPayload(
+type ModifyGuildChannelPayload(
     ?name:                               string,
     ?``type``:                           ChannelType,
     ?position:                           int option,
@@ -374,30 +373,33 @@ and ModifyGuildChannelPayload(
     ?default_sort_order:                 ChannelSortOrder option,
     ?default_forum_layout:               ForumLayout
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "type" ``type``
-            optional "position" position
-            optional "topic" topic
-            optional "nsfw" nsfw
-            optional "rate_limit_per_user" rate_limit_per_user
-            optional "bitrate" bitrate
-            optional "user_limit" user_limit
-            optional "permission_overwrites" permission_overwrites
-            optional "parent_id" parent_id
-            optional "rtc_region" rtc_region
-            optional "video_quality_mode" video_quality_mode
-            optional "default_auto_archive_duration" default_auto_archive_duration
-            optional "flags" flags
-            optional "available_tags" available_tags
-            optional "default_reaction_emoji" default_reaction_emoji
-            optional "default_thread_rate_limit_per_user" default_thread_rate_limit_per_user
-            optional "default_sort_order" default_sort_order
-            optional "default_forum_layout" default_forum_layout
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "type" ``type``
+                optional "position" position
+                optional "topic" topic
+                optional "nsfw" nsfw
+                optional "rate_limit_per_user" rate_limit_per_user
+                optional "bitrate" bitrate
+                optional "user_limit" user_limit
+                optional "permission_overwrites" permission_overwrites
+                optional "parent_id" parent_id
+                optional "rtc_region" rtc_region
+                optional "video_quality_mode" video_quality_mode
+                optional "default_auto_archive_duration" default_auto_archive_duration
+                optional "flags" flags
+                optional "available_tags" available_tags
+                optional "default_reaction_emoji" default_reaction_emoji
+                optional "default_thread_rate_limit_per_user" default_thread_rate_limit_per_user
+                optional "default_sort_order" default_sort_order
+                optional "default_forum_layout" default_forum_layout
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-and ModifyThreadChannelPayload (
+type ModifyThreadChannelPayload (
     ?name:                  string,
     ?archived:              bool,
     ?auto_archive_duration: int,
@@ -407,17 +409,25 @@ and ModifyThreadChannelPayload (
     ?flags:                 int,
     ?applied_tags:          string list
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "archived" archived
-            optional "auto_archive_duration" auto_archive_duration
-            optional "locked" locked
-            optional "invitable" invitable
-            optional "rate_limit_per_user" rate_limit_per_user
-            optional "flags" flags
-            optional "applied_tags" applied_tags
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "archived" archived
+                optional "auto_archive_duration" auto_archive_duration
+                optional "locked" locked
+                optional "invitable" invitable
+                optional "rate_limit_per_user" rate_limit_per_user
+                optional "flags" flags
+                optional "applied_tags" applied_tags
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
+
+type ModifyChannelPayload =
+    | GroupDm of ModifyGroupDmChannelPayload
+    | Guild   of ModifyGuildChannelPayload
+    | Thread  of ModifyThreadChannelPayload
 
 type EditChannelPermissionsType =
     | ROLE   = 0
@@ -428,12 +438,15 @@ type EditChannelPermissionsPayload (
     ?allow:   string option,
     ?deny:    string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "type" ``type``
-            optional "allow" allow
-            optional "deny" deny
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "type" ``type``
+                optional "allow" allow
+                optional "deny" deny
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type CreateChannelInvitePayload (
     target_type:            InviteTargetType,
@@ -444,46 +457,58 @@ type CreateChannelInvitePayload (
     ?target_user_id:        string,
     ?target_application_id: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "max_age" max_age
-            optional "max_uses" max_uses
-            optional "temporary" temporary
-            optional "unique" unique
-            required "target_type" target_type
-            optional "target_user_id" target_user_id
-            optional "target_application_id" target_application_id
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "max_age" max_age
+                optional "max_uses" max_uses
+                optional "temporary" temporary
+                optional "unique" unique
+                required "target_type" target_type
+                optional "target_user_id" target_user_id
+                optional "target_application_id" target_application_id
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type FollowAnnouncementChannelPayload (
     webhook_channel_id: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "webhook_channel_id" webhook_channel_id
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "webhook_channel_id" webhook_channel_id
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type GroupDmAddRecipientPayload (
     access_token: string,
     ?nick: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "access_token" access_token
-            optional "nick" nick
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "access_token" access_token
+                optional "nick" nick
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type StartThreadFromMessagePayload (
     name:                   string,
     ?auto_archive_duration: int,
     ?rate_limit_per_user:   int option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            optional "auto_archive_duration" auto_archive_duration
-            optional "rate_limit_per_user" rate_limit_per_user
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                optional "auto_archive_duration" auto_archive_duration
+                optional "rate_limit_per_user" rate_limit_per_user
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ThreadType =
     | ANNOUNCEMENT_THREAD = 10
@@ -497,14 +522,17 @@ type StartThreadWithoutMessagePayload (
     ?invitable:             bool,
     ?rate_limit_per_user:   int option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            optional "auto_archive_duration" auto_archive_duration
-            optional "type" ``type``
-            optional "invitable" invitable
-            optional "rate_limit_per_user" rate_limit_per_user
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                optional "auto_archive_duration" auto_archive_duration
+                optional "type" ``type``
+                optional "invitable" invitable
+                optional "rate_limit_per_user" rate_limit_per_user
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ForumAndMediaThreadMessageParams = {
     [<JsonPropertyName "content">] Content: string option
@@ -521,11 +549,11 @@ type StartThreadInForumOrMediaChannelPayload (
     message:                ForumAndMediaThreadMessageParams,
     ?auto_archive_duration: int,
     ?applied_tags:          string list,
-    ?files:                 IDictionary<string, IPayloadBuilder>
+    ?files:                 File list
 ) =
-    inherit Payload() with
-        override _.Content =
-            let payload_json = json {
+    interface IPayload with
+        member _.Content =
+            let payload = payload {
                 required "name" name
                 optional "auto_archive_duration" auto_archive_duration
                 required "message" message
@@ -533,9 +561,9 @@ type StartThreadInForumOrMediaChannelPayload (
             }
 
             match files with
-            | None -> payload_json
-            | Some f -> multipartOld {
-                part "payload_json" payload_json
+            | None -> payload |> Payload.toJsonContent :> HttpContent
+            | Some f -> multipart {
+                json "payload_json" payload
                 files f
             }
 
