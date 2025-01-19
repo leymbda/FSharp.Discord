@@ -7,6 +7,14 @@ open System.Text.Json
 
 type Payload = (string * obj) seq
 
+module StringContent =
+    let fromObjectAsJson (o: obj) =
+        new StringContent(Json.serializeF o, MediaTypeHeaderValue("application/json"))
+
+module HttpContent =
+    let fromObjectAsJson (o: obj) =
+        StringContent.fromObjectAsJson o :> HttpContent
+
 module Payload =
     let toJsonContent (p: Payload) =
         new StringContent(Json.serializeF p, MediaTypeHeaderValue("application/json"))
@@ -31,13 +39,13 @@ module PayloadBuilder =
         member _.Yield (p: Payload) = p
 
         [<CustomOperation>]
-        member _.required (p: Payload, key: string, value: obj) =
-            Seq.append [key, value] p
+        member _.required (p: Payload, key: string, value: 'a) =
+            Seq.append [key, (value :> obj)] p
 
         [<CustomOperation>]
-        member _.optional (p: Payload, key: string, value: obj option) =
+        member _.optional (p: Payload, key: string, value: 'a option) =
             match value with
-            | Some v -> Seq.append [key, v] p
+            | Some v -> Seq.append [key, (v :> obj)] p
             | None -> p
 
     let payload = PayloadBuilder ()
@@ -53,6 +61,11 @@ module MultipartBuilder =
         [<CustomOperation>]
         member _.json (m: MultipartFormDataContent, name: string, value: Payload) =
             m.Add(Payload.toJsonContent value, name)
+            m
+
+        [<CustomOperation>]
+        member _.json (m: MultipartFormDataContent, name: string, value: obj) =
+            m.Add(StringContent.fromObjectAsJson value, name)
             m
 
         [<CustomOperation>]
@@ -176,7 +189,7 @@ module PayloadBuilderOld =
             member this.ToContent () =
                 this.Form
 
-    let multipart = MultipartPayloadBuilder()
+    let multipartOld = MultipartPayloadBuilder()
 
     [<AbstractClass>]
     [<System.Obsolete>]

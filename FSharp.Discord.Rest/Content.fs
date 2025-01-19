@@ -6,37 +6,33 @@ open System.Collections.Generic
 open System.Text.Json
 open System.Text.Json.Serialization
 
-// TODO: Convert all IDictionary into seqs
-
 // ----- Interaction -----
 
 type CreateInteractionResponsePayload<'a> (
     payload: InteractionResponse,
-    ?files: IDictionary<string, IPayloadBuilder>
+    ?files:  File list
 ) =
-    inherit Payload() with
-        override _.Content =
-            let payload_json = JsonPayload payload
-
+    interface IPayload with
+        member _.Content =
             match files with
-            | None -> payload_json
+            | None -> HttpContent.fromObjectAsJson payload
             | Some f -> multipart {
-                part "payload_json" payload_json
+                json "payload_json" payload
                 files f
             }
 
 type EditOriginalInteractionResponsePayload (
-    ?content: string,
-    ?embeds: Embed list,
+    ?content:          string,
+    ?embeds:           Embed list,
     ?allowed_mentions: AllowedMentions,
-    ?components: Component list,
-    ?attachments: PartialAttachment list,
-    ?poll: Poll,
-    ?files: IDictionary<string, IPayloadBuilder>
+    ?components:       Component list,
+    ?attachments:      PartialAttachment list,
+    ?poll:             Poll,
+    ?files:            File list
 ) =
-    inherit Payload() with
-        override _.Content =
-            let payload_json = json {
+    interface IPayload with
+        member _.Content =
+            let payload = payload {
                 optional "content" content
                 optional "embeds" embeds
                 optional "allowed_mentions" allowed_mentions
@@ -46,9 +42,9 @@ type EditOriginalInteractionResponsePayload (
             }
 
             match files with
-            | None -> payload_json
+            | None -> HttpContent.fromObjectAsJson payload
             | Some f -> multipart {
-                part "payload_json" payload_json
+                json "payload_json" payload
                 files f
             }
 
@@ -78,7 +74,7 @@ type CreateFollowUpMessagePayload (
 
             match files with
             | None -> payload_json
-            | Some f -> multipart {
+            | Some f -> multipartOld {
                 part "payload_json" payload_json
                 files f
             }
@@ -105,7 +101,7 @@ type EditFollowUpMessagePayload (
 
             match files with
             | None -> payload_json
-            | Some f -> multipart {
+            | Some f -> multipartOld {
                 part "payload_json" payload_json
                 files f
             }
@@ -522,7 +518,7 @@ type StartThreadInForumOrMediaChannelPayload (
 
             match files with
             | None -> payload_json
-            | Some f -> multipart {
+            | Some f -> multipartOld {
                 part "payload_json" payload_json
                 files f
             }
@@ -1095,7 +1091,7 @@ type CreateMessagePayload (
 
             match files with
             | None -> payload_json
-            | Some f -> multipart {
+            | Some f -> multipartOld {
                 part "payload_json" payload_json
                 files f
             }
@@ -1122,7 +1118,7 @@ type EditMessagePayload (
 
             match files with
             | None -> payload_json
-            | Some f -> multipart {
+            | Some f -> multipartOld {
                 part "payload_json" payload_json
                 files f
             }
@@ -1234,7 +1230,7 @@ type CreateGuildStickerPayload (
     fileContent: IPayloadBuilder
 ) =
     inherit Payload() with
-        override _.Content = multipart {
+        override _.Content = multipartOld {
             part "name" (StringPayload name)
             part "description" (StringPayload description)
             part "tags" (StringPayload tags)
@@ -1394,7 +1390,7 @@ type ExecuteWebhookPayload (
 
             match files with
             | None -> payload_json
-            | Some f -> multipart {
+            | Some f -> multipartOld {
                 part "payload_json" payload_json
                 files f
             }
@@ -1421,7 +1417,7 @@ type EditWebhookMessagePayload (
 
             match files with
             | None -> payload_json
-            | Some f -> multipart {
+            | Some f -> multipartOld {
                 part "payload_json" payload_json
                 files f
             }
