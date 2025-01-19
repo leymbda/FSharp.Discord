@@ -31,8 +31,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.Discord.Utils.Tests.
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.Discord.Commands.Tests.Unit", "Tests\FSharp.Discord.Commands.Tests.Unit\FSharp.Discord.Commands.Tests.Unit.fsproj", "{BEC2A6FC-74F1-44A0-B47E-A325809A3AE0}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.Discord.Tests.Unit", "Tests\FSharp.Discord.Tests.Unit\FSharp.Discord.Tests.Unit.fsproj", "{23685200-B781-4278-A5EF-AF31D17A8F59}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,10 +89,6 @@ Global
 		{BEC2A6FC-74F1-44A0-B47E-A325809A3AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEC2A6FC-74F1-44A0-B47E-A325809A3AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEC2A6FC-74F1-44A0-B47E-A325809A3AE0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{23685200-B781-4278-A5EF-AF31D17A8F59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{23685200-B781-4278-A5EF-AF31D17A8F59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{23685200-B781-4278-A5EF-AF31D17A8F59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{23685200-B781-4278-A5EF-AF31D17A8F59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +100,5 @@ Global
 		{683760E5-38F2-494B-826B-F6A081A7068A} = {9A66A158-511A-43C1-BE92-9BF0A2909F98}
 		{B5D386D8-7E19-4C3A-B493-8D5711AD4C0C} = {9A66A158-511A-43C1-BE92-9BF0A2909F98}
 		{BEC2A6FC-74F1-44A0-B47E-A325809A3AE0} = {9A66A158-511A-43C1-BE92-9BF0A2909F98}
-		{23685200-B781-4278-A5EF-AF31D17A8F59} = {9A66A158-511A-43C1-BE92-9BF0A2909F98}
 	EndGlobalSection
 EndGlobal
