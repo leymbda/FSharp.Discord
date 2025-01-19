@@ -3,6 +3,7 @@
 open FSharp.Discord.Types
 open System
 open System.Collections.Generic
+open System.Net.Http
 open System.Text.Json
 open System.Text.Json.Serialization
 
@@ -49,19 +50,19 @@ type EditOriginalInteractionResponsePayload (
             }
 
 type CreateFollowUpMessagePayload (
-    ?content: string,
-    ?tts: bool,
-    ?embeds: Embed list,
+    ?content:          string,
+    ?tts:              bool,
+    ?embeds:           Embed list,
     ?allowed_mentions: AllowedMentions,
-    ?components: Component list,
-    ?attachments: PartialAttachment list,
-    ?flags: int,
-    ?poll: Poll,
-    ?files: IDictionary<string, IPayloadBuilder>
+    ?components:       Component list,
+    ?attachments:      PartialAttachment list,
+    ?flags:            int,
+    ?poll:             Poll,
+    ?files:            File list
 ) =
-    inherit Payload() with
-        override _.Content =
-            let payload_json = json {
+    interface IPayload with
+        member _.Content =
+            let payload = payload {
                 optional "content" content
                 optional "tts" tts
                 optional "embeds" embeds
@@ -73,24 +74,24 @@ type CreateFollowUpMessagePayload (
             }
 
             match files with
-            | None -> payload_json
-            | Some f -> multipartOld {
-                part "payload_json" payload_json
+            | None -> HttpContent.fromObjectAsJson payload
+            | Some f -> multipart {
+                json "payload_json" payload
                 files f
             }
 
 type EditFollowUpMessagePayload (
-    ?content: string option,
-    ?embeds: Embed list option,
+    ?content:          string option,
+    ?embeds:           Embed list option,
     ?allowed_mentions: AllowedMentions option,
-    ?components: Component list option,
-    ?attachments: PartialAttachment list option,
-    ?poll: Poll option,
-    ?files: IDictionary<string, IPayloadBuilder>
+    ?components:       Component list option,
+    ?attachments:      PartialAttachment list option,
+    ?poll:             Poll option,
+    ?files:            File list
 ) =
-    inherit Payload() with
-        override _.Content =
-            let payload_json = json {
+    interface IPayload with
+        member _.Content =
+            let payload = payload {
                 optional "content" content
                 optional "embeds" embeds
                 optional "allowed_mentions" allowed_mentions
@@ -98,11 +99,11 @@ type EditFollowUpMessagePayload (
                 optional "attachments" attachments
                 optional "poll" poll                
             }
-
+            
             match files with
-            | None -> payload_json
-            | Some f -> multipartOld {
-                part "payload_json" payload_json
+            | None -> HttpContent.fromObjectAsJson payload
+            | Some f -> multipart {
+                json "payload_json" payload
                 files f
             }
             
@@ -110,9 +111,9 @@ type EditFollowUpMessagePayload (
 
 type CreateGlobalApplicationCommandPayload (
     name:                        string,
-    ?name_localizations:         IDictionary<string, string> option,
+    ?name_localizations:         (string * string) seq option,
     ?description:                string,
-    ?description_localizations:  IDictionary<string, string> option,
+    ?description_localizations:  (string * string) seq option,
     ?options:                    ApplicationCommandOption list,
     ?default_member_permissions: string option,
     ?integration_types:          ApplicationIntegrationType list,
@@ -120,50 +121,56 @@ type CreateGlobalApplicationCommandPayload (
     ?``type``:                   ApplicationCommandType,
     ?nsfw:                       bool
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            optional "name_localizations" name_localizations
-            optional "description" description
-            optional "description_localizations" description_localizations
-            optional "options" options
-            optional "default_member_permissions" default_member_permissions
-            optional "integration_types" integration_types
-            optional "contexts" contexts
-            optional "type" ``type``
-            optional "nsfw" nsfw
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                optional "name_localizations" (name_localizations |> Option.map (Option.map dict))
+                optional "description" description
+                optional "description_localizations" (description_localizations |> Option.map (Option.map dict))
+                optional "options" options
+                optional "default_member_permissions" default_member_permissions
+                optional "integration_types" integration_types
+                optional "contexts" contexts
+                optional "type" ``type``
+                optional "nsfw" nsfw
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type EditGlobalApplicationCommandPayload (
     ?name:                       string,
-    ?name_localizations:         IDictionary<string, string> option,
+    ?name_localizations:         (string * string) seq option,
     ?description:                string,
-    ?description_localizations:  IDictionary<string, string> option,
+    ?description_localizations:  (string * string) seq option,
     ?options:                    ApplicationCommandOption list,
     ?default_member_permissions: string option,
     ?integration_types:          ApplicationIntegrationType list,
     ?contexts:                   InteractionContextType list,
     ?nsfw:                       bool
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "name_localizations" name_localizations
-            optional "description" description
-            optional "description_localizations" description_localizations
-            optional "options" options
-            optional "default_member_permissions" default_member_permissions
-            optional "integration_types" integration_types
-            optional "contexts" contexts
-            optional "nsfw" nsfw
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "name_localizations" (name_localizations |> Option.map (Option.map dict))
+                optional "description" description
+                optional "description_localizations" (description_localizations |> Option.map (Option.map dict))
+                optional "options" options
+                optional "default_member_permissions" default_member_permissions
+                optional "integration_types" integration_types
+                optional "contexts" contexts
+                optional "nsfw" nsfw
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type BulkOverwriteApplicationCommand = {
     [<JsonPropertyName "id">] Id: string option
     [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "name_localizations">] NameLocalizations: IDictionary<string, string> option
+    [<JsonPropertyName "name_localizations">] NameLocalizations: (string * string) seq option
     [<JsonPropertyName "description">] Description: string
-    [<JsonPropertyName "description_localizations">] DescriptionLocalizations: IDictionary<string, string> option
+    [<JsonPropertyName "description_localizations">] DescriptionLocalizations: (string * string) seq option
     [<JsonPropertyName "options">] Options: ApplicationCommandOption list option
     [<JsonPropertyName "default_member_permissions">] DefaultMemberPermissions: string option
     [<JsonPropertyName "integration_types">] IntegrationTypes: ApplicationIntegrationType list option
@@ -171,68 +178,77 @@ type BulkOverwriteApplicationCommand = {
     [<JsonPropertyName "type">] Type: ApplicationCommandType option
     [<JsonPropertyName "nsfw">] Nsfw: bool option
 }
-        
+
 type BulkOverwriteGlobalApplicationCommandsPayload (
     commands: BulkOverwriteApplicationCommand list
 ) =
-    inherit Payload() with
-        override _.Content = JsonListPayload commands
+    interface IPayload with
+        member _.Content = HttpContent.fromObjectAsJson commands
 
 type CreateGuildApplicationCommandPayload (
     name:                        string,
-    ?name_localizations:         IDictionary<string, string> option,
+    ?name_localizations:         (string * string) seq option,
     ?description:                string,
-    ?description_localizations:  IDictionary<string, string> option,
+    ?description_localizations:  (string * string) seq option,
     ?options:                    ApplicationCommandOption list,
     ?default_member_permissions: string option,
     ?``type``:                   ApplicationCommandType,
     ?nsfw:                       bool
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            optional "name_localizations" name_localizations
-            optional "description" description
-            optional "description_localizations" description_localizations
-            optional "options" options
-            optional "default_member_permissions" default_member_permissions
-            optional "type" ``type``
-            optional "nsfw" nsfw
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                optional "name_localizations" (name_localizations |> Option.map (Option.map dict))
+                optional "description" description
+                optional "description_localizations" (description_localizations |> Option.map (Option.map dict))
+                optional "options" options
+                optional "default_member_permissions" default_member_permissions
+                optional "type" ``type``
+                optional "nsfw" nsfw
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type EditGuildApplicationCommandPayload (
     ?name:                       string,
-    ?name_localizations:         IDictionary<string, string> option,
+    ?name_localizations:         (string * string) seq option,
     ?description:                string,
-    ?description_localizations:  IDictionary<string, string> option,
+    ?description_localizations:  (string * string) seq option,
     ?options:                    ApplicationCommandOption list,
     ?default_member_permissions: string option,
     ?nsfw:                       bool
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "name_localizations" name_localizations
-            optional "description" description
-            optional "description_localizations" description_localizations
-            optional "options" options
-            optional "default_member_permissions" default_member_permissions
-            optional "nsfw" nsfw
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "name_localizations" (name_localizations |> Option.map (Option.map dict))
+                optional "description" description
+                optional "description_localizations" (description_localizations |> Option.map (Option.map dict))
+                optional "options" options
+                optional "default_member_permissions" default_member_permissions
+                optional "nsfw" nsfw
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type BulkOverwriteGuildApplicationCommands (
     commands: BulkOverwriteApplicationCommand list
 ) =
-    inherit Payload() with
-        override _.Content = JsonListPayload commands
+    interface IPayload with
+        member _.Content = HttpContent.fromObjectAsJson commands
 
 type EditApplicationCommandPermissions (
     permissions: ApplicationCommandPermission list
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "permissions" permissions
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "permissions" permissions
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Application -----
 
