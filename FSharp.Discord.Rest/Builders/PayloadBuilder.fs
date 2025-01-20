@@ -69,14 +69,23 @@ module MultipartBuilder =
             m
 
         [<CustomOperation>]
-        member _.file (m: MultipartFormDataContent, file: File) =
-            m.Add(File.toContent file, $"files[{fileCount}", file.Name)
+        member _.file (m: MultipartFormDataContent, name: string, file: File) =
+            m.Add(File.toContent file, name, file.Name)
             fileCount <- fileCount + 1
             m
 
         [<CustomOperation>]
+        member this.file (m: MultipartFormDataContent, file: File) =
+            this.file (m, $"files[{fileCount}]", file)
+
+        [<CustomOperation>]
         member this.files (m: MultipartFormDataContent, files: File list) =
             List.fold (fun acc file -> this.file (acc, file)) m files
+
+        [<CustomOperation>]
+        member this.text (m: MultipartFormDataContent, name: string, content: string) =
+            m.Add(new StringContent(content, MediaTypeHeaderValue("plain/text")), name)
+            m
 
     let multipart = MultipartBuilder ()
 

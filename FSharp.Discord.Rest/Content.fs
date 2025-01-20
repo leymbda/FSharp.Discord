@@ -1184,11 +1184,11 @@ type CreateMessagePayload (
     ?flags:             int,
     ?enforce_nonce:     bool,
     ?poll:              Poll,
-    ?files:             IDictionary<string, IPayloadBuilder>
+    ?files:             File list
 ) =
-    inherit Payload() with
-        override _.Content =
-            let payload_json = json {
+    interface IPayload with
+        member _.Content =
+            let payload = payload {
                 optional "content" content
                 optional "nonce" (match nonce with | Some (MessageNonce.Number n) -> Some n | _ -> None)
                 optional "nonce" (match nonce with | Some (MessageNonce.String s) -> Some s | _ -> None)
@@ -1205,9 +1205,9 @@ type CreateMessagePayload (
             }
 
             match files with
-            | None -> payload_json
-            | Some f -> multipartOld {
-                part "payload_json" payload_json
+            | None -> payload |> Payload.toJsonContent :> HttpContent
+            | Some f -> multipart {
+                json "payload_json" payload
                 files f
             }
 
@@ -1218,11 +1218,11 @@ type EditMessagePayload (
     ?allow_mentions: AllowedMentions option,
     ?components:     Component list option,
     ?attachments:    PartialAttachment list option,
-    ?files:          IDictionary<string, IPayloadBuilder>
+    ?files:          File list
 ) =
-    inherit Payload() with
-        override _.Content =
-            let payload_json = json {
+    interface IPayload with
+        member _.Content =
+            let payload = payload {
                 optional "content" content
                 optional "embeds" embeds
                 optional "flags" flags
@@ -1232,19 +1232,22 @@ type EditMessagePayload (
             }
 
             match files with
-            | None -> payload_json
-            | Some f -> multipartOld {
-                part "payload_json" payload_json
+            | None -> payload |> Payload.toJsonContent :> HttpContent
+            | Some f -> multipart {
+                json "payload_json" payload
                 files f
             }
 
 type BulkDeleteMessagesPayload (
     messages: string list
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "messages" messages
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "messages" messages
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Poll -----
 
@@ -1257,10 +1260,8 @@ type GetAnswerVotersOkResponse = {
 type UpdateApplicationRoleConnectionMetadataRecordsPayload (
     metadata: ApplicationRoleConnectionMetadata list
 ) =
-    inherit Payload() with
-        override _.Content = JsonListPayload metadata
-
-// ----- Sku -----
+    interface IPayload with
+        member _.Content = HttpContent.fromObjectAsJson metadata
 
 // ----- Soundboard -----
 
@@ -1268,11 +1269,14 @@ type SendSoundboardSoundPayload (
     sound_id:         string,
     ?source_guild_id: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "sound_id" sound_id
-            optional "source_guild_id" source_guild_id
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "sound_id" sound_id
+                optional "source_guild_id" source_guild_id
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type CreateGuildSoundboardSoundPayload (
     name: string,
@@ -1281,14 +1285,17 @@ type CreateGuildSoundboardSoundPayload (
     ?emoji_id: string option,
     ?emoji_name: string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            required "sound" sound
-            optional "volume" volume
-            optional "emoji_id" emoji_id
-            optional "emoji_name" emoji_name
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                required "sound" sound
+                optional "volume" volume
+                optional "emoji_id" emoji_id
+                optional "emoji_name" emoji_name
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ModifyGuildSoundboardSoundPayload (
     ?name: string,
@@ -1296,13 +1303,16 @@ type ModifyGuildSoundboardSoundPayload (
     ?emoji_id: string option,
     ?emoji_name: string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "volume" volume
-            optional "emoji_id" emoji_id
-            optional "emoji_name" emoji_name
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "volume" volume
+                optional "emoji_id" emoji_id
+                optional "emoji_name" emoji_name
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Stage Instance -----
 
@@ -1313,24 +1323,30 @@ type CreateStageInstancePayload (
     ?send_start_notification:  bool,
     ?guild_scheduled_event_id: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "channel_id" channel_id
-            required "topic" topic
-            optional "privacy_level" privacy_level
-            optional "send_start_notification" send_start_notification
-            optional "guild_scheduled_event_id" guild_scheduled_event_id
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "channel_id" channel_id
+                required "topic" topic
+                optional "privacy_level" privacy_level
+                optional "send_start_notification" send_start_notification
+                optional "guild_scheduled_event_id" guild_scheduled_event_id
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ModifyStageInstancePayload (
     ?topic:         string,
     ?privacy_level: PrivacyLevel
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "topic" topic
-            optional "privacy_level" privacy_level
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "topic" topic
+                optional "privacy_level" privacy_level
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Sticker -----
 
@@ -1342,29 +1358,31 @@ type CreateGuildStickerPayload (
     name: string,
     description: string,
     tags: string,
-    fileContent: IPayloadBuilder
+    stickerFile: File
 ) =
-    inherit Payload() with
-        override _.Content = multipartOld {
-            part "name" (StringPayload name)
-            part "description" (StringPayload description)
-            part "tags" (StringPayload tags)
-            part "file" fileContent
-        }
+    interface IPayload with
+        member _.Content =
+            multipart {
+                text "name" name
+                text "description" description
+                text "tags" tags
+                file "file" stickerFile
+            }
 
 type ModifyGuildStickerPayload (
     name:        string,
     description: string option,
     tags:        string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            required "description" description
-            required "tags" tags
-        }
-
-// ----- Subscription -----
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                required "description" description
+                required "tags" tags
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- User -----
 
