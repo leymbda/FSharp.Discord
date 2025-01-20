@@ -6,8 +6,6 @@ open System.Net.Http
 open System.Text.Json
 open System.Text.Json.Serialization
 
-// TODO: Change all flags ints into flag enum lists
-
 // ----- Interaction -----
 
 type CreateInteractionResponsePayload<'a> (
@@ -57,7 +55,7 @@ type CreateFollowUpMessagePayload (
     ?allowed_mentions: AllowedMentions,
     ?components:       Component list,
     ?attachments:      PartialAttachment list,
-    ?flags:            int,
+    ?flags:            MessageFlag list, // Only supports EPHEMERAL
     ?poll:             Poll,
     ?files:            File list
 ) =
@@ -70,7 +68,7 @@ type CreateFollowUpMessagePayload (
                 optional "allowed_mentions" allowed_mentions
                 optional "components" components
                 optional "attachments" attachments
-                optional "flags" flags
+                optional "flags" (flags |> Option.map (List.map int >> List.distinct >> List.sum))
                 optional "poll" poll                
             }
 
@@ -259,7 +257,7 @@ type EditCurrentApplicationPayload (
     ?role_connection_verification_url: string,
     ?install_params:                   InstallParams,
     ?integration_types_config:         (ApplicationIntegrationType * ApplicationIntegrationTypeConfiguration) seq,
-    ?flags:                            int,
+    ?flags:                            ApplicationFlag list,
     ?icon:                             string option,
     ?cover_image:                      string option,
     ?interactions_endpoint_url:        string,
@@ -276,7 +274,7 @@ type EditCurrentApplicationPayload (
                 optional "role_connection_verification_url" role_connection_verification_url
                 optional "install_params" install_params
                 optional "integration_types_config" (integration_types_config |> Option.map dict)
-                optional "flags" flags
+                optional "flags" (flags |> Option.map (List.map int >> List.distinct >> List.sum))
                 optional "icon" icon
                 optional "cover_image" cover_image
                 optional "interactions_endpoint_url" interactions_endpoint_url
@@ -367,7 +365,7 @@ type ModifyGuildChannelPayload(
     ?rtc_region:                         string option,
     ?video_quality_mode:                 VideoQualityMode option,
     ?default_auto_archive_duration:      int option,
-    ?flags:                              int,
+    ?flags:                              ChannelFlag list,
     ?available_tags:                     ForumTag list,
     ?default_reaction_emoji:             DefaultReaction option,
     ?default_thread_rate_limit_per_user: int,
@@ -390,7 +388,7 @@ type ModifyGuildChannelPayload(
                 optional "rtc_region" rtc_region
                 optional "video_quality_mode" video_quality_mode
                 optional "default_auto_archive_duration" default_auto_archive_duration
-                optional "flags" flags
+                optional "flags" (flags |> Option.map (List.map int >> List.distinct >> List.sum))
                 optional "available_tags" available_tags
                 optional "default_reaction_emoji" default_reaction_emoji
                 optional "default_thread_rate_limit_per_user" default_thread_rate_limit_per_user
@@ -407,7 +405,7 @@ type ModifyThreadChannelPayload (
     ?locked:                bool,
     ?invitable:             bool,
     ?rate_limit_per_user:   int option,
-    ?flags:                 int,
+    ?flags:                 ChannelFlag list,
     ?applied_tags:          string list
 ) =
     interface IPayload with
@@ -419,7 +417,7 @@ type ModifyThreadChannelPayload (
                 optional "locked" locked
                 optional "invitable" invitable
                 optional "rate_limit_per_user" rate_limit_per_user
-                optional "flags" flags
+                optional "flags" (flags |> Option.map (List.map int >> List.distinct >> List.sum))
                 optional "applied_tags" applied_tags
             }
             |> Payload.toJsonContent
@@ -709,7 +707,7 @@ type CreateGuildPayload (
     ?afk_channel_id:                string,
     ?afk_timeout:                   int,
     ?system_channel_id:             string,
-    ?system_channel_flags:          int
+    ?system_channel_flags:          SystemChannelFlag list
 ) =
     interface IPayload with
         member _.Content =
@@ -724,7 +722,7 @@ type CreateGuildPayload (
                 optional "afk_channel_id" afk_channel_id
                 optional "afk_timeout" afk_timeout
                 optional "system_channel_id" system_channel_id
-                optional "system_channel_flags" system_channel_flags
+                optional "system_channel_flags" (system_channel_flags |> Option.map (List.map int >> List.distinct >> List.sum))
             }
             |> Payload.toJsonContent
             :> HttpContent
@@ -742,7 +740,7 @@ type ModifyGuildPayload (
     ?discovery_splash:              string option,
     ?banner:                        string option,
     ?system_channel_id:             string option,
-    ?system_channel_flags:          int,
+    ?system_channel_flags:          SystemChannelFlag list,
     ?rules_channel_id:              string option,
     ?public_updates_channel_id:     string option,
     ?preferred_locale:              string option,
@@ -766,7 +764,7 @@ type ModifyGuildPayload (
                 optional "discovery_splash" discovery_splash
                 optional "banner" banner
                 optional "system_channel_id" system_channel_id
-                optional "system_channel_flags" system_channel_flags
+                optional "system_channel_flags" (system_channel_flags |> Option.map (List.map int >> List.distinct >> List.sum))
                 optional "rules_channel_id" rules_channel_id
                 optional "public_updates_channel_id" public_updates_channel_id
                 optional "preferred_locale" preferred_locale
@@ -868,7 +866,7 @@ type ModifyGuildMemberPayload (
     ?deaf:                         bool option,
     ?channel_id:                   string option,
     ?communication_disabled_until: DateTime option,
-    ?flags:                        int option
+    ?flags:                        GuildMemberFlag list option
 ) =
     interface IPayload with
         member _.Content =
@@ -879,7 +877,7 @@ type ModifyGuildMemberPayload (
                 optional "deaf" deaf
                 optional "channel_id" channel_id
                 optional "communication_disabled_until" communication_disabled_until
-                optional "flags" flags
+                optional "flags" (flags |> Option.map (Option.map (List.map int >> List.distinct >> List.sum)))
             }
             |> Payload.toJsonContent
             :> HttpContent
@@ -1182,7 +1180,7 @@ type CreateMessagePayload (
     ?components:        Component list,
     ?sticker_ids:       string list,
     ?attachments:       PartialAttachment list,
-    ?flags:             int,
+    ?flags:             MessageFlag list,
     ?enforce_nonce:     bool,
     ?poll:              Poll,
     ?files:             File list
@@ -1200,7 +1198,7 @@ type CreateMessagePayload (
                 optional "components" components
                 optional "sticker_ids" sticker_ids
                 optional "attachments" attachments
-                optional "flags" flags
+                optional "flags" (flags |> Option.map (List.map int >> List.distinct >> List.sum))
                 optional "enforce_nonce" enforce_nonce
                 optional "poll" poll
             }
@@ -1215,7 +1213,7 @@ type CreateMessagePayload (
 type EditMessagePayload (
     ?content:        string option,
     ?embeds:         Embed list option,
-    ?flags:          int option,
+    ?flags:          MessageFlag list option,
     ?allow_mentions: AllowedMentions option,
     ?components:     Component list option,
     ?attachments:    PartialAttachment list option,
@@ -1226,7 +1224,7 @@ type EditMessagePayload (
             let payload = payload {
                 optional "content" content
                 optional "embeds" embeds
-                optional "flags" flags
+                optional "flags" (flags |> Option.map (Option.map (List.map int >> List.distinct >> List.sum)))
                 optional "allowed_mentions" allow_mentions
                 optional "components" components
                 optional "attachments" attachments
@@ -1526,7 +1524,7 @@ type ExecuteWebhookPayload (
     ?allowed_mentions: AllowedMentions,
     ?components:       Component list,
     ?attachments:      PartialAttachment list,
-    ?flags:            int,
+    ?flags:            MessageFlag list,
     ?thread_name:      string,
     ?applied_tags:     string list,
     ?poll:             Poll,
@@ -1543,7 +1541,7 @@ type ExecuteWebhookPayload (
                 optional "allowed_mentions" allowed_mentions
                 optional "components" components
                 optional "attachments" attachments
-                optional "flags" flags
+                optional "flags" (flags |> Option.map (List.map int >> List.distinct >> List.sum))
                 optional "thread_name" thread_name
                 optional "applied_tags" applied_tags
                 optional "poll" poll                
