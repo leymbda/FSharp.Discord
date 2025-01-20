@@ -2,10 +2,11 @@
 
 open FSharp.Discord.Types
 open System
-open System.Collections.Generic
 open System.Net.Http
 open System.Text.Json
 open System.Text.Json.Serialization
+
+// TODO: Change all flags ints into flag enum lists
 
 // ----- Interaction -----
 
@@ -1391,30 +1392,39 @@ type ModifyCurrentUserPayload (
     ?avatar:   string option,
     ?banner:   string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "username" username
-            optional "avatar" avatar
-            optional "banner" banner
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "username" username
+                optional "avatar" avatar
+                optional "banner" banner
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type CreateDmPayload (
     recipient_id: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "recipient_id" recipient_id
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "recipient_id" recipient_id
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type CreateGroupDmPayload (
     access_tokens: string list,
-    nicks:         IDictionary<string, string>
+    nicks:         (string * string) seq
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "access_tokens" access_tokens
-            required "nicks" nicks
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "access_tokens" access_tokens
+                required "nicks" (nicks |> dict)
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
     // TODO: Test if these are optional (likely just nicks is, but cant use openapi spec to check because same endpoint
     //       used for createDM which uses a different kind of payload and it doesnt discriminate them)
@@ -1422,14 +1432,17 @@ type CreateGroupDmPayload (
 type UpdateCurrentUserApplicationRoleConnectionPayload (
     ?platform_name:     string,
     ?platform_username: string,
-    ?metadata:          IDictionary<string, string> // value is the "stringified value"
+    ?metadata:          (string * string) seq // value is the "stringified value"
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "platform_name" platform_name
-            optional "platform_username" platform_username
-            optional "metadata" metadata
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "platform_name" platform_name
+                optional "platform_username" platform_username
+                optional "metadata" (metadata |> Option.map dict)
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Voice -----
 
@@ -1438,22 +1451,28 @@ type ModifyCurrentUserVoiceStatePayload (
     ?suppress:                   bool,
     ?request_to_speak_timestamp: DateTime option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "channel_id" channel_id
-            optional "suppress" suppress
-            optional "request_to_speak_timestamp" request_to_speak_timestamp
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "channel_id" channel_id
+                optional "suppress" suppress
+                optional "request_to_speak_timestamp" request_to_speak_timestamp
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ModifyUserVoiceStatePayload (
     channel_id: string,
     ?suppress:  bool
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "channel_id" channel_id
-            optional "suppress" suppress
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "channel_id" channel_id
+                optional "suppress" suppress
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Webhook -----
 
@@ -1461,52 +1480,61 @@ type CreateWebhookPayload (
     name:    string,
     ?avatar: string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            optional "avatar" avatar
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                optional "avatar" avatar
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ModifyWebhookPayload (
     ?name:       string,
     ?avatar:     string option,
     ?channel_id: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "avatar" avatar
-            optional "channel_id" channel_id
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "avatar" avatar
+                optional "channel_id" channel_id
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ModifyWebhookWithTokenPayload (
     ?name:   string,
     ?avatar: string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "avatar" avatar
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "avatar" avatar
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ExecuteWebhookPayload (
-    ?content: string,
-    ?username: string,
-    ?avatar_url: string,
-    ?tts: bool,
-    ?embeds: Embed list,
+    ?content:          string,
+    ?username:         string,
+    ?avatar_url:       string,
+    ?tts:              bool,
+    ?embeds:           Embed list,
     ?allowed_mentions: AllowedMentions,
-    ?components: Component list,
-    ?attachments: PartialAttachment list,
-    ?flags: int,
-    ?thread_name: string,
-    ?applied_tags: string list,
-    ?poll: Poll,
-    ?files: IDictionary<string, IPayloadBuilder>
+    ?components:       Component list,
+    ?attachments:      PartialAttachment list,
+    ?flags:            int,
+    ?thread_name:      string,
+    ?applied_tags:     string list,
+    ?poll:             Poll,
+    ?files:            File list
 ) =
-    inherit Payload() with
-        override _.Content =
-            let payload_json = json {
+    interface IPayload with
+        member _.Content =
+            let payload = payload {
                 optional "content" content
                 optional "username" username
                 optional "avatar_url" avatar_url
@@ -1522,24 +1550,24 @@ type ExecuteWebhookPayload (
             }
 
             match files with
-            | None -> payload_json
-            | Some f -> multipartOld {
-                part "payload_json" payload_json
+            | None -> payload |> Payload.toJsonContent :> HttpContent
+            | Some f -> multipart {
+                json "payload_json" payload
                 files f
             }
 
 type EditWebhookMessagePayload (
-    ?content: string option,
-    ?embeds: Embed list option,
+    ?content:          string option,
+    ?embeds:           Embed list option,
     ?allowed_mentions: AllowedMentions option,
-    ?components: Component list option,
-    ?attachments: PartialAttachment list option,
-    ?poll: Poll option,
-    ?files: IDictionary<string, IPayloadBuilder>
+    ?components:       Component list option,
+    ?attachments:      PartialAttachment list option,
+    ?poll:             Poll option,
+    ?files:            File list
 ) =
-    inherit Payload() with
-        override _.Content =
-            let payload_json = json {
+    interface IPayload with
+        member _.Content =
+            let payload = payload {
                 optional "content" content
                 optional "embeds" embeds
                 optional "allowed_mentions" allowed_mentions
@@ -1549,9 +1577,9 @@ type EditWebhookMessagePayload (
             }
 
             match files with
-            | None -> payload_json
-            | Some f -> multipartOld {
-                part "payload_json" payload_json
+            | None -> payload |> Payload.toJsonContent :> HttpContent
+            | Some f -> multipart {
+                json "payload_json" payload
                 files f
             }
 
@@ -1580,12 +1608,15 @@ type AuthorizationCodeGrantPayload (
     code:          string,
     redirect_uri:  string
 ) =
-    inherit Payload() with
-        override _.Content = urlencoded {
-            required "grant_type" "authorization_code"
-            required "code" code
-            required "redirect_uri" redirect_uri
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "grant_type" "authorization_code"
+                required "code" code
+                required "redirect_uri" redirect_uri
+            }
+            |> Payload.toFormContent
+            :> HttpContent
         
 type AuthorizationCodeGrantResponse = {
     [<JsonPropertyName "access_token">] AccessToken: string
@@ -1598,11 +1629,14 @@ type AuthorizationCodeGrantResponse = {
 type RefreshTokenGrantPayload (
     refresh_token: string
 ) =
-    inherit Payload() with
-        override _.Content = urlencoded {
-            required "grant_type" "refresh_token"
-            required "refresh_token" refresh_token
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "grant_type" "refresh_token"
+                required "refresh_token" refresh_token
+            }
+            |> Payload.toFormContent
+            :> HttpContent
 
 type RefreshTokenGrantResponse = {
     [<JsonPropertyName "access_token">] AccessToken: string
@@ -1616,20 +1650,26 @@ type RevokeTokenPayload (
     token:            string,
     ?token_type_hint: TokenTypeHint
 ) =
-    inherit Payload() with
-        override _.Content = urlencoded {
-            required "token" token
-            optional "token_type_hint" token_type_hint
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "token" token
+                optional "token_type_hint" token_type_hint
+            }
+            |> Payload.toFormContent
+            :> HttpContent
         
 type ClientCredentialsGrantPayload (
     scope: OAuth2Scope list
 ) =
-    inherit Payload() with
-        override _.Content = urlencoded {
-            required "grant_type" "client_credentials"
-            required "scope" scope
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "grant_type" "client_credentials"
+                required "scope" scope
+            }
+            |> Payload.toFormContent
+            :> HttpContent
 
 type ClientCredentialsGrantResponse = {
     [<JsonPropertyName "access_token">] AccessToken: string
