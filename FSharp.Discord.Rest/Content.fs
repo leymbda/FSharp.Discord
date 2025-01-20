@@ -617,49 +617,61 @@ type ListJoinedPrivateArchivedThreadsOkResponse = {
 
 // ----- Emoji -----
 
-type CreateGuildEmojiPayload(
+type CreateGuildEmojiPayload (
     name:  string,
     image: string,
     roles: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            required "image" image
-            required "roles" roles
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                required "image" image
+                required "roles" roles
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type ModifyGuildEmojiPayload(
+type ModifyGuildEmojiPayload (
     ?name:  string,
     ?roles: string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "roles" roles
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "roles" roles
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ListApplicationEmojisOkResponse = {
     [<JsonPropertyName "items">] Items: Emoji list
 }
 
-type CreateApplicationEmojiPayload(
+type CreateApplicationEmojiPayload (
     name:  string,
     image: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            required "image" image
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                required "image" image
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type ModifyApplicationEmojiPayload(
+type ModifyApplicationEmojiPayload (
     name: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Entitlement -----
 
@@ -673,16 +685,19 @@ type CreateTestEntitlementPayload (
     owner_id:   string,
     owner_type: EntitlementOwnerType
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "sku_id" sku_id
-            required "owner_id" owner_id
-            required "owner_type" owner_type
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "sku_id" sku_id
+                required "owner_id" owner_id
+                required "owner_type" owner_type
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Guild -----
 
-type CreateGuildPayload(
+type CreateGuildPayload (
     name:                           string,
     ?icon:                          string,
     ?verification_level:            VerificationLevel,
@@ -695,22 +710,25 @@ type CreateGuildPayload(
     ?system_channel_id:             string,
     ?system_channel_flags:          int
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            optional "icon" icon
-            optional "verification_level" verification_level
-            optional "default_message_notifications" default_message_notifications
-            optional "explicit_content_filter" explicit_content_filter
-            optional "roles" roles
-            optional "channels" channels
-            optional "afk_channel_id" afk_channel_id
-            optional "afk_timeout" afk_timeout
-            optional "system_channel_id" system_channel_id
-            optional "system_channel_flags" system_channel_flags
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                optional "icon" icon
+                optional "verification_level" verification_level
+                optional "default_message_notifications" default_message_notifications
+                optional "explicit_content_filter" explicit_content_filter
+                optional "roles" roles
+                optional "channels" channels
+                optional "afk_channel_id" afk_channel_id
+                optional "afk_timeout" afk_timeout
+                optional "system_channel_id" system_channel_id
+                optional "system_channel_flags" system_channel_flags
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type ModifyGuildPayload(
+type ModifyGuildPayload (
     ?name:                          string,
     ?verification_level:            VerificationLevel option,
     ?default_message_notifications: MessageNotificationLevel option,
@@ -732,31 +750,34 @@ type ModifyGuildPayload(
     ?premium_progress_bar_enabled:  bool,
     ?safety_alerts_channel_id:      string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "verification_level" verification_level
-            optional "default_message_notifications" default_message_notifications
-            optional "explicit_content_filter" explicit_content_filter
-            optional "afk_channel_id" afk_channel_id
-            optional "afk_timeout" afk_timeout
-            optional "icon" icon
-            optional "owner_id" owner_id
-            optional "splash" splash
-            optional "discovery_splash" discovery_splash
-            optional "banner" banner
-            optional "system_channel_id" system_channel_id
-            optional "system_channel_flags" system_channel_flags
-            optional "rules_channel_id" rules_channel_id
-            optional "public_updates_channel_id" public_updates_channel_id
-            optional "preferred_locale" preferred_locale
-            optional "features" (features >>. List.map _.ToString())
-            optional "description" description
-            optional "premium_progress_bar_enabled" premium_progress_bar_enabled
-            optional "safety_alerts_channel_id" safety_alerts_channel_id
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "verification_level" verification_level
+                optional "default_message_notifications" default_message_notifications
+                optional "explicit_content_filter" explicit_content_filter
+                optional "afk_channel_id" afk_channel_id
+                optional "afk_timeout" afk_timeout
+                optional "icon" icon
+                optional "owner_id" owner_id
+                optional "splash" splash
+                optional "discovery_splash" discovery_splash
+                optional "banner" banner
+                optional "system_channel_id" system_channel_id
+                optional "system_channel_flags" system_channel_flags
+                optional "rules_channel_id" rules_channel_id
+                optional "public_updates_channel_id" public_updates_channel_id
+                optional "preferred_locale" preferred_locale
+                optional "features" (features >>. List.map _.ToString())
+                optional "description" description
+                optional "premium_progress_bar_enabled" premium_progress_bar_enabled
+                optional "safety_alerts_channel_id" safety_alerts_channel_id
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type CreateGuildChannelPayload(
+type CreateGuildChannelPayload (
     name:                                string,
     ?``type``:                           ChannelType option,
     ?topic:                              string option,
@@ -776,27 +797,30 @@ type CreateGuildChannelPayload(
     ?default_forum_layout:               ForumLayout option,
     ?default_thread_rate_limit_per_user: int option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            optional "type" ``type``
-            optional "topic" topic
-            optional "bitrate" bitrate
-            optional "user_limit" user_limit
-            optional "rate_limit_per_user" rate_limit_per_user
-            optional "position" position
-            optional "permission_overwrites" permission_overwrites
-            optional "parent_id" parent_id
-            optional "nsfw" nsfw
-            optional "rtc_region" rtc_region
-            optional "video_quality_mode" video_quality_mode
-            optional "default_auto_archive_duration" default_auto_archive_duration
-            optional "default_reaction_emoji" default_reaction_emoji
-            optional "available_tags" available_tags
-            optional "default_sort_order" default_sort_order
-            optional "default_forum_layout" default_forum_layout
-            optional "default_thread_rate_limit_per_user" default_thread_rate_limit_per_user
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                optional "type" ``type``
+                optional "topic" topic
+                optional "bitrate" bitrate
+                optional "user_limit" user_limit
+                optional "rate_limit_per_user" rate_limit_per_user
+                optional "position" position
+                optional "permission_overwrites" permission_overwrites
+                optional "parent_id" parent_id
+                optional "nsfw" nsfw
+                optional "rtc_region" rtc_region
+                optional "video_quality_mode" video_quality_mode
+                optional "default_auto_archive_duration" default_auto_archive_duration
+                optional "default_reaction_emoji" default_reaction_emoji
+                optional "available_tags" available_tags
+                optional "default_sort_order" default_sort_order
+                optional "default_forum_layout" default_forum_layout
+                optional "default_thread_rate_limit_per_user" default_thread_rate_limit_per_user
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 
 type ModifyGuildChannelPosition = {
@@ -806,35 +830,37 @@ type ModifyGuildChannelPosition = {
     [<JsonPropertyName "parent_id">] ParentId: string option
 }
 
-type ModifyGuildChannelPositionsPayload(
+type ModifyGuildChannelPositionsPayload (
     positions: ModifyGuildChannelPosition list
 ) =
-    inherit Payload() with
-        override _.Content =
-            JsonListPayload positions
+    interface IPayload with
+        member _.Content = HttpContent.fromObjectAsJson positions
 
 type ListActiveGuildThreadsOkResponse = {
     [<JsonPropertyName "threads">] Threads: Channel list
     [<JsonPropertyName "members">] Members: GuildMember list
 }
 
-type AddGuildMemberPayload(
+type AddGuildMemberPayload (
     access_token: string,
     ?nick:        string,
     ?roles:       string list,
     ?mute:        bool,
     ?deaf:        bool
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "access_token" access_token
-            optional "nick" nick
-            optional "roles" roles
-            optional "mute" mute
-            optional "deaf" deaf
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "access_token" access_token
+                optional "nick" nick
+                optional "roles" roles
+                optional "mute" mute
+                optional "deaf" deaf
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type ModifyGuildMemberPayload(
+type ModifyGuildMemberPayload (
     ?nick:                         string option,
     ?roles:                        string list option,
     ?mute:                         bool option,
@@ -843,51 +869,63 @@ type ModifyGuildMemberPayload(
     ?communication_disabled_until: DateTime option,
     ?flags:                        int option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "nick" nick
-            optional "roles" roles
-            optional "mute" mute
-            optional "deaf" deaf
-            optional "channel_id" channel_id
-            optional "communication_disabled_until" communication_disabled_until
-            optional "flags" flags
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "nick" nick
+                optional "roles" roles
+                optional "mute" mute
+                optional "deaf" deaf
+                optional "channel_id" channel_id
+                optional "communication_disabled_until" communication_disabled_until
+                optional "flags" flags
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type ModifyCurrentMemberPayload(
+type ModifyCurrentMemberPayload (
     ?nick: string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "nick" nick
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "nick" nick
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type CreateGuildBanPayload(
+type CreateGuildBanPayload (
     ?delete_message_days:    int,
     ?delete_message_seconds: int
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "delete_message_days" delete_message_days
-            optional "delete_message_seconds" delete_message_seconds
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "delete_message_days" delete_message_days
+                optional "delete_message_seconds" delete_message_seconds
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type BulkGuildBanPayload(
+type BulkGuildBanPayload (
     user_ids:                string list,
     ?delete_message_seconds: int
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "user_ids" user_ids
-            optional "delete_message_seconds" delete_message_seconds
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "user_ids" user_ids
+                optional "delete_message_seconds" delete_message_seconds
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type BulkGuildBanOkResponse = {
     [<JsonPropertyName "banned_users">] BannedUsers: string list
     [<JsonPropertyName "failed_users">] FailedUsers: string list
 }
     
-type CreateGuildRolePayload(
+type CreateGuildRolePayload (
     ?name:          string,
     ?permissions:   string,
     ?color:         int,
@@ -896,16 +934,19 @@ type CreateGuildRolePayload(
     ?unicode_emoji: string option,
     ?mentionable:   bool
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "permissions" permissions
-            optional "color" color
-            optional "hoist" hoist
-            optional "icon" icon
-            optional "unicode_emoji" unicode_emoji
-            optional "mentionable" mentionable
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "permissions" permissions
+                optional "color" color
+                optional "hoist" hoist
+                optional "icon" icon
+                optional "unicode_emoji" unicode_emoji
+                optional "mentionable" mentionable
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ModifyGuildRolePosition = {
     [<JsonPropertyName "id">] Id: string
@@ -915,11 +956,10 @@ type ModifyGuildRolePosition = {
 type ModifyGuildRolePositionsPayload(
     positions: ModifyGuildRolePosition list
 ) =
-    inherit Payload() with
-        override _.Content =
-            JsonListPayload positions
+    interface IPayload with
+        member _.Content = HttpContent.fromObjectAsJson positions
 
-type ModifyGuildRolePayload(
+type ModifyGuildRolePayload (
     ?name:          string option,
     ?permissions:   string option,
     ?color:         int option,
@@ -928,87 +968,105 @@ type ModifyGuildRolePayload(
     ?unicode_emoji: string option,
     ?mentionable:   bool option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "permissions" permissions
-            optional "color" color
-            optional "hoist" hoist
-            optional "icon" icon
-            optional "unicode_emoji" unicode_emoji
-            optional "mentionable" mentionable
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "permissions" permissions
+                optional "color" color
+                optional "hoist" hoist
+                optional "icon" icon
+                optional "unicode_emoji" unicode_emoji
+                optional "mentionable" mentionable
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type ModifyGuildMfaLevelPayload(
+type ModifyGuildMfaLevelPayload (
     level: MfaLevel
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "level" level
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "level" level
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type GetGuildPruneCountOkResponse = {
     [<JsonPropertyName "pruned">] Pruned: int
 }
 
-type BeginGuildPrunePayload(
+type BeginGuildPrunePayload (
     ?days: int,
     ?compute_prune_count: bool,
     ?include_roles: string list,
     ?reason: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "days" days
-            optional "compute_prune_count" compute_prune_count
-            optional "include_roles" include_roles
-            optional "reason" reason
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "days" days
+                optional "compute_prune_count" compute_prune_count
+                optional "include_roles" include_roles
+                optional "reason" reason
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type BeginGuildPruneOkResponse = {
     [<JsonPropertyName "pruned">] Pruned: int option
 }
 
-type ModifyGuildWidgetPayload(
+type ModifyGuildWidgetPayload (
     ?enabled:    bool,
     ?channel_id: string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "enabled" enabled
-            optional "channel_id" channel_id
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "enabled" enabled
+                optional "channel_id" channel_id
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type GetGuildVanityUrlOkResponse = {
     [<JsonPropertyName "code">] Code: string option
     [<JsonPropertyName "uses">] Uses: int
 }
 
-type ModifyGuildWelcomeScreenPayload(
+type ModifyGuildWelcomeScreenPayload (
     ?enabled:          bool option,
     ?welcome_channels: WelcomeScreenChannel list option,
     ?description:      string option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "enabled" enabled
-            optional "welcome_channels" welcome_channels
-            optional "description" description
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "enabled" enabled
+                optional "welcome_channels" welcome_channels
+                optional "description" description
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
-type ModifyGuildOnboardingPayload(
+type ModifyGuildOnboardingPayload (
     prompts:             GuildOnboardingPrompt list,
     default_channel_ids: string list,
     enabled:             bool,
     mode:                OnboardingMode
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "prompts" prompts
-            required "default_channel_ids" default_channel_ids
-            required "enabled" enabled
-            required "mode" mode
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "prompts" prompts
+                required "default_channel_ids" default_channel_ids
+                required "enabled" enabled
+                required "mode" mode
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Guild Scheduled Event -----
 
@@ -1024,19 +1082,22 @@ type CreateGuildScheduledEventPayload (
     ?image:               string,
     ?recurrence_rule:     RecurrenceRule
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "channel_id" channel_id
-            optional "entity_metadata" entity_metadata
-            required "name" name
-            required "privacy_level" privacy_level
-            required "scheduled_start_time" scheduled_start_time
-            optional "scheduled_end_time" scheduled_end_time
-            optional "description" description
-            required "entity_type" entity_type
-            optional "image" image
-            optional "recurrence_rule" recurrence_rule
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "channel_id" channel_id
+                optional "entity_metadata" entity_metadata
+                required "name" name
+                required "privacy_level" privacy_level
+                required "scheduled_start_time" scheduled_start_time
+                optional "scheduled_end_time" scheduled_end_time
+                optional "description" description
+                required "entity_type" entity_type
+                optional "image" image
+                optional "recurrence_rule" recurrence_rule
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ModifyGuildScheduledEventPayload (
     ?channel_id:           string option,
@@ -1050,19 +1111,22 @@ type ModifyGuildScheduledEventPayload (
     ?image:                string,
     ?recurrence_rule:      RecurrenceRule option
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "channel_id" channel_id
-            optional "entity_metadata" entity_metadata
-            optional "name" name
-            optional "privacy_level" privacy_level
-            optional "scheduled_start_time" scheduled_start_time
-            optional "scheduled_end_time" scheduled_end_time
-            optional "description" description
-            optional "entity_type" entity_type
-            optional "image" image
-            optional "recurrence_rule" recurrence_rule
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "channel_id" channel_id
+                optional "entity_metadata" entity_metadata
+                optional "name" name
+                optional "privacy_level" privacy_level
+                optional "scheduled_start_time" scheduled_start_time
+                optional "scheduled_end_time" scheduled_end_time
+                optional "description" description
+                optional "entity_type" entity_type
+                optional "image" image
+                optional "recurrence_rule" recurrence_rule
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Guild Template -----
 
@@ -1070,33 +1134,40 @@ type CreateGuildFromTemplatePayload (
     name:  string,
     ?icon: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            optional "icon" icon
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                optional "icon" icon
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type CreateGuildTemplatePayload (
     name:         string,
     ?description: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            required "name" name
-            optional "description" description
-        }
+    interface IPayload with
+        member _.Content =
+            payload {
+                required "name" name
+                optional "description" description
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 type ModifyGuildTemplatePayload (
     ?name:        string,
     ?description: string
 ) =
-    inherit Payload() with
-        override _.Content = json {
-            optional "name" name
-            optional "description" description
-        }
-
-// ----- Invite -----
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "name" name
+                optional "description" description
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
 
 // ----- Message -----
 
