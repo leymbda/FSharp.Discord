@@ -1390,6 +1390,19 @@ let modifyGuildOnboarding
         |> client.SendAsync
         ?>> DiscordResponse.asJson<GuildOnboarding>
 
+let modifyGuildIncidentActions
+    (guildId: string)
+    (auditLogReason: string option)
+    (content: ModifyGuildIncidentActionsPayload)
+    (client: IBotClient) =
+        req {
+            put $"guilds/{guildId}/incident-actions"
+            payload content
+        }
+        |> DiscordRequest.withAuditLogReason auditLogReason
+        |> client.SendAsync
+        ?>> DiscordResponse.asJson<IncidentsData>
+
 // ----- Guild Scheduled Event -----
 
 let listGuildScheduledEvents

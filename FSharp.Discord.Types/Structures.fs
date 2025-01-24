@@ -1047,6 +1047,7 @@ type Guild = {
     [<JsonPropertyName "stickers">] Stickers: Sticker list option
     [<JsonPropertyName "premium_progress_bar_enabled">] PremiumProgressBarEnabled: bool
     [<JsonPropertyName "safety_alerts_channel_id">] SafetyAlertsChannelId: string option
+    [<JsonPropertyName "incidents_data">] IncidentsData: IncidentsData option
 }
 
 and PartialGuild = {
@@ -1271,6 +1272,14 @@ type GuildOnboardingPromptOption = {
     [<JsonPropertyName "emoji_animated">] EmojiAnimated: bool option
     [<JsonPropertyName "title">] Title: string
     [<JsonPropertyName "description">] Description: string
+}
+
+// https://discord.com/developers/docs/resources/guild#incidents-data-object-incidents-data-structure
+type IncidentsData = {
+    [<JsonPropertyName "invites_disabled_until">] InvitesDisabledUntil: DateTime option
+    [<JsonPropertyName "dms_disabled_until">] DmsDisabledUntil: DateTime option
+    [<JsonPropertyName "dm_spam_detected_at">] DmSpamDetectedAt: DateTime option
+    [<JsonPropertyName "raid_detected_at">] RaidDetectedAt: DateTime option
 }
 
 // ----- Resources: Guild Scheduled Event -----

@@ -108,6 +108,8 @@ type MessageFlag =
     | SUPPRESS_NOTIFICATIONS =                 (1 <<< 12)
     /// This message is a voice message
     | IS_VOICE_MESSAGE =                       (1 <<< 13)
+    /// This message has a snapshot (via Message Forwarding)
+    | HAS_SNAPSHOT =                           (1 <<< 14)
 
 // https://discord.com/developers/docs/topics/permissions#role-object-role-flags
 type RoleFlag =

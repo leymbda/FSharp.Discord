@@ -1067,6 +1067,19 @@ type ModifyGuildOnboardingPayload (
             |> Payload.toJsonContent
             :> HttpContent
 
+type ModifyGuildIncidentActionsPayload (
+    invites_disabled_until: DateTime option, // max 24 hours
+    dms_disabled_until:     DateTime option  // max 24 hours
+) =
+    interface IPayload with
+        member _.Content =
+            payload {
+                optional "invites_disabled_until" invites_disabled_until
+                optional "dms_disabled_until" dms_disabled_until
+            }
+            |> Payload.toJsonContent
+            :> HttpContent
+
 // ----- Guild Scheduled Event -----
 
 type CreateGuildScheduledEventPayload (
