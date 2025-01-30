@@ -768,7 +768,7 @@ type ModifyGuildPayload (
                 optional "rules_channel_id" rules_channel_id
                 optional "public_updates_channel_id" public_updates_channel_id
                 optional "preferred_locale" preferred_locale
-                optional "features" (features >>. List.map _.ToString())
+                optional "features" (features >>. List.map GuildFeature.toString)
                 optional "description" description
                 optional "premium_progress_bar_enabled" premium_progress_bar_enabled
                 optional "safety_alerts_channel_id" safety_alerts_channel_id
@@ -1610,7 +1610,7 @@ type GetGatewayBotOkResponse = {
 
 type GetCurrentAuthorizationInformationOkResponse = {
     [<JsonPropertyName "application">] Application: PartialApplication
-    [<JsonPropertyName "scopes">] [<JsonConverter(typeof<OAuth2ScopeListConverter>)>] Scopes: OAuth2Scope list
+    [<JsonPropertyName "scopes">] [<JsonConverter(typeof<OAuth2Scope.ListConverter>)>] Scopes: OAuth2Scope list
     [<JsonPropertyName "expires">] Expires: DateTime
     [<JsonPropertyName "user">] User: User option
 }
@@ -1634,7 +1634,7 @@ type AuthorizationCodeGrantResponse = {
     [<JsonPropertyName "token_type">] TokenType: string
     [<JsonPropertyName "expires_in">] ExpiresIn: int
     [<JsonPropertyName "refresh_token">] RefreshToken: string
-    [<JsonPropertyName "scope">] [<JsonConverter(typeof<OAuth2ScopeListConverter>)>] Scope: OAuth2Scope list
+    [<JsonPropertyName "scope">] [<JsonConverter(typeof<OAuth2Scope.ListConverter>)>] Scope: OAuth2Scope list
 }
 
 type RefreshTokenGrantPayload (
@@ -1654,7 +1654,7 @@ type RefreshTokenGrantResponse = {
     [<JsonPropertyName "token_type">] TokenType: string
     [<JsonPropertyName "expires_in">] ExpiresIn: int
     [<JsonPropertyName "refresh_token">] RefreshToken: string
-    [<JsonPropertyName "scope">] [<JsonConverter(typeof<OAuth2ScopeListConverter>)>] Scope: OAuth2Scope list
+    [<JsonPropertyName "scope">] [<JsonConverter(typeof<OAuth2Scope.ListConverter>)>] Scope: OAuth2Scope list
 }
 
 type RevokeTokenPayload (
@@ -1686,5 +1686,5 @@ type ClientCredentialsGrantResponse = {
     [<JsonPropertyName "access_token">] AccessToken: string
     [<JsonPropertyName "token_type">] TokenType: string
     [<JsonPropertyName "expires_in">] ExpiresIn: int
-    [<JsonPropertyName "scope">] [<JsonConverter(typeof<OAuth2ScopeListConverter>)>] Scope: OAuth2Scope list
+    [<JsonPropertyName "scope">] [<JsonConverter(typeof<OAuth2Scope.ListConverter>)>] Scope: OAuth2Scope list
 }

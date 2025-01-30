@@ -86,7 +86,7 @@ type VerificationLevel =
     | VERY_HIGH = 4
 
 // https://discord.com/developers/docs/resources/guild#guild-object-guild-features
-[<JsonConverter(typeof<GuildFeatureConverter>)>]
+[<JsonConverter(typeof<GuildFeature.Converter>)>]
 type GuildFeature =
     | ANIMATED_BANNER
     | ANIMATED_ICON
@@ -115,9 +115,10 @@ type GuildFeature =
     | VERIFIED
     | VIP_REGIONS
     | WELCOME_SCREEN_ENABLED
-with
-    override this.ToString () =
-        match this with
+
+module GuildFeature =
+    let toString (feature: GuildFeature) =
+        match feature with
         | GuildFeature.ANIMATED_BANNER -> "ANIMATED_BANNER"
         | GuildFeature.ANIMATED_ICON -> "ANIMATED_ICON"
         | GuildFeature.APPLICATION_COMMAND_PERMISSIONS_V2 -> "APPLICATION_COMMAND_PERMISSIONS_V2"
@@ -146,7 +147,7 @@ with
         | GuildFeature.VIP_REGIONS -> "VIP_REGIONS"
         | GuildFeature.WELCOME_SCREEN_ENABLED -> "WELCOME_SCREEN_ENABLED"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "ANIMATED_BANNER" -> Some GuildFeature.ANIMATED_BANNER
         | "ANIMATED_ICON" -> Some GuildFeature.ANIMATED_ICON
@@ -177,16 +178,16 @@ with
         | "WELCOME_SCREEN_ENABLED" -> Some GuildFeature.WELCOME_SCREEN_ENABLED
         | _ -> None
 
-and GuildFeatureConverter () =
-    inherit JsonConverter<GuildFeature> ()
+    type Converter () =
+        inherit JsonConverter<GuildFeature> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> GuildFeature.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildFeature type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildFeature type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-onboarding-mode
 type OnboardingMode =
@@ -321,35 +322,36 @@ and ApplicationCommandMaxValueConverter () =
         | ApplicationCommandMaxValue.Int v -> writer.WriteNumberValue v
         | ApplicationCommandMaxValue.Double v -> writer.WriteNumberValue v
 
-[<JsonConverter(typeof<AllowedMentionsParseTypeConverter>)>]
+[<JsonConverter(typeof<AllowedMentionsParseType.Converter>)>]
 type AllowedMentionsParseType =
     | ROLES
     | USERS
     | EVERYONE
-with
-    override this.ToString () =
-        match this with
+
+module AllowedMentionsParseType =
+    let toString (mentions: AllowedMentionsParseType) =
+        match mentions with
         | AllowedMentionsParseType.ROLES -> "roles"
         | AllowedMentionsParseType.USERS -> "users"
         | AllowedMentionsParseType.EVERYONE -> "everyone"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "roles" -> Some AllowedMentionsParseType.ROLES
         | "users" -> Some AllowedMentionsParseType.USERS
         | "everyone" -> Some AllowedMentionsParseType.EVERYONE
         | _ -> None
 
-and AllowedMentionsParseTypeConverter () =
-    inherit JsonConverter<AllowedMentionsParseType> ()
+    type Converter () =
+        inherit JsonConverter<AllowedMentionsParseType> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> AllowedMentionsParseType.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected AllowedMentionsParseType type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected AllowedMentionsParseType type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
 [<JsonConverter(typeof<SoundboardSoundIdConverter>)>]
 type SoundboardSoundId =
@@ -383,38 +385,39 @@ type AutoModerationKeywordPreset =
     | SLURS          = 3
 
 // https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-kind-enum
-[<JsonConverter(typeof<ActivityLocationKindConverter>)>]
+[<JsonConverter(typeof<ActivityLocationKind.Converter>)>]
 type ActivityLocationKind =
     | GUILD_CHANNEL
     | PRIVATE_CHANNEL
-with
-    override this.ToString () =
-        match this with
+
+module ActivityLocationKind =
+    let toString (kind: ActivityLocationKind) =
+        match kind with
         | ActivityLocationKind.GUILD_CHANNEL -> "gc"
         | ActivityLocationKind.PRIVATE_CHANNEL -> "pc"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "gc" -> Some ActivityLocationKind.GUILD_CHANNEL
         | "pc" -> Some ActivityLocationKind.PRIVATE_CHANNEL
         | _ -> None
 
-and ActivityLocationKindConverter () =
-    inherit JsonConverter<ActivityLocationKind> ()
+    type Converter () =
+        inherit JsonConverter<ActivityLocationKind> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> ActivityLocationKind.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected ActivityLocationKind type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected ActivityLocationKind type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
 type IntegrationExpireBehavior =
     | REMOVE_ROLE = 0
     | KICK        = 1
 
-[<JsonConverter(typeof<OAuth2ScopeConverter>)>]
+[<JsonConverter(typeof<OAuth2Scope.Converter>)>]
 type OAuth2Scope =
     | ACTIVITIES_READ
     | ACTIVITIES_WRITE
@@ -444,9 +447,10 @@ type OAuth2Scope =
     | RPC_VOICE_WRITE
     | VOICE
     | WEBHOOK_INCOMING
-with
-    override this.ToString () =
-        match this with
+
+module OAuth2Scope =
+    let toString (scope: OAuth2Scope) =
+        match scope with
         | OAuth2Scope.ACTIVITIES_READ -> "activities.read"
         | OAuth2Scope.ACTIVITIES_WRITE -> "activities.write"
         | OAuth2Scope.APPLICATIONS_BUILDS_READ -> "applications.builds.read"
@@ -476,7 +480,7 @@ with
         | OAuth2Scope.VOICE -> "voice"
         | OAuth2Scope.WEBHOOK_INCOMING -> "webhook.incoming"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "activities.read" -> Some OAuth2Scope.ACTIVITIES_READ
         | "activities.write" -> Some OAuth2Scope.ACTIVITIES_WRITE
@@ -508,78 +512,80 @@ with
         | "webhook.incoming" -> Some OAuth2Scope.WEBHOOK_INCOMING
         | _ -> None
 
-and OAuth2ScopeConverter () =
-    inherit JsonConverter<OAuth2Scope> ()
+    type Converter () =
+        inherit JsonConverter<OAuth2Scope> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> OAuth2Scope.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
-and OAuth2ScopeListConverter () =
-    inherit JsonConverter<OAuth2Scope list> ()
+    type ListConverter () =
+        inherit JsonConverter<OAuth2Scope list> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> _.Split(' ')
-        |> Array.map OAuth2Scope.FromString
-        |> Array.map (Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type"))
-        |> Array.toList
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> _.Split(' ')
+            |> Array.map OAuth2Scope.fromString
+            |> Array.map (Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type"))
+            |> Array.toList
 
-    override _.Write (writer, value, _) =
-        value
-        |> List.map (_.ToString())
-        |> (fun v -> String.Join(' ', v))
-        |> writer.WriteStringValue
+        override _.Write (writer, value, _) =
+            value
+            |> List.map (fun v -> OAuth2Scope.toString v)
+            |> (fun v -> String.Join(' ', v))
+            |> writer.WriteStringValue
 
-[<JsonConverter(typeof<TokenTypeHintConverter>)>]
+[<JsonConverter(typeof<TokenTypeHint.Converter>)>]
 type TokenTypeHint =
     | ACCESS_TOKEN
     | REFRESH_TOKEN
-with
-    override this.ToString () =
-        match this with
+
+module TokenTypeHint =
+    let toString (tokenTypeHint: TokenTypeHint) =
+        match tokenTypeHint with
         | TokenTypeHint.ACCESS_TOKEN -> "access_token"
         | TokenTypeHint.REFRESH_TOKEN -> "refresh_token"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "access_token" -> Some TokenTypeHint.ACCESS_TOKEN
         | "refresh_token" -> Some TokenTypeHint.REFRESH_TOKEN
         | _ -> None
 
-and TokenTypeHintConverter () =
-    inherit JsonConverter<TokenTypeHint> ()
+    type Converter () =
+        inherit JsonConverter<TokenTypeHint> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> TokenTypeHint.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected TokenTypeHint type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected TokenTypeHint type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/resources/guild#get-guild-widget-image-widget-style-options
-[<JsonConverter(typeof<GuildWidgetStyleConverter>)>]
+[<JsonConverter(typeof<GuildWidgetStyle.Converter>)>]
 type GuildWidgetStyle =
     | SHIELD
     | BANNER_1
     | BANNER_2
     | BANNER_3
     | BANNER_4
-with
-    override this.ToString () =
-        match this with
+
+module GuildWidgetStyle =
+    let toString (style: GuildWidgetStyle) =
+        match style with
         | GuildWidgetStyle.SHIELD -> "shield"
         | GuildWidgetStyle.BANNER_1 -> "banner_1"
         | GuildWidgetStyle.BANNER_2 -> "banner_2"
         | GuildWidgetStyle.BANNER_3 -> "banner_3"
         | GuildWidgetStyle.BANNER_4 -> "banner_4"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "shield" -> Some GuildWidgetStyle.SHIELD
         | "banner_1" -> Some GuildWidgetStyle.BANNER_1
@@ -588,16 +594,16 @@ with
         | "banner_4" -> Some GuildWidgetStyle.BANNER_4
         | _ -> None
 
-and GuildWidgetStyleConverter () =
-    inherit JsonConverter<GuildWidgetStyle> ()
+    type Converter () =
+        inherit JsonConverter<GuildWidgetStyle> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> GuildWidgetStyle.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildWidgetStyle type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildWidgetStyle type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
        
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-privacy-level
 type PrivacyLevel =
@@ -830,61 +836,62 @@ module Permission =
         | _ -> false
 
 // https://discord.com/developers/docs/events/gateway#transport-compression
-[<JsonConverter(typeof<GatewayCompressionConverter>)>]
+[<JsonConverter(typeof<GatewayCompression.Converter>)>]
 type GatewayCompression =
     | ZLIBSTREAM
     | ZSTDSTREAM
-with
-    override this.ToString () =
-        match this with
+
+module GatewayCompression =
+    let toString (compression: GatewayCompression) =
+        match compression with
         | GatewayCompression.ZLIBSTREAM -> "zlib-stream"
         | GatewayCompression.ZSTDSTREAM -> "zstd-stream"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "zlib-stream" -> Some GatewayCompression.ZLIBSTREAM
         | "zstd-stream" -> Some GatewayCompression.ZSTDSTREAM
         | _ -> None
 
-and GatewayCompressionConverter () =
-    inherit JsonConverter<GatewayCompression> ()
+    type Converter () =
+        inherit JsonConverter<GatewayCompression> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> GatewayCompression.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected GatewayCompression type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GatewayCompression type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString()
-        |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/events/gateway#encoding-and-compression
-[<JsonConverter(typeof<GatewayEncodingConverter>)>]
+[<JsonConverter(typeof<GatewayEncoding.Converter>)>]
 type GatewayEncoding =
     | JSON
     | ETF
-with
-    override this.ToString () =
-        match this with
+
+module GatewayEncoding =
+    let toString (encoding: GatewayEncoding) =
+        match encoding with
         | GatewayEncoding.JSON -> "json"
         | GatewayEncoding.ETF -> "etf"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "json" -> Some GatewayEncoding.JSON
         | "etf" -> Some GatewayEncoding.ETF
         | _ -> None
 
-and GatewayEncodingConverter () =
-    inherit JsonConverter<GatewayEncoding> ()
+    type Converter () =
+        inherit JsonConverter<GatewayEncoding> ()
 
-    override _.Read (reader, _, _) =
-        reader.GetString()
-        |> GatewayEncoding.FromString
-        |> Option.defaultWith (JsonException.raiseThunk "Unexpected GatewayEncoding type")
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GatewayEncoding type")
 
-    override _.Write (writer, value, _) = 
-        value.ToString() |> writer.WriteStringValue
+        override _.Write (writer, value, _) = 
+            value |> toString |> writer.WriteStringValue
 
 // https://discord.com/developers/docs/events/gateway#list-of-intents
 type GatewayIntent =
@@ -982,20 +989,33 @@ type RateLimitScope =
     | USER
     | GLOBAL
     | SHARED
-with
-    override this.ToString () =
-        match this with
+
+module RateLimitScope =
+    let toString (scope: RateLimitScope) =
+        match scope with
         | USER -> "user"
         | GLOBAL -> "global"
         | SHARED -> "shared"
 
-    static member FromString (str: string) =
+    let fromString (str: string) =
         match str with
         | "user" -> Some RateLimitScope.USER
         | "global" -> Some RateLimitScope.GLOBAL
         | "shared" -> Some RateLimitScope.SHARED
         | _ -> None
+    
+    type Converter () =
+        inherit JsonConverter<RateLimitScope> ()
+
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected RateLimitScope type")
+
+        override _.Write (writer, value, _) = 
+            value
+            |> toString
+            |> writer.WriteStringValue        
 
 // TODO: Sort alphabetically and extract more into separate files in enums folder
 // TODO: Add missing documentation links
-// TODO: Turn into recursive namespace and refactor methods into modules

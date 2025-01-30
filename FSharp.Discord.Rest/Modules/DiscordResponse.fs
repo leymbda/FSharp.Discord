@@ -40,7 +40,7 @@ module DiscordResponse =
                 ResetAfter = res |> getOptionalHeader "X-RateLimit-ResetAfter" >>. double
                 Bucket = res |> getOptionalHeader "X-RateLimit-Bucket"
                 Global = res |> getOptionalHeader "X-RateLimit-Global" >>. bool.Parse
-                Scope = res |> getOptionalHeader "X-RateLimit-Scope" >>= RateLimitScope.FromString
+                Scope = res |> getOptionalHeader "X-RateLimit-Scope" >>= RateLimitScope.fromString
             }
             Status = res.StatusCode
         }
