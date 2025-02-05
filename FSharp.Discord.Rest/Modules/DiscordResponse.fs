@@ -6,6 +6,7 @@ open System.Net
 open System.Net.Http
 open System.Net.Http.Headers
 open System.Text.Json
+open System.Threading.Tasks
 
 type RateLimitHeaders = {
     Limit: int option
@@ -33,13 +34,13 @@ module RateLimitHeaders =
             | false, _ -> None
 
         {
-            Limit = headers |> getOptionalHeader LIMIT_KEY >>. Int32.Parse
-            Remaining = headers |> getOptionalHeader REMAINING_KEY >>. int
-            Reset = headers |> getOptionalHeader RESET_KEY >>. DateTime.Parse
-            ResetAfter = headers |> getOptionalHeader RESET_AFTER_KEY >>. Double.Parse
+            Limit = headers |> getOptionalHeader LIMIT_KEY |> Option.map Int32.Parse
+            Remaining = headers |> getOptionalHeader REMAINING_KEY |> Option.map int
+            Reset = headers |> getOptionalHeader RESET_KEY |> Option.map DateTime.Parse
+            ResetAfter = headers |> getOptionalHeader RESET_AFTER_KEY |> Option.map Double.Parse
             Bucket = headers |> getOptionalHeader BUCKET_KEY
-            Global = headers |> getOptionalHeader GLOBAL_KEY >>. bool.Parse
-            Scope = headers |> getOptionalHeader SCOPE_KEY >>= RateLimitScope.fromString
+            Global = headers |> getOptionalHeader GLOBAL_KEY |> Option.map bool.Parse
+            Scope = headers |> getOptionalHeader SCOPE_KEY |> Option.bind RateLimitScope.fromString
         }
 
 type ResponseWithMetadata<'a> = {
@@ -51,6 +52,9 @@ type ResponseWithMetadata<'a> = {
 type DiscordResponse<'a> = Result<ResponseWithMetadata<'a>, ResponseWithMetadata<DiscordError>>
 
 module DiscordResponse =
+    let inline private (?>) v f = Task.map f v
+    let inline private (<?) f v = v ?> f
+
     let private withMetadata<'a> (res: HttpResponseMessage) (obj: 'a) = {
         Data = obj
         RateLimitHeaders = RateLimitHeaders.fromResponseHeaders res.Headers

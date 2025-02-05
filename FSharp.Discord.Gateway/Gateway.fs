@@ -66,9 +66,9 @@ module Gateway =
                 |> Task.Delay
 
             let event =
-                Websocket.readNext ws ct ?> function
+                Websocket.readNext ws ct |> Task.map (function
                 | WebsocketReadResponse.Close code -> Error (Option.map enum<GatewayCloseEventCode> code)
-                | WebsocketReadResponse.Message message -> Ok (Json.deserializeF<GatewayReceiveEvent> message, message)
+                | WebsocketReadResponse.Message message -> Ok (Json.deserializeF<GatewayReceiveEvent> message, message))
 
             let! winner = Task.WhenAny(timeout, event)
 

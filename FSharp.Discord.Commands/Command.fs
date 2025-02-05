@@ -36,10 +36,12 @@ module Command =
 
     let addNameLocalizations localizations command =
         let localizations =
-            command.NameLocalizations >>? dict []
+            command.NameLocalizations
+            |> Option.defaultValue (dict [])
             |> Seq.map (|KeyValue|)
             |> Seq.append localizations
-            |> dict |> Some
+            |> dict
+            |> Some
         
         { command with NameLocalizations = localizations }
 
@@ -48,10 +50,12 @@ module Command =
 
     let addDescriptionLocalizations localizations command =
         let localizations =
-            command.DescriptionLocalizations >>? dict []
+            command.DescriptionLocalizations
+            |> Option.defaultValue (dict [])
             |> Seq.map (|KeyValue|)
             |> Seq.append localizations
-            |> dict |> Some
+            |> dict
+            |> Some
         
         { command with DescriptionLocalizations = localizations }
 
@@ -63,7 +67,8 @@ module Command =
 
     let addIntegrationTypes integrationTypes command =
         let integrationTypes =
-            command.IntegrationTypes >>? []
+            command.IntegrationTypes
+            |> Option.defaultValue []
             |> List.append integrationTypes
             |> Some
 
@@ -74,7 +79,8 @@ module Command =
 
     let addContexts contexts command =
         let contexts =
-            command.Contexts >>? []
+            command.Contexts
+            |> Option.defaultValue []
             |> List.append contexts
             |> Some
 

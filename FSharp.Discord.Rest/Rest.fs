@@ -3,6 +3,7 @@
 open FSharp.Discord.Types
 open System
 open System.Net.Http
+open System.Threading.Tasks
 
 // ----- Interaction -----
 
@@ -14,11 +15,11 @@ let createInteractionResponse
     (client: IBotClient) =
         req {
             post $"interactions/{interactionId}/{interactionToken}/callback"
-            query "with_response" (withResponse >>. _.ToString())
+            query "with_response" (Option.map string withResponse)
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asOptionalJson<InteractionCallbackResponse>
+        |> Task.mapT DiscordResponse.asOptionalJson<InteractionCallbackResponse>
             
 let getOriginalInteractionResponse
     (interactionId: string)
@@ -28,7 +29,7 @@ let getOriginalInteractionResponse
             get $"webhooks/{interactionId}/{interactionToken}/messages/@original"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
             
 let editOriginalInteractionResponse
     (interactionId: string)
@@ -40,7 +41,7 @@ let editOriginalInteractionResponse
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
             
 let deleteOriginalInteractionResponse
     (interactionId: string)
@@ -50,7 +51,7 @@ let deleteOriginalInteractionResponse
             delete $"webhooks/{interactionId}/{interactionToken}/messages/@original"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
             
 let createFollowUpMessage
     (applicationId: string)
@@ -62,7 +63,7 @@ let createFollowUpMessage
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
             
 let getFollowUpMessage
     (applicationId: string)
@@ -73,7 +74,7 @@ let getFollowUpMessage
             get $"webhooks/{applicationId}/{interactionToken}/messages/{messageId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
             
 let editFollowUpMessage
     (applicationId: string)
@@ -86,7 +87,7 @@ let editFollowUpMessage
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
             
 let deleteFollowUpMessage
     (applicationId: string)
@@ -97,7 +98,7 @@ let deleteFollowUpMessage
             delete $"webhooks/{applicationId}/{interactionToken}/messages/{messageId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Application Command -----
 
@@ -107,10 +108,10 @@ let getGlobalApplicationCommands
     (client: IBotClient) =
         req {
             get $"applications/{applicationId}/commands"
-            query "with_localizations" (withLocalizations >>. _.ToString())
+            query "with_localizations" (Option.map string withLocalizations)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand list>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand list>
             
 let createGlobalApplicationCommand
     (applicationId: string)
@@ -121,7 +122,7 @@ let createGlobalApplicationCommand
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand>
             
 let getGlobalApplicationCommand
     (applicationId: string)
@@ -131,7 +132,7 @@ let getGlobalApplicationCommand
             get $"applications/{applicationId}/commands/{commandId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand>
             
 let editGlobalApplicationCommand
     (applicationId: string)
@@ -143,7 +144,7 @@ let editGlobalApplicationCommand
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand>
             
 let deleteGlobalApplicationCommand
     (applicationId: string)
@@ -153,7 +154,7 @@ let deleteGlobalApplicationCommand
             delete $"applications/{applicationId}/commands/{commandId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
             
 let bulkOverwriteGlobalApplicationCommands
     (applicationId: string)
@@ -164,7 +165,7 @@ let bulkOverwriteGlobalApplicationCommands
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand list>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand list>
             
 let getGuildApplicationCommands
     (applicationId: string)
@@ -173,10 +174,10 @@ let getGuildApplicationCommands
     (client: IBotClient) =
         req {
             get $"applications/{applicationId}/guilds/{guildId}/commands"
-            query "with_localizations" (withLocalizations >>. _.ToString())
+            query "with_localizations" (Option.map string withLocalizations)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand list>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand list>
             
 let createGuildApplicationCommand
     (applicationId: string)
@@ -188,7 +189,7 @@ let createGuildApplicationCommand
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand>
             
 let getGuildApplicationCommand
     (applicationId: string)
@@ -199,7 +200,7 @@ let getGuildApplicationCommand
             get $"applications/{applicationId}/guilds/{guildId}/commands/{commandId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand>
             
 let editGuildApplicationCommand
     (applicationId: string)
@@ -212,7 +213,7 @@ let editGuildApplicationCommand
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand>
             
 let deleteGuildApplicationCommand
     (applicationId: string)
@@ -223,7 +224,7 @@ let deleteGuildApplicationCommand
             delete $"applications/{applicationId}/guilds/{guildId}/commands/{commandId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
             
 let bulkOverwriteGuildApplicationCommands
     (applicationId: string)
@@ -235,7 +236,7 @@ let bulkOverwriteGuildApplicationCommands
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationCommand list>
+        |> Task.mapT DiscordResponse.asJson<ApplicationCommand list>
             
 let getGuildApplicationCommandsPermissions
     (applicationId: string)
@@ -245,7 +246,7 @@ let getGuildApplicationCommandsPermissions
             get $"applications/{applicationId}/guilds/{guildId}/commands/permissions"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildApplicationCommandPermissions list>
+        |> Task.mapT DiscordResponse.asJson<GuildApplicationCommandPermissions list>
             
 let getGuildApplicationCommandPermissions
     (applicationId: string)
@@ -256,7 +257,7 @@ let getGuildApplicationCommandPermissions
             get $"applications/{applicationId}/guilds/{guildId}/commands/{commandId}/permissions"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildApplicationCommandPermissions>
+        |> Task.mapT DiscordResponse.asJson<GuildApplicationCommandPermissions>
             
 let editApplicationCommandPermissions
     (applicationId: string)
@@ -269,7 +270,7 @@ let editApplicationCommandPermissions
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildApplicationCommandPermissions>
+        |> Task.mapT DiscordResponse.asJson<GuildApplicationCommandPermissions>
 
 // ----- Application -----
 
@@ -279,7 +280,7 @@ let getCurrentApplication
             get "applications/@me"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Application>
+        |> Task.mapT DiscordResponse.asJson<Application>
 
 let editCurrentApplication
     (content: EditCurrentApplicationPayload)
@@ -289,7 +290,7 @@ let editCurrentApplication
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Application>
+        |> Task.mapT DiscordResponse.asJson<Application>
 
 let getApplicationActivityInstance
     (applicationId: string)
@@ -299,7 +300,7 @@ let getApplicationActivityInstance
             patch $"applications/{applicationId}/activity-instances/{instanceId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ActivityInstance>
+        |> Task.mapT DiscordResponse.asJson<ActivityInstance>
 
 // ----- Audit Log -----
 
@@ -314,13 +315,13 @@ let getGuildAuditLog
         req {
             get $"guilds/{guildId}/audit-logs"
             query "user_id" userId
-            query "action_type" (actionType >>. _.ToString())
+            query "action_type" (Option.map (int >> string) actionType)
             query "before" before
             query "after" after
-            query "limit" (limit >>. _.ToString())
+            query "limit" (Option.map string limit)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<AuditLog>
+        |> Task.mapT DiscordResponse.asJson<AuditLog>
 
 // ----- Auto Moderation -----
 
@@ -331,7 +332,7 @@ let listAutoModerationRulesForGuild
             get $"guilds/{guildId}/auto-moderation/rules"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<AutoModerationRule list>
+        |> Task.mapT DiscordResponse.asJson<AutoModerationRule list>
 
 let getAutoModerationRule
     (guildId: string)
@@ -341,7 +342,7 @@ let getAutoModerationRule
             get $"guilds/{guildId}/auto-moderation/rules/{autoModerationRuleId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<AutoModerationRule>
+        |> Task.mapT DiscordResponse.asJson<AutoModerationRule>
 
 let createAutoModerationRule
     (guildId: string)
@@ -354,7 +355,7 @@ let createAutoModerationRule
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<AutoModerationRule>
+        |> Task.mapT DiscordResponse.asJson<AutoModerationRule>
 
 let modifyAutoModerationRule
     (guildId: string)
@@ -368,7 +369,7 @@ let modifyAutoModerationRule
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<AutoModerationRule>
+        |> Task.mapT DiscordResponse.asJson<AutoModerationRule>
 
 let deleteAutoModerationRule
     (guildId: string)
@@ -380,7 +381,7 @@ let deleteAutoModerationRule
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Channel -----
 
@@ -391,7 +392,7 @@ let getChannel
             get $"channels/{channelId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Channel>
+        |> Task.mapT DiscordResponse.asJson<Channel>
 
 let modifyChannel
     (channelId: string)
@@ -409,7 +410,7 @@ let modifyChannel
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Channel>
+        |> Task.mapT DiscordResponse.asJson<Channel>
 
 let deleteChannel
     (channelId: string)
@@ -420,7 +421,7 @@ let deleteChannel
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Channel>
+        |> Task.mapT DiscordResponse.asJson<Channel>
 
 let editChannelPermissions
     (channelId: string)
@@ -434,7 +435,7 @@ let editChannelPermissions
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let getChannelInvites
     (channelId: string)
@@ -443,7 +444,7 @@ let getChannelInvites
             get $"channels/{channelId}/invites"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<InviteWithMetadata list>
+        |> Task.mapT DiscordResponse.asJson<InviteWithMetadata list>
 
 let createChannelInvite
     (channelId: string)
@@ -456,7 +457,7 @@ let createChannelInvite
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asOptionalJson<InviteWithMetadata>
+        |> Task.mapT DiscordResponse.asOptionalJson<InviteWithMetadata>
 
 let deleteChannelPermission
     (channelId: string)
@@ -468,7 +469,7 @@ let deleteChannelPermission
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let followAnnouncementChannel
     (channelId: string)
@@ -481,7 +482,7 @@ let followAnnouncementChannel
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<FollowedChannel>
+        |> Task.mapT DiscordResponse.asJson<FollowedChannel>
 
 let triggerTypingIndicator
     (channelId: string)
@@ -490,7 +491,7 @@ let triggerTypingIndicator
             post $"channels/{channelId}/typing"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let getPinnedMessages
     (channelId: string)
@@ -499,7 +500,7 @@ let getPinnedMessages
             get $"channels/{channelId}/pins"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message list>
+        |> Task.mapT DiscordResponse.asJson<Message list>
 
 let pinMessage
     (channelId: string)
@@ -511,7 +512,7 @@ let pinMessage
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let unpinMessage
     (channelId: string)
@@ -523,7 +524,7 @@ let unpinMessage
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let groupDmAddRecipient
     (channelId: string)
@@ -535,7 +536,7 @@ let groupDmAddRecipient
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asOptionalJson<Channel>
+        |> Task.mapT DiscordResponse.asOptionalJson<Channel>
 
 let groupDmRemoveRecipient
     (channelId: string)
@@ -545,7 +546,7 @@ let groupDmRemoveRecipient
             delete $"channels/{channelId}/recipients/{userId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let startThreadFromMessage
     (channelId: string)
@@ -559,7 +560,7 @@ let startThreadFromMessage
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Channel>
+        |> Task.mapT DiscordResponse.asJson<Channel>
 
 let startThreadWithoutMessage
     (channelId: string)
@@ -572,7 +573,7 @@ let startThreadWithoutMessage
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Channel>
+        |> Task.mapT DiscordResponse.asJson<Channel>
 
 let startThreadInForumOrMediaChannel
     (channelId: string)
@@ -585,7 +586,7 @@ let startThreadInForumOrMediaChannel
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<StartThreadInForumOrMediaChannelOkResponse>
+        |> Task.mapT DiscordResponse.asJson<StartThreadInForumOrMediaChannelOkResponse>
 
 let joinThread
     (channelId: string)
@@ -594,7 +595,7 @@ let joinThread
             put $"channels/{channelId}/thread-members/@me"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let addThreadMember
     (channelId: string)
@@ -604,7 +605,7 @@ let addThreadMember
             put $"channels/{channelId}/thread-members/{userId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let leaveThread
     (channelId: string)
@@ -613,7 +614,7 @@ let leaveThread
             delete $"channels/{channelId}/thread-members/@me"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let removeThreadMember
     (channelId: string)
@@ -623,7 +624,7 @@ let removeThreadMember
             delete $"channels/{channelId}/thread-members/{userId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let getThreadMember
     (channelId: string)
@@ -635,7 +636,7 @@ let getThreadMember
             query "with_member" (match withMember with | Some true -> Some "true" | _ -> None)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ThreadMember>
+        |> Task.mapT DiscordResponse.asJson<ThreadMember>
 
 let listThreadMembers
     (channelId: string)
@@ -647,10 +648,10 @@ let listThreadMembers
             get $"channels/{channelId}/thread-members"
             query "with_member" (match withMember with | Some true -> Some "true" | _ -> None)
             query "after" after
-            query "limit" (limit >>. _.ToString())
+            query "limit" (Option.map string limit)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ThreadMember list>
+        |> Task.mapT DiscordResponse.asJson<ThreadMember list>
 
     // TODO: Test paginated response and implement for list thread members
 
@@ -661,11 +662,11 @@ let listPublicArchivedThreads
     (client: IBotClient) =
         req {
             get $"channels/{channelId}/threads/archived/public"
-            query "before" (before >>. _.ToString())
-            query "limit" (limit >>. _.ToString())
+            query "before" (Option.map string before)
+            query "limit" (Option.map string limit)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ListPublicArchivedThreadsOkResponse>
+        |> Task.mapT DiscordResponse.asJson<ListPublicArchivedThreadsOkResponse>
 
 let listPrivateArchivedThreads
     (channelId: string)
@@ -674,11 +675,11 @@ let listPrivateArchivedThreads
     (client: IBotClient) =
         req {
             get $"channels/{channelId}/threads/archived/private"
-            query "before" (before >>. _.ToString())
-            query "limit" (limit >>. _.ToString())
+            query "before" (Option.map string before)
+            query "limit" (Option.map string limit)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ListPrivateArchivedThreadsOkResponse>
+        |> Task.mapT DiscordResponse.asJson<ListPrivateArchivedThreadsOkResponse>
 
 let listJoinedPrivateArchivedThreads
     (channelId: string)
@@ -687,11 +688,11 @@ let listJoinedPrivateArchivedThreads
     (client: IBotClient) =
         req {
             get $"channels/{channelId}/users/@me/threads/archived/private"
-            query "before" (before >>. _.ToString())
-            query "limit" (limit >>. _.ToString())
+            query "before" (Option.map string before)
+            query "limit" (Option.map string limit)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ListJoinedPrivateArchivedThreadsOkResponse>
+        |> Task.mapT DiscordResponse.asJson<ListJoinedPrivateArchivedThreadsOkResponse>
 
 // ----- Emoji -----
 
@@ -702,7 +703,7 @@ let listGuildEmojis
             get $"guilds/{guildId}/emojis"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Emoji list>
+        |> Task.mapT DiscordResponse.asJson<Emoji list>
 
 let getGuildEmoji
     (guildId: string)
@@ -712,7 +713,7 @@ let getGuildEmoji
             get $"guilds/{guildId}/emojis/{emojiId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Emoji>
+        |> Task.mapT DiscordResponse.asJson<Emoji>
 
 let createGuildEmoji
     (guildId: string)
@@ -725,7 +726,7 @@ let createGuildEmoji
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Emoji>
+        |> Task.mapT DiscordResponse.asJson<Emoji>
         
 let modifyGuildEmoji
     (guildId: string)
@@ -739,7 +740,7 @@ let modifyGuildEmoji
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Emoji>
+        |> Task.mapT DiscordResponse.asJson<Emoji>
 
 let deleteGuildEmoji
     (guildId: string)
@@ -751,7 +752,7 @@ let deleteGuildEmoji
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
         
 let listApplicationEmojis
     (applicationId: string)
@@ -760,7 +761,7 @@ let listApplicationEmojis
             get $"applications/{applicationId}/emojis"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ListApplicationEmojisOkResponse>
+        |> Task.mapT DiscordResponse.asJson<ListApplicationEmojisOkResponse>
 
 let getApplicationEmoji
     (applicationId: string)
@@ -770,7 +771,7 @@ let getApplicationEmoji
             get $"applications/{applicationId}/emojis/{emojiId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Emoji>
+        |> Task.mapT DiscordResponse.asJson<Emoji>
 
 let createApplicationEmoji
     (applicationId: string)
@@ -781,7 +782,7 @@ let createApplicationEmoji
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Emoji>
+        |> Task.mapT DiscordResponse.asJson<Emoji>
         
 let modifyApplicationEmoji
     (applicationId: string)
@@ -793,7 +794,7 @@ let modifyApplicationEmoji
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Emoji>
+        |> Task.mapT DiscordResponse.asJson<Emoji>
 
 let deleteApplicationEmoji
     (applicationId: string)
@@ -803,7 +804,7 @@ let deleteApplicationEmoji
             delete $"applications/{applicationId}/emojis/{emojiId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Entitlement -----
 
@@ -821,16 +822,16 @@ let listEntitlements
         req {
             get $"applications/{applicationId}/entitlements"
             query "user_id" userId
-            query "sku_ids" (skuIds >>. String.concat ",")
+            query "sku_ids" (Option.map (String.concat ",") skuIds)
             query "before" before
             query "after" after
-            query "limit" (limit >>. _.ToString())
+            query "limit" (Option.map string limit)
             query "guild_id" guildId
-            query "exclude_ended" (excludeEnded >>. _.ToString())
-            query "exclude_deleted" (excludeDeleted >>. _.ToString())
+            query "exclude_ended" (Option.map string excludeEnded)
+            query "exclude_deleted" (Option.map string excludeDeleted)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Entitlement list>
+        |> Task.mapT DiscordResponse.asJson<Entitlement list>
 
 let getEntitlement
     (applicationId: string)
@@ -840,7 +841,7 @@ let getEntitlement
             get $"applications/{applicationId}/entitlements/{entitlementId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Entitlement>
+        |> Task.mapT DiscordResponse.asJson<Entitlement>
 
 let consumeEntitlement
     (applicationId: string)
@@ -850,7 +851,7 @@ let consumeEntitlement
             post $"applications/{applicationId}/entitlements/{entitlementId}/consume"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let createTestEntitlement
     (applicationId: string)
@@ -861,7 +862,7 @@ let createTestEntitlement
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Entitlement>
+        |> Task.mapT DiscordResponse.asJson<Entitlement>
 
 let deleteTestEntitlement
     (applicationId: string)
@@ -871,7 +872,7 @@ let deleteTestEntitlement
             delete $"applications/{applicationId}/entitlements/{entitlementId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Guild -----
 
@@ -883,7 +884,7 @@ let createGuild
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Guild>
+        |> Task.mapT DiscordResponse.asJson<Guild>
 
 let getGuild
     (guildId: string)
@@ -891,10 +892,10 @@ let getGuild
     (client: IBotClient) =
         req {
             get $"guilds/{guildId}"
-            query "with_counts" (withCounts >>. _.ToString())
+            query "with_counts" (Option.map string withCounts)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Guild>
+        |> Task.mapT DiscordResponse.asJson<Guild>
 
 let getGuildPreview
     (guildId: string)
@@ -903,7 +904,7 @@ let getGuildPreview
             get $"guilds/{guildId}/preview"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildPreview>
+        |> Task.mapT DiscordResponse.asJson<GuildPreview>
 
 let modifyGuild
     (guildId: string)
@@ -916,7 +917,7 @@ let modifyGuild
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Guild>
+        |> Task.mapT DiscordResponse.asJson<Guild>
 
 let deleteGuild
     (guildId: string)
@@ -925,7 +926,7 @@ let deleteGuild
             delete $"guilds/{guildId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let getGuildChannels
     (guildId: string)
@@ -934,7 +935,7 @@ let getGuildChannels
             get $"guilds/{guildId}/channels"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Channel list>
+        |> Task.mapT DiscordResponse.asJson<Channel list>
 
 let createGuildChannel
     (guildId: string)
@@ -947,7 +948,7 @@ let createGuildChannel
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Channel>
+        |> Task.mapT DiscordResponse.asJson<Channel>
 
 let modifyGuildChannelPositions
     (guildId: string)
@@ -958,7 +959,7 @@ let modifyGuildChannelPositions
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let listActiveGuildThreads
     (guildId: string)
@@ -967,7 +968,7 @@ let listActiveGuildThreads
             get $"guilds/{guildId}/threads/active"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ListActiveGuildThreadsOkResponse>
+        |> Task.mapT DiscordResponse.asJson<ListActiveGuildThreadsOkResponse>
 
 let getGuildMember
     (guildId: string)
@@ -977,7 +978,7 @@ let getGuildMember
             get $"guilds/{guildId}/members/{userId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildMember>
+        |> Task.mapT DiscordResponse.asJson<GuildMember>
 
 let listGuildMembers
     (guildId: string)
@@ -986,11 +987,11 @@ let listGuildMembers
     (client: IBotClient) =
         req {
             get $"guilds/{guildId}/members"
-            query "limit" (limit >>. _.ToString())
-            query "after" (after >>. _.ToString())
+            query "limit" (Option.map string limit)
+            query "after" (Option.map string after)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildMember list>
+        |> Task.mapT DiscordResponse.asJson<GuildMember list>
 
 let searchGuildMembers
     (guildId: string)
@@ -1000,10 +1001,10 @@ let searchGuildMembers
         req {
             get $"guilds/{guildId}/members/search"
             query "query" q
-            query "limit" (limit >>. _.ToString())
+            query "limit" (Option.map string limit)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildMember list>
+        |> Task.mapT DiscordResponse.asJson<GuildMember list>
 
 let addGuildMember
     (guildId: string)
@@ -1015,7 +1016,7 @@ let addGuildMember
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asOptionalJson<GuildMember> // TODO: Double check this has both 200 and 204
+        |> Task.mapT DiscordResponse.asOptionalJson<GuildMember> // TODO: Double check this has both 200 and 204
 
 let modifyGuildMember
     (guildId: string)
@@ -1029,7 +1030,7 @@ let modifyGuildMember
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asOptionalJson<GuildMember> // TODO: Double check this has both 200 and 204
+        |> Task.mapT DiscordResponse.asOptionalJson<GuildMember> // TODO: Double check this has both 200 and 204
 
 let modifyCurrentMember
     (guildId: string)
@@ -1042,7 +1043,7 @@ let modifyCurrentMember
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asOptionalJson<GuildMember> // TODO: Double check this has both 200 and 204
+        |> Task.mapT DiscordResponse.asOptionalJson<GuildMember> // TODO: Double check this has both 200 and 204
         
 let addGuildMemberRole
     (guildId: string)
@@ -1055,7 +1056,7 @@ let addGuildMemberRole
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let removeGuildMemberRole
     (guildId: string)
@@ -1068,7 +1069,7 @@ let removeGuildMemberRole
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let removeGuildMember
     (guildId: string)
@@ -1080,7 +1081,7 @@ let removeGuildMember
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let getGuildBans
     (guildId: string)
@@ -1090,12 +1091,12 @@ let getGuildBans
     (client: IBotClient) =
         req {
             get $"guilds/{guildId}/bans"
-            query "limit" (limit >>. _.ToString())
+            query "limit" (Option.map string limit)
             query "before" before
             query "after" after
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Ban list>
+        |> Task.mapT DiscordResponse.asJson<Ban list>
 
 let getGuildBan
     (guildId: string)
@@ -1105,7 +1106,7 @@ let getGuildBan
             get $"guilds/{guildId}/bans/{userId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Ban>
+        |> Task.mapT DiscordResponse.asJson<Ban>
 
 let createGuildBan
     (guildId: string)
@@ -1119,7 +1120,7 @@ let createGuildBan
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let removeGuildBan
     (guildId: string)
@@ -1131,7 +1132,7 @@ let removeGuildBan
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let bulkGuildBan
     (guildId: string)
@@ -1144,7 +1145,7 @@ let bulkGuildBan
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<BulkGuildBanOkResponse>
+        |> Task.mapT DiscordResponse.asJson<BulkGuildBanOkResponse>
 
 let getGuildRoles
     (guildId: string)
@@ -1153,7 +1154,7 @@ let getGuildRoles
             get $"guilds/{guildId}/roles"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Role list>
+        |> Task.mapT DiscordResponse.asJson<Role list>
 
 let getGuildRole
     (guildId: string)
@@ -1163,7 +1164,7 @@ let getGuildRole
             get $"guilds/{guildId}/roles/{roleId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Role>
+        |> Task.mapT DiscordResponse.asJson<Role>
 
 let createGuildRole
     (guildId: string)
@@ -1176,7 +1177,7 @@ let createGuildRole
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Role>
+        |> Task.mapT DiscordResponse.asJson<Role>
 
 let modifyGuildRolePositions
     (guildId: string)
@@ -1189,7 +1190,7 @@ let modifyGuildRolePositions
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Role list>
+        |> Task.mapT DiscordResponse.asJson<Role list>
 
 let modifyGuildRole
     (guildId: string)
@@ -1203,7 +1204,7 @@ let modifyGuildRole
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Role>
+        |> Task.mapT DiscordResponse.asJson<Role>
 
 let modifyGuildMfaLevel
     (guildId: string)
@@ -1216,7 +1217,7 @@ let modifyGuildMfaLevel
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<MfaLevel>
+        |> Task.mapT DiscordResponse.asJson<MfaLevel>
 
 let deleteGuildRole
     (guildId: string)
@@ -1228,7 +1229,7 @@ let deleteGuildRole
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let getGuildPruneCount
     (guildId: string)
@@ -1237,11 +1238,11 @@ let getGuildPruneCount
     (client: IBotClient) =
         req {
             get $"guilds/{guildId}/prune"
-            query "days" (days >>. _.ToString())
-            query "include_roles" (includeRoles >>. String.concat ",")
+            query "days" (Option.map string days)
+            query "include_roles" (Option.map (String.concat ",") includeRoles)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GetGuildPruneCountOkResponse>
+        |> Task.mapT DiscordResponse.asJson<GetGuildPruneCountOkResponse>
 
 let beginGuildPrune
     (guildId: string)
@@ -1254,7 +1255,7 @@ let beginGuildPrune
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<BeginGuildPruneOkResponse>
+        |> Task.mapT DiscordResponse.asJson<BeginGuildPruneOkResponse>
 
 let getGuildVoiceRegions
     (guildId: string)
@@ -1263,7 +1264,7 @@ let getGuildVoiceRegions
             get $"guilds/{guildId}/regions"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<VoiceRegion list>
+        |> Task.mapT DiscordResponse.asJson<VoiceRegion list>
 
 let getGuildInvites
     (guildId: string)
@@ -1272,7 +1273,7 @@ let getGuildInvites
             get $"guilds/{guildId}/invites"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<InviteWithMetadata list>
+        |> Task.mapT DiscordResponse.asJson<InviteWithMetadata list>
 
 let getGuildIntegrations
     (guildId: string)
@@ -1281,7 +1282,7 @@ let getGuildIntegrations
             get $"guilds/{guildId}/integrations"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Integration list>
+        |> Task.mapT DiscordResponse.asJson<Integration list>
 
 let deleteGuildIntegration
     (guildId: string)
@@ -1293,7 +1294,7 @@ let deleteGuildIntegration
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let getGuildWidgetSettings
     (guildId: string)
@@ -1302,7 +1303,7 @@ let getGuildWidgetSettings
             get $"guilds/{guildId}/widget"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildWidgetSettings>
+        |> Task.mapT DiscordResponse.asJson<GuildWidgetSettings>
 
 let modifyGuildWidget
     (guildId: string)
@@ -1315,7 +1316,7 @@ let modifyGuildWidget
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildWidgetSettings>
+        |> Task.mapT DiscordResponse.asJson<GuildWidgetSettings>
 
 let getGuildWidget
     (guildId: string)
@@ -1324,7 +1325,7 @@ let getGuildWidget
             get $"guilds/{guildId}/widget.json"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildWidget>
+        |> Task.mapT DiscordResponse.asJson<GuildWidget>
 
 let getGuildVanityUrl
     (guildId: string)
@@ -1333,7 +1334,7 @@ let getGuildVanityUrl
             get $"guilds/{guildId}/vanity-url"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GetGuildVanityUrlOkResponse>
+        |> Task.mapT DiscordResponse.asJson<GetGuildVanityUrlOkResponse>
 
 let getGuildWidgetImage
     (guildId: string)
@@ -1341,10 +1342,10 @@ let getGuildWidgetImage
     (client: IBotClient) =
         req {
             get $"guilds/{guildId}/widget.png"
-            query "style" (style >>. _.ToString())
+            query "style" (Option.map (GuildWidgetStyle.toString) style)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asRaw // TODO: Convert to png image format
+        |> Task.mapT DiscordResponse.asRaw // TODO: Convert to png image format
 
 let getGuildWelcomeScreen
     (guildId: string)
@@ -1353,7 +1354,7 @@ let getGuildWelcomeScreen
             get $"guilds/{guildId}/welcome-screen"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<WelcomeScreen>
+        |> Task.mapT DiscordResponse.asJson<WelcomeScreen>
 
 let modifyGuildWelcomeScreen
     (guildId: string)
@@ -1366,7 +1367,7 @@ let modifyGuildWelcomeScreen
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<WelcomeScreen>
+        |> Task.mapT DiscordResponse.asJson<WelcomeScreen>
 
 let getGuildOnboarding
     (guildId: string)
@@ -1375,7 +1376,7 @@ let getGuildOnboarding
             get $"guilds/{guildId}/onboarding"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildOnboarding>
+        |> Task.mapT DiscordResponse.asJson<GuildOnboarding>
 
 let modifyGuildOnboarding
     (guildId: string)
@@ -1388,7 +1389,7 @@ let modifyGuildOnboarding
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildOnboarding>
+        |> Task.mapT DiscordResponse.asJson<GuildOnboarding>
 
 let modifyGuildIncidentActions
     (guildId: string)
@@ -1401,7 +1402,7 @@ let modifyGuildIncidentActions
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<IncidentsData>
+        |> Task.mapT DiscordResponse.asJson<IncidentsData>
 
 // ----- Guild Scheduled Event -----
 
@@ -1411,10 +1412,10 @@ let listGuildScheduledEvents
     (client: IBotClient) =
         req {
             get $"guilds/{guildId}/scheduled-events"
-            query "with_user_count" (withUserCount >>. _.ToString())
+            query "with_user_count" (Option.map string withUserCount)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildScheduledEvent list>
+        |> Task.mapT DiscordResponse.asJson<GuildScheduledEvent list>
 
 let createGuildScheduledEvent
     (guildId: string)
@@ -1427,7 +1428,7 @@ let createGuildScheduledEvent
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildScheduledEvent>
+        |> Task.mapT DiscordResponse.asJson<GuildScheduledEvent>
 
 let getGuildScheduledEvent
     (guildId: string)
@@ -1436,10 +1437,10 @@ let getGuildScheduledEvent
     (client: IBotClient) =
         req {
             get $"guilds/{guildId}/scheduled-events/{guildScheduledEventId}"
-            query "with_user_count" (withUserCount >>. _.ToString())
+            query "with_user_count" (Option.map string withUserCount)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildScheduledEvent>
+        |> Task.mapT DiscordResponse.asJson<GuildScheduledEvent>
 
 let modifyGuildScheduledEvent
     (guildId: string)
@@ -1453,7 +1454,7 @@ let modifyGuildScheduledEvent
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildScheduledEvent>
+        |> Task.mapT DiscordResponse.asJson<GuildScheduledEvent>
 
 let deleteGuildScheduledEvent
     (guildId: string)
@@ -1464,7 +1465,7 @@ let deleteGuildScheduledEvent
             post $"guilds/{guildId}/scheduled-events/{guildScheduledEventId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let getGuildScheduledEventUsers
     (guildId: string)
@@ -1476,13 +1477,13 @@ let getGuildScheduledEventUsers
     (client: IBotClient) =
         req {
             get $"guilds/{guildId}/scheduled-events/{guildScheduledEventId}/users"
-            query "limit" (limit >>. _.ToString())
-            query "with_member" (withMember >>. _.ToString())
+            query "limit" (Option.map string limit)
+            query "with_member" (Option.map string withMember)
             query "before" before
             query "after" after
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildScheduledEventUser list>
+        |> Task.mapT DiscordResponse.asJson<GuildScheduledEventUser list>
 
 // ----- Guild Template -----
 
@@ -1493,7 +1494,7 @@ let getGuildTemplate
             get $"guilds/templates/{templateCode}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildTemplate>
+        |> Task.mapT DiscordResponse.asJson<GuildTemplate>
 
 let createGuildFromTemplate
     (templateCode: string)
@@ -1504,7 +1505,7 @@ let createGuildFromTemplate
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Guild>
+        |> Task.mapT DiscordResponse.asJson<Guild>
 
 let getGuildTemplates
     (guildId: string)
@@ -1513,7 +1514,7 @@ let getGuildTemplates
             get $"guilds/{guildId}/templates"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildTemplate list>
+        |> Task.mapT DiscordResponse.asJson<GuildTemplate list>
 
 let createGuildTemplate
     (guildId: string)
@@ -1524,7 +1525,7 @@ let createGuildTemplate
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildTemplate>
+        |> Task.mapT DiscordResponse.asJson<GuildTemplate>
 
 let syncGuildTemplate
     (guildId: string)
@@ -1534,7 +1535,7 @@ let syncGuildTemplate
             put $"guilds/{guildId}/templates/{templateCode}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildTemplate>
+        |> Task.mapT DiscordResponse.asJson<GuildTemplate>
 
 let modifyGuildTemplate
     (guildId: string)
@@ -1546,7 +1547,7 @@ let modifyGuildTemplate
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildTemplate>
+        |> Task.mapT DiscordResponse.asJson<GuildTemplate>
 
 let deleteGuildTemplate
     (guildId: string)
@@ -1556,7 +1557,7 @@ let deleteGuildTemplate
             delete $"guilds/{guildId}/templates/{templateCode}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildTemplate>
+        |> Task.mapT DiscordResponse.asJson<GuildTemplate>
 
 // ----- Invite -----
 
@@ -1568,12 +1569,12 @@ let getInvite
     (client: IBotClient) =
         req {
             get $"invites/{inviteCode}"
-            query "with_counts" (withCounts >>. _.ToString())
-            query "with_expiration" (withExpiration >>. _.ToString())
+            query "with_counts" (Option.map string withCounts)
+            query "with_expiration" (Option.map string withExpiration)
             query "guild_scheduled_event_id" guildScheduledEventId
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Invite>
+        |> Task.mapT DiscordResponse.asJson<Invite>
 
 let deleteInvite
     (inviteCode: string)
@@ -1584,7 +1585,7 @@ let deleteInvite
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Invite>
+        |> Task.mapT DiscordResponse.asJson<Invite>
 
 // ----- Message -----
 
@@ -1600,10 +1601,10 @@ let getChannelMessages
             query "around" around
             query "before" before
             query "after" after
-            query "limit" (limit >>. _.ToString())
+            query "limit" (Option.map string limit)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message list>
+        |> Task.mapT DiscordResponse.asJson<Message list>
 
 let getChannelMessage
     (channelId: string)
@@ -1613,7 +1614,7 @@ let getChannelMessage
             get $"channels/{channelId}/messages/{messageId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
 
 let createMessage
     (channelId: string)
@@ -1624,7 +1625,7 @@ let createMessage
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
 
 let crosspostMessage
     (channelId: string)
@@ -1634,7 +1635,7 @@ let crosspostMessage
             post $"channels/{channelId}/messages/{messageId}/crosspost"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
 
 let createReaction
     (channelId: string)
@@ -1645,7 +1646,7 @@ let createReaction
             post $"channels/{channelId}/messages/{messageId}/reactions/{emoji}/@me"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let deleteOwnReaction
     (channelId: string)
@@ -1656,7 +1657,7 @@ let deleteOwnReaction
             delete $"channels/{channelId}/messages/{messageId}/reactions/{emoji}/@me"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let deleteUserReaction
     (channelId: string)
@@ -1668,7 +1669,7 @@ let deleteUserReaction
             delete $"channels/{channelId}/messages/{messageId}/reactions/{emoji}/{userId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let getReactions
     (channelId: string)
@@ -1680,12 +1681,12 @@ let getReactions
     (client: IBotClient) =
         req {
             get $"channels/{channelId}/messages/{messageId}/reactions/{emoji}"
-            query "type" (``type`` >>. int >>. _.ToString())
+            query "type" (Option.map (int >> string) ``type``)
             query "after" after
-            query "limit" (limit >>. _.ToString())
+            query "limit" (Option.map string limit)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<User list>
+        |> Task.mapT DiscordResponse.asJson<User list>
 
 let deleteAllReactions
     (channelId: string)
@@ -1695,7 +1696,7 @@ let deleteAllReactions
             delete $"channels/{channelId}/messages/{messageId}/reactions"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let deleteAllReactionsForEmoji
     (channelId: string)
@@ -1706,7 +1707,7 @@ let deleteAllReactionsForEmoji
             delete $"channels/{channelId}/messages/{messageId}/reactions/{emoji}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let editMessage
     (channelId: string)
@@ -1718,7 +1719,7 @@ let editMessage
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
 
 let deleteMessage
     (channelId: string)
@@ -1730,7 +1731,7 @@ let deleteMessage
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let bulkDeleteMessages
     (channelId: string)
@@ -1743,7 +1744,7 @@ let bulkDeleteMessages
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Poll -----
 
@@ -1757,10 +1758,10 @@ let getAnswerVoters
         req {
             get $"channels/{channelId}/polls/{messageId}/answers/{answerId}"
             query "after" after
-            query "limit" (limit >>. _.ToString())
+            query "limit" (Option.map string limit)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GetAnswerVotersOkResponse>
+        |> Task.mapT DiscordResponse.asJson<GetAnswerVotersOkResponse>
 
 let endPoll
     (channelId: string)
@@ -1770,7 +1771,7 @@ let endPoll
             post $"channels/{channelId}/polls/{messageId}/expire"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
 
 // ----- Role Connection -----
 
@@ -1781,7 +1782,7 @@ let getApplicationRoleConnectionMetadataRecords
             get $"applications/{applicationId}/role-connections/metadata"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationRoleConnectionMetadata list>
+        |> Task.mapT DiscordResponse.asJson<ApplicationRoleConnectionMetadata list>
 
 let updateApplicationRoleConnectionMetadataRecords
     (applicationId: string)
@@ -1792,7 +1793,7 @@ let updateApplicationRoleConnectionMetadataRecords
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationRoleConnectionMetadata list>
+        |> Task.mapT DiscordResponse.asJson<ApplicationRoleConnectionMetadata list>
 
 // ----- Sku -----
 
@@ -1803,7 +1804,7 @@ let listSkus
             get $"applications/{applicationId}/skus"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Sku list>
+        |> Task.mapT DiscordResponse.asJson<Sku list>
 
 // ----- Soundboard -----
 
@@ -1816,7 +1817,7 @@ let sendSoundboardSound
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let listDefaultSoundboardSounds
     (client: IBotClient) =
@@ -1824,7 +1825,7 @@ let listDefaultSoundboardSounds
             get "soundboard-default-sounds"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<SoundboardSound list>
+        |> Task.mapT DiscordResponse.asJson<SoundboardSound list>
 
 let listGuildSoundboardSounds
     (guildId: string)
@@ -1833,7 +1834,7 @@ let listGuildSoundboardSounds
             get $"guilds/{guildId}/soundboard-sounds"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<SoundboardSound list>
+        |> Task.mapT DiscordResponse.asJson<SoundboardSound list>
 
 let getGuildSoundboardSound
     (guildId: string)
@@ -1843,7 +1844,7 @@ let getGuildSoundboardSound
             get $"guilds/{guildId}/soundboard-sounds/{soundId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<SoundboardSound>
+        |> Task.mapT DiscordResponse.asJson<SoundboardSound>
 
 let createGuildSoundboardSound
     (guildId: string)
@@ -1856,7 +1857,7 @@ let createGuildSoundboardSound
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<SoundboardSound>
+        |> Task.mapT DiscordResponse.asJson<SoundboardSound>
 
 let modifyGuildSoundboardSound
     (guildId: string)
@@ -1870,7 +1871,7 @@ let modifyGuildSoundboardSound
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<SoundboardSound>
+        |> Task.mapT DiscordResponse.asJson<SoundboardSound>
 
 let deleteGuildSoundboardSound
     (guildId: string)
@@ -1882,7 +1883,7 @@ let deleteGuildSoundboardSound
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Stage Instance -----
 
@@ -1896,7 +1897,7 @@ let createStageInstance
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<StageInstance>
+        |> Task.mapT DiscordResponse.asJson<StageInstance>
 
 let getStanceInstance
     (channelId: string)
@@ -1905,7 +1906,7 @@ let getStanceInstance
             get $"stage-instances/{channelId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<StageInstance>
+        |> Task.mapT DiscordResponse.asJson<StageInstance>
 
 let modifyStageInstance
     (channelId: string)
@@ -1918,7 +1919,7 @@ let modifyStageInstance
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<StageInstance>
+        |> Task.mapT DiscordResponse.asJson<StageInstance>
 
 let deleteStageInstance
     (channelId: string)
@@ -1929,7 +1930,7 @@ let deleteStageInstance
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Sticker -----
 
@@ -1939,7 +1940,7 @@ let listStickerPacks
             get "sticker-packs"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ListStickerPacksOkResponse>
+        |> Task.mapT DiscordResponse.asJson<ListStickerPacksOkResponse>
 
 let getStickerPack
     (packId: string)
@@ -1948,7 +1949,7 @@ let getStickerPack
             get $"sticker-packs/{packId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<StickerPack>
+        |> Task.mapT DiscordResponse.asJson<StickerPack>
 
 let listGuildStickers
     (guildId: string)
@@ -1957,7 +1958,7 @@ let listGuildStickers
             get $"guilds/{guildId}/stickers"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Sticker list>
+        |> Task.mapT DiscordResponse.asJson<Sticker list>
 
 let getGuildSticker
     (guildId: string)
@@ -1967,7 +1968,7 @@ let getGuildSticker
             get $"guilds/{guildId}/stickers/{stickerId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Sticker>
+        |> Task.mapT DiscordResponse.asJson<Sticker>
 
 let createGuildSticker
     (guildId: string)
@@ -1980,7 +1981,7 @@ let createGuildSticker
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Sticker>
+        |> Task.mapT DiscordResponse.asJson<Sticker>
 
 let modifyGuildSticker
     (guildId: string)
@@ -1994,7 +1995,7 @@ let modifyGuildSticker
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Sticker>
+        |> Task.mapT DiscordResponse.asJson<Sticker>
 
 let deleteGuildSticker
     (guildId: string)
@@ -2006,7 +2007,7 @@ let deleteGuildSticker
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Subscription -----
 
@@ -2021,11 +2022,11 @@ let listSkuSubscriptions
             get $"skus/{skuId}/subscriptions"
             query "before" before
             query "after" after
-            query "limit" (limit >>. _.ToString())
+            query "limit" (Option.map string limit)
             query "userId" userId
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Subscription list>
+        |> Task.mapT DiscordResponse.asJson<Subscription list>
 
 let getSkuSubscription
     (skuId: string)
@@ -2035,7 +2036,7 @@ let getSkuSubscription
             get $"skus/{skuId}/subscriptions/{subscriptionId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Subscription>
+        |> Task.mapT DiscordResponse.asJson<Subscription>
 
 // ----- User -----
 
@@ -2045,7 +2046,7 @@ let getCurrentUser
             get "users/@me"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<User>
+        |> Task.mapT DiscordResponse.asJson<User>
 let getUser
     (userId: string)
     (client: IBotClient) =
@@ -2053,7 +2054,7 @@ let getUser
             get $"users/{userId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<User>
+        |> Task.mapT DiscordResponse.asJson<User>
 
 let modifyCurrentUser
     (content: ModifyCurrentUserPayload)
@@ -2063,7 +2064,7 @@ let modifyCurrentUser
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<User>
+        |> Task.mapT DiscordResponse.asJson<User>
 
 let getCurrentUserGuilds
     (before: string option)
@@ -2075,11 +2076,11 @@ let getCurrentUserGuilds
             get "users/@me/guilds"
             query "before" before
             query "after" after
-            query "limit" (limit >>. _.ToString())
-            query "with_counts" (withCounts >>. _.ToString())
+            query "limit" (Option.map string limit)
+            query "with_counts" (Option.map string withCounts)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<PartialGuild list>
+        |> Task.mapT DiscordResponse.asJson<PartialGuild list>
 
 let getCurrentUserGuildMember
     (guildId: string)
@@ -2088,7 +2089,7 @@ let getCurrentUserGuildMember
             get $"users/@me/guilds/{guildId}/member"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GuildMember>
+        |> Task.mapT DiscordResponse.asJson<GuildMember>
 
 let leaveGuild
     (guildId: string)
@@ -2097,7 +2098,7 @@ let leaveGuild
             delete $"users/@me/guilds/{guildId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let createDm
     (content: CreateDmPayload)
@@ -2107,7 +2108,7 @@ let createDm
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Channel>
+        |> Task.mapT DiscordResponse.asJson<Channel>
 
 let createGroupDm
     (content: CreateGroupDmPayload)
@@ -2117,7 +2118,7 @@ let createGroupDm
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Channel>
+        |> Task.mapT DiscordResponse.asJson<Channel>
 
 let getCurrentUserConnections
     (client: IOAuthClient) =
@@ -2125,7 +2126,7 @@ let getCurrentUserConnections
             get "users/@me/connections"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Connection list>
+        |> Task.mapT DiscordResponse.asJson<Connection list>
 
 let getCurrentUserApplicationRoleConnection
     (applicationId: string)
@@ -2134,7 +2135,7 @@ let getCurrentUserApplicationRoleConnection
             get $"users/@me/applications/{applicationId}/role-connection"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationRoleConnection>
+        |> Task.mapT DiscordResponse.asJson<ApplicationRoleConnection>
 
 let updateCurrentUserApplicationRoleConnection
     (applicationId: string)
@@ -2145,7 +2146,7 @@ let updateCurrentUserApplicationRoleConnection
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ApplicationRoleConnection>
+        |> Task.mapT DiscordResponse.asJson<ApplicationRoleConnection>
 
 // ----- Voice -----
 
@@ -2155,7 +2156,7 @@ let listVoiceRegions
             get "voice/regions"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<VoiceRegion list>
+        |> Task.mapT DiscordResponse.asJson<VoiceRegion list>
 
 let getCurrentUserVoiceState
     (guildId: string)
@@ -2164,7 +2165,7 @@ let getCurrentUserVoiceState
             get $"guilds/{guildId}/voice-states/@me"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<VoiceState>
+        |> Task.mapT DiscordResponse.asJson<VoiceState>
 
 let getUserVoiceState
     (guildId: string)
@@ -2174,7 +2175,7 @@ let getUserVoiceState
             get $"guilds/{guildId}/voice-states/{userId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<VoiceState>
+        |> Task.mapT DiscordResponse.asJson<VoiceState>
 
 let modifyCurrentUserVoiceState
     (guildId: string)
@@ -2185,7 +2186,7 @@ let modifyCurrentUserVoiceState
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let modifyUserVoiceState
     (guildId: string)
@@ -2197,7 +2198,7 @@ let modifyUserVoiceState
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Webhook -----
 
@@ -2212,7 +2213,7 @@ let createWebhook
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Webhook>
+        |> Task.mapT DiscordResponse.asJson<Webhook>
 
 let getChannelWebhooks
     (channelId: string)
@@ -2221,7 +2222,7 @@ let getChannelWebhooks
             get $"channels/{channelId}/webhooks"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Webhook list>
+        |> Task.mapT DiscordResponse.asJson<Webhook list>
 
 let getGuildWebhooks
     (guildId: string)
@@ -2230,7 +2231,7 @@ let getGuildWebhooks
             get $"guilds/{guildId}/webhooks"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Webhook list>
+        |> Task.mapT DiscordResponse.asJson<Webhook list>
 
 let getWebhook
     (webhookId: string)
@@ -2239,7 +2240,7 @@ let getWebhook
             get $"webhooks/{webhookId}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Webhook>
+        |> Task.mapT DiscordResponse.asJson<Webhook>
 
 let getWebhookWithToken
     (webhookId: string)
@@ -2249,7 +2250,7 @@ let getWebhookWithToken
             get $"webhooks/{webhookId}/{webhookToken}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Webhook>
+        |> Task.mapT DiscordResponse.asJson<Webhook>
 
 let modifyWebhook
     (webhookId: string)
@@ -2262,7 +2263,7 @@ let modifyWebhook
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Webhook>
+        |> Task.mapT DiscordResponse.asJson<Webhook>
 
 let modifyWebhookWithToken
     (webhookId: string)
@@ -2274,7 +2275,7 @@ let modifyWebhookWithToken
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Webhook>
+        |> Task.mapT DiscordResponse.asJson<Webhook>
 
 let deleteWebhook
     (webhookId: string)
@@ -2285,7 +2286,7 @@ let deleteWebhook
         }
         |> DiscordRequest.withAuditLogReason auditLogReason
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let deleteWebhookWithToken
     (webhookId: string)
@@ -2295,7 +2296,7 @@ let deleteWebhookWithToken
             delete $"webhooks/{webhookId}/{webhookToken}"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let executeWebhook
     (webhookId: string)
@@ -2306,12 +2307,12 @@ let executeWebhook
     (client: IBotClient) =
         req {
             post $"webhooks/{webhookId}/{webhookToken}"
-            query "wait" (wait >>. _.ToString())
+            query "wait" (Option.map string wait)
             query "thread_id" threadId
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
 
 let getWebhookMessage
     (webhookId: string)
@@ -2324,7 +2325,7 @@ let getWebhookMessage
             query "thread_id" threadId
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
 
 let editWebhookMessage
     (webhookId: string)
@@ -2339,7 +2340,7 @@ let editWebhookMessage
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Message>
+        |> Task.mapT DiscordResponse.asJson<Message>
 
 let deleteWebhookMessage
     (webhookId: string)
@@ -2352,7 +2353,7 @@ let deleteWebhookMessage
             query "thread_id" threadId
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 // ----- Gateway -----
 
@@ -2364,11 +2365,11 @@ let getGateway
         req {
             get "gateway"
             query "v" version
-            query "encoding" (encoding.ToString())
-            query "compress" (compression >>. _.ToString())
+            query "encoding" (GatewayEncoding.toString encoding)
+            query "compress" (Option.map (GatewayCompression.toString) compression)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GetGatewayOkResponse>
+        |> Task.mapT DiscordResponse.asJson<GetGatewayOkResponse>
         
 let getGatewayBot
     (version: string)
@@ -2378,11 +2379,11 @@ let getGatewayBot
         req {
             get "gateway/bot"
             query "v" version
-            query "encoding" (encoding.ToString())
-            query "compress" (compression >>. _.ToString())
+            query "encoding" (GatewayEncoding.toString encoding)
+            query "compress" (Option.map (GatewayCompression.toString) compression)
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GetGatewayBotOkResponse>
+        |> Task.mapT DiscordResponse.asJson<GetGatewayBotOkResponse>
 
 // ----- OAuth2 -----
 
@@ -2393,7 +2394,7 @@ let getCurrentBotApplicationInformation
             get "applications/@me"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<Application>
+        |> Task.mapT DiscordResponse.asJson<Application>
 
 let getCurrentAuthorizationInformation
     (client: IOAuthClient) =
@@ -2402,7 +2403,7 @@ let getCurrentAuthorizationInformation
             get "@me"
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<GetCurrentAuthorizationInformationOkResponse>
+        |> Task.mapT DiscordResponse.asJson<GetCurrentAuthorizationInformationOkResponse>
 
 let authorizationCodeGrant
     (content: AuthorizationCodeGrantPayload)
@@ -2413,7 +2414,7 @@ let authorizationCodeGrant
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<AuthorizationCodeGrantResponse>
+        |> Task.mapT DiscordResponse.asJson<AuthorizationCodeGrantResponse>
 
 let refreshTokenGrant
     (content: RefreshTokenGrantPayload)
@@ -2424,7 +2425,7 @@ let refreshTokenGrant
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<RefreshTokenGrantResponse>
+        |> Task.mapT DiscordResponse.asJson<RefreshTokenGrantResponse>
 
 let revokeToken
     (content: RevokeTokenPayload)
@@ -2435,7 +2436,7 @@ let revokeToken
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asEmpty
+        |> Task.mapT DiscordResponse.asEmpty
 
 let clientCredentialsGrant
     (content: ClientCredentialsGrantPayload)
@@ -2446,4 +2447,4 @@ let clientCredentialsGrant
             payload content
         }
         |> client.SendAsync
-        ?>> DiscordResponse.asJson<ClientCredentialsGrantResponse>
+        |> Task.mapT DiscordResponse.asJson<ClientCredentialsGrantResponse>

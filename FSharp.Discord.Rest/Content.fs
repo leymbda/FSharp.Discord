@@ -768,7 +768,7 @@ type ModifyGuildPayload (
                 optional "rules_channel_id" rules_channel_id
                 optional "public_updates_channel_id" public_updates_channel_id
                 optional "preferred_locale" preferred_locale
-                optional "features" (features >>. List.map GuildFeature.toString)
+                optional "features" (Option.map (List.map GuildFeature.toString) features)
                 optional "description" description
                 optional "premium_progress_bar_enabled" premium_progress_bar_enabled
                 optional "safety_alerts_channel_id" safety_alerts_channel_id
