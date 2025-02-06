@@ -13,7 +13,11 @@
     <Compile Include="Snowflake.fs" />
     <Compile Include="MessageFormat.fs" />
     <Compile Include="Cdn.fs" />
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FSharp.Discord.Types\FSharp.Discord.Types.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
