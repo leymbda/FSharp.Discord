@@ -13,6 +13,7 @@ type GatewaySendEvent =
     | REQUEST_SOUNDBOARD_SOUNDS of GatewayEventPayload<RequestSoundboardSoundsSendEvent>
     | UPDATE_VOICE_STATE        of GatewayEventPayload<UpdateVoiceStateSendEvent>
     | UPDATE_PRESENCE           of GatewayEventPayload<UpdatePresenceSendEvent>
+    | UNKNOWN                   of GatewayEventPayload<obj>
 
 and GatewaySendEventConverter () =
     inherit JsonConverter<GatewaySendEvent> ()
@@ -36,7 +37,7 @@ and GatewaySendEventConverter () =
         | GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS -> REQUEST_SOUNDBOARD_SOUNDS <| Json.deserializeF json
         | GatewayOpcode.VOICE_STATE_UPDATE -> UPDATE_VOICE_STATE <| Json.deserializeF json
         | GatewayOpcode.PRESENCE_UPDATE -> UPDATE_PRESENCE <| Json.deserializeF json
-        | _ -> JsonException.raise "Unexpected GatewayOpcode provided" // TODO: Handle gracefully for unfamiliar events
+        | _ -> UNKNOWN <| Json.deserializeF json
                 
     override __.Write (writer, value, _) =
         match value with
@@ -47,3 +48,4 @@ and GatewaySendEventConverter () =
         | REQUEST_SOUNDBOARD_SOUNDS r -> Json.serializeF r |> writer.WriteRawValue
         | UPDATE_VOICE_STATE u -> Json.serializeF u |> writer.WriteRawValue
         | UPDATE_PRESENCE u -> Json.serializeF u |> writer.WriteRawValue
+        | UNKNOWN u -> Json.serializeF u |> writer.WriteRawValue

@@ -82,6 +82,7 @@ type GatewayReceiveEvent =
     | SUBSCRIPTION_DELETE                    of GatewayEventPayload<SubscriptionDeleteReceiveEvent>
     | MESSAGE_POLL_VOTE_ADD                  of GatewayEventPayload<MessagePollVoteAddReceiveEvent>
     | MESSAGE_POLL_VOTE_REMOVE               of GatewayEventPayload<MessagePollVoteRemoveReceiveEvent>
+    | UNKNOWN                                of GatewayEventPayload<obj>
 
 and GatewayReceiveEventConverter () =
     inherit JsonConverter<GatewayReceiveEvent> ()
@@ -179,7 +180,7 @@ and GatewayReceiveEventConverter () =
         | GatewayOpcode.DISPATCH, Some (nameof SUBSCRIPTION_DELETE) -> SUBSCRIPTION_DELETE <| Json.deserializeF json
         | GatewayOpcode.DISPATCH, Some (nameof MESSAGE_POLL_VOTE_ADD) -> MESSAGE_POLL_VOTE_ADD <| Json.deserializeF json
         | GatewayOpcode.DISPATCH, Some (nameof MESSAGE_POLL_VOTE_REMOVE) -> MESSAGE_POLL_VOTE_REMOVE <| Json.deserializeF json
-        | _ -> JsonException.raise "Unexpected GatewayOpcode and/or EventName provided" // TODO: Handle gracefully so bot doesnt crash on unfamiliar events
+        | _ -> UNKNOWN <| Json.deserializeF json
                 
     override __.Write (writer, value, options) =
         match value with
@@ -259,3 +260,4 @@ and GatewayReceiveEventConverter () =
         | SUBSCRIPTION_DELETE s -> Json.serializeF s |> writer.WriteRawValue
         | MESSAGE_POLL_VOTE_ADD m -> Json.serializeF m |> writer.WriteRawValue
         | MESSAGE_POLL_VOTE_REMOVE m -> Json.serializeF m |> writer.WriteRawValue
+        | UNKNOWN u -> Json.serializeF u |> writer.WriteRawValue
