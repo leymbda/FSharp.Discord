@@ -14,6 +14,8 @@
     <Compile Include="Websocket.fs" />
     <Compile Include="Gateway.fs" />
     <Compile Include="GatewayClient.fs" />
+    <Compile Include="Clients\GatewayConnectionClient.fs" />
+    <Compile Include="Clients\DurableGatewayClient.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
