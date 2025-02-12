@@ -189,6 +189,38 @@ module GuildFeature =
         override _.Write (writer, value, _) = 
             value |> toString |> writer.WriteStringValue
 
+// https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-authorization-url-example
+[<RequireQualifiedAccess>]
+[<JsonConverter(typeof<OAuthConsent.Converter>)>]
+type OAuthConsent =
+    | Consent
+    | None
+
+module OAuthConsent =
+    let toString (consent: OAuthConsent) =
+        match consent with
+        | OAuthConsent.Consent -> "consent"
+        | OAuthConsent.None -> "none"
+
+    let fromString (str: string) =
+        match str with
+        | "consent" -> Some OAuthConsent.Consent
+        | "none" -> Some OAuthConsent.None
+        | _ -> None
+
+    type Converter () =
+        inherit JsonConverter<OAuthConsent> ()
+
+        override _.Read (reader, _, _) =
+            reader.GetString()
+            |> fromString
+            |> Option.defaultWith (JsonException.raiseThunk "Unexpected OAuthConsent type")
+
+        override _.Write (writer, value, _) = 
+            value
+            |> toString
+            |> writer.WriteStringValue
+
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-onboarding-mode
 type OnboardingMode =
     | ONBOARDING_DEFAULT  = 0
@@ -1019,3 +1051,4 @@ module RateLimitScope =
 
 // TODO: Sort alphabetically and extract more into separate files in enums folder
 // TODO: Add missing documentation links
+// TODO: Add `RequireQualifiedAccess` to all enums (and flags etc in other files)

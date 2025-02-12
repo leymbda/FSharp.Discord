@@ -13,6 +13,7 @@
     <Compile Include="SnowflakeTests.fs" />
     <Compile Include="MessageFormatTests.fs" />
     <Compile Include="CdnTests.fs" />
+    <Compile Include="OAuthTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
