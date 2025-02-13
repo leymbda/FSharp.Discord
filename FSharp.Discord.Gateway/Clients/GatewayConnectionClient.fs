@@ -3,22 +3,26 @@
 open FSharp.Discord.Types
 open System
 open System.Net.WebSockets
+open System.Text.Json
 open System.Threading
 open System.Threading.Tasks
 
 type ReconnectableGatewayDisconnect =
-    | Resume of ResumeGatewayUrl: string
+    | Resume of ResumeData
     | Reconnect
 
 type IGatewayConnectionClient =
-    abstract Connected: bool
+    abstract Connected: bool with get
 
     abstract Connect:
         gatewayUrl: string ->
+        cancellationToken: CancellationToken ->
         Task<Result<ReconnectableGatewayDisconnect, GatewayCloseEventCode option>>
 
     abstract Resume:
-        resumeGatewayUrl: string ->
+        gatewayUrl: string ->
+        resumeData: ResumeData ->
+        cancellationToken: CancellationToken ->
         Task<Result<ReconnectableGatewayDisconnect, GatewayCloseEventCode option>>
 
     abstract RequestGuildMembers:
@@ -48,19 +52,52 @@ type IGatewayConnectionClient =
         afk: bool option ->
         Task<unit>
 
-type GatewayConnectionClient (identify: IdentifySendEvent, handler: string -> Task<unit>, ws: ClientWebSocket) =
+type GatewayConnectionClient (identify: IdentifySendEvent, handler: GatewayHandler, ws: ClientWebSocket) =
+    member private this.connect (gatewayUrl: string) (resumeData: ResumeData option) ct = task {
+        let url =
+            match resumeData with
+            | Some { ResumeGatewayUrl = url } -> url
+            | None -> gatewayUrl
+
+        do! ws.ConnectAsync(Uri url, ct)
+        this.Connected <- true
+
+        let mutable state = GatewayState.zero identify resumeData
+        let mutable disconnectCause: Result<ReconnectableGatewayDisconnect, GatewayCloseEventCode option> option = None
+
+        while disconnectCause.IsNone do
+            let event = Websocket.readNext ws ct |> Task.map (function
+                | WebsocketReadResponse.Close code -> Error (Option.map enum<GatewayCloseEventCode> code)
+                | WebsocketReadResponse.Message message -> Ok (Json.deserializeF<GatewayReceiveEvent> message, message))
+
+            let timeout =
+                match state.Heartbeat with
+                | Some h -> h.Subtract DateTime.UtcNow
+                | None -> Timeout.InfiniteTimeSpan
+                |> Task.Delay
+
+            let! res = Gateway.handle event timeout state handler ws ct
+                
+            match res with
+            | LifecycleResult.Continue newState -> state <- newState
+            | LifecycleResult.Resume resumeData -> disconnectCause <- Some (Ok (ReconnectableGatewayDisconnect.Resume resumeData))
+            | LifecycleResult.Reconnect -> disconnectCause <- Some (Ok ReconnectableGatewayDisconnect.Reconnect)
+            | LifecycleResult.Disconnect code -> disconnectCause <- Some (Error code)
+
+        this.Connected <- false
+        return disconnectCause.Value
+    }
+    
     member val Connected = false with get, set
-
+    
     interface IGatewayConnectionClient with
-        member this.Connected = this.Connected
+        member this.Connected = this.Connected // TODO: Test if this behaves as intended
 
-        member _.Connect gatewayUrl = task {
-            return Error None // TODO: Handle fresh connect here
-        }
+        member this.Connect gatewayUrl ct =
+            this.connect gatewayUrl None ct
 
-        member _.Resume resumeGatewayUrl = task {
-            return Error None // TODO: Handle resuming here
-        }
+        member this.Resume gatewayUrl resumeData ct =
+            this.connect gatewayUrl (Some resumeData) ct
 
         member _.RequestGuildMembers guildId query limit presences userIds nonce = task {
             let payload = RequestGuildMembersSendEvent.create(guildId, limit, ?Presences = presences, ?Query = query, ?UserIds = userIds, ?Nonce = nonce)
@@ -91,4 +128,4 @@ type GatewayConnectionClient (identify: IdentifySendEvent, handler: string -> Ta
         }
 
     interface IDisposable with
-        member _.Dispose () = ()
+        member _.Dispose () = () // TODO: Implement (?)
