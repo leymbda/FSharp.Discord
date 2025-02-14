@@ -2,7 +2,6 @@
 
 open FSharp.Discord.Types
 open System
-open System.Net.WebSockets
 open System.Threading
 open System.Threading.Tasks
 
@@ -22,12 +21,12 @@ type IGatewayClient =
         userIds: string list option ->
         nonce: string option ->
         cancellationToken: CancellationToken ->
-        Task<Result<unit, WebsocketWriteError>>
+        Task<Result<unit, WebsocketError>>
 
     abstract RequestSoundboardSounds:
         guildIds: string list ->
         cancellationToken: CancellationToken ->
-        Task<Result<unit, WebsocketWriteError>>
+        Task<Result<unit, WebsocketError>>
 
     abstract UpdateVoiceState:
         guildId: string ->
@@ -35,7 +34,7 @@ type IGatewayClient =
         selfMute: bool ->
         selfDeaf: bool ->
         cancellationToken: CancellationToken ->
-        Task<Result<unit, WebsocketWriteError>>
+        Task<Result<unit, WebsocketError>>
 
     abstract UpdatePresence:
         since: int option ->
@@ -43,10 +42,10 @@ type IGatewayClient =
         status: Status ->
         afk: bool option ->
         cancellationToken: CancellationToken ->
-        Task<Result<unit, WebsocketWriteError>>
+        Task<Result<unit, WebsocketError>>
 
-type GatewayClient () =
-    member val private _ws: ClientWebSocket ref = ref (new ClientWebSocket()) with get, set
+type GatewayClient (websocketFactory: IWebsocketFactory) =
+    member val private _ws: IWebsocket ref = ref (websocketFactory.CreateClient()) with get, set
 
     interface IGatewayClient with
         member this.Connect gatewayUrl identify handler ct = task {
@@ -54,7 +53,7 @@ type GatewayClient () =
             let mutable closeCode: GatewayCloseEventCode option option = None
 
             while Option.isNone closeCode do
-                this._ws.Value <- new ClientWebSocket()
+                this._ws.Value <- websocketFactory.CreateClient()
             
                 let! disconnect =
                     match disconnectReason with

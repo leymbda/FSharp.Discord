@@ -13,6 +13,7 @@
     <Compile Include="Events\GatewaySendEvent.fs" />
     <Compile Include="Modules\Websocket.fs" />
     <Compile Include="Modules\Gateway.fs" />
+    <Compile Include="Factories\WebsocketFactory.fs" />
     <Compile Include="GatewayClient.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>

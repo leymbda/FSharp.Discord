@@ -2,7 +2,6 @@
 
 open FSharp.Discord.Types
 open System
-open System.Net.WebSockets
 open System.Text.Json
 open System.Threading
 open System.Threading.Tasks
@@ -63,7 +62,7 @@ type ReconnectableGatewayDisconnect =
 
 module Gateway = 
     let send (event: GatewaySendEvent) ct ws =
-        Websocket.write (Json.serializeF event) ws ct
+        Websocket.write (Json.serializeF event) ct ws
 
     // TODO: Add functions for lifecycle send events
     // TODO: Handle enqueuing send events to ensure only one is sent at a time (add to queue synchronously, then work through as freed up)
@@ -169,7 +168,7 @@ module Gateway =
                 return handleEvent event raw state handler ct ws
     }
 
-    let connect identify handler gatewayUrl (resumeData: ResumeData option) ct (ws: ClientWebSocket) = task {
+    let connect identify handler gatewayUrl (resumeData: ResumeData option) ct (ws: IWebsocket) = task {
         let url =
             match resumeData with
             | Some { ResumeGatewayUrl = url } -> url
@@ -181,9 +180,14 @@ module Gateway =
         let mutable disconnectCause: Result<ReconnectableGatewayDisconnect, GatewayCloseEventCode option> option = None
 
         while disconnectCause.IsNone do
-            let event = Websocket.readNext ws ct |> Task.map (function
-                | WebsocketReadResponse.Close code -> Error (Option.map enum<GatewayCloseEventCode> code)
-                | WebsocketReadResponse.Message message -> Ok (Json.deserializeF<GatewayReceiveEvent> message, message))
+            let event =
+                let mapper = Result.mapError (fun _ -> None) 
+                let binder = Result.bind (function
+                    | WebsocketResponse.Close code -> Error (Option.map enum<GatewayCloseEventCode> code)
+                    | WebsocketResponse.Message message -> Ok (Json.deserializeF<GatewayReceiveEvent> message, message)
+                )
+
+                Websocket.readNext ct ws |> Task.map (mapper >> binder)
 
             let timeout =
                 match state.Heartbeat with
