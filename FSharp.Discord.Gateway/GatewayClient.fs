@@ -88,3 +88,11 @@ type GatewayClient (websocketFactory: IWebsocketFactory) =
             this._ws.Value.Dispose() // TODO: Figure out proper disposal to gracefully disconnect (probably needs to be IAsyncDisposable)
 
     // TODO: Figure out what should be getting injected or partially applied so that the gateway client can be reasonably testable
+
+type IGatewayClientFactory =
+    abstract CreateClient: unit -> IGatewayClient
+
+type GatewayClientFactory (websocketFactory: IWebsocketFactory) =
+    interface IGatewayClientFactory with
+        member _.CreateClient () =
+            new GatewayClient(websocketFactory)

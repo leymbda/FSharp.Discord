@@ -61,51 +61,57 @@ type ReconnectableGatewayDisconnect =
     | Reconnect
 
 module Gateway = 
-    let send (event: GatewaySendEvent) ct ws =
-        Websocket.write (Json.serializeF event) ct ws
+    let identify payload ct ws = task {
+        let event = GatewaySendEvent.IDENTIFY (GatewayEventPayload.create(GatewayOpcode.IDENTIFY, payload))
+        return! Websocket.write (Json.serializeF event) ct ws
+    }
 
-    // TODO: Add functions for lifecycle send events
-    // TODO: Handle enqueuing send events to ensure only one is sent at a time (add to queue synchronously, then work through as freed up)
+    let resume token sessionId sequenceId ct ws = task {
+        let payload = ResumeSendEvent.create(token, sessionId, sequenceId)
+        let event = GatewaySendEvent.RESUME (GatewayEventPayload.create(GatewayOpcode.RESUME, payload))
+        return! Websocket.write (Json.serializeF event) ct ws
+    }
+
+    let heartbeat sequenceId ct ws = task {
+        let event = GatewaySendEvent.HEARTBEAT (GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, sequenceId))
+        return! Websocket.write (Json.serializeF event) ct ws    
+    }
 
     let requestGuildMembers guildId query limit presences userIds nonce ct ws = task {
         let payload = RequestGuildMembersSendEvent.create(guildId, limit, ?Presences = presences, ?Query = query, ?UserIds = userIds, ?Nonce = nonce)
         let event = GatewaySendEvent.REQUEST_GUILD_MEMBERS (GatewayEventPayload.create(GatewayOpcode.REQUEST_GUILD_MEMBERS, payload))
-        return! send event ct ws
+        return! Websocket.write (Json.serializeF event) ct ws
     }
 
     let requestSoundboardSounds guildIds ct ws = task {
         let payload = RequestSoundboardSoundsSendEvent.create(guildIds)
         let event = GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS (GatewayEventPayload.create(GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, payload))
-        return! send event ct ws
+        return! Websocket.write (Json.serializeF event) ct ws
     }
 
     let updateVoiceState guildId channelId selfMute selfDeaf ct ws = task {
         let payload = UpdateVoiceStateSendEvent.create(guildId, channelId, selfMute, selfDeaf)
         let event = GatewaySendEvent.UPDATE_VOICE_STATE (GatewayEventPayload.create(GatewayOpcode.VOICE_STATE_UPDATE, payload))
-        return! send event ct ws
+        return! Websocket.write (Json.serializeF event) ct ws
     }
 
     let updatePresence since activities status afk ct ws = task {
         let payload = UpdatePresenceSendEvent.create(status, ?Activities = activities, ?Afk = afk, ?Since = since)
         let event = GatewaySendEvent.UPDATE_PRESENCE (GatewayEventPayload.create(GatewayOpcode.PRESENCE_UPDATE, payload))
-        return! send event ct ws
+        return! Websocket.write (Json.serializeF event) ct ws
     }
 
     let handleEvent event (raw: string) state handler ct ws =
         match event, raw with
         | GatewayReceiveEvent.HELLO ev, _ ->
             match state.SessionId, state.SequenceId with
-            | Some sessionId, Some sequenceId -> GatewayEventPayload.create(GatewayOpcode.RESUME, ResumeSendEvent.create(state.IdentifyEvent.Token, sessionId, sequenceId)) |> GatewaySendEvent.RESUME
-            | _ -> GatewayEventPayload.create(GatewayOpcode.IDENTIFY, state.IdentifyEvent) |> GatewaySendEvent.IDENTIFY
-            |> fun sendEvent -> send sendEvent ct ws
-            |> ignore
+            | Some sessionId, Some sequenceId -> resume state.IdentifyEvent.Token sessionId sequenceId ct ws |> ignore
+            | _ -> identify state.IdentifyEvent ct ws |> ignore
 
             LifecycleResult.Continue { state with Interval = Some ev.Data.HeartbeatInterval }
 
         | GatewayReceiveEvent.HEARTBEAT _, _ ->
-            GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, state.SequenceId) |> GatewaySendEvent.HEARTBEAT
-            |> fun sendEvent -> send sendEvent ct ws
-            |> ignore
+            heartbeat state.SequenceId ct ws |> ignore
 
             LifecycleResult.Continue { state with Heartbeat = state.Interval |> Option.map (fun i -> DateTime.UtcNow.AddMilliseconds(i)) }
         
@@ -145,9 +151,7 @@ module Gateway =
             | _, _, _ -> return LifecycleResult.Reconnect
 
         | winner, true when winner = timeout ->
-            GatewayEventPayload.create (GatewayOpcode.HEARTBEAT, state.SequenceId) |> GatewaySendEvent.HEARTBEAT
-            |> fun sendEvent -> send sendEvent ct ws
-            |> ignore
+            heartbeat state.SequenceId ct ws |> ignore
 
             return LifecycleResult.Continue { state with HeartbeatAcked = false }
 
@@ -208,3 +212,4 @@ module Gateway =
 
     // TODO: Probably rename above functions to nicer names
     // TODO: Handle jitter (where it should be done TBD)
+    // TODO: Handle enqueuing send events to ensure only one is sent at a time (add to queue synchronously, then work through as freed up, basically any use of `ignore` in this file)

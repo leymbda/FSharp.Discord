@@ -5,7 +5,6 @@ open System.IO
 open System.Net.WebSockets
 open System.Text
 open System.Threading
-open System.Threading.Tasks
 
 type WebsocketResponse =
     | Message of string
@@ -14,21 +13,6 @@ type WebsocketResponse =
 type WebsocketError =
     | NotConnected
     | Closed
-
-type IWebsocket =
-    inherit IDisposable
-
-    abstract ConnectAsync:
-        uri: Uri * ct: CancellationToken ->
-        Task
-
-    abstract ReceiveAsync:
-        buffer: ArraySegment<byte> * ct: CancellationToken ->
-        Task<WebSocketReceiveResult>
-
-    abstract SendAsync:
-        buffer: ArraySegment<byte> * messageType: WebSocketMessageType * endOfMessage: bool * ct: CancellationToken ->
-        Task
 
 module Websocket =
     let readNext (ct: CancellationToken) (ws: IWebsocket) = task {
