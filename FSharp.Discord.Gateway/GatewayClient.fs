@@ -6,6 +6,8 @@ open System.Threading
 open System.Threading.Tasks
 
 type IGatewayClient =
+    inherit IAsyncDisposable
+
     abstract Connect:
         gatewayUrl: string ->
         identify: IdentifySendEvent ->
@@ -83,11 +85,9 @@ type GatewayClient (websocketFactory: IWebsocketFactory) =
             return! Gateway.updatePresence since activities status afk ct this._ws.Value
         }
 
-    interface IDisposable with
-        member this.Dispose () =
-            this._ws.Value.Dispose() // TODO: Figure out proper disposal to gracefully disconnect (probably needs to be IAsyncDisposable)
-
-    // TODO: Figure out what should be getting injected or partially applied so that the gateway client can be reasonably testable
+    interface IAsyncDisposable with
+        member this.DisposeAsync () =
+            this._ws.Value.DisposeAsync()
 
 type IGatewayClientFactory =
     abstract CreateClient: unit -> IGatewayClient

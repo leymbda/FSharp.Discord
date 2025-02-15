@@ -6,10 +6,14 @@ open System.Threading
 open System.Threading.Tasks
 
 type IWebsocket =
-    inherit IDisposable
+    inherit IAsyncDisposable
 
     abstract ConnectAsync:
         uri: Uri * ct: CancellationToken ->
+        Task
+
+    abstract CloseAsync:
+        status: WebSocketCloseStatus * description: string * ct: CancellationToken ->
         Task
 
     abstract ReceiveAsync:
@@ -30,6 +34,7 @@ type WebsocketFactory () =
 
             { new IWebsocket with
                 member _.ConnectAsync (uri, ct) = ws.ConnectAsync(uri, ct)
+                member _.CloseAsync (status, description, ct) = ws.CloseAsync(status, description, ct)
                 member _.ReceiveAsync (buffer, ct) = ws.ReceiveAsync(buffer, ct)
                 member _.SendAsync (buffer, messageType, endOfMessage, ct) = ws.SendAsync(buffer, messageType, endOfMessage, ct)
-                member _.Dispose () = ws.Dispose() }
+                member _.DisposeAsync () = ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None) |> ValueTask }
