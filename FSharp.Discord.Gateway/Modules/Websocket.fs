@@ -15,6 +15,7 @@ type WebsocketError =
     | Closed
 
 module Websocket =
+    /// Reads the next message to arrive on the websocket. Returns a message or close event once resolved.
     let readNext (ct: CancellationToken) (ws: IWebsocket) = task {
         try
             use ms = new MemoryStream()
@@ -44,6 +45,7 @@ module Websocket =
         | :? WebSocketException -> return Error WebsocketError.Closed
     }
 
+    /// Write a message onto the websocket.
     let write (message: string) (ct: CancellationToken) (ws: IWebsocket) = task {
         try
             let bytes = Encoding.UTF8.GetBytes message

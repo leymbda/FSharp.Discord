@@ -60,47 +60,55 @@ type ReconnectableGatewayDisconnect =
     | Resume of ResumeData
     | Reconnect
 
-module Gateway = 
+module Gateway =
+    /// Send an identify event.
     let identify payload ct ws = task {
         let event = GatewaySendEvent.IDENTIFY (GatewayEventPayload.create(GatewayOpcode.IDENTIFY, payload))
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
+    /// Send a resume event.
     let resume token sessionId sequenceId ct ws = task {
         let payload = ResumeSendEvent.create(token, sessionId, sequenceId)
         let event = GatewaySendEvent.RESUME (GatewayEventPayload.create(GatewayOpcode.RESUME, payload))
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
+    /// Send a heartbeat event.
     let heartbeat sequenceId ct ws = task {
         let event = GatewaySendEvent.HEARTBEAT (GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, sequenceId))
         return! Websocket.write (Json.serializeF event) ct ws    
     }
 
+    /// Send a request guild members event.
     let requestGuildMembers guildId query limit presences userIds nonce ct ws = task {
         let payload = RequestGuildMembersSendEvent.create(guildId, limit, ?Presences = presences, ?Query = query, ?UserIds = userIds, ?Nonce = nonce)
         let event = GatewaySendEvent.REQUEST_GUILD_MEMBERS (GatewayEventPayload.create(GatewayOpcode.REQUEST_GUILD_MEMBERS, payload))
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
+    /// Send a request soundboard sounds event.
     let requestSoundboardSounds guildIds ct ws = task {
         let payload = RequestSoundboardSoundsSendEvent.create(guildIds)
         let event = GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS (GatewayEventPayload.create(GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, payload))
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
+    /// Send an update voice state event.
     let updateVoiceState guildId channelId selfMute selfDeaf ct ws = task {
         let payload = UpdateVoiceStateSendEvent.create(guildId, channelId, selfMute, selfDeaf)
         let event = GatewaySendEvent.UPDATE_VOICE_STATE (GatewayEventPayload.create(GatewayOpcode.VOICE_STATE_UPDATE, payload))
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
+    /// Send an update presence event.
     let updatePresence since activities status afk ct ws = task {
         let payload = UpdatePresenceSendEvent.create(status, ?Activities = activities, ?Afk = afk, ?Since = since)
         let event = GatewaySendEvent.UPDATE_PRESENCE (GatewayEventPayload.create(GatewayOpcode.PRESENCE_UPDATE, payload))
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
+    /// Handle a gateway event. Appropriately handles lifecycle events, and uses the provided handler for the rest.
     let handleEvent (event, raw) state (handler: GatewayHandler) ct ws =
         match event, raw with
         | GatewayReceiveEvent.HELLO ev, _ ->
@@ -141,6 +149,7 @@ module Gateway =
             | true, t -> LifecycleResult.Continue { state with SequenceId = Some (t.GetInt32()) }
             | _ -> LifecycleResult.Continue state
     
+    /// Handle the lifecycle of the gateway connection, including heartbeat.
     let handleLifecycle (event: Task<Result<(GatewayReceiveEvent * string), GatewayCloseEventCode option>>) (timeout: Task) state handler ct ws = task {
         let! winner = Task.WhenAny(event, timeout)
 
@@ -172,6 +181,7 @@ module Gateway =
                 return handleEvent (event, raw) state handler ct ws
     }
 
+    /// Start a connection to the gateway. Automatically reconnects on disconnect when appropriate.
     let startConnection identify handler gatewayUrl (resumeData: ResumeData option) ct (ws: IWebsocket) = task {
         let url =
             match resumeData with

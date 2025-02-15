@@ -5,9 +5,13 @@ open System
 open System.Threading
 open System.Threading.Tasks
 
+/// A durable gateway client to connect to the Discord Gateway. Handles automatically reconnecting if the close code is
+/// considered reconnectable or resumable.
 type IGatewayClient =
     inherit IAsyncDisposable
 
+    /// Connect to the Discord Gateway. Returns a task which only completes when the connection must close (either due
+    /// to an exception or Discord telling the connection to not resume or reconnect).
     abstract Connect:
         gatewayUrl: string ->
         identify: IdentifySendEvent ->
@@ -15,6 +19,7 @@ type IGatewayClient =
         cancellationToken: CancellationToken ->
         Task<GatewayCloseEventCode option>
 
+    /// Send event to request guild members. Result is returned in a new receive event with the given nonce.
     abstract RequestGuildMembers:
         guildId: string ->
         query: string option ->
@@ -25,11 +30,13 @@ type IGatewayClient =
         cancellationToken: CancellationToken ->
         Task<Result<unit, WebsocketError>>
 
+    /// Send event to request soundboard sounds. Result is returned in a new receive event with the given nonce.
     abstract RequestSoundboardSounds:
         guildIds: string list ->
         cancellationToken: CancellationToken ->
         Task<Result<unit, WebsocketError>>
 
+    /// Send event to update the bot's voice state. Result is returned in a new receive event with the given nonce.
     abstract UpdateVoiceState:
         guildId: string ->
         channelId: string option ->
@@ -38,6 +45,7 @@ type IGatewayClient =
         cancellationToken: CancellationToken ->
         Task<Result<unit, WebsocketError>>
 
+    /// Send event to update the bot's presence. Result is returned in a new receive event with the given nonce.
     abstract UpdatePresence:
         since: int option ->
         activities: Activity list option ->
@@ -89,7 +97,9 @@ type GatewayClient (websocketFactory: IWebsocketFactory) =
         member this.DisposeAsync () =
             this._ws.Value.DisposeAsync()
 
+/// A factory to create gateway clients.
 type IGatewayClientFactory =
+    /// Create a new gateway client.
     abstract CreateClient: unit -> IGatewayClient
 
 type GatewayClientFactory (websocketFactory: IWebsocketFactory) =
