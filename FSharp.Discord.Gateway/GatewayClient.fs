@@ -59,8 +59,8 @@ type GatewayClient (websocketFactory: IWebsocketFactory) =
             
                 let! disconnect =
                     match disconnectReason with
-                    | ReconnectableGatewayDisconnect.Reconnect -> Gateway.connect identify handler gatewayUrl None ct this._ws.Value
-                    | ReconnectableGatewayDisconnect.Resume resumeData -> Gateway.connect identify handler gatewayUrl (Some resumeData) ct this._ws.Value
+                    | ReconnectableGatewayDisconnect.Reconnect -> Gateway.startConnection identify handler gatewayUrl None ct this._ws.Value
+                    | ReconnectableGatewayDisconnect.Resume resumeData -> Gateway.startConnection identify handler gatewayUrl (Some resumeData) ct this._ws.Value
 
                 match disconnect with
                 | Error code -> closeCode <- Some code

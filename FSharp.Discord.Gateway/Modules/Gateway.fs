@@ -101,7 +101,7 @@ module Gateway =
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
-    let handleEvent event (raw: string) state handler ct ws =
+    let handleEvent (event, raw) state (handler: GatewayHandler) ct ws =
         match event, raw with
         | GatewayReceiveEvent.HELLO ev, _ ->
             match state.SessionId, state.SequenceId with
@@ -141,7 +141,7 @@ module Gateway =
             | true, t -> LifecycleResult.Continue { state with SequenceId = Some (t.GetInt32()) }
             | _ -> LifecycleResult.Continue state
     
-    let handle (event: Task<Result<(GatewayReceiveEvent * string), GatewayCloseEventCode option>>) (timeout: Task) state handler ct ws = task {
+    let handleLifecycle (event: Task<Result<(GatewayReceiveEvent * string), GatewayCloseEventCode option>>) (timeout: Task) state handler ct ws = task {
         let! winner = Task.WhenAny(event, timeout)
 
         match winner, state.HeartbeatAcked with
@@ -169,10 +169,10 @@ module Gateway =
                 | false, _, _, _ -> return LifecycleResult.Disconnect code
 
             | Ok (event, raw) ->
-                return handleEvent event raw state handler ct ws
+                return handleEvent (event, raw) state handler ct ws
     }
 
-    let connect identify handler gatewayUrl (resumeData: ResumeData option) ct (ws: IWebsocket) = task {
+    let startConnection identify handler gatewayUrl (resumeData: ResumeData option) ct (ws: IWebsocket) = task {
         let url =
             match resumeData with
             | Some { ResumeGatewayUrl = url } -> url
@@ -199,7 +199,9 @@ module Gateway =
                 | None -> Timeout.InfiniteTimeSpan
                 |> Task.Delay
 
-            let! res = handle event timeout state handler ct ws
+                // TODO: Implement jitter here
+
+            let! res = handleLifecycle event timeout state handler ct ws
                 
             match res with
             | LifecycleResult.Continue newState -> state <- newState
@@ -210,6 +212,4 @@ module Gateway =
         return disconnectCause.Value
     }
 
-    // TODO: Probably rename above functions to nicer names
-    // TODO: Handle jitter (where it should be done TBD)
     // TODO: Handle enqueuing send events to ensure only one is sent at a time (add to queue synchronously, then work through as freed up, basically any use of `ignore` in this file)
