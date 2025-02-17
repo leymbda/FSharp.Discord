@@ -9,13 +9,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Entities\IWebsocket.fs" />
     <Compile Include="Events\GatewayReceiveEvent.fs" />
     <Compile Include="Events\GatewaySendEvent.fs" />
-    <Compile Include="Entities\IWebsocket.fs" />
     <Compile Include="Modules\Websocket.fs" />
     <Compile Include="Modules\Gateway.fs" />
     <Compile Include="GatewayClient.fs" />
+    <Compile Include="GatewayState.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Elmish" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
