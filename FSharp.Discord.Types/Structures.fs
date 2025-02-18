@@ -1,5 +1,6 @@
 ﻿namespace rec FSharp.Discord.Types
 
+open Thoth.Json.Net
 open System
 open System.Text.Json
 open System.Text.Json.Serialization
@@ -8,35 +9,96 @@ open System.Text.Json.Serialization
 
 // https://discord.com/developers/docs/reference#error-messages
 type ErrorResponse = {
-    [<JsonPropertyName "code">] Code: JsonErrorCode
-    [<JsonPropertyName "message">] Message: string
-    [<JsonPropertyName "errors">] Errors: (string * string) seq
+    Code: JsonErrorCode
+    Message: string
+    Errors: Map<string, string>
 }
+
+module ErrorResponse =
+    let encoder (errorResponse: ErrorResponse) = Encode.object [
+        "code", Encode.int (errorResponse.Code |> int)
+        "message", Encode.string errorResponse.Message
+        "errors", Encode.dict <| (errorResponse.Errors |> Map.map (fun _ v -> Encode.string v))
+    ]
+
+    let decoder = Decode.object (fun get -> {
+        Code = get.Required.Field "code" Decode.int |> enum<JsonErrorCode>
+        Message = get.Required.Field "message" Decode.string
+        Errors = get.Required.Field "errors" (Decode.dict Decode.string)
+    })
 
 // ----- Interactions: Receiving and Responding -----
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-structure
 type Interaction = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "application_id">] ApplicationId: string
-    [<JsonPropertyName "type">] Type: InteractionType
-    [<JsonPropertyName "data">] Data: InteractionData option
-    [<JsonPropertyName "guild">] Guild: PartialGuild option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "channel">] Channel: PartialChannel option
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "member">] Member: GuildMember option
-    [<JsonPropertyName "user">] User: User option
-    [<JsonPropertyName "token">] Token: string
-    [<JsonPropertyName "version">] Version: int
-    [<JsonPropertyName "message">] Message: Message option
-    [<JsonPropertyName "app_permissions">] AppPermissions: string
-    [<JsonPropertyName "locale">] Locale: string option
-    [<JsonPropertyName "guild_locale">] GuildLocale: string option
-    [<JsonPropertyName "entitlements">] Entitlements: Entitlement list
-    [<JsonPropertyName "authorizing_integration_owners">] AuthorizingIntegrationOwners: (ApplicationIntegrationType * ApplicationIntegrationTypeConfiguration) seq
-    [<JsonPropertyName "context">] Context: InteractionContextType option
+    Id: string
+    ApplicationId: string
+    Type: InteractionType
+    Data: InteractionData option
+    Guild: PartialGuild option
+    GuildId: string option
+    Channel: PartialChannel option
+    ChannelId: string option
+    Member: GuildMember option
+    User: User option
+    Token: string
+    Version: int
+    Message: Message option
+    AppPermissions: string
+    Locale: string option
+    GuildLocale: string option
+    Entitlements: Entitlement list
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
+    Context: InteractionContextType option
 }
+
+module Interaction =
+    // TODO: Does authorizing_integration_owners use the stringified int type or the string name (e.g. "0" vs "GUILD_INSTALL")? Need to check by hitting API manually to check 
+    // TODO: Should authorizing_integration_owners be separated into its own type?
+
+    let decoder = Decode.object (fun get -> {
+        Id = get.Required.Field "id" Decode.string
+        ApplicationId = get.Required.Field "application_id" Decode.string
+        Type = get.Required.Field "type" Decode.int |> enum<InteractionType>
+        Data = get.Optional.Field "data" (Decode.object InteractionData.decoder)
+        Guild = get.Optional.Field "guild" (Decode.object PartialGuild.decoder)
+        GuildId = get.Optional.Field "guild_id" Decode.string
+        Channel = get.Optional.Field "channel" (Decode.object PartialChannel.decoder)
+        ChannelId = get.Optional.Field "channel_id" Decode.string
+        Member = get.Optional.Field "member" (Decode.object GuildMember.decoder)
+        User = get.Optional.Field "user" (Decode.object User.decoder)
+        Token = get.Required.Field "token" Decode.string
+        Version = get.Required.Field "version" Decode.int
+        Message = get.Optional.Field "message" (Decode.object Message.decoder)
+        AppPermissions = get.Required.Field "app_permissions" Decode.string
+        Locale = get.Optional.Field "locale" Decode.string
+        GuildLocale = get.Optional.Field "guild_locale" Decode.string
+        Entitlements = get.Required.Field "entitlements" (Decode.list (Decode.object Entitlement.decoder))
+        AuthorizingIntegrationOwners = get.Required.Field "authorizing_integration_owners" (Decode.map' (Decode.int |> Decode.map enum<ApplicationIntegrationType>) (Decode.object ApplicationIntegrationTypeConfiguration.decoder))
+        Context = get.Optional.Field "context" Decode.int |> Option.map enum<InteractionContextType>
+    })
+
+    let encoder (interaction: Interaction) = Encode.object [
+        "id", Encode.string interaction.Id
+        "application_id", Encode.string interaction.ApplicationId
+        "type", Encode.int (interaction.Type |> int)
+        "data", Encode.option InteractionData.encoder interaction.Data
+        "guild", Encode.option Guild.encoder interaction.Guild
+        "guild_id", Encode.option Encode.string interaction.GuildId
+        "channel", Encode.option PartialChannel.encoder interaction.Channel
+        "channel_id", Encode.option Encode.string interaction.ChannelId
+        "member", Encode.option GuildMember.encoder interaction.Member
+        "user", Encode.option User.encoder interaction.User
+        "token", Encode.string interaction.Token
+        "version", Encode.int interaction.Version
+        "message", Encode.option Message.encoder interaction.Message
+        "app_permissions", Encode.string interaction.AppPermissions
+        "locale", Encode.option Encode.string interaction.Locale
+        "guild_locale", Encode.option Encode.string interaction.GuildLocale
+        "entitlements", Encode.list <| List.map Entitlement.encoder interaction.Entitlements
+        "authorizing_integration_owners", Encode.object <| (interaction.AuthorizingIntegrationOwners |> Map.toList |> List.map (fun (k, v) -> (string k, ApplicationIntegrationTypeConfiguration.encoder v)))
+        "context", Encode.option Encode.int (interaction.Context |> Option.map int)
+    ]
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
 type ApplicationCommandData = {
@@ -158,6 +220,7 @@ type ModalInteractionCallbackData = {
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-response-structure
+[<JsonConverter(typeof<InteractionResponse.Converter>)>]
 type InteractionResponse =
     | PONG                                    of unit
     | CHANNEL_MESSAGE_WITH_SOURCE             of MessageInteractionCallbackData
