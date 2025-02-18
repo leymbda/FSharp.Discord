@@ -10,7 +10,7 @@ type GatewayReceiveEvent =
     | HEARTBEAT_ACK                          of GatewayEventPayload<HeartbeatAckReceiveEvent>
     | HELLO                                  of GatewayEventPayload<HelloReceiveEvent>
     | READY                                  of GatewayEventPayload<ReadyReceiveEvent>
-    | RESUMED                                of GatewayEventPayload<ReadyReceiveEvent>
+    | RESUMED                                of GatewayEventPayload<ResumedReceiveEvent>
     | RECONNECT                              of GatewayEventPayload<ReconnectReceiveEvent>
     | INVALID_SESSION                        of GatewayEventPayload<InvalidSessionReceiveEvent>
     | APPLICATION_COMMAND_PERMISSIONS_UPDATE of GatewayEventPayload<ApplicationCommandPermissionsUpdateReceiveEvent>

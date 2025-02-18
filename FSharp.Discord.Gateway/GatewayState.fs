@@ -4,42 +4,29 @@ open Elmish
 open FSharp.Discord.Types
 open System
 
-module Cmd =
-    let fromAsync (operation: Async<'msg>): Cmd<'msg> =
-        let delayedCmd (dispatch: 'msg -> unit): unit =
-            let delayedDispatch = async {
-                let! msg = operation
-                dispatch msg
-            }
-
-            Async.StartImmediate delayedDispatch
-
-        Cmd.ofEffect delayedCmd
-
-type SendEventAction =
-    | Start
-    | Finish
-
 type QueuedSendEvent =
     | Pending of GatewaySendEvent
     | Processing
 
 type Model = {
+    // Program state
     SendQueue: QueuedSendEvent list
 
+    // Args
     IdentifyEvent: IdentifySendEvent
-    SequenceId: int option
+
+    // Lifecycle state
     Interval: int option
+    ResumeGatewayUrl: string option
+    SessionId: string option
+    SequenceId: int option
     Heartbeat: DateTime option
     HeartbeatAcked: bool
-    ResumeGatewayUrl: string option
-    SessionId: string option    
 }
 
 let init identifyEvent =
     {
         SendQueue = []
-
         IdentifyEvent = identifyEvent
         SequenceId = None
         Interval = None
@@ -51,10 +38,25 @@ let init identifyEvent =
     Cmd.none
 
 type Msg =
-    | Send of SendEventAction
+    // Core interactivity
+    | Send of GatewaySendEvent
+    | Receive of GatewayReceiveEvent
+
+    // Handle send queue
+    | Enqueue of GatewaySendEvent
+    | StartProcessNext
+    | EndProcessNext
+
+    // Send events
     | SendIdentify of GatewayEventPayload<IdentifySendEvent>
     | SendResume of GatewayEventPayload<ResumeSendEvent>
+    | SendHeartbeat of GatewayEventPayload<HeartbeatSendEvent>
+    | SendRequestGuildMembers of GatewayEventPayload<RequestGuildMembersSendEvent>
+    | SendRequestSoundboardSounds of GatewayEventPayload<RequestSoundboardSoundsSendEvent>
+    | SendUpdateVoiceState of GatewayEventPayload<UpdateVoiceStateSendEvent>
+    | SendUpdatePresence of GatewayEventPayload<UpdatePresenceSendEvent>
 
+    // Receive events
     | ReceiveHello of GatewayEventPayload<HelloReceiveEvent>
     | ReceiveHeartbeat of GatewayEventPayload<HeartbeatReceiveEvent>
     | ReceiveHeartbeatAck of GatewayEventPayload<HeartbeatAckReceiveEvent>
@@ -63,32 +65,70 @@ type Msg =
     | ReceiveReconnect of GatewayEventPayload<ReconnectReceiveEvent>
     | ReceiveInvalidSession of GatewayEventPayload<InvalidSessionReceiveEvent>
 
-let private send model status =
-    match status with
-    | SendEventAction.Start ->
-        match model.SendQueue |> List.tryHead with
-        | Some (QueuedSendEvent.Pending ev) ->
-            { model with SendQueue = model.SendQueue |> List.skip 1 |> List.append [QueuedSendEvent.Processing] },
-            Cmd.ofEffect (fun dispatch -> (async {
-                // TODO: Send next event `ev` here (where does the websocket dependency come from?)
-                dispatch (Msg.Send SendEventAction.Finish)
-            } |> Async.StartImmediate)) // TODO: Is this blocking? Can it be made not blocking?
+let private send model (ev: GatewaySendEvent) =
+    match ev with
+    | GatewaySendEvent.IDENTIFY ev -> model, Cmd.ofMsg (Msg.SendIdentify ev)
+    | GatewaySendEvent.RESUME ev -> model, Cmd.ofMsg (Msg.SendResume ev)
+    | GatewaySendEvent.HEARTBEAT ev -> model, Cmd.ofMsg (Msg.SendHeartbeat ev)
+    | GatewaySendEvent.REQUEST_GUILD_MEMBERS ev -> model, Cmd.ofMsg (Msg.SendRequestGuildMembers ev)
+    | GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS ev -> model, Cmd.ofMsg (Msg.SendRequestSoundboardSounds ev)
+    | GatewaySendEvent.UPDATE_VOICE_STATE ev -> model, Cmd.ofMsg (Msg.SendUpdateVoiceState ev)
+    | GatewaySendEvent.UPDATE_PRESENCE ev -> model, Cmd.ofMsg (Msg.SendUpdatePresence ev)
+    | GatewaySendEvent.UNKNOWN ev -> model, Cmd.none // TODO: Handle unknown events (?)
 
-        | Some (QueuedSendEvent.Processing)
-        | None ->
-            model, Cmd.none
+let private receive model (ev: GatewayReceiveEvent) =
+    match ev with
+    | GatewayReceiveEvent.HELLO ev -> model, Cmd.ofMsg (Msg.ReceiveHello ev)
+    | GatewayReceiveEvent.HEARTBEAT ev -> model, Cmd.ofMsg (Msg.ReceiveHeartbeat ev)
+    | GatewayReceiveEvent.HEARTBEAT_ACK ev -> model, Cmd.ofMsg (Msg.ReceiveHeartbeatAck ev)
+    | GatewayReceiveEvent.READY ev -> model, Cmd.ofMsg (Msg.ReceiveReady ev)
+    | GatewayReceiveEvent.RESUMED ev -> model, Cmd.ofMsg (Msg.ReceiveResumed ev)
+    | GatewayReceiveEvent.RECONNECT ev -> model, Cmd.ofMsg (Msg.ReceiveReconnect ev)
+    | GatewayReceiveEvent.INVALID_SESSION ev -> model, Cmd.ofMsg (Msg.ReceiveInvalidSession ev)
+    | ev -> model, Cmd.none // TODO: Handle other events (pass gateway handler in as arg?)
 
-    | SendEventAction.Finish ->
-        { model with SendQueue = model.SendQueue |> List.skip 1 },
-        Cmd.ofMsg (Msg.Send SendEventAction.Start)
+let private enqueue model ev =
+    { model with SendQueue = model.SendQueue @ [QueuedSendEvent.Pending ev] },
+    Cmd.ofMsg Msg.StartProcessNext
+
+let private startProcessNext model =
+    match model.SendQueue |> List.tryHead with
+    | Some (QueuedSendEvent.Pending ev) ->
+        { model with SendQueue = model.SendQueue |> List.skip 1 |> List.append [QueuedSendEvent.Processing] },
+        Cmd.ofEffect (fun dispatch -> (async {
+            // TODO: Send event `ev` here (where does the dependency to send gateway events come from?)
+
+            dispatch (Msg.EndProcessNext)
+        } |> Async.StartImmediate)) // TODO: Test if this is blocking or not
+
+    | _ -> model, Cmd.none
+
+let private endProcessNext model =
+    { model with SendQueue = model.SendQueue |> List.skip 1 },
+    Cmd.ofMsg Msg.StartProcessNext
+
+    // TODO: Should this somehow filter for `QueuedSendEvent.Processing` in some way to ensure it doesn't get stuck?
 
 let private sendIdentify model (ev: GatewayEventPayload<IdentifySendEvent>) =
-    { model with SendQueue = model.SendQueue @ [QueuedSendEvent.Pending (GatewaySendEvent.IDENTIFY ev)] },
-    Cmd.ofMsg (Msg.Send SendEventAction.Start)
+    model, Cmd.ofMsg (Msg.Enqueue (GatewaySendEvent.IDENTIFY ev))
 
 let private sendResume model (ev: GatewayEventPayload<ResumeSendEvent>) =
-    { model with SendQueue = model.SendQueue @ [QueuedSendEvent.Pending (GatewaySendEvent.RESUME ev)] },
-    Cmd.ofMsg (Msg.Send SendEventAction.Start)
+    model, Cmd.ofMsg (Msg.Enqueue (GatewaySendEvent.RESUME ev))
+
+let private sendHeartbeat model (ev: GatewayEventPayload<HeartbeatSendEvent>) =
+    model, Cmd.ofMsg (Msg.Enqueue (GatewaySendEvent.HEARTBEAT ev))
+
+let private sendRequestGuildMembers model (ev: GatewayEventPayload<RequestGuildMembersSendEvent>) =
+    model, Cmd.ofMsg (Msg.Enqueue (GatewaySendEvent.REQUEST_GUILD_MEMBERS ev))
+
+let private sendRequestSoundboardSounds model (ev: GatewayEventPayload<RequestSoundboardSoundsSendEvent>) =
+    model, Cmd.ofMsg (Msg.Enqueue (GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS ev))
+
+let private sendUpdateVoiceState model (ev: GatewayEventPayload<UpdateVoiceStateSendEvent>) =
+    model, Cmd.ofMsg (Msg.Enqueue (GatewaySendEvent.UPDATE_VOICE_STATE ev))
+
+let private sendUpdatePresence model (ev: GatewayEventPayload<UpdatePresenceSendEvent>) =
+    model, Cmd.ofMsg (Msg.Enqueue (GatewaySendEvent.UPDATE_PRESENCE ev))
 
 let private receiveHello model (ev: GatewayEventPayload<HelloReceiveEvent>) =
     match model.SessionId, model.SequenceId with
@@ -103,28 +143,46 @@ let private receiveHello model (ev: GatewayEventPayload<HelloReceiveEvent>) =
         Cmd.ofMsg (Msg.SendIdentify (GatewayEventPayload.create(GatewayOpcode.IDENTIFY, model.IdentifyEvent)))
 
 let private receiveHeartbeat model (ev: GatewayEventPayload<HeartbeatReceiveEvent>) =
-    model, Cmd.none // TODO: Implement
+    let payload = GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, model.SequenceId)
 
-let private receiveHeartbeatAck model (ev: GatewayEventPayload<HeartbeatAckReceiveEvent>) =
-    model, Cmd.none // TODO: Implement
+    { model with Heartbeat = model.Interval |> Option.map DateTime.UtcNow.AddMilliseconds }, // TODO: Remove current time dependency
+    Cmd.ofMsg (Msg.SendHeartbeat payload)
 
-let private receiveReady model (ev: GatewayEventPayload<ReadyReceiveEvent>) =
-    model, Cmd.none // TODO: Implement
+let private receiveHeartbeatAck (model: Model) (ev: GatewayEventPayload<HeartbeatAckReceiveEvent>) =
+    { model with HeartbeatAcked = true }, Cmd.none
+
+let private receiveReady (model: Model) (ev: GatewayEventPayload<ReadyReceiveEvent>) =
+    { model with ResumeGatewayUrl = Some ev.Data.ResumeGatewayUrl; SessionId = Some ev.Data.SessionId }, Cmd.none
 
 let private receiveResumed model (ev: GatewayEventPayload<ResumedReceiveEvent>) =
-    model, Cmd.none // TODO: Implement
+    model, Cmd.none // TODO: Mark state as active? Same with ready?
 
 let private receiveReconnect model (ev: GatewayEventPayload<ReconnectReceiveEvent>) =
-    model, Cmd.none // TODO: Implement
+    match model.ResumeGatewayUrl, model.SessionId, model.SequenceId with
+    | Some resumeGatewayUrl, Some sessionId, Some sequenceId -> model, Cmd.none // TODO: Resume
+    | _ -> model, Cmd.none // TODO: Reconnect
 
 let private receiveInvalidSession model (ev: GatewayEventPayload<InvalidSessionReceiveEvent>) =
-    model, Cmd.none // TODO: Implement
+    match ev.Data, model.ResumeGatewayUrl, model.SessionId, model.SequenceId with
+    | true, Some resumeGatewayUrl, Some sessionId, Some sequenceId -> model, Cmd.none // TODO: Resume
+    | _ -> model, Cmd.none // TODO: Reconnect
 
 let update msg model =
     match msg with
-    | Msg.Send status -> send model status
+    | Msg.Send ev -> send model ev
+    | Msg.Receive ev -> receive model ev
+
+    | Msg.Enqueue status -> enqueue model status
+    | Msg.StartProcessNext -> startProcessNext model
+    | Msg.EndProcessNext -> endProcessNext model
+
     | Msg.SendIdentify ev -> sendIdentify model ev
     | Msg.SendResume ev -> sendResume model ev
+    | Msg.SendHeartbeat ev -> sendHeartbeat model ev
+    | Msg.SendRequestGuildMembers ev -> sendRequestGuildMembers model ev
+    | Msg.SendRequestSoundboardSounds ev -> sendRequestSoundboardSounds model ev
+    | Msg.SendUpdateVoiceState ev -> sendUpdateVoiceState model ev
+    | Msg.SendUpdatePresence ev -> sendUpdatePresence model ev
 
     | Msg.ReceiveHello ev -> receiveHello model ev
     | Msg.ReceiveHeartbeat ev -> receiveHeartbeat model ev
@@ -137,8 +195,7 @@ let update msg model =
 let view model dispatch =
     ()
 
-let program identifyEvent =
+let program identify =
     Program.mkProgram init update view
-    |> Program.runWith identifyEvent
-
-// TODO: Figure out subscriptions for receiving from the actual websocket
+    // TODO: Add subscriptions to trigger send and receive messages with the websocket here `|> Program.withSubscription ...` (?)
+    |> Program.runWith identify
