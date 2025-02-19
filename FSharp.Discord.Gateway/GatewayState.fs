@@ -3,7 +3,36 @@
 open Elmish
 open FSharp.Discord.Types
 open System
+open System.Text.Json
 open System.Threading.Tasks
+
+type Socket (ws: IWebsocket, id) =
+    member val private _observers: IObserver<(GatewayReceiveEvent * string)> list = [] with get, set
+
+    member val Id: Guid = id with get
+
+    interface IObservable<(GatewayReceiveEvent * string)> with
+        member this.Subscribe observer =
+            this._observers <- this._observers @ [observer]
+            { new IDisposable with member _.Dispose () = this._observers <- this._observers |> List.except [observer] }
+
+    member this.Connect uri ct = task {
+        do! ws.ConnectAsync(uri, ct)
+
+        let mapper = Result.mapError (fun _ -> None)
+        let binder = Result.bind (function
+            | WebsocketResponse.Close code -> Error (Option.map enum<GatewayCloseEventCode> code)
+            | WebsocketResponse.Message message -> Ok (Json.deserializeF<GatewayReceiveEvent> message, message)
+        )
+
+        let! res = Websocket.readNext ct ws |> Task.map (mapper >> binder)
+
+        match res with
+        | Error _ -> this._observers |> List.iter (_.OnCompleted()) // TODO: Pass actual error code to handle resume/reconnect
+        | Ok (ev, raw) -> this._observers |> List.iter (_.OnNext(ev, raw))
+    }
+
+// TODO: Clean up above and probably move to a separate file. Should be able to remove IWebsocket as well
 
 type Model = {
     // Args
@@ -23,7 +52,7 @@ type Model = {
     SendQueue: GatewaySendQueue.Model
 
     // Other state
-    Socket: IWebsocket option
+    Socket: Socket option
 }
 
 type Msg =
@@ -32,6 +61,9 @@ type Msg =
 
     // TODO: Create message to initialise with connect (and run as cmd on init?)
     // TODO: Figure out how to handle disconnect and termination (probably needs a msg here)
+
+    | Resume
+    | Reconnect
 
     | SetActive of bool
     | Queue of GatewaySendQueue.Msg
@@ -51,7 +83,7 @@ let init (identifyEvent, handler) =
         Heartbeat = None
         HeartbeatAcked = true
         SendQueue = sendQueue
-        Socket = None
+        Socket = None // TODO: How can this be passed down into the GatewaySendQueue appropriately?
     },
     Cmd.map Msg.Queue sendQueueCmd
 
@@ -100,6 +132,12 @@ let private receive (env: #IGetCurrentTime) model (ev: GatewayReceiveEvent) (raw
     | _, raw ->
         model, Cmd.OfAsync.perform (fun r -> model.Handler r |> Async.AwaitTask) raw (fun _ -> Msg.Ignore)
 
+let resume env model =
+    model, Cmd.none // TODO: Trigger socket setup and startup with existing model state (do reconnect if invalid state)
+
+let reconnect env model =
+    init(model.IdentifyEvent, model.Handler) // TODO: Trigger socket setup and startup
+
 let private setActive model active =
     let opcode =
         match active with
@@ -118,6 +156,8 @@ let update env msg model =
     match msg with
     | Msg.Send ev -> model, Cmd.ofMsg (Msg.Queue (GatewaySendQueue.Msg.Enqueue ev))
     | Msg.Receive (ev, raw) -> receive env model ev raw
+    | Msg.Resume -> resume env model
+    | Msg.Reconnect -> reconnect env model
     | Msg.SetActive active -> setActive model active
     | Msg.Queue msg' ->
         let res, cmd = GatewaySendQueue.update env msg' model.SendQueue
@@ -130,19 +170,12 @@ let view model dispatch =
 let subscribe model =
     match model.Socket with
     | None -> []
-    | Some socket ->
-        let id = socket.ToString() // TODO: Generate random ID to recognise when a socket is regenerated (or just needs to resubscribe for some reason)
+    | Some socket -> [
+        ["websocket"; socket.Id.ToString()],
+        fun dispatch -> socket.Subscribe(fun (ev, raw) -> dispatch (Msg.Receive (ev, raw)));
 
-        let sub = fun dispatch ->
-            let onReceive ev raw =
-                dispatch (Msg.Receive (ev, raw))
-
-            // TODO: Subscribe to socket event to pick up received here (somehow)
-
-            { new IDisposable with
-                member _.Dispose () = () } // TODO: Unsubscribe here
-
-        [["websocket"; id], sub]
+        // TODO: Handle heartbeat timeout as a second subscription (probably)
+    ]
 
 let program env identify handler =
     Task.Run(fun () ->
