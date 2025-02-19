@@ -3,6 +3,7 @@
 open Elmish
 open FSharp.Discord.Types
 open System
+open System.Threading.Tasks
 
 type Model = {
     // Args
@@ -20,11 +21,17 @@ type Model = {
 
     // Child Models
     SendQueue: GatewaySendQueue.Model
+
+    // Other state
+    Socket: IWebsocket option
 }
 
 type Msg =
     | Send of GatewaySendEvent
     | Receive of GatewayReceiveEvent * string
+
+    // TODO: Create message to initialise with connect (and run as cmd on init?)
+    // TODO: Figure out how to handle disconnect and termination (probably needs a msg here)
 
     | SetActive of bool
     | Queue of GatewaySendQueue.Msg
@@ -44,6 +51,7 @@ let init (identifyEvent, handler) =
         Heartbeat = None
         HeartbeatAcked = true
         SendQueue = sendQueue
+        Socket = None
     },
     Cmd.map Msg.Queue sendQueueCmd
 
@@ -119,10 +127,30 @@ let update env msg model =
 let view model dispatch =
     ()
 
-let program env identify handler =
-    Program.mkProgram init (update env) view
-    // TODO: Add subscription to shutdown connection `|> Program.withSubscription ...` (or maybe its `|> Program.withTermination ...` ?)
-    |> Program.runWith (identify, handler)
+let subscribe model =
+    match model.Socket with
+    | None -> []
+    | Some socket ->
+        let id = socket.ToString() // TODO: Generate random ID to recognise when a socket is regenerated (or just needs to resubscribe for some reason)
 
-// TODO: Setup and manage websocket internally
+        let sub = fun dispatch ->
+            let onReceive ev raw =
+                dispatch (Msg.Receive (ev, raw))
+
+            // TODO: Subscribe to socket event to pick up received here (somehow)
+
+            { new IDisposable with
+                member _.Dispose () = () } // TODO: Unsubscribe here
+
+        [["websocket"; id], sub]
+
+let program env identify handler =
+    Task.Run(fun () ->
+        Program.mkProgram init (update env) view
+        |> Program.withSubscription subscribe
+        |> Program.runWith (identify, handler)
+    )
+
+    // TODO: Check if this resolves when program ends, otherwise figure out `withSubscription`/`withTermination` type logic
+
 // TODO: Figure out how to notify that the gateway disconencted irrecoverably (likely cant use `Program.runWith` as it starts single threaded loop)
