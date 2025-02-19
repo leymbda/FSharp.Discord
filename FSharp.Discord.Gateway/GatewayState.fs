@@ -130,7 +130,7 @@ let private receive (env: #IGetCurrentTime) model (ev: GatewayReceiveEvent) (raw
         | _ -> model, Cmd.ofMsg (Msg.SetActive false) // TODO: Reconnect
 
     | _, raw ->
-        model, Cmd.OfAsync.perform (fun r -> model.Handler r |> Async.AwaitTask) raw (fun _ -> Msg.Ignore)
+        model, Cmd.OfAsync.perform (fun r -> model.Handler r |> Async.AwaitTask) raw (fun _ -> Msg.Ignore) // TODO: Can Msg.Ignore be removed? Cmd.ofEffect?
 
 let resume env model =
     model, Cmd.none // TODO: Trigger socket setup and startup with existing model state (do reconnect if invalid state)
