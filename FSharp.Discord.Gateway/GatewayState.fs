@@ -3,44 +3,16 @@
 open Elmish
 open FSharp.Discord.Types
 open System
-open System.Text.Json
+open System.Threading
 open System.Threading.Tasks
-
-type Socket (ws: IWebsocket, id) =
-    member val private _observers: IObserver<(GatewayReceiveEvent * string)> list = [] with get, set
-
-    member val Id: Guid = id with get
-
-    interface IObservable<(GatewayReceiveEvent * string)> with
-        member this.Subscribe observer =
-            this._observers <- this._observers @ [observer]
-            { new IDisposable with member _.Dispose () = this._observers <- this._observers |> List.except [observer] }
-
-    member this.Connect uri ct = task {
-        do! ws.ConnectAsync(uri, ct)
-
-        let mapper = Result.mapError (fun _ -> None)
-        let binder = Result.bind (function
-            | WebsocketResponse.Close code -> Error (Option.map enum<GatewayCloseEventCode> code)
-            | WebsocketResponse.Message message -> Ok (Json.deserializeF<GatewayReceiveEvent> message, message)
-        )
-
-        let! res = Websocket.readNext ct ws |> Task.map (mapper >> binder)
-
-        match res with
-        | Error _ -> this._observers |> List.iter (_.OnCompleted()) // TODO: Pass actual error code to handle resume/reconnect
-        | Ok (ev, raw) -> this._observers |> List.iter (_.OnNext(ev, raw))
-    }
-
-// TODO: Clean up above and probably move to a separate file. Should be able to remove IWebsocket as well
 
 type Model = {
     // Args
+    GatewayUrl: string
     IdentifyEvent: IdentifySendEvent
     Handler: GatewayHandler
 
     // Lifecycle state
-    Active: bool
     Interval: int option
     ResumeGatewayUrl: string option
     SessionId: string option
@@ -52,7 +24,7 @@ type Model = {
     SendQueue: GatewaySendQueue.Model
 
     // Other state
-    Socket: Socket option
+    Socket: ISocket option
 }
 
 type Msg =
@@ -62,20 +34,20 @@ type Msg =
     // TODO: Create message to initialise with connect (and run as cmd on init?)
     // TODO: Figure out how to handle disconnect and termination (probably needs a msg here)
 
-    | Resume
-    | Reconnect
+    | Connect of forceReconnect: bool
+    | Ready
+    | Heartbeat
 
-    | SetActive of bool
     | Queue of GatewaySendQueue.Msg
     | Ignore
 
-let init (identifyEvent, handler) =
+let init (gatewayUrl, identifyEvent, handler) =
     let sendQueue, sendQueueCmd = GatewaySendQueue.init()
 
     {
+        GatewayUrl = gatewayUrl
         IdentifyEvent = identifyEvent
         Handler = handler
-        Active = false
         Interval = None
         ResumeGatewayUrl = None
         SessionId = None
@@ -85,80 +57,94 @@ let init (identifyEvent, handler) =
         SendQueue = sendQueue
         Socket = None // TODO: How can this be passed down into the GatewaySendQueue appropriately?
     },
-    Cmd.map Msg.Queue sendQueueCmd
+    Cmd.batch [
+        Cmd.map Msg.Queue sendQueueCmd
+        Cmd.ofMsg (Msg.Connect true)
+    ]
 
-let private receive (env: #IGetCurrentTime) model (ev: GatewayReceiveEvent) (raw: string) =
+let private receive model (ev: GatewayReceiveEvent) (raw: string) =
     match ev, raw with
     | GatewayReceiveEvent.HELLO ev, _ ->
-        match model.SessionId, model.SequenceId with
-        | Some sessionId, Some sequenceId ->
-            let event = GatewayEventPayload.create(GatewayOpcode.RESUME, ResumeSendEvent.create(model.IdentifyEvent.Token, sessionId, sequenceId)) |> GatewaySendEvent.RESUME
+        let event =
+            match model.SessionId, model.SequenceId with
+            | Some sessionId, Some sequenceId ->
+                let payload = ResumeSendEvent.create(model.IdentifyEvent.Token, sessionId, sequenceId)
+                GatewayEventPayload.create(GatewayOpcode.RESUME, payload) |> GatewaySendEvent.RESUME
 
-            { model with Interval = Some ev.Data.HeartbeatInterval },
-            Cmd.ofMsg (Msg.Send event)
+            | _ ->
+                GatewayEventPayload.create(GatewayOpcode.IDENTIFY, model.IdentifyEvent) |> GatewaySendEvent.IDENTIFY
 
-        | _ ->
-            let event = GatewayEventPayload.create(GatewayOpcode.IDENTIFY, model.IdentifyEvent) |> GatewaySendEvent.IDENTIFY
+        { model with Interval = Some ev.Data.HeartbeatInterval }, Cmd.ofMsg (Msg.Send event)
 
-            { model with Interval = Some ev.Data.HeartbeatInterval },
-            Cmd.ofMsg (Msg.Send event)
-
-    | GatewayReceiveEvent.HEARTBEAT ev, _ ->
-        let event = GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, model.SequenceId) |> GatewaySendEvent.HEARTBEAT
-
-        { model with Heartbeat = model.Interval |> Option.map (env.GetCurrentTime().AddMilliseconds) },
-        Cmd.ofMsg (Msg.Send event)
+    | GatewayReceiveEvent.HEARTBEAT _, _ ->
+        model, Cmd.ofMsg Msg.Heartbeat
 
     | GatewayReceiveEvent.HEARTBEAT_ACK ev, _ ->
         { model with HeartbeatAcked = true }, Cmd.none
 
     | GatewayReceiveEvent.READY ev, _ ->
         { model with ResumeGatewayUrl = Some ev.Data.ResumeGatewayUrl; SessionId = Some ev.Data.SessionId },
-        Cmd.ofMsg (Msg.SetActive true)
+        Cmd.none
 
     | GatewayReceiveEvent.RESUMED _, _ ->
-        model, Cmd.ofMsg (Msg.SetActive true)
+        model, Cmd.none
 
     | GatewayReceiveEvent.RECONNECT _, _ ->
-        match model.ResumeGatewayUrl, model.SessionId, model.SequenceId with
-        | Some _, Some _, Some _ -> model, Cmd.ofMsg (Msg.SetActive false) // TODO: Resume
-        | _ -> model, Cmd.ofMsg (Msg.SetActive false) // TODO: Reconnect
+        model, Cmd.ofMsg (Msg.Connect false)
 
     | GatewayReceiveEvent.INVALID_SESSION ev, _ ->
-        match ev.Data, model.ResumeGatewayUrl, model.SessionId, model.SequenceId with
-        | true, Some _, Some _, Some _ -> model, Cmd.ofMsg (Msg.SetActive false) // TODO: Resume
-        | _ -> model, Cmd.ofMsg (Msg.SetActive false) // TODO: Reconnect
+        model, Cmd.ofMsg (Msg.Connect (not ev.Data))
 
     | _, raw ->
         model, Cmd.OfAsync.perform (fun r -> model.Handler r |> Async.AwaitTask) raw (fun _ -> Msg.Ignore) // TODO: Can Msg.Ignore be removed? Cmd.ofEffect?
 
-let resume env model =
-    model, Cmd.none // TODO: Trigger socket setup and startup with existing model state (do reconnect if invalid state)
-
-let reconnect env model =
-    init(model.IdentifyEvent, model.Handler) // TODO: Trigger socket setup and startup
-
-let private setActive model active =
-    let opcode =
-        match active with
-        | false -> CustomGatewayOpcode.INACTIVE
-        | true -> CustomGatewayOpcode.ACTIVE
-
+let ready model =
     let ev =
-        GatewayReceiveEvent.UNKNOWN (GatewayEventPayload.create (CustomGatewayOpcode.cast opcode, ())),
-        $"""{{"op": {CustomGatewayOpcode.toString opcode}}}"""
+        GatewayReceiveEvent.UNKNOWN (GatewayEventPayload.create (CustomGatewayOpcode.cast CustomGatewayOpcode.ACTIVE, ())),
+        $"""{{"op": {CustomGatewayOpcode.toString CustomGatewayOpcode.ACTIVE}}}"""
     
     // TODO: Clean up this (should this even be sending in the same way as a custom event?)
-    
-    { model with Active = active }, Cmd.ofMsg (Msg.Receive ev)
+
+    model, Cmd.ofMsg (Msg.Receive ev)
+
+let connect (env: #ISocketFactory) model forceReconnect =
+    // TODO: Check if socket already present, if so, close it then reconenct/resume based on its state and `forceReconnect`
+    // TODO: Detect if reconnecting, and send custom INACTIVE event if doing reconnect
+
+    let uri, event =
+        match forceReconnect, model.ResumeGatewayUrl, model.SessionId, model.SequenceId with
+        | false, Some resumeGatewayUrl, Some sessionId, Some sequenceId ->
+            let payload = ResumeSendEvent.create (model.IdentifyEvent.Token, sessionId, sequenceId)
+            let event = GatewaySendEvent.RESUME (GatewayEventPayload.create (GatewayOpcode.RESUME, payload))
+            Uri resumeGatewayUrl, event
+
+        | _ ->
+            let event = GatewaySendEvent.IDENTIFY (GatewayEventPayload.create (GatewayOpcode.IDENTIFY, model.IdentifyEvent))
+            Uri model.GatewayUrl, event
+
+    let socket = env.CreateSocket()
+
+    // TODO: Connect socket (do async in effect cmd?) then send event from above
+
+    { model with Socket = Some socket }, Cmd.ofMsg (Msg.Send event)
+
+let heartbeat (env: #IGetCurrentTime) model =
+    let event = GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, model.SequenceId) |> GatewaySendEvent.HEARTBEAT
+
+    { model with
+        HeartbeatAcked = false
+        Heartbeat = model.Interval |> Option.map (env.GetCurrentTime().AddMilliseconds) },
+    Cmd.ofMsg (Msg.Send event)
 
 let update env msg model =
     match msg with
     | Msg.Send ev -> model, Cmd.ofMsg (Msg.Queue (GatewaySendQueue.Msg.Enqueue ev))
-    | Msg.Receive (ev, raw) -> receive env model ev raw
-    | Msg.Resume -> resume env model
-    | Msg.Reconnect -> reconnect env model
-    | Msg.SetActive active -> setActive model active
+    | Msg.Receive (ev, raw) -> receive model ev raw
+
+    | Msg.Connect forceReconnect -> connect env model forceReconnect
+    | Msg.Ready -> ready model
+    | Msg.Heartbeat -> heartbeat env model
+
     | Msg.Queue msg' ->
         let res, cmd = GatewaySendQueue.update env msg' model.SendQueue
         { model with SendQueue = res }, Cmd.map Msg.Queue cmd
@@ -167,21 +153,44 @@ let update env msg model =
 let view model dispatch =
     ()
 
-let subscribe model =
-    match model.Socket with
-    | None -> []
-    | Some socket -> [
-        ["websocket"; socket.Id.ToString()],
-        fun dispatch -> socket.Subscribe(fun (ev, raw) -> dispatch (Msg.Receive (ev, raw)));
+let subscribe (env: #IGetCurrentTime) model =
+    let socket =
+        match model.Socket with
+        | Some socket ->
+            [
+                ["websocket"; socket.Id.ToString()],
+                fun dispatch -> socket.Subscribe(fun (ev, raw) -> dispatch (Msg.Receive (ev, raw)));
+            ]
+        | _ -> []
 
-        // TODO: Handle heartbeat timeout as a second subscription (probably)
-    ]
+    let delay (timespan: TimeSpan) (callback: unit -> unit) =
+        use cts = new CancellationTokenSource()
+        Task.Delay(timespan, cts.Token).ContinueWith(fun _ -> callback()) |> ignore
+        { new IDisposable with member _.Dispose () = cts.Cancel() }
 
-let program env identify handler =
+        // TODO: Test if ignore and the cts work here
+
+    let heartbeat =
+        match model.HeartbeatAcked, model.Heartbeat with
+        | false, Some due ->
+            [
+                ["heartbeat"; "notacked"; Guid.NewGuid().ToString()],
+                fun dispatch -> delay (due.Subtract (env.GetCurrentTime())) (fun () -> dispatch (Msg.Connect false))
+            ]
+        | true, Some due ->
+            [
+                ["heartbeat"; "acked"; Guid.NewGuid().ToString()],
+                fun dispatch -> delay (due.Subtract (env.GetCurrentTime())) (fun () -> dispatch Msg.Heartbeat)
+            ]
+        | _ -> []
+
+    socket @ heartbeat
+
+let program env gatewayUrl identify handler =
     Task.Run(fun () ->
         Program.mkProgram init (update env) view
-        |> Program.withSubscription subscribe
-        |> Program.runWith (identify, handler)
+        |> Program.withSubscription (subscribe env)
+        |> Program.runWith (gatewayUrl, identify, handler)
     )
 
     // TODO: Check if this resolves when program ends, otherwise figure out `withSubscription`/`withTermination` type logic
