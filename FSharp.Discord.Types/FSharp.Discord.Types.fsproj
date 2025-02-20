@@ -18,6 +18,7 @@
 		<Compile Include="Structures.fs" />
 		<Compile Include="GatewayEvents.fs" />
 		<Compile Include="WebhookEvents.fs" />
+		<Compile Include="Serialization\Thoth.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
