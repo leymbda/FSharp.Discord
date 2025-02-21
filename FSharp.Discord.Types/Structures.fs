@@ -8,34 +8,34 @@ open System.Text.Json.Serialization
 
 // https://discord.com/developers/docs/reference#error-messages
 type ErrorResponse = {
-    [<JsonPropertyName "code">] Code: JsonErrorCode
-    [<JsonPropertyName "message">] Message: string
-    [<JsonPropertyName "errors">] Errors: (string * string) seq
+    Code: JsonErrorCode
+    Message: string
+    Errors: Map<string, string>
 }
 
 // ----- Interactions: Receiving and Responding -----
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-structure
 type Interaction = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "application_id">] ApplicationId: string
-    [<JsonPropertyName "type">] Type: InteractionType
-    [<JsonPropertyName "data">] Data: InteractionData option
-    [<JsonPropertyName "guild">] Guild: PartialGuild option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "channel">] Channel: PartialChannel option
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "member">] Member: GuildMember option
-    [<JsonPropertyName "user">] User: User option
-    [<JsonPropertyName "token">] Token: string
-    [<JsonPropertyName "version">] Version: int
-    [<JsonPropertyName "message">] Message: Message option
-    [<JsonPropertyName "app_permissions">] AppPermissions: string
-    [<JsonPropertyName "locale">] Locale: string option
-    [<JsonPropertyName "guild_locale">] GuildLocale: string option
-    [<JsonPropertyName "entitlements">] Entitlements: Entitlement list
-    [<JsonPropertyName "authorizing_integration_owners">] AuthorizingIntegrationOwners: (ApplicationIntegrationType * ApplicationIntegrationTypeConfiguration) seq
-    [<JsonPropertyName "context">] Context: InteractionContextType option
+    Id: string
+    ApplicationId: string
+    Type: InteractionType
+    Data: InteractionData option
+    Guild: PartialGuild option
+    GuildId: string option
+    Channel: PartialChannel option
+    ChannelId: string option
+    Member: GuildMember option
+    User: User option
+    Token: string
+    Version: int
+    Message: Message option
+    AppPermissions: string
+    Locale: string option
+    GuildLocale: string option
+    Entitlements: Entitlement list
+    AuthorizingIntegrationOwners: Map<string, ApplicationIntegrationTypeConfiguration>
+    Context: InteractionContextType option
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
@@ -158,6 +158,7 @@ type ModalInteractionCallbackData = {
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-response-structure
+[<JsonConverter(typeof<InteractionResponse.Converter>)>]
 type InteractionResponse =
     | PONG                                    of unit
     | CHANNEL_MESSAGE_WITH_SOURCE             of MessageInteractionCallbackData
