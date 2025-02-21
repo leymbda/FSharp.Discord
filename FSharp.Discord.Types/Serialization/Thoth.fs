@@ -3,6 +3,11 @@
 open FSharp.Discord.Types
 open Thoth.Json.Net
 
+module Encode =
+    /// Encode a map to an object (dictionary) by mapping the value to the given encoder.
+    let dict' (encoder: Encoder<'a>) value =
+        Encode.dict <| Map.map (fun _ v -> encoder v) value
+
 // TODO: Figure out why Decoder<_> seems to be necessary but isn't in docs
 // TODO: See if auto encoding/decoding works (and if so, prioritize using it over doing EVERYTHING manually...)
 
@@ -10,13 +15,13 @@ module ErrorResponse =
     let decoder: Decoder<_> = Decode.object (fun get -> {
         Code = get.Required.Field "code" Decode.Enum.int<JsonErrorCode>
         Message = get.Required.Field "message" Decode.string
-        Errors = get.Required.Field "errors" (Decode.map' Decode.string Decode.string)
+        Errors = get.Required.Field "errors" (Decode.dict Decode.string)
     })
 
     let encoder (errorResponse: ErrorResponse) = Encode.object [
         "code", Encode.Enum.int errorResponse.Code
         "message", Encode.string errorResponse.Message
-        "errors", Encode.map Encode.string Encode.string errorResponse.Errors
+        "errors", Encode.dict' Encode.string errorResponse.Errors
     ]
 
 // TODO: Refactor below to use neater encoding/decoding (like above) and implement child types (but also test auto)
