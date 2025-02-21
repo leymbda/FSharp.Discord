@@ -34,7 +34,7 @@ type Interaction = {
     Locale: string option
     GuildLocale: string option
     Entitlements: Entitlement list
-    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
+    AuthorizingIntegrationOwners: Map<string, ApplicationIntegrationTypeConfiguration>
     Context: InteractionContextType option
 }
 
