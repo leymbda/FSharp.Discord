@@ -9,7 +9,7 @@ open System.Text.Json.Serialization
 // ----- Interaction -----
 
 type CreateInteractionResponsePayload<'a> (
-    payload: InteractionResponse,
+    payload: InteractionResponse, // TODO: Create DU for interaction responses to ensure valid type/data
     ?files:  File list
 ) =
     interface IPayload with

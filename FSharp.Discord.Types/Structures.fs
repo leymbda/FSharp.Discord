@@ -67,137 +67,93 @@ type ModalSubmitData = {
 
 type InteractionData =
     | APPLICATION_COMMAND of ApplicationCommandData
-    | MESSAGE_COMPONENT of MessageComponentData
-    | MODAL_SUBMIT of ModalSubmitData
+    | MESSAGE_COMPONENT   of MessageComponentData
+    | MODAL_SUBMIT        of ModalSubmitData
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure
 type ResolvedData = {
-    [<JsonPropertyName "users">] Users: (string * User) seq
-    [<JsonPropertyName "members">] Members: (string * PartialGuildMember) seq // Missing user, deaf, mute
-    [<JsonPropertyName "roles">] Roles: (string * Role) seq
-    [<JsonPropertyName "channels">] Channels: (string * PartialChannel) seq // Only have id, name, type, permissions (and threads have thread_metadata, parent_id)
-    [<JsonPropertyName "messages">] Messages: (string * PartialMessage) seq
-    [<JsonPropertyName "attachments">] Attachments: (string * Attachment) seq
+    Users: Map<string, User> option
+    Members: Map<string, PartialGuildMember> option // Missing user, deaf, mute
+    Roles: Map<string, Role> option
+    Channels: Map<string, PartialChannel> option // Only have id, name, type, permissions (and threads have thread_metadata, parent_id)
+    Messages: Map<string, PartialMessage> option
+    Attachments: Map<string, Attachment> option
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-interaction-data-option-structure
 type ApplicationCommandInteractionDataOption = {
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "type">] Type: ApplicationCommandOptionType
-    [<JsonPropertyName "value">] Value: CommandInteractionDataOptionValue option
-    [<JsonPropertyName "options">] Options: ApplicationCommandInteractionDataOption list option
-    [<JsonPropertyName "focused">] Focused: bool option
+    Name: string
+    Type: ApplicationCommandOptionType
+    Value: CommandInteractionDataOptionValue option
+    Options: ApplicationCommandInteractionDataOption list option
+    Focused: bool option
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#message-interaction-object-message-interaction-structure
 type MessageInteraction = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: InteractionType
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "user">] User: User
-    [<JsonPropertyName "member">] Member: PartialGuildMember option
+    Id: string
+    Type: InteractionType
+    Name: string
+    User: User
+    Member: PartialGuildMember option
+}
+
+// https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-response-structure
+type InteractionResponse = {
+    Type: InteractionCallbackType
+    Data: InteractionCallbackData option
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-messages
 type MessageInteractionCallbackData = {
-    [<JsonPropertyName "tts">] Tts: bool option
-    [<JsonPropertyName "content">] Content: string option
-    [<JsonPropertyName "embeds">] Embeds: Embed list option
-    [<JsonPropertyName "allowed_mentions">] AllowedMentions: AllowedMentions option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "components">] Components: Component list option
-    [<JsonPropertyName "attachments">] Attachments: PartialAttachment list option
-    [<JsonPropertyName "poll">] Poll: Poll option
+    Tts: bool option
+    Content: string option
+    Embeds: Embed list option
+    AllowedMentions: AllowedMentions option
+    Flags: int option
+    Components: Component list option
+    Attachments: PartialAttachment list option
+    Poll: Poll option
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-autocomplete
 type AutocompleteInteractionCallbackData = {
-    [<JsonPropertyName "choices">] Choices: ApplicationCommandOptionChoice list
+    Choices: ApplicationCommandOptionChoice list
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal
 type ModalInteractionCallbackData = {
-    [<JsonPropertyName "custom_id">] CustomId: string
-    [<JsonPropertyName "title">] Title: string
-    [<JsonPropertyName "components">] Components: Component list
+    CustomId: string
+    Title: string
+    Components: Component list
 }
 
-// https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-response-structure
-[<JsonConverter(typeof<InteractionResponse.Converter>)>]
-type InteractionResponse =
-    | PONG                                    of unit
-    | CHANNEL_MESSAGE_WITH_SOURCE             of MessageInteractionCallbackData
-    | DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE    of unit
-    | DEFERRED_UPDATE_MESSAGE                 of unit
-    | UPDATE_MESSAGE                          of MessageInteractionCallbackData
-    | APPLICATION_COMMAND_AUTOCOMPLETE_RESULT of AutocompleteInteractionCallbackData
-    | MODAL                                   of ModalInteractionCallbackData
-    | LAUNCH_ACTIVITY                         of unit
-
-module InteractionResponse =
-    // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-response-structure
-    type Payload = {
-        [<JsonPropertyName "type">] Type: InteractionCallbackType
-        [<JsonPropertyName "data">] Data: obj option
-    }
-
-    // TODO: Test if serialisation works with data defined as obj (saves having to write an annoying json converter for them)
-
-    type Converter () =
-        inherit JsonConverter<InteractionResponse> ()
-
-        override _.Read (reader, _, _) =
-            let success, document = JsonDocument.TryParseValue &reader
-            if not success then JsonException.raise "Failed to parse JSON document"
-
-            let callbackType = document.RootElement.GetProperty "type" |> _.GetInt32() |> enum<InteractionCallbackType>
-            let json = document.RootElement.GetRawText()
-            
-            match callbackType with
-            | InteractionCallbackType.PONG -> InteractionResponse.PONG ()
-            | InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE -> InteractionResponse.CHANNEL_MESSAGE_WITH_SOURCE <| Json.deserializeF<MessageInteractionCallbackData> json
-            | InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE -> InteractionResponse.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE ()
-            | InteractionCallbackType.DEFERRED_UPDATE_MESSAGE -> InteractionResponse.DEFERRED_UPDATE_MESSAGE ()
-            | InteractionCallbackType.UPDATE_MESSAGE -> InteractionResponse.UPDATE_MESSAGE <| Json.deserializeF<MessageInteractionCallbackData> json
-            | InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT -> InteractionResponse.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT <| Json.deserializeF<AutocompleteInteractionCallbackData> json
-            | InteractionCallbackType.MODAL -> InteractionResponse.MODAL <| Json.deserializeF<ModalInteractionCallbackData> json
-            | InteractionCallbackType.LAUNCH_ACTIVITY -> InteractionResponse.LAUNCH_ACTIVITY ()
-            | _ -> JsonException.raise "Unexpected InteractionCallbackType provided"
-
-        override _.Write (writer, value, _) =
-            match value with
-            | InteractionResponse.PONG _ -> { Type = InteractionCallbackType.PONG; Data = None }
-            | InteractionResponse.CHANNEL_MESSAGE_WITH_SOURCE m -> { Type = InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE; Data = Some m }
-            | InteractionResponse.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE _ -> { Type = InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE; Data = None }
-            | InteractionResponse.DEFERRED_UPDATE_MESSAGE _ -> { Type = InteractionCallbackType.DEFERRED_UPDATE_MESSAGE; Data = None }
-            | InteractionResponse.UPDATE_MESSAGE m -> { Type = InteractionCallbackType.UPDATE_MESSAGE; Data = Some m }
-            | InteractionResponse.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT a -> { Type = InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT; Data = Some a }
-            | InteractionResponse.MODAL m -> { Type = InteractionCallbackType.MODAL; Data = Some m }
-            | InteractionResponse.LAUNCH_ACTIVITY _ -> { Type = InteractionCallbackType.LAUNCH_ACTIVITY; Data = None }
-            |> Json.serializeF
-            |> writer.WriteRawValue
+type InteractionCallbackData =
+    | MESSAGE      of MessageInteractionCallbackData
+    | AUTOCOMPLETE of AutocompleteInteractionCallbackData
+    | MODAL        of ModalInteractionCallbackData
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-response-object
 type InteractionCallbackResponse = {
-    [<JsonPropertyName "interaction">] Interaction: InteractionCallback
-    [<JsonPropertyName "resource">] Resource: InteractionCallbackResource option
+    Interaction: InteractionCallback
+    Resource: InteractionCallbackResource option
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-object
 type InteractionCallback = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: InteractionType
-    [<JsonPropertyName "activity_instance_id">] ActivityInstanceId: string option
-    [<JsonPropertyName "response_message_id">] ResponseMessageId: string option
-    [<JsonPropertyName "response_message_loading">] ResponseMessageLoading: bool option
-    [<JsonPropertyName "response_message_ephemeral">] ResponseMessageEphemeral: bool option
+    Id: string
+    Type: InteractionType
+    ActivityInstanceId: string option
+    ResponseMessageId: string option
+    ResponseMessageLoading: bool option
+    ResponseMessageEphemeral: bool option
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-resource-object
 type InteractionCallbackResource = {
-    [<JsonPropertyName "type">] Type: InteractionCallbackType
-    [<JsonPropertyName "activity_instance">] ActivityInstance: InteractionCallbackActivityInstance option
-    [<JsonPropertyName "message">] Message: Message option
+    Type: InteractionCallbackType
+    ActivityInstance: InteractionCallbackActivityInstance option
+    Message: Message option
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-activity-instance-resource
