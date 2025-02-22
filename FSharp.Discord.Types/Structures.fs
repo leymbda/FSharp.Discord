@@ -84,10 +84,17 @@ type ResolvedData = {
 type ApplicationCommandInteractionDataOption = {
     Name: string
     Type: ApplicationCommandOptionType
-    Value: CommandInteractionDataOptionValue option
+    Value: ApplicationCommandInteractionDataOptionValue option
     Options: ApplicationCommandInteractionDataOption list option
     Focused: bool option
 }
+
+[<RequireQualifiedAccess>]
+type ApplicationCommandInteractionDataOptionValue =
+    | STRING of string
+    | INT    of int
+    | DOUBLE of double
+    | BOOL   of bool
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#message-interaction-object-message-interaction-structure
 type MessageInteraction = {
@@ -210,6 +217,62 @@ type ApplicationCommandOption = {
 
 // TODO: Create DU for different types of application command option
 
+[<JsonConverter(typeof<ApplicationCommandMinValueConverter>)>]
+[<RequireQualifiedAccess>]
+type ApplicationCommandMinValue =
+    | Int    of int
+    | Double of double
+
+and ApplicationCommandMinValueConverter () =
+    inherit JsonConverter<ApplicationCommandMinValue> ()
+
+    override _.Read (reader, _, _) =
+        match reader.TokenType with
+        | JsonTokenType.Number ->
+            let double: double = 0
+            let int: int = 0
+            if reader.TryGetInt32(ref int) then
+                ApplicationCommandMinValue.Int int
+            else if reader.TryGetDouble(ref double) then
+                ApplicationCommandMinValue.Double double
+            else
+                raise (JsonException "Unexpected ApplicationCommandMinValue value")
+            // TODO: Test if this correctly handles int and double
+        | _ -> raise (JsonException "Unexpected ApplicationCommandMinValue value")
+
+    override _.Write (writer, value, _) = 
+        match value with
+        | ApplicationCommandMinValue.Int v -> writer.WriteNumberValue v
+        | ApplicationCommandMinValue.Double v -> writer.WriteNumberValue v
+    
+[<JsonConverter(typeof<ApplicationCommandMaxValueConverter>)>]
+[<RequireQualifiedAccess>]
+type ApplicationCommandMaxValue =
+    | Int    of int
+    | Double of double
+
+and ApplicationCommandMaxValueConverter () =
+    inherit JsonConverter<ApplicationCommandMaxValue> ()
+
+    override _.Read (reader, _, _) =
+        match reader.TokenType with
+        | JsonTokenType.Number ->
+            let double: double = 0
+            let int: int = 0
+            if reader.TryGetInt32(ref int) then
+                ApplicationCommandMaxValue.Int int
+            else if reader.TryGetDouble(ref double) then
+                ApplicationCommandMaxValue.Double double
+            else
+                raise (JsonException "Unexpected ApplicationCommandMaxValue value")
+            // TODO: Test if this correctly handles int and double
+        | _ -> raise (JsonException "Unexpected ApplicationCommandMaxValue value")
+
+    override _.Write (writer, value, _) = 
+        match value with
+        | ApplicationCommandMaxValue.Int v -> writer.WriteNumberValue v
+        | ApplicationCommandMaxValue.Double v -> writer.WriteNumberValue v
+
 // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
 type ApplicationCommandOptionChoice = {
     [<JsonPropertyName "name">] Name: string
@@ -217,6 +280,37 @@ type ApplicationCommandOptionChoice = {
     [<JsonPropertyName "value">] Value: ApplicationCommandOptionChoiceValue
 }
 
+[<JsonConverter(typeof<ApplicationCommandOptionChoiceValueConverter>)>]
+[<RequireQualifiedAccess>]
+type ApplicationCommandOptionChoiceValue =
+    | String of string
+    | Int    of int
+    | Double of double
+
+and ApplicationCommandOptionChoiceValueConverter () =
+    inherit JsonConverter<ApplicationCommandOptionChoiceValue> ()
+
+    override _.Read (reader, _, _) =
+        match reader.TokenType with
+        | JsonTokenType.String -> ApplicationCommandOptionChoiceValue.String (reader.GetString())
+        | JsonTokenType.Number ->
+            let double: double = 0
+            let int: int = 0
+            if reader.TryGetInt32(ref int) then
+                ApplicationCommandOptionChoiceValue.Int int
+            else if reader.TryGetDouble(ref double) then
+                ApplicationCommandOptionChoiceValue.Double double
+            else
+                raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
+            // TODO: Test if this correctly handles int and double
+        | _ -> raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
+
+    override _.Write (writer, value, _) =
+        match value with
+        | ApplicationCommandOptionChoiceValue.String v -> writer.WriteStringValue v
+        | ApplicationCommandOptionChoiceValue.Int v -> writer.WriteNumberValue v
+        | ApplicationCommandOptionChoiceValue.Double v -> writer.WriteNumberValue v
+    
 // TODO: Handle value type based on parent application command option type
 
 // https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-guild-application-command-permissions-structure
@@ -1415,6 +1509,26 @@ and PartialMessage = {
     [<JsonPropertyName "poll">] Poll: Poll option
     [<JsonPropertyName "call">] Call: MessageCall option
 }
+
+[<JsonConverter(typeof<MessageNonceConverter>)>]
+[<RequireQualifiedAccess>]
+type MessageNonce =
+    | Number of int
+    | String of string
+
+and MessageNonceConverter () =
+    inherit JsonConverter<MessageNonce> ()
+
+    override _.Read (reader, _, _) =
+        match reader.TokenType with
+        | JsonTokenType.Number -> MessageNonce.Number (reader.GetInt32())
+        | JsonTokenType.String -> MessageNonce.String (reader.GetString())
+        | _ -> raise (JsonException "Unexpected MessageNonce value")
+
+    override _.Write (writer, value, _) =
+        match value with
+        | MessageNonce.Number v -> writer.WriteNumberValue v
+        | MessageNonce.String v -> writer.WriteStringValue v
 
 /// A partial message specifically for message snapshots
 and SnapshotPartialMessage = {

@@ -232,7 +232,7 @@ module ApplicationCommandInteractionDataOption =
         Decode.object (fun get -> {
             Name = get.Required.Field Property.Name Decode.string
             Type = get.Required.Field Property.Type Decode.Enum.int<ApplicationCommandOptionType>
-            Value = get.Optional.Field Property.Value CommandInteractionDataOptionValue.decoder
+            Value = get.Optional.Field Property.Value ApplicationCommandInteractionDataOptionValue.decoder
             Options = get.Optional.Field Property.Options (Decode.list ApplicationCommandInteractionDataOption.decoder)
             Focused = get.Optional.Field Property.Focused Decode.bool
         }) path v
@@ -241,10 +241,29 @@ module ApplicationCommandInteractionDataOption =
         Encode.object [
             Property.Name, Encode.string v.Name
             Property.Type, Encode.Enum.int v.Type
-            Property.Value, Encode.option CommandInteractionDataOptionValue.encoder v.Value
+            Property.Value, Encode.option ApplicationCommandInteractionDataOptionValue.encoder v.Value
             Property.Options, Encode.option (List.map ApplicationCommandInteractionDataOption.encoder >> Encode.list) v.Options
             Property.Focused, Encode.option Encode.bool v.Focused
         ]
+
+module ApplicationCommandInteractionDataOptionValue =
+    let decoder path v =
+        Decode.oneOf [
+            Decode.map ApplicationCommandInteractionDataOptionValue.STRING Decode.string
+            Decode.map ApplicationCommandInteractionDataOptionValue.INT Decode.int
+            Decode.map ApplicationCommandInteractionDataOptionValue.DOUBLE Decode.float
+            Decode.map ApplicationCommandInteractionDataOptionValue.BOOL Decode.bool
+        ] path v
+
+        // TODO: Test if int will fail decoding if a float is provided
+        // TODO: Test to ensure that Decode.oneOf works down the list
+
+    let encoder (v: ApplicationCommandInteractionDataOptionValue) =
+        match v with
+        | ApplicationCommandInteractionDataOptionValue.STRING data -> Encode.string data
+        | ApplicationCommandInteractionDataOptionValue.INT data -> Encode.int data
+        | ApplicationCommandInteractionDataOptionValue.DOUBLE data -> Encode.float data
+        | ApplicationCommandInteractionDataOptionValue.BOOL data -> Encode.bool data
 
 module MessageInteraction =
     module Property =

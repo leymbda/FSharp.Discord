@@ -1,8 +1,5 @@
 ﻿namespace rec FSharp.Discord.Types
 
-open System.Text.Json
-open System.Text.Json.Serialization
-
 [<RequireQualifiedAccess>]
 type TextInputStyle =
     | SHORT     = 1
@@ -142,165 +139,12 @@ type OnboardingMode =
     | ONBOARDING_DEFAULT  = 0
     | ONBOARDING_ADVANCED = 1
 
-[<JsonConverter(typeof<CommandInteractionDataOptionValueConverter>)>]
-[<RequireQualifiedAccess>]
-type CommandInteractionDataOptionValue =
-    | String of string
-    | Int    of int
-    | Double of double
-    | Bool   of bool
-
-and CommandInteractionDataOptionValueConverter () =
-    inherit JsonConverter<CommandInteractionDataOptionValue> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with
-        | JsonTokenType.String -> CommandInteractionDataOptionValue.String (reader.GetString())
-        | JsonTokenType.Number -> CommandInteractionDataOptionValue.Int (reader.GetInt32())
-        | JsonTokenType.True -> CommandInteractionDataOptionValue.Bool true
-        | JsonTokenType.False -> CommandInteractionDataOptionValue.Bool false
-        | _ -> raise (JsonException "Unexpected CommandInteractionDataOptionValue value")
-
-    override _.Write (writer, value, _) =
-        match value with
-        | CommandInteractionDataOptionValue.String v -> writer.WriteStringValue v
-        | CommandInteractionDataOptionValue.Int v -> writer.WriteNumberValue v
-        | CommandInteractionDataOptionValue.Bool v -> writer.WriteBooleanValue v
-        | CommandInteractionDataOptionValue.Double v -> writer.WriteNumberValue v
-
-[<JsonConverter(typeof<MessageNonceConverter>)>]
-[<RequireQualifiedAccess>]
-type MessageNonce =
-    | Number of int
-    | String of string
-
-and MessageNonceConverter () =
-    inherit JsonConverter<MessageNonce> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with
-        | JsonTokenType.Number -> MessageNonce.Number (reader.GetInt32())
-        | JsonTokenType.String -> MessageNonce.String (reader.GetString())
-        | _ -> raise (JsonException "Unexpected MessageNonce value")
-
-    override _.Write (writer, value, _) =
-        match value with
-        | MessageNonce.Number v -> writer.WriteNumberValue v
-        | MessageNonce.String v -> writer.WriteStringValue v
-
-[<JsonConverter(typeof<ApplicationCommandOptionChoiceValueConverter>)>]
-[<RequireQualifiedAccess>]
-type ApplicationCommandOptionChoiceValue =
-    | String of string
-    | Int    of int
-    | Double of double
-
-and ApplicationCommandOptionChoiceValueConverter () =
-    inherit JsonConverter<ApplicationCommandOptionChoiceValue> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with
-        | JsonTokenType.String -> ApplicationCommandOptionChoiceValue.String (reader.GetString())
-        | JsonTokenType.Number ->
-            let double: double = 0
-            let int: int = 0
-            if reader.TryGetInt32(ref int) then
-                ApplicationCommandOptionChoiceValue.Int int
-            else if reader.TryGetDouble(ref double) then
-                ApplicationCommandOptionChoiceValue.Double double
-            else
-                raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
-            // TODO: Test if this correctly handles int and double
-        | _ -> raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
-
-    override _.Write (writer, value, _) =
-        match value with
-        | ApplicationCommandOptionChoiceValue.String v -> writer.WriteStringValue v
-        | ApplicationCommandOptionChoiceValue.Int v -> writer.WriteNumberValue v
-        | ApplicationCommandOptionChoiceValue.Double v -> writer.WriteNumberValue v
-    
-[<JsonConverter(typeof<ApplicationCommandMinValueConverter>)>]
-[<RequireQualifiedAccess>]
-type ApplicationCommandMinValue =
-    | Int    of int
-    | Double of double
-
-and ApplicationCommandMinValueConverter () =
-    inherit JsonConverter<ApplicationCommandMinValue> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with
-        | JsonTokenType.Number ->
-            let double: double = 0
-            let int: int = 0
-            if reader.TryGetInt32(ref int) then
-                ApplicationCommandMinValue.Int int
-            else if reader.TryGetDouble(ref double) then
-                ApplicationCommandMinValue.Double double
-            else
-                raise (JsonException "Unexpected ApplicationCommandMinValue value")
-            // TODO: Test if this correctly handles int and double
-        | _ -> raise (JsonException "Unexpected ApplicationCommandMinValue value")
-
-    override _.Write (writer, value, _) = 
-        match value with
-        | ApplicationCommandMinValue.Int v -> writer.WriteNumberValue v
-        | ApplicationCommandMinValue.Double v -> writer.WriteNumberValue v
-    
-[<JsonConverter(typeof<ApplicationCommandMaxValueConverter>)>]
-[<RequireQualifiedAccess>]
-type ApplicationCommandMaxValue =
-    | Int    of int
-    | Double of double
-
-and ApplicationCommandMaxValueConverter () =
-    inherit JsonConverter<ApplicationCommandMaxValue> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with
-        | JsonTokenType.Number ->
-            let double: double = 0
-            let int: int = 0
-            if reader.TryGetInt32(ref int) then
-                ApplicationCommandMaxValue.Int int
-            else if reader.TryGetDouble(ref double) then
-                ApplicationCommandMaxValue.Double double
-            else
-                raise (JsonException "Unexpected ApplicationCommandMaxValue value")
-            // TODO: Test if this correctly handles int and double
-        | _ -> raise (JsonException "Unexpected ApplicationCommandMaxValue value")
-
-    override _.Write (writer, value, _) = 
-        match value with
-        | ApplicationCommandMaxValue.Int v -> writer.WriteNumberValue v
-        | ApplicationCommandMaxValue.Double v -> writer.WriteNumberValue v
-
 [<RequireQualifiedAccess>]
 type AllowedMentionsParseType =
     | ROLES
     | USERS
     | EVERYONE
 
-[<JsonConverter(typeof<SoundboardSoundIdConverter>)>]
-[<RequireQualifiedAccess>]
-type SoundboardSoundId =
-    | String of string
-    | Int    of int
-
-and SoundboardSoundIdConverter () =
-    inherit JsonConverter<SoundboardSoundId> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with // TODO: Test this, sounds wrong
-        | JsonTokenType.String -> SoundboardSoundId.String (reader.GetString())
-        | JsonTokenType.Number -> SoundboardSoundId.Int (reader.GetInt32())
-        | _ -> raise (JsonException "Unexpected SoundboardSoundId value")
-
-    override _.Write (writer, value, _) =
-        match value with
-        | SoundboardSoundId.String v -> writer.WriteStringValue v
-        | SoundboardSoundId.Int v -> writer.WriteNumberValue v
-        
 [<RequireQualifiedAccess>]
 type AutoArchiveDuration =
     | HOUR       = 60
@@ -692,4 +536,3 @@ type RateLimitScope =
 
 // TODO: Sort alphabetically and extract more into separate files in enums folder
 // TODO: Add missing documentation links
-// TODO: Remake DUs for varied types (probably belong in Structures.fs too ?)
