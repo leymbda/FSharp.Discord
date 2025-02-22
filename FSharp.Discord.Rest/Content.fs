@@ -1,6 +1,7 @@
 ﻿namespace FSharp.Discord.Rest
 
 open FSharp.Discord.Types
+open FSharp.Discord.Types.Serialization
 open System
 open System.Net.Http
 open System.Text.Json
@@ -107,6 +108,18 @@ type EditFollowUpMessagePayload (
             }
             
 // ----- Application Command -----
+
+type LocalizedApplicationCommandExtraFields = {
+    NameLocalized: string option
+    DescriptionLocalized: string option
+}
+
+type LocalizedApplicationCommand = {
+    Command: ApplicationCommand
+    ExtraFields: LocalizedApplicationCommandExtraFields
+}
+
+// TODO: Implement serialization for localized application command
 
 type CreateGlobalApplicationCommandPayload (
     name:                        string,
@@ -1610,7 +1623,7 @@ type GetGatewayBotOkResponse = {
 
 type GetCurrentAuthorizationInformationOkResponse = {
     [<JsonPropertyName "application">] Application: PartialApplication
-    [<JsonPropertyName "scopes">] [<JsonConverter(typeof<OAuth2Scope.ListConverter>)>] Scopes: OAuthScope list
+    [<JsonPropertyName "scopes">] Scopes: OAuthScope list
     [<JsonPropertyName "expires">] Expires: DateTime
     [<JsonPropertyName "user">] User: User option
 }
@@ -1634,7 +1647,7 @@ type AuthorizationCodeGrantResponse = {
     [<JsonPropertyName "token_type">] TokenType: string
     [<JsonPropertyName "expires_in">] ExpiresIn: int
     [<JsonPropertyName "refresh_token">] RefreshToken: string
-    [<JsonPropertyName "scope">] [<JsonConverter(typeof<OAuth2Scope.ListConverter>)>] Scope: OAuthScope list
+    [<JsonPropertyName "scope">] Scope: OAuthScope list
 }
 
 type RefreshTokenGrantPayload (
@@ -1654,7 +1667,7 @@ type RefreshTokenGrantResponse = {
     [<JsonPropertyName "token_type">] TokenType: string
     [<JsonPropertyName "expires_in">] ExpiresIn: int
     [<JsonPropertyName "refresh_token">] RefreshToken: string
-    [<JsonPropertyName "scope">] [<JsonConverter(typeof<OAuth2Scope.ListConverter>)>] Scope: OAuthScope list
+    [<JsonPropertyName "scope">] Scope: OAuthScope list
 }
 
 type RevokeTokenPayload (
@@ -1686,5 +1699,5 @@ type ClientCredentialsGrantResponse = {
     [<JsonPropertyName "access_token">] AccessToken: string
     [<JsonPropertyName "token_type">] TokenType: string
     [<JsonPropertyName "expires_in">] ExpiresIn: int
-    [<JsonPropertyName "scope">] [<JsonConverter(typeof<OAuth2Scope.ListConverter>)>] Scope: OAuthScope list
+    [<JsonPropertyName "scope">] Scope: OAuthScope list
 }

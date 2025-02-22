@@ -1,6 +1,7 @@
 ﻿module FSharp.Discord.Rest.Rest
 
 open FSharp.Discord.Types
+open FSharp.Discord.Types.Serialization
 open System
 open System.Net.Http
 open System.Threading.Tasks
@@ -102,16 +103,24 @@ let deleteFollowUpMessage
 
 // ----- Application Command -----
 
-let getGlobalApplicationCommands
+let getGlobalApplicationCommandsWithAllLocalizations
     (applicationId: string)
-    (withLocalizations: bool option)
     (client: IBotClient) =
         req {
             get $"applications/{applicationId}/commands"
-            query "with_localizations" (Option.map string withLocalizations)
+            query "with_localizations" (string true)
         }
         |> client.SendAsync
         |> Task.mapT DiscordResponse.asJson<ApplicationCommand list>
+
+let getGlobalApplicationCommands
+    (applicationId: string)
+    (client: IBotClient) =
+        req {
+            get $"applications/{applicationId}/commands"
+        }
+        |> client.SendAsync
+        |> Task.mapT DiscordResponse.asJson<LocalizedApplicationCommand list>
             
 let createGlobalApplicationCommand
     (applicationId: string)
@@ -167,17 +176,26 @@ let bulkOverwriteGlobalApplicationCommands
         |> client.SendAsync
         |> Task.mapT DiscordResponse.asJson<ApplicationCommand list>
             
-let getGuildApplicationCommands
+let getGuildApplicationCommandsWithAllLocalizations
     (applicationId: string)
     (guildId: string)
-    (withLocalizations: bool option)
     (client: IBotClient) =
         req {
             get $"applications/{applicationId}/guilds/{guildId}/commands"
-            query "with_localizations" (Option.map string withLocalizations)
+            query "with_localizations" (string true)
         }
         |> client.SendAsync
         |> Task.mapT DiscordResponse.asJson<ApplicationCommand list>
+            
+let getGuildApplicationCommands
+    (applicationId: string)
+    (guildId: string)
+    (client: IBotClient) =
+        req {
+            get $"applications/{applicationId}/guilds/{guildId}/commands"
+        }
+        |> client.SendAsync
+        |> Task.mapT DiscordResponse.asJson<LocalizedApplicationCommand list>
             
 let createGuildApplicationCommand
     (applicationId: string)

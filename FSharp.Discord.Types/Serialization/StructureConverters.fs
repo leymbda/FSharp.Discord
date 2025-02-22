@@ -470,3 +470,219 @@ module InteractionCallbackActivityInstance =
         Encode.object [
             Property.Id, Encode.string v.Id
         ]
+
+module ApplicationCommand =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] NameLocalizations = "name_localizations"
+        let [<Literal>] Description = "description"
+        let [<Literal>] DescriptionLocalizations = "description_localizations"
+        let [<Literal>] Options = "options"
+        let [<Literal>] DefaultMemberPermissions = "default_member_permissions"
+        let [<Literal>] Nsfw = "nsfw"
+        let [<Literal>] IntegrationTypes = "integration_types"
+        let [<Literal>] Contexts = "contexts"
+        let [<Literal>] Version = "version"
+        let [<Literal>] Handler = "handler"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get.Required.Field Property.Id Decode.string
+            Type = get.Optional.Field Property.Type Decode.Enum.int<ApplicationCommandType> |> Option.defaultValue ApplicationCommandType.CHAT_INPUT
+            ApplicationId = get.Required.Field Property.ApplicationId Decode.string
+            GuildId = get.Optional.Field Property.GuildId Decode.string
+            Name = get.Required.Field Property.Name Decode.string
+            NameLocalizations = get.Optional.Field Property.NameLocalizations (Decode.dict Decode.string)
+            Description = get.Required.Field Property.Description Decode.string
+            DescriptionLocalizations = get.Optional.Field Property.DescriptionLocalizations (Decode.dict Decode.string)
+            Options = get.Optional.Field Property.Options (Decode.list ApplicationCommandOption.decoder)
+            DefaultMemberPermissions = get.Optional.Field Property.DefaultMemberPermissions Decode.string
+            Nsfw = get.Optional.Field Property.Nsfw Decode.bool |> Option.defaultValue false
+            IntegrationTypes = get.Optional.Field Property.IntegrationTypes (Decode.list Decode.Enum.int<ApplicationIntegrationType>) |> Option.defaultValue [ApplicationIntegrationType.GUILD_INSTALL; ApplicationIntegrationType.USER_INSTALL]
+            Contexts = get.Optional.Field Property.Contexts (Decode.list Decode.Enum.int<InteractionContextType>)
+            Version = get.Required.Field Property.Version Decode.string
+            Handler = get.Optional.Field Property.Handler Decode.Enum.int<ApplicationCommandHandlerType>
+        }) path v
+
+    let encoder (v: ApplicationCommand) =
+        Encode.object [
+            Property.Id, Encode.string v.Id
+            Property.Type, Encode.Enum.int v.Type
+            Property.ApplicationId, Encode.string v.ApplicationId
+            Property.GuildId, Encode.option Encode.string v.GuildId
+            Property.Name, Encode.string v.Name
+            Property.NameLocalizations, Encode.option (Encode.mapv Encode.string) v.NameLocalizations
+            Property.Description, Encode.string v.Description
+            Property.DescriptionLocalizations, Encode.option (Encode.mapv Encode.string) v.DescriptionLocalizations
+            Property.Options, Encode.option (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
+            Property.DefaultMemberPermissions, Encode.option Encode.string v.DefaultMemberPermissions
+            Property.Nsfw, Encode.bool v.Nsfw
+            Property.IntegrationTypes, (List.map Encode.Enum.int >> Encode.list) v.IntegrationTypes
+            Property.Contexts, Encode.option (List.map Encode.Enum.int >> Encode.list) v.Contexts
+            Property.Version, Encode.string v.Version
+            Property.Handler, Encode.option Encode.Enum.int v.Handler
+        ]
+
+module ApplicationCommandOption =
+    module Property =
+        let [<Literal>] Type = "type"
+        let [<Literal>] Name = "name"
+        let [<Literal>] NameLocalizations = "name_localizations"
+        let [<Literal>] Description = "description"
+        let [<Literal>] DescriptionLocalizations = "description_localizations"
+        let [<Literal>] Required = "required"
+        let [<Literal>] Choices = "choices"
+        let [<Literal>] Options = "options"
+        let [<Literal>] ChannelTypes = "channel_types"
+        let [<Literal>] MinValue = "min_value"
+        let [<Literal>] MaxValue = "max_value"
+        let [<Literal>] MinLength = "min_length"
+        let [<Literal>] MaxLength = "max_length"
+        let [<Literal>] Autocomplete = "autocomplete"
+
+    let decoder path v: Result<ApplicationCommandOption, DecoderError> =
+        Decode.object (fun get -> {
+            Type = get.Required.Field Property.Type Decode.Enum.int<ApplicationCommandOptionType>
+            Name = get.Required.Field Property.Name Decode.string
+            NameLocalizations = get.Optional.Field Property.NameLocalizations (Decode.dict Decode.string)
+            Description = get.Required.Field Property.Description Decode.string
+            DescriptionLocalizations = get.Optional.Field Property.DescriptionLocalizations (Decode.dict Decode.string)
+            Required = get.Optional.Field Property.Required Decode.bool |> Option.defaultValue false
+            Choices = get.Optional.Field Property.Choices (Decode.list ApplicationCommandOptionChoice.decoder)
+            Options = get.Optional.Field Property.Options (Decode.list ApplicationCommandOption.decoder)
+            ChannelTypes = get.Optional.Field Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
+            MinValue = get.Optional.Field Property.MinValue ApplicationCommandOptionMinValue.decoder
+            MaxValue = get.Optional.Field Property.MaxValue ApplicationCommandOptionMaxValue.decoder
+            MinLength = get.Optional.Field Property.MinLength Decode.int
+            MaxLength = get.Optional.Field Property.MaxLength Decode.int
+            Autocomplete = get.Optional.Field Property.Autocomplete Decode.bool
+        }) path v
+
+    let encoder (v: ApplicationCommandOption) =
+        Encode.object [
+            Property.Type, Encode.Enum.int v.Type
+            Property.Name, Encode.string v.Name
+            Property.NameLocalizations, Encode.option (Encode.mapv Encode.string) v.NameLocalizations
+            Property.Description, Encode.string v.Description
+            Property.DescriptionLocalizations, Encode.option (Encode.mapv Encode.string) v.DescriptionLocalizations
+            Property.Required, Encode.bool v.Required
+            Property.Choices, Encode.option (List.map ApplicationCommandOptionChoice.encoder >> Encode.list) v.Choices
+            Property.Options, Encode.option (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
+            Property.ChannelTypes, Encode.option (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes
+            Property.MinValue, Encode.option ApplicationCommandOptionMinValue.encoder v.MinValue
+            Property.MaxValue, Encode.option ApplicationCommandOptionMaxValue.encoder v.MaxValue
+            Property.MinLength, Encode.option Encode.int v.MinLength
+            Property.MaxLength, Encode.option Encode.int v.MaxLength
+            Property.Autocomplete, Encode.option Encode.bool v.Autocomplete
+        ]
+
+module ApplicationCommandOptionMinValue =
+    let decoder path v =
+        Decode.oneOf [
+            Decode.map ApplicationCommandOptionMinValue.INT Decode.int
+            Decode.map ApplicationCommandOptionMinValue.DOUBLE Decode.float
+        ] path v
+
+    let encoder (v: ApplicationCommandOptionMinValue) =
+        match v with
+        | ApplicationCommandOptionMinValue.INT data -> Encode.int data
+        | ApplicationCommandOptionMinValue.DOUBLE data -> Encode.float data
+
+    // TODO: Ensure min 0, max 6000
+
+module ApplicationCommandOptionMaxValue =
+    let decoder path v =
+        Decode.oneOf [
+            Decode.map ApplicationCommandOptionMaxValue.INT Decode.int
+            Decode.map ApplicationCommandOptionMaxValue.DOUBLE Decode.float
+        ] path v
+
+    let encoder (v: ApplicationCommandOptionMaxValue) =
+        match v with
+        | ApplicationCommandOptionMaxValue.INT data -> Encode.int data
+        | ApplicationCommandOptionMaxValue.DOUBLE data -> Encode.float data
+
+    // TODO: Ensure min 1, max 6000
+
+module ApplicationCommandOptionChoice =
+    module Property =
+        let [<Literal>] Name = "name"
+        let [<Literal>] NameLocalizations = "name_localizations"
+        let [<Literal>] Value = "value"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Name = get.Required.Field Property.Name Decode.string
+            NameLocalizations = get.Optional.Field Property.NameLocalizations (Decode.dict Decode.string)
+            Value = get.Required.Field Property.Value ApplicationCommandOptionChoiceValue.decoder
+        }) path v
+
+    let encoder (v: ApplicationCommandOptionChoice) =
+        Encode.object [
+            Property.Name, Encode.string v.Name
+            Property.NameLocalizations, Encode.option (Encode.mapv Encode.string) v.NameLocalizations
+            Property.Value, ApplicationCommandOptionChoiceValue.encoder v.Value
+        ]
+
+module ApplicationCommandOptionChoiceValue =
+    let decoder path v =
+        Decode.oneOf [
+            Decode.map ApplicationCommandOptionChoiceValue.STRING Decode.string
+            Decode.map ApplicationCommandOptionChoiceValue.INT Decode.int
+            Decode.map ApplicationCommandOptionChoiceValue.DOUBLE Decode.float
+        ] path v
+
+    let encoder (v: ApplicationCommandOptionChoiceValue) =
+        match v with
+        | ApplicationCommandOptionChoiceValue.STRING data -> Encode.string data
+        | ApplicationCommandOptionChoiceValue.INT data -> Encode.int data
+        | ApplicationCommandOptionChoiceValue.DOUBLE data -> Encode.float data
+
+module GuildApplicationCommandPermissions =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Permissions = "permissions"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get.Required.Field Property.Id Decode.string
+            ApplicationId = get.Required.Field Property.ApplicationId Decode.string
+            GuildId = get.Required.Field Property.GuildId Decode.string
+            Permissions = get.Required.Field Property.Permissions (Decode.list ApplicationCommandPermission.decoder)
+        }) path v
+
+    let encoder (v: GuildApplicationCommandPermissions) =
+        Encode.object [
+            Property.Id, Encode.string v.Id
+            Property.ApplicationId, Encode.string v.ApplicationId
+            Property.GuildId, Encode.string v.GuildId
+            Property.Permissions, (List.map ApplicationCommandPermission.encoder >> Encode.list) v.Permissions
+        ]
+
+module ApplicationCommandPermission =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Permission = "permission"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get.Required.Field Property.Id Decode.string
+            Type = get.Required.Field Property.Type Decode.Enum.int<ApplicationCommandPermissionType>
+            Permission = get.Required.Field Property.Permission Decode.bool
+        }) path v
+
+    let encoder (v: ApplicationCommandPermission) =
+        Encode.object [
+            Property.Id, Encode.string v.Id
+            Property.Type, Encode.Enum.int v.Type
+            Property.Permission, Encode.bool v.Permission
+        ]
+
+// TODO: Can piped functions be mapped instead (e.g. Option.defaultValue)

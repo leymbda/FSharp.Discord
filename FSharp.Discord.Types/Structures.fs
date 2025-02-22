@@ -165,7 +165,7 @@ type InteractionCallbackResource = {
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-activity-instance-resource
 type InteractionCallbackActivityInstance = {
-    [<JsonPropertyName "id">] Id: string
+    Id: string
 }
 
 // TODO: Refactor how Structures/* and Events types are implemented and put the structures here (basing off above)
@@ -174,163 +174,98 @@ type InteractionCallbackActivityInstance = {
 
 // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure
 type ApplicationCommand = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: ApplicationCommandType option
-    [<JsonPropertyName "application_id">] ApplicationId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "name_localizations">] NameLocalizations: (string * string) seq option
-    [<JsonPropertyName "description">] Description: string
-    [<JsonPropertyName "description_localizations">] DescriptionLocalizations: (string * string) seq option
-    [<JsonPropertyName "options">] Options: ApplicationCommandOption list option
-    [<JsonPropertyName "default_member_permissions">] DefaultMemberPermissions: string option
-    [<JsonPropertyName "nsfw">] Nsfw: bool option
-    [<JsonPropertyName "integration_types">] IntegrationTypes: ApplicationIntegrationType list option
-    [<JsonPropertyName "contexts">] Contexts: InteractionContextType list option
-    [<JsonPropertyName "version">] Version: string
-    [<JsonPropertyName "handler">] Handler: ApplicationCommandHandlerType option
-
-    // Only present under certain conditions: https://discord.com/developers/docs/interactions/application-commands#retrieving-localized-commands
-    [<JsonPropertyName "name_localized">] NameLocalized: string option
-    [<JsonPropertyName "description_localized">] DescriptionLocalized: string option
-
-    // TODO: Create separate type with these special properties? Like invite metadata?
+    Id: string
+    Type: ApplicationCommandType
+    ApplicationId: string
+    GuildId: string option
+    Name: string
+    NameLocalizations: Map<string, string> option
+    Description: string
+    DescriptionLocalizations: Map<string, string> option
+    Options: ApplicationCommandOption list option
+    DefaultMemberPermissions: string option // TODO: Serialize bitfield into permission list
+    Nsfw: bool
+    IntegrationTypes: ApplicationIntegrationType list
+    Contexts: InteractionContextType list option
+    Version: string
+    Handler: ApplicationCommandHandlerType option
 }
+
+// TODO: Create DU for different application command types? A few values only present on one
 
 // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-structure
 type ApplicationCommandOption = {
-    [<JsonPropertyName "type">] Type: ApplicationCommandOptionType
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "name_localizations">] NameLocalizations: (string * string) seq option
-    [<JsonPropertyName "description">] Description: string
-    [<JsonPropertyName "description_localizations">] DescriptionLocalizations: (string * string) seq option
-    [<JsonPropertyName "required">] Required: bool option
-    [<JsonPropertyName "choices">] Choices: ApplicationCommandOptionChoice list option
-    [<JsonPropertyName "options">] Options: ApplicationCommandOption list option
-    [<JsonPropertyName "channel_types">] ChannelTypes: ChannelType list option
-    [<JsonPropertyName "min_value">] MinValue: ApplicationCommandMinValue option
-    [<JsonPropertyName "max_value">] MaxValue: ApplicationCommandMaxValue option
-    [<JsonPropertyName "min_length">] MinLength: int option
-    [<JsonPropertyName "max_length">] MaxLength: int option
-    [<JsonPropertyName "autocomplete">] Autocomplete: bool option
+    Type: ApplicationCommandOptionType
+    Name: string
+    NameLocalizations: Map<string, string> option
+    Description: string
+    DescriptionLocalizations: Map<string, string> option
+    Required: bool
+    Choices: ApplicationCommandOptionChoice list option
+    Options: ApplicationCommandOption list option
+    ChannelTypes: ChannelType list option
+    MinValue: ApplicationCommandOptionMinValue option
+    MaxValue: ApplicationCommandOptionMaxValue option
+    MinLength: int option
+    MaxLength: int option
+    Autocomplete: bool option
 }
 
 // TODO: Create DU for different types of application command option
 
-[<JsonConverter(typeof<ApplicationCommandMinValueConverter>)>]
 [<RequireQualifiedAccess>]
-type ApplicationCommandMinValue =
-    | Int    of int
-    | Double of double
+type ApplicationCommandOptionMinValue =
+    | INT    of int
+    | DOUBLE of double
 
-and ApplicationCommandMinValueConverter () =
-    inherit JsonConverter<ApplicationCommandMinValue> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with
-        | JsonTokenType.Number ->
-            let double: double = 0
-            let int: int = 0
-            if reader.TryGetInt32(ref int) then
-                ApplicationCommandMinValue.Int int
-            else if reader.TryGetDouble(ref double) then
-                ApplicationCommandMinValue.Double double
-            else
-                raise (JsonException "Unexpected ApplicationCommandMinValue value")
-            // TODO: Test if this correctly handles int and double
-        | _ -> raise (JsonException "Unexpected ApplicationCommandMinValue value")
-
-    override _.Write (writer, value, _) = 
-        match value with
-        | ApplicationCommandMinValue.Int v -> writer.WriteNumberValue v
-        | ApplicationCommandMinValue.Double v -> writer.WriteNumberValue v
-    
-[<JsonConverter(typeof<ApplicationCommandMaxValueConverter>)>]
 [<RequireQualifiedAccess>]
-type ApplicationCommandMaxValue =
-    | Int    of int
-    | Double of double
-
-and ApplicationCommandMaxValueConverter () =
-    inherit JsonConverter<ApplicationCommandMaxValue> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with
-        | JsonTokenType.Number ->
-            let double: double = 0
-            let int: int = 0
-            if reader.TryGetInt32(ref int) then
-                ApplicationCommandMaxValue.Int int
-            else if reader.TryGetDouble(ref double) then
-                ApplicationCommandMaxValue.Double double
-            else
-                raise (JsonException "Unexpected ApplicationCommandMaxValue value")
-            // TODO: Test if this correctly handles int and double
-        | _ -> raise (JsonException "Unexpected ApplicationCommandMaxValue value")
-
-    override _.Write (writer, value, _) = 
-        match value with
-        | ApplicationCommandMaxValue.Int v -> writer.WriteNumberValue v
-        | ApplicationCommandMaxValue.Double v -> writer.WriteNumberValue v
+type ApplicationCommandOptionMaxValue =
+    | INT    of int
+    | DOUBLE of double
 
 // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
 type ApplicationCommandOptionChoice = {
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "name_localizations">] NameLocalizations: (string * string) seq option
-    [<JsonPropertyName "value">] Value: ApplicationCommandOptionChoiceValue
+    Name: string
+    NameLocalizations: Map<string, string> option
+    Value: ApplicationCommandOptionChoiceValue
 }
 
-[<JsonConverter(typeof<ApplicationCommandOptionChoiceValueConverter>)>]
 [<RequireQualifiedAccess>]
 type ApplicationCommandOptionChoiceValue =
-    | String of string
-    | Int    of int
-    | Double of double
+    | STRING of string
+    | INT    of int
+    | DOUBLE of double
 
-and ApplicationCommandOptionChoiceValueConverter () =
-    inherit JsonConverter<ApplicationCommandOptionChoiceValue> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with
-        | JsonTokenType.String -> ApplicationCommandOptionChoiceValue.String (reader.GetString())
-        | JsonTokenType.Number ->
-            let double: double = 0
-            let int: int = 0
-            if reader.TryGetInt32(ref int) then
-                ApplicationCommandOptionChoiceValue.Int int
-            else if reader.TryGetDouble(ref double) then
-                ApplicationCommandOptionChoiceValue.Double double
-            else
-                raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
-            // TODO: Test if this correctly handles int and double
-        | _ -> raise (JsonException "Unexpected ApplicationCommandOptionChoiceValue value")
-
-    override _.Write (writer, value, _) =
-        match value with
-        | ApplicationCommandOptionChoiceValue.String v -> writer.WriteStringValue v
-        | ApplicationCommandOptionChoiceValue.Int v -> writer.WriteNumberValue v
-        | ApplicationCommandOptionChoiceValue.Double v -> writer.WriteNumberValue v
-    
 // TODO: Handle value type based on parent application command option type
 
 // https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-guild-application-command-permissions-structure
 type GuildApplicationCommandPermissions = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "application_id">] ApplicationId: string
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "permissions">] Permissions: ApplicationCommandPermission list
+    Id: string
+    ApplicationId: string
+    GuildId: string
+    Permissions: ApplicationCommandPermission list
 }
 
 // https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-application-command-permissions-structure
 type ApplicationCommandPermission = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: ApplicationCommandPermissionType
-    [<JsonPropertyName "permission">] Permission: bool
+    Id: string
+    Type: ApplicationCommandPermissionType
+    Permission: bool
 }
 
-// TODO: Add application command permission constants somewhere
+module ApplicationCommandPermissionConstants =
+    /// Sets an application command permission on all members in a guild
+    let everyone (guildId: string) =
+        guildId
+
+    /// Sets an application command permission on all channels
+    let allChannels (guildId: string) =
+        (int64 guildId) - 1L |> string // TODO: Return option instead of throwing exception
+
+    // TODO: Should this module be moved into Utils or somewhere else?
+
 // TODO: Handle maximum subcommand depth (is this even possible?)
-// TODO: Implement locale fallbacks
+// TODO: Implement locales and locale fallbacks
 
 // ----- Interactions: Message Components -----
 
