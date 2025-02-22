@@ -346,132 +346,93 @@ type Component =
 
 // https://discord.com/developers/docs/events/gateway#session-start-limit-object-session-start-limit-structure
 type SessionStartLimit = {
-    [<JsonPropertyName "total">] Total: int
-    [<JsonPropertyName "remaining">] Remaining: int
-    [<JsonPropertyName "reset_after">] ResetAfter: int
-    [<JsonPropertyName "max_concurrency">] MaxConcurrency: int
+    Total: int
+    Remaining: int
+    ResetAfter: int
+    MaxConcurrency: int
 }
 
 // ----- Events: Gateway Events -----
 
+// TODO: Define gateway event data types here
+
 // https://discord.com/developers/docs/topics/gateway-events#identify-identify-connection-properties
 type IdentifyConnectionProperties = {
-    [<JsonPropertyName "os">] OperatingSystem: string
-    [<JsonPropertyName "browser">] Browser: string
-    [<JsonPropertyName "device">] Device: string
+    OperatingSystem: string
+    Browser: string
+    Device: string
 }
+
+// TODO: Make single DU for ensuring the device matches expected format (?)
 
 // https://discord.com/developers/docs/events/gateway-events#client-status-object
 //[<JsonConverter(typeof<ClientStatus.Converter>)>]
 type ClientStatus = {
-    [<JsonPropertyName "desktop">] Desktop: Status
-    [<JsonPropertyName "mobile">] Mobile: Status
-    [<JsonPropertyName "web">] Web: Status
+    Desktop: ClientDeviceStatus option
+    Mobile: ClientDeviceStatus option
+    Web: ClientDeviceStatus option
 }
 
-//module ClientStatus =
-//    type Payload = {
-//        [<JsonPropertyName "desktop">] Desktop: string option
-//        [<JsonPropertyName "mobile">] Mobile: string option
-//        [<JsonPropertyName "web">] Web: string option
-//    }
-
-//    type Converter () =
-//        inherit JsonConverter<ClientStatus> ()
-
-//        override _.Read (reader, _, _) =
-//            let success, document = JsonDocument.TryParseValue &reader
-//            if not success then JsonException.raise "Failed to parse JSON document"
-
-//            let statusFromOption (str: string option) =
-//                match str with
-//                | None -> Status.OFFLINE
-//                | Some str ->
-//                    match Status.fromString str with
-//                    | Some Status.ONLINE -> Status.ONLINE
-//                    | Some Status.IDLE -> Status.IDLE
-//                    | Some Status.DND -> Status.DND
-//                    | _ -> Status.OFFLINE
-
-//            let payload = document.Deserialize<Payload>()
-
-//            {
-//                Desktop = statusFromOption payload.Desktop
-//                Mobile = statusFromOption payload.Mobile
-//                Web = statusFromOption payload.Web
-//            }
-
-//        override _.Write (writer, value, _) =
-//            let statusToOption (status: Status) =
-//                match status with
-//                | Status.ONLINE -> Some "online"
-//                | Status.IDLE -> Some "idle"
-//                | Status.DND -> Some "dnd"
-//                | _ -> None
-
-//            {
-//                Desktop = statusToOption value.Desktop
-//                Mobile = statusToOption value.Mobile
-//                Web = statusToOption value.Web
-//            }
-//            |> Json.serializeF
-//            |> writer.WriteRawValue
+// TODO: Should this just define the invis/offline in the type instead of as option (which discord does)
 
 // https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-structure
 type Activity = {
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "type">] Type: ActivityType
-    [<JsonPropertyName "url">] Url: string option
-    [<JsonPropertyName "created_at">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] CreatedAt: DateTime option
-    [<JsonPropertyName "timestamps">] Timestamps: ActivityTimestamps option
-    [<JsonPropertyName "application_id">] ApplicationId: string option
-    [<JsonPropertyName "details">] Details: string option
-    [<JsonPropertyName "state">] State: string option
-    [<JsonPropertyName "emoji">] Emoji: ActivityEmoji option
-    [<JsonPropertyName "party">] Party: ActivityParty option
-    [<JsonPropertyName "assets">] Assets: ActivityAssets option
-    [<JsonPropertyName "secrets">] Secrets: ActivitySecrets option
-    [<JsonPropertyName "instance">] Instance: bool option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "buttons">] Buttons: ActivityButton list option
+    Name: string
+    Type: ActivityType
+    Url: string option
+    CreatedAt: DateTime option
+    Timestamps: ActivityTimestamps option
+    ApplicationId: string option
+    Details: string option
+    State: string option
+    Emoji: ActivityEmoji option
+    Party: ActivityParty option
+    Assets: ActivityAssets option
+    Secrets: ActivitySecrets option
+    Instance: bool option
+    Flags: int option
+    Buttons: ActivityButton list option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#activity-object-activity-timestamps
 type ActivityTimestamps = {
-    [<JsonPropertyName "start">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] Start: DateTime option
-    [<JsonPropertyName "end">] [<JsonConverter(typeof<JsonConverter.UnixEpoch>)>] End: DateTime option
+    Start: DateTime option
+    End: DateTime option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#activity-object-activity-emoji
 type ActivityEmoji = {
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "id">] Id: string option
-    [<JsonPropertyName "animated">] Animated: bool option
+    Name: string
+    Id: string option
+    Animated: bool option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#activity-object-activity-party
 type ActivityParty = {
-    [<JsonPropertyName "id">] Id: string option
-    [<JsonPropertyName "size">] Size: (int * int) option
+    Id: string option
+    Size: ActivityPartySize option
 }
 
-// TODO: Make custom serializer for above to make a record with current and max size properties
+type ActivityPartySize = {
+    Current: int
+    Maximum: int
+}
 
 // https://discord.com/developers/docs/events/gateway-events#activity-object-activity-assets
 type ActivityAssets = {
-    [<JsonPropertyName "large_image">] LargeImage: string option
-    [<JsonPropertyName "large_text">] LargeText: string option
-    [<JsonPropertyName "small_image">] SmallImage: string option
-    [<JsonPropertyName "small_text">] SmallText: string option
+    LargeImage: string option
+    LargeText: string option
+    SmallImage: string option
+    SmallText: string option
 }
 
 // TODO: Handle activity asset images as documented
 
 // https://discord.com/developers/docs/events/gateway-events#activity-object-activity-secrets
 type ActivitySecrets = {
-    [<JsonPropertyName "join">] Join: string option
-    [<JsonPropertyName "spectate">] Spectate: string option
-    [<JsonPropertyName "matcch">] Match: string option
+    Join: string option
+    Spectate: string option
+    Match: string option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#activity-object-activity-buttons
@@ -479,8 +440,6 @@ type ActivityButton = {
     [<JsonPropertyName "label">] Label: string
     [<JsonPropertyName "url">] Url: string
 }
-
-// TODO: Move gateway events here from Structures/GatewayEvents.fs
 
 // ----- Events: Webhook Events -----
 

@@ -528,6 +528,13 @@ type Status =
     | INVISIBLE
     | OFFLINE
 
+// https://discord.com/developers/docs/events/gateway-events#client-status-object
+[<RequireQualifiedAccess>]
+type ClientDeviceStatus =
+    | ONLINE
+    | IDLE
+    | DND
+
 [<RequireQualifiedAccess>]
 type RateLimitScope =
     | USER

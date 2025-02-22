@@ -1,6 +1,7 @@
 ﻿namespace FSharp.Discord.Types.Serialization
 
 open FSharp.Discord.Types
+open Thoth.Json.Net
 
 module GuildFeature =
     let toString (feature: GuildFeature) =
@@ -237,6 +238,52 @@ module Status =
         | "invisible" -> Some Status.INVISIBLE
         | "offline" -> Some Status.OFFLINE
         | _ -> None
+
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a status", v))
+        | Some res -> Ok res
+
+    let encoder (v: Status) =
+        toString v |> Encode.string
+
+module ClientDeviceStatus =
+    let toString (status: ClientDeviceStatus) =
+        match status with
+        | ClientDeviceStatus.ONLINE -> "online"
+        | ClientDeviceStatus.IDLE -> "idle"
+        | ClientDeviceStatus.DND -> "dnd"
+
+    let fromString (str: string) =
+        match str with
+        | "online" -> Some ClientDeviceStatus.ONLINE
+        | "idle" -> Some ClientDeviceStatus.IDLE
+        | "dnd" -> Some ClientDeviceStatus.DND
+        | _ -> None
+
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a client device status", v))
+        | Some res -> Ok res
+
+    let encoder (v: ClientDeviceStatus) =
+        toString v |> Encode.string
         
 module RateLimitScope =
     let toString (scope: RateLimitScope) =
