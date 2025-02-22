@@ -14,7 +14,7 @@ type OptionsTests () =
             {
                 Name = "option"
                 Type = ApplicationCommandOptionType.STRING
-                Value = Some (CommandInteractionDataOptionValue.String "option")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "option")
                 Options = None
                 Focused = None
             }
@@ -48,7 +48,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -88,7 +88,7 @@ type OptionsTests () =
             {
                 Name = "option"
                 Type = ApplicationCommandOptionType.STRING
-                Value = Some (CommandInteractionDataOptionValue.String "option")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "option")
                 Options = None
                 Focused = None
             }
@@ -132,7 +132,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -173,7 +173,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.STRING
-                Value = Some (CommandInteractionDataOptionValue.String value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
                 Options = None
                 Focused = None
             }
@@ -197,7 +197,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -238,7 +238,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.INTEGER
-                Value = Some (CommandInteractionDataOptionValue.Int value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.INT value)
                 Options = None
                 Focused = None
             }
@@ -262,7 +262,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -303,7 +303,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.BOOLEAN
-                Value = Some (CommandInteractionDataOptionValue.Bool value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.BOOL value)
                 Options = None
                 Focused = None
             }
@@ -327,7 +327,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -368,7 +368,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.USER
-                Value = Some (CommandInteractionDataOptionValue.String value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
                 Options = None
                 Focused = None
             }
@@ -392,7 +392,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -433,7 +433,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.CHANNEL
-                Value = Some (CommandInteractionDataOptionValue.String value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
                 Options = None
                 Focused = None
             }
@@ -457,7 +457,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -498,7 +498,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
                 Options = None
                 Focused = None
             }
@@ -522,7 +522,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.CHANNEL
-                Value = Some (CommandInteractionDataOptionValue.String "channelId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "channelId")
                 Options = None
                 Focused = None
             }
@@ -563,7 +563,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.MENTIONABLE
-                Value = Some (CommandInteractionDataOptionValue.String value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
                 Options = None
                 Focused = None
             }
@@ -587,7 +587,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -628,7 +628,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.NUMBER
-                Value = Some (CommandInteractionDataOptionValue.Double value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.DOUBLE value)
                 Options = None
                 Focused = None
             }
@@ -652,7 +652,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -693,7 +693,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ATTACHMENT
-                Value = Some (CommandInteractionDataOptionValue.String value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
                 Options = None
                 Focused = None
             }
@@ -717,7 +717,7 @@ type OptionsTests () =
             {
                 Name = name
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId")
                 Options = None
                 Focused = None
             }
@@ -755,21 +755,21 @@ type OptionsTests () =
             {
                 Name = "role1"
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId1")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId1")
                 Options = None
                 Focused = None
             }
             {
                 Name = "role2"
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId2")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId2")
                 Options = None
                 Focused = None
             }
             {
                 Name = "channel"
                 Type = ApplicationCommandOptionType.CHANNEL
-                Value = Some (CommandInteractionDataOptionValue.String "channelId")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "channelId")
                 Options = None
                 Focused = None
             }
@@ -798,14 +798,14 @@ type OptionsTests () =
             {
                 Name = "role1"
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (CommandInteractionDataOptionValue.String "roleId1")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "roleId1")
                 Options = None
                 Focused = None
             }
             {
                 Name = "channel"
                 Type = ApplicationCommandOptionType.CHANNEL
-                Value = Some (CommandInteractionDataOptionValue.String "channel")
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING "channel")
                 Options = None
                 Focused = None
             }

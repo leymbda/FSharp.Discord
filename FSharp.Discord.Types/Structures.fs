@@ -384,60 +384,60 @@ type IdentifyConnectionProperties = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#client-status-object
-[<JsonConverter(typeof<ClientStatus.Converter>)>]
+//[<JsonConverter(typeof<ClientStatus.Converter>)>]
 type ClientStatus = {
     [<JsonPropertyName "desktop">] Desktop: Status
     [<JsonPropertyName "mobile">] Mobile: Status
     [<JsonPropertyName "web">] Web: Status
 }
 
-module ClientStatus =
-    type Payload = {
-        [<JsonPropertyName "desktop">] Desktop: string option
-        [<JsonPropertyName "mobile">] Mobile: string option
-        [<JsonPropertyName "web">] Web: string option
-    }
+//module ClientStatus =
+//    type Payload = {
+//        [<JsonPropertyName "desktop">] Desktop: string option
+//        [<JsonPropertyName "mobile">] Mobile: string option
+//        [<JsonPropertyName "web">] Web: string option
+//    }
 
-    type Converter () =
-        inherit JsonConverter<ClientStatus> ()
+//    type Converter () =
+//        inherit JsonConverter<ClientStatus> ()
 
-        override _.Read (reader, _, _) =
-            let success, document = JsonDocument.TryParseValue &reader
-            if not success then JsonException.raise "Failed to parse JSON document"
+//        override _.Read (reader, _, _) =
+//            let success, document = JsonDocument.TryParseValue &reader
+//            if not success then JsonException.raise "Failed to parse JSON document"
 
-            let statusFromOption (str: string option) =
-                match str with
-                | None -> Status.OFFLINE
-                | Some str ->
-                    match Status.fromString str with
-                    | Some Status.ONLINE -> Status.ONLINE
-                    | Some Status.IDLE -> Status.IDLE
-                    | Some Status.DND -> Status.DND
-                    | _ -> Status.OFFLINE
+//            let statusFromOption (str: string option) =
+//                match str with
+//                | None -> Status.OFFLINE
+//                | Some str ->
+//                    match Status.fromString str with
+//                    | Some Status.ONLINE -> Status.ONLINE
+//                    | Some Status.IDLE -> Status.IDLE
+//                    | Some Status.DND -> Status.DND
+//                    | _ -> Status.OFFLINE
 
-            let payload = document.Deserialize<Payload>()
+//            let payload = document.Deserialize<Payload>()
 
-            {
-                Desktop = statusFromOption payload.Desktop
-                Mobile = statusFromOption payload.Mobile
-                Web = statusFromOption payload.Web
-            }
+//            {
+//                Desktop = statusFromOption payload.Desktop
+//                Mobile = statusFromOption payload.Mobile
+//                Web = statusFromOption payload.Web
+//            }
 
-        override _.Write (writer, value, _) =
-            let statusToOption (status: Status) =
-                match status with
-                | Status.ONLINE -> Some "online"
-                | Status.IDLE -> Some "idle"
-                | Status.DND -> Some "dnd"
-                | _ -> None
+//        override _.Write (writer, value, _) =
+//            let statusToOption (status: Status) =
+//                match status with
+//                | Status.ONLINE -> Some "online"
+//                | Status.IDLE -> Some "idle"
+//                | Status.DND -> Some "dnd"
+//                | _ -> None
 
-            {
-                Desktop = statusToOption value.Desktop
-                Mobile = statusToOption value.Mobile
-                Web = statusToOption value.Web
-            }
-            |> Json.serializeF
-            |> writer.WriteRawValue
+//            {
+//                Desktop = statusToOption value.Desktop
+//                Mobile = statusToOption value.Mobile
+//                Web = statusToOption value.Web
+//            }
+//            |> Json.serializeF
+//            |> writer.WriteRawValue
 
 // https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-structure
 type Activity = {

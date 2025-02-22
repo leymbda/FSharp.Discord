@@ -14,7 +14,7 @@ type ResumeData = {
     SequenceId: int
 }
 
-type GatewayState = {
+type OldGatewayState = {
     IdentifyEvent: IdentifySendEvent
     SequenceId: int option
     Interval: int option
@@ -24,7 +24,7 @@ type GatewayState = {
     SessionId: string option
 }
 
-module GatewayState =
+module OldGatewayState =
     let connect (identifyEvent: IdentifySendEvent) = {
         IdentifyEvent = identifyEvent
         SequenceId = None
@@ -51,7 +51,7 @@ module GatewayState =
         | None -> connect identifyEvent
 
 type LifecycleResult =
-    | Continue of GatewayState
+    | Continue of OldGatewayState
     | Resume of ResumeData
     | Reconnect
     | Disconnect of GatewayCloseEventCode option
@@ -190,7 +190,7 @@ module Gateway =
 
         do! ws.ConnectAsync(Uri url, ct)
 
-        let mutable state = GatewayState.zero identify resumeData
+        let mutable state = OldGatewayState.zero identify resumeData
         let mutable disconnectCause: Result<ReconnectableGatewayDisconnect, GatewayCloseEventCode option> option = None
 
         while disconnectCause.IsNone do

@@ -1,6 +1,7 @@
 ﻿namespace FSharp.Discord.Webhook
 
 open FSharp.Discord.Types
+open FSharp.Discord.Types.Serialization
 open System.Text.Json
 open System.Text.Json.Serialization
 
@@ -47,3 +48,4 @@ and WebhookReceiveEventConverter () =
         | APPLICATION_AUTHORIZED a -> Json.serializeF a |> writer.WriteRawValue
         | UNKNOWN u -> Json.serializeF u |> writer.WriteRawValue
         
+// TODO: Rewrite serializer with thoth separately

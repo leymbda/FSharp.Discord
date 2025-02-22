@@ -42,7 +42,7 @@ let (|StringOption|_|) (name: string) (interaction: Interaction) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
                 Type = ApplicationCommandOptionType.STRING
             }) when option.Name = name -> Some value
             | _ -> None
@@ -55,7 +55,7 @@ let (|IntegerOption|_|) (name: string) (interaction: Interaction) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.Int value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.INT value)
                 Type = ApplicationCommandOptionType.INTEGER
             }) when option.Name = name -> Some value
             | _ -> None
@@ -68,7 +68,7 @@ let (|BooleanOption|_|) (name: string) (interaction: Interaction) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.Bool value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.BOOL value)
                 Type = ApplicationCommandOptionType.BOOLEAN
             }) when option.Name = name -> Some value
             | _ -> None
@@ -82,7 +82,7 @@ let (|UserIdOption|_|) (name: string) (interaction: Interaction) =
             match option with
             | ({
                 Type = ApplicationCommandOptionType.USER
-                Value = Some (CommandInteractionDataOptionValue.String userId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING userId)
             }) when option.Name = name -> Some userId
             | _ -> None
         )
@@ -96,8 +96,8 @@ let (|UserOption|_|) (name: string) (interaction: Interaction) =
             match option with
             | ({
                 Type = ApplicationCommandOptionType.USER
-                Value = Some (CommandInteractionDataOptionValue.String userId)
-            }) when option.Name = name -> users |> Seq.tryFind (fun (id, _) -> id = userId) |> Option.map snd
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING userId)
+            }) when option.Name = name -> users |> Option.map (Map.tryFind userId)
             | _ -> None
         )
     | _ -> None
@@ -108,7 +108,7 @@ let (|ChannelIdOption|_|) (name: string) (interaction: Interaction) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String channelId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING channelId)
                 Type = ApplicationCommandOptionType.CHANNEL
             }) when option.Name = name -> Some channelId
             | _ -> None
@@ -121,9 +121,9 @@ let (|ChannelOption|_|) (name: string) (interaction: Interaction) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String channelId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING channelId)
                 Type = ApplicationCommandOptionType.CHANNEL
-            }) when option.Name = name -> channels |> Seq.tryFind (fun (id, _) -> id = channelId) |> Option.map snd
+            }) when option.Name = name -> channels |> Option.bind (Map.tryFind channelId)
             | _ -> None
         )
     | _ -> None
@@ -134,7 +134,7 @@ let (|RoleIdOption|_|) (name: string) (interaction: Interaction) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String roleId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING roleId)
                 Type = ApplicationCommandOptionType.ROLE
             }) when option.Name = name -> Some roleId
             | _ -> None
@@ -147,9 +147,9 @@ let (|RoleOption|_|) (name: string) (interaction: Interaction) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String roleId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING roleId)
                 Type = ApplicationCommandOptionType.ROLE
-            }) when option.Name = name -> roles |> Seq.tryFind (fun (id, _) -> id = roleId) |> Option.map snd
+            }) when option.Name = name -> roles |> Option.bind (Map.tryFind roleId)
             | _ -> None
         )
     | _ -> None
@@ -160,7 +160,7 @@ let (|MentionableIdOption|_|) (name: string) (interaction: Interaction) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String mentionableId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING mentionableId)
                 Type = ApplicationCommandOptionType.MENTIONABLE
             }) when option.Name = name -> Some mentionableId
             | _ -> None
@@ -177,12 +177,12 @@ let (|MentionableOption|_|) (name: string) (interaction: Interaction) =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String mentionableId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING mentionableId)
                 Type = ApplicationCommandOptionType.MENTIONABLE
             }) when option.Name = name ->
                 let mentionables =
-                    let userList = users |> Seq.map (fun (id, v) -> (id, Mentionable.User v)) |> Seq.toList
-                    let roleList = roles |> Seq.map (fun (id, v) -> (id, Mentionable.Role v)) |> Seq.toList
+                    let userList = users |> Option.map (Map.toSeq >> Seq.map (fun (id, v) -> (id, Mentionable.User v)) >> Seq.toList) |> Option.defaultValue []
+                    let roleList = roles |> Option.map (Map.toSeq >> Seq.map (fun (id, v) -> (id, Mentionable.Role v)) >> Seq.toList) |> Option.defaultValue []
                     userList @ roleList
 
                 mentionables |> Seq.tryFind (fun (id, _) -> id = mentionableId) |> Option.map snd

@@ -27,7 +27,7 @@ module Options =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String value);
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value);
                 Type = ApplicationCommandOptionType.STRING;
             }) when option.Name = name -> Some value
             | _ -> None
@@ -37,7 +37,7 @@ module Options =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.Int value);
+                Value = Some (ApplicationCommandInteractionDataOptionValue.INT value);
                 Type = ApplicationCommandOptionType.INTEGER;
             }) when option.Name = name -> Some value
             | _ -> None
@@ -47,7 +47,7 @@ module Options =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.Bool value);
+                Value = Some (ApplicationCommandInteractionDataOptionValue.BOOL value);
                 Type = ApplicationCommandOptionType.BOOLEAN;
             }) when option.Name = name -> Some value
             | _ -> None
@@ -57,7 +57,7 @@ module Options =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String userId);
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING userId);
                 Type = ApplicationCommandOptionType.USER;
             }) when option.Name = name -> Some userId
             | _ -> None
@@ -67,7 +67,7 @@ module Options =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String channelId);
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING channelId);
                 Type = ApplicationCommandOptionType.CHANNEL;
             }) when option.Name = name -> Some channelId
             | _ -> None
@@ -77,7 +77,7 @@ module Options =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String roleId);
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING roleId);
                 Type = ApplicationCommandOptionType.ROLE;
             }) when option.Name = name -> Some roleId
             | _ -> None
@@ -87,7 +87,7 @@ module Options =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String mentionableId);
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING mentionableId);
                 Type = ApplicationCommandOptionType.MENTIONABLE;
             }) when option.Name = name -> Some mentionableId
             | _ -> None
@@ -97,7 +97,7 @@ module Options =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.Double value);
+                Value = Some (ApplicationCommandInteractionDataOptionValue.DOUBLE value);
                 Type = ApplicationCommandOptionType.NUMBER;
             }) when option.Name = name -> Some value
             | _ -> None
@@ -107,7 +107,7 @@ module Options =
         options |> List.tryPick (fun option ->
             match option with
             | ({
-                Value = Some (CommandInteractionDataOptionValue.String attachmentId);
+                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING attachmentId);
                 Type = ApplicationCommandOptionType.ATTACHMENT;
             }) when option.Name = name -> Some attachmentId
             | _ -> None

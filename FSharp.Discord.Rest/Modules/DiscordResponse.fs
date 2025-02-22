@@ -1,6 +1,7 @@
 ﻿namespace FSharp.Discord.Rest
 
 open FSharp.Discord.Types
+open FSharp.Discord.Types.Serialization
 open System
 open System.Net
 open System.Net.Http
