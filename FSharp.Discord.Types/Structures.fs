@@ -271,98 +271,76 @@ module ApplicationCommandPermissionConstants =
 
 // https://discord.com/developers/docs/interactions/message-components#action-rows
 type ActionRow = {
-    [<JsonPropertyName "type">] Type: ComponentType
-    [<JsonPropertyName "components">] Components: Component list
+    Type: ComponentType
+    Components: Component list
 }
 
 // https://discord.com/developers/docs/interactions/message-components#button-object-button-structure
 type Button = {
-    [<JsonPropertyName "type">] Type: ComponentType
-    [<JsonPropertyName "style">] Style: ButtonStyle
-    [<JsonPropertyName "label">] Label: string
-    [<JsonPropertyName "emoji">] Emoji: Emoji option
-    [<JsonPropertyName "custom_id">] CustomId: string option
-    [<JsonPropertyName "url">] Url: string option
-    [<JsonPropertyName "disabled">] Disabled: bool option
+    Type: ComponentType
+    Style: ButtonStyle
+    Label: string
+    Emoji: Emoji option
+    CustomId: string option
+    Url: string option
+    Disabled: bool
 }
+
+// TODO: Ensure values meet requirements set in docs for buttons
 
 // https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure
 type SelectMenu = {
-    [<JsonPropertyName "type">] Type: ComponentType
-    [<JsonPropertyName "custom_id">] CustomId: string
-    [<JsonPropertyName "options">] Options: SelectMenuOption list option
-    [<JsonPropertyName "channel_types">] ChannelTypes: ChannelType list option
-    [<JsonPropertyName "placeholder">] Placeholder: string option
-    [<JsonPropertyName "default_values">] DefaultValues: SelectMenuDefaultValue option
-    [<JsonPropertyName "min_values">] MinValues: int option
-    [<JsonPropertyName "max_values">] MaxValues: int option
-    [<JsonPropertyName "disabled">] Disabled: bool option
+    Type: ComponentType
+    CustomId: string
+    Options: SelectMenuOption list option
+    ChannelTypes: ChannelType list option
+    Placeholder: string option
+    DefaultValues: SelectMenuDefaultValue list option
+    MinValues: int
+    MaxValues: int
+    Disabled: bool
 }
+
+// TODO: DU for different types of select menus
+// TODO: Ensure values meet requirements set in docs for select menus
 
 // https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-option-structure
 type SelectMenuOption = {
-    [<JsonPropertyName "label">] Label: string
-    [<JsonPropertyName "value">] Value: string
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "emoji">] Emoji: Emoji option
-    [<JsonPropertyName "default">] Default: bool option
+    Label: string
+    Value: string
+    Description: string option
+    Emoji: Emoji option
+    Default: bool option
 }
+
+// TODO: Ensure values meet requirements set in docs for select menu options
 
 // https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-default-value-structure
 type SelectMenuDefaultValue = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: string
+    Id: string
+    Type: SelectMenuDefaultValueType
 }
 
 // https://discord.com/developers/docs/interactions/message-components#text-input-object-text-input-structure
 type TextInput = {
-    [<JsonPropertyName "type">] Type: ComponentType
-    [<JsonPropertyName "custom_id">] CustomId: string
-    [<JsonPropertyName "style">] Style: TextInputStyle
-    [<JsonPropertyName "label">] Label: string
-    [<JsonPropertyName "min_length">] MinLength: int option
-    [<JsonPropertyName "max_length">] MaxLength: int option
-    [<JsonPropertyName "required">] Required: bool option
-    [<JsonPropertyName "value">] Value: string option
-    [<JsonPropertyName "placeholder">] Placeholder: string option
+    Type: ComponentType
+    CustomId: string
+    Style: TextInputStyle
+    Label: string
+    MinLength: int option
+    MaxLength: int option
+    Required: bool
+    Value: string option
+    Placeholder: string option
 }
 
-[<JsonConverter(typeof<Component.Converter>)>]
+// TODO: Ensure values meet requirements set in docs for text input
+
 type Component =
     | ACTION_ROW of ActionRow
     | BUTTON of Button
     | SELECT_MENU of SelectMenu
     | TEXT_INPUT of TextInput
-
-module Component =
-    type Converter () =
-        inherit JsonConverter<Component> ()
-
-        override _.Read (reader, _, _) =
-            let success, document = JsonDocument.TryParseValue &reader
-            if not success then JsonException.raise "Unable to parse JSON document"
-
-            let componentType = document.RootElement.GetProperty "type" |> _.GetInt32() |> enum<ComponentType>
-            let json = document.RootElement.GetRawText()
-
-            match componentType with
-            | ComponentType.ACTION_ROW -> Component.ACTION_ROW <| Json.deserializeF<ActionRow> json
-            | ComponentType.BUTTON -> Component.BUTTON <| Json.deserializeF<Button> json
-            | ComponentType.STRING_SELECT
-            | ComponentType.USER_SELECT
-            | ComponentType.ROLE_SELECT
-            | ComponentType.MENTIONABLE_SELECT
-            | ComponentType.CHANNEL_SELECT -> Component.SELECT_MENU <| Json.deserializeF<SelectMenu> json
-            | ComponentType.TEXT_INPUT -> Component.TEXT_INPUT <| Json.deserializeF<TextInput> json
-            | _ -> raise (JsonException "Unexpected ComponentType provided")
-
-        override _.Write (writer, value, _) =
-            match value with
-            | Component.ACTION_ROW a -> Json.serializeF a
-            | Component.BUTTON b -> Json.serializeF b
-            | Component.SELECT_MENU s -> Json.serializeF s
-            | Component.TEXT_INPUT t -> Json.serializeF t
-            |> writer.WriteRawValue
 
 // ----- Events: Using Gateway -----
 

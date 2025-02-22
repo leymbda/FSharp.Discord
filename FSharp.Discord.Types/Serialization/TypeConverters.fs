@@ -1,6 +1,7 @@
 ﻿namespace FSharp.Discord.Types.Serialization
 
 open FSharp.Discord.Types
+open Thoth.Json.Net
 
 module ApplicationIntegrationType =
     let toString (value: ApplicationIntegrationType) =
@@ -112,6 +113,36 @@ module GuildIntegrationType =
         | "discord" -> Some GuildIntegrationType.DISCORD
         | "guild_subscription" -> Some GuildIntegrationType.GUILD_SUBSCRIPTION
         | _ -> None
+        
+module SelectMenuDefaultValueType =
+    let toString (selectMenuDefaultValue: SelectMenuDefaultValueType) =
+        match selectMenuDefaultValue with
+        | SelectMenuDefaultValueType.USER -> "user"
+        | SelectMenuDefaultValueType.ROLE -> "role"
+        | SelectMenuDefaultValueType.CHANNEL -> "channel"
+
+    let fromString (str: string) =
+        match str with
+        | "user" -> Some SelectMenuDefaultValueType.USER
+        | "role" -> Some SelectMenuDefaultValueType.ROLE
+        | "channel" -> Some SelectMenuDefaultValueType.CHANNEL
+        | _ -> None
+
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a select menu default value type", v))
+        | Some res -> Ok res
+
+    let encoder (v: SelectMenuDefaultValueType) =
+        toString v |> Encode.string
 
 module WebhookEventType =
     let toString (webhookEventType: WebhookEventType) =

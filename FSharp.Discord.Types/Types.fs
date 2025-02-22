@@ -405,6 +405,13 @@ type ScheduledEntityType =
     | VOICE           = 2
     | EXTERNAL        = 3
 
+// https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-default-value-structure
+[<RequireQualifiedAccess>]
+type SelectMenuDefaultValueType =
+    | USER
+    | ROLE
+    | CHANNEL
+
 // https://discord.com/developers/docs/resources/sku#sku-object-sku-types
 [<RequireQualifiedAccess>]
 type SkuType =
