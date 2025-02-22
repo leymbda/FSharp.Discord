@@ -1,6 +1,7 @@
 ﻿namespace FSharp.Discord.Types
 
 // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
+[<RequireQualifiedAccess>]
 type GatewayCloseEventCode =
     | UNKNOWN_ERROR         = 4000
     | UNKNOWN_OPCODE        = 4001
@@ -38,6 +39,7 @@ module GatewayCloseEventCode =
         | _ -> true
 
 // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-opcodes
+[<RequireQualifiedAccess>]
 type GatewayOpcode =
     | DISPATCH                  = 0
     | HEARTBEAT                 = 1
@@ -53,6 +55,7 @@ type GatewayOpcode =
     | REQUEST_SOUNDBOARD_SOUNDS = 31
     
 // https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes
+[<RequireQualifiedAccess>]
 type JsonErrorCode =
     | UNKNOWN_ERROR                                                = 0
     | UNKNOWN_ACCOUNT                                              = 10001

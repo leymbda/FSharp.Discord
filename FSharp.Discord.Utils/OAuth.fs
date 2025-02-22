@@ -5,7 +5,7 @@ open System
 open System.Web
 
 module OAuth =
-    let authorizationUrl (clientId: string) (redirectUri: string) (scopes: OAuth2Scope list) (state: string option) (prompt: OAuthConsent) (integrationType: ApplicationIntegrationType option) =
+    let authorizationUrl (clientId: string) (redirectUri: string) (scopes: OAuthScope list) (state: string option) (prompt: OAuthConsent) (integrationType: ApplicationIntegrationType option) =
         let builder = UriBuilder "https://discord.com/oauth2/authorize"
 
         let query = HttpUtility.ParseQueryString String.Empty

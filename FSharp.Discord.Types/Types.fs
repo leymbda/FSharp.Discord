@@ -1,9 +1,7 @@
 ﻿namespace rec FSharp.Discord.Types
 
-open System.Text.Json
-open System.Text.Json.Serialization
-
 // https://discord.com/developers/docs/events/gateway-events#activity-object-activity-types
+[<RequireQualifiedAccess>]
 type ActivityType =
     | PLAYING   = 0
     | STREAMING = 1
@@ -11,15 +9,18 @@ type ActivityType =
     | WATCHING  = 3
     | CUSTOM    = 4
     | COMPETING = 5
-
+    
+[<RequireQualifiedAccess>]
 type AnimationType =
     | PREMIUM = 0
-    | BAISC   = 1
-
+    | BASIC   = 1
+    
+[<RequireQualifiedAccess>]
 type ApplicationCommandHandlerType =
     | APP_HANDER              = 1
     | DISCORD_LAUNCH_ACTIVITY = 2
-
+    
+[<RequireQualifiedAccess>]
 type ApplicationCommandOptionType =
     | SUB_COMMAND       = 1
     | SUB_COMMAND_GROUP = 2
@@ -32,22 +33,26 @@ type ApplicationCommandOptionType =
     | MENTIONABLE       = 9
     | NUMBER            = 10
     | ATTACHMENT        = 11
-
+    
+[<RequireQualifiedAccess>]
 type ApplicationCommandPermissionType =
     | ROLE    = 1
     | USER    = 2
     | CHANNEL = 3
-
+    
+[<RequireQualifiedAccess>]
 type ApplicationCommandType = 
     | CHAT_INPUT          = 1
     | USER                = 2
     | MESSAGE             = 3
     | PRIMARY_ENTRY_POINT = 4
-
+    
+[<RequireQualifiedAccess>]
 type ApplicationIntegrationType =
     | GUILD_INSTALL = 0
     | USER_INSTALL  = 1
-
+    
+[<RequireQualifiedAccess>]
 type ApplicationRoleConnectionMetadataType =
     | INTEGER_LESS_THAN_OR_EQUAL     = 1
     | INTEGER_GREATER_THAN_OR_EQUAL  = 2
@@ -59,6 +64,7 @@ type ApplicationRoleConnectionMetadataType =
     | BOOLEAN_NOT_EQUAL              = 8
 
 // https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-events
+[<RequireQualifiedAccess>]
 type AuditLogEventType =
     | GUILD_UPDATE                                = 1
     | CHANNEL_CREATE                              = 10
@@ -128,6 +134,7 @@ type AuditLogEventType =
     | HOME_SETTINGS_UPDATE                        = 191
 
 // https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-action-object-action-types
+[<RequireQualifiedAccess>]
 type AutoModerationActionType =
     | BLOCK_MESSAGE            = 1
     | SEND_ALERT_MESSAGE       = 2
@@ -135,11 +142,13 @@ type AutoModerationActionType =
     | BLOCK_MEMBER_INTERACTION = 4
 
 // https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-event-types
+[<RequireQualifiedAccess>]
 type AutoModerationEventType =
     | MESSAGE_SEND  = 1
     | MEMBER_UDPATE = 2
 
 // https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-trigger-types
+[<RequireQualifiedAccess>]
 type AutoModerationTriggerType =
     | KEYWORD        = 1
     | SPAM           = 3
@@ -148,6 +157,7 @@ type AutoModerationTriggerType =
     | MEMBER_PROFILE = 6
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-types
+[<RequireQualifiedAccess>]
 type ChannelType =
     | GUILD_TEXT          = 0
     | DM                  = 1
@@ -162,7 +172,8 @@ type ChannelType =
     | GUILD_DIRECTORY     = 14
     | GUILD_FORUM         = 15
     | GUILD_MEDIA         = 16
-
+    
+[<RequireQualifiedAccess>]
 type ComponentType =
     | ACTION_ROW         = 1
     | BUTTON             = 2
@@ -174,7 +185,7 @@ type ComponentType =
     | CHANNEL_SELECT     = 8
 
 // https://discord.com/developers/docs/resources/user#connection-object-services
-[<JsonConverter(typeof<ConnectionServiceType.Converter>)>]
+[<RequireQualifiedAccess>]
 type ConnectionServiceType =
     | AMAZON_MUSIC
     | BATTLE_NET
@@ -202,79 +213,8 @@ type ConnectionServiceType =
     | TWITTER
     | XBOX
     | YOUTUBE
-
-module ConnectionServiceType =
-    let toString (connectionServiceType: ConnectionServiceType) =
-        match connectionServiceType with
-        | ConnectionServiceType.AMAZON_MUSIC -> "amazon-music"
-        | ConnectionServiceType.BATTLE_NET -> "battlenet"
-        | ConnectionServiceType.BLUESKY -> "bluesky"
-        | ConnectionServiceType.BUNGIE -> "bungie"
-        | ConnectionServiceType.CRUNCHYROLL -> "crunchyroll"
-        | ConnectionServiceType.DOMAIN -> "domain"
-        | ConnectionServiceType.EBAY -> "ebay"
-        | ConnectionServiceType.EPIC_GAMES -> "epicgames"
-        | ConnectionServiceType.FACEBOOK -> "facebook"
-        | ConnectionServiceType.GITHUB -> "github"
-        | ConnectionServiceType.INSTAGRAM -> "instagram"
-        | ConnectionServiceType.LEAGUE_OF_LEGENDS -> "leagueoflegends"
-        | ConnectionServiceType.MASTODON -> "mastodon"
-        | ConnectionServiceType.PAYPAL -> "paypal"
-        | ConnectionServiceType.PLAYSTATION -> "playstation"
-        | ConnectionServiceType.REDDIT -> "reddit"
-        | ConnectionServiceType.RIOT_GAMES -> "riotgames"
-        | ConnectionServiceType.ROBLOX -> "roblox"
-        | ConnectionServiceType.SPOTIFY -> "spotify"
-        | ConnectionServiceType.SKYPE -> "skype"
-        | ConnectionServiceType.STEAM -> "steam"
-        | ConnectionServiceType.TIKTOK -> "tiktok"
-        | ConnectionServiceType.TWITCH -> "twitch"
-        | ConnectionServiceType.TWITTER -> "twitter"
-        | ConnectionServiceType.XBOX -> "xbox"
-        | ConnectionServiceType.YOUTUBE -> "youtube"
-
-    let fromString (str: string) =
-        match str with
-        | "amazon-music" -> Some ConnectionServiceType.AMAZON_MUSIC
-        | "battlenet" -> Some ConnectionServiceType.BATTLE_NET
-        | "bluesky" -> Some ConnectionServiceType.BLUESKY
-        | "bungie" -> Some ConnectionServiceType.BUNGIE
-        | "cruncyroll" -> Some ConnectionServiceType.CRUNCHYROLL
-        | "domain" -> Some ConnectionServiceType.DOMAIN
-        | "ebay" -> Some ConnectionServiceType.EBAY
-        | "epicgames" -> Some ConnectionServiceType.EPIC_GAMES
-        | "facebook" -> Some ConnectionServiceType.FACEBOOK
-        | "github" -> Some ConnectionServiceType.GITHUB
-        | "instagram" -> Some ConnectionServiceType.INSTAGRAM
-        | "leagueoflegends" -> Some ConnectionServiceType.LEAGUE_OF_LEGENDS
-        | "mastodon" -> Some ConnectionServiceType.MASTODON
-        | "paypal" -> Some ConnectionServiceType.PAYPAL
-        | "playstation" -> Some ConnectionServiceType.PLAYSTATION
-        | "reddit" -> Some ConnectionServiceType.REDDIT
-        | "riotgames" -> Some ConnectionServiceType.RIOT_GAMES
-        | "roblox" -> Some ConnectionServiceType.ROBLOX
-        | "spotify" -> Some ConnectionServiceType.SPOTIFY
-        | "skype" -> Some ConnectionServiceType.SKYPE
-        | "steam" -> Some ConnectionServiceType.STEAM
-        | "tiktok" -> Some ConnectionServiceType.TIKTOK
-        | "twitch" -> Some ConnectionServiceType.TWITCH
-        | "twitter" -> Some ConnectionServiceType.TWITTER
-        | "xbox" -> Some ConnectionServiceType.XBOX
-        | "youtube" -> Some ConnectionServiceType.YOUTUBE
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<ConnectionServiceType> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected ConnectionServiceType type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
-[<JsonConverter(typeof<EmbedType.Converter>)>]
+    
+[<RequireQualifiedAccess>]
 type EmbedType =
     | RICH
     | IMAGE
@@ -283,40 +223,8 @@ type EmbedType =
     | ARTICLE
     | LINK
     | POLL_RESULT
-
-module EmbedType =
-    let toString (embedType: EmbedType) =
-        match embedType with
-        | RICH -> "rich"
-        | IMAGE -> "image"
-        | VIDEO -> "video"
-        | GIFV -> "gifv"
-        | ARTICLE -> "article"
-        | LINK -> "link"
-        | POLL_RESULT -> "poll_result"
-
-    let fromString (str: string) =
-        match str with
-        | "rich" -> Some EmbedType.RICH
-        | "image" -> Some EmbedType.IMAGE
-        | "video" -> Some EmbedType.VIDEO
-        | "gifv" -> Some EmbedType.GIFV
-        | "article" -> Some EmbedType.ARTICLE
-        | "link" -> Some EmbedType.LINK
-        | "poll_result" -> Some EmbedType.POLL_RESULT
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<EmbedType> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected EmbedType type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
+    
+[<RequireQualifiedAccess>]
 type EntitlementType =
     | PURCHASE                 = 1
     | PREMIUM_SUBSCRIPTION     = 2
@@ -328,40 +236,14 @@ type EntitlementType =
     | APPLICATION_SUBSCRIPTION = 8
 
 // https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
-[<JsonConverter(typeof<GuildIntegrationType.Converter>)>]
+[<RequireQualifiedAccess>]
 type GuildIntegrationType =
     | TWITCH
     | YOUTUBE
     | DISCORD
     | GUILD_SUBSCRIPTION
-
-module GuildIntegrationType =
-    let toString (guildIntegrationType: GuildIntegrationType) =
-        match guildIntegrationType with
-        | GuildIntegrationType.TWITCH -> "twitch"
-        | GuildIntegrationType.YOUTUBE -> "youtube"
-        | GuildIntegrationType.DISCORD -> "discord"
-        | GuildIntegrationType.GUILD_SUBSCRIPTION -> "guild_subscription"
-
-    let fromString (str: string) =
-        match str with
-        | "twitch" -> Some GuildIntegrationType.TWITCH
-        | "youtube" -> Some GuildIntegrationType.YOUTUBE
-        | "discord" -> Some GuildIntegrationType.DISCORD
-        | "guild_subscription" -> Some GuildIntegrationType.GUILD_SUBSCRIPTION
-        | _ -> None
     
-    type Converter () =
-        inherit JsonConverter<GuildIntegrationType> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildIntegrationType type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
+[<RequireQualifiedAccess>]
 type InteractionCallbackType = 
     | PONG                                    = 1
     | CHANNEL_MESSAGE_WITH_SOURCE             = 4
@@ -371,34 +253,40 @@ type InteractionCallbackType =
     | APPLICATION_COMMAND_AUTOCOMPLETE_RESULT = 8
     | MODAL                                   = 9
     | LAUNCH_ACTIVITY                         = 12
-
+    
+[<RequireQualifiedAccess>]
 type InteractionContextType =
     | GUILD           = 0
     | BOT_DM          = 1
     | PRIVATE_CHANNEL = 2
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-data
+[<RequireQualifiedAccess>]
 type InteractionDataType =
     | APPLICATION_COMMAND
     | MESSAGE_COMPONENT
     | MODAL_SUBMIT
-
+    
+[<RequireQualifiedAccess>]
 type InteractionType = 
     | PING                             = 1
     | APPLICATION_COMMAND              = 2
     | MESSAGE_COMPONENT                = 3
     | APPLICATION_COMMAND_AUTOCOMPLETE = 4
     | MODAL_SUBMIT                     = 5
-
+    
+[<RequireQualifiedAccess>]
 type InviteTargetType =
     | STREAM               = 1
     | EMBEDDED_APPLICATION = 2
-
+    
+[<RequireQualifiedAccess>]
 type InviteType =
     | GUILD    = 0
     | GROUP_DM = 1
     | FRIEND   = 2
-
+    
+[<RequireQualifiedAccess>]
 type MessageActivityType =
     | JOIN         = 1
     | SPECTATE     = 2
@@ -406,10 +294,12 @@ type MessageActivityType =
     | JOIN_REQUEST = 5
 
 // https://discord.com/developers/docs/resources/message#message-reference-types
+[<RequireQualifiedAccess>]
 type MessageReferenceType =
     | DEFAULT = 0
     | FORWARD = 1
-
+    
+[<RequireQualifiedAccess>]
 type MessageType =
     | DEFAULT                                      = 0
     | RECIPIENT_ADD                                = 1
@@ -492,71 +382,56 @@ module MessageType =
         | _                                                        -> false
 
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-prompt-types
+[<RequireQualifiedAccess>]
 type OnboardingPromptType =
     | MULTIPLE_CHOICE = 0
     | DROPDOWN        = 1
-
+    
+[<RequireQualifiedAccess>]
 type PermissionOverwriteType =
     | ROLE   = 0
     | MEMBER = 1
 
 // https://discord.com/developers/docs/resources/message#get-reactions-reaction-types
+[<RequireQualifiedAccess>]
 type ReactionType =
     | NORMAL = 0
     | BURST  = 1
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-entity-types
+[<RequireQualifiedAccess>]
 type ScheduledEntityType =
     | STANCE_INSTANCE = 1
     | VOICE           = 2
     | EXTERNAL        = 3
 
 // https://discord.com/developers/docs/resources/sku#sku-object-sku-types
+[<RequireQualifiedAccess>]
 type SkuType =
     | DURABLE            = 2
     | CONSUMABLE         = 3
     | SUBSCRIPTION       = 5
     | SUBSCRIPTION_GROUP = 6
-
+    
+[<RequireQualifiedAccess>]
 type StickerType = 
     | STANDARD = 1
     | GUILD    = 2
 
 // https://discord.com/developers/docs/events/webhook-events#event-types
-[<JsonConverter(typeof<WebhookEventType.Converter>)>]
+[<RequireQualifiedAccess>]
 type WebhookEventType =
     | APPLICATION_AUTHORIZED
     | ENTITLEMENT_CREATE
 
-module WebhookEventType =
-    let toString (webhookEventType: WebhookEventType) =
-        match webhookEventType with
-        | WebhookEventType.APPLICATION_AUTHORIZED -> "APPLICATION_AUTHORIZED"
-        | WebhookEventType.ENTITLEMENT_CREATE -> "ENTITLEMENT_CREATE"
-
-    let fromString (str: string) =
-        match str with
-        | "APPLICATION_AUTHORIZED" -> Some WebhookEventType.APPLICATION_AUTHORIZED
-        | "ENTITLEMENT_CREATE" -> Some WebhookEventType.ENTITLEMENT_CREATE
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<WebhookEventType> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected WebhookEventType type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
 // https://discord.com/developers/docs/events/webhook-events#webhook-types
+[<RequireQualifiedAccess>]
 type WebhookPayloadType =
     | PING  = 0
     | EVENT = 1
 
 // https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-types
+[<RequireQualifiedAccess>]
 type WebhookType =
     | INCOMING         = 1
     | CHANNEL_FOLLOWER = 2

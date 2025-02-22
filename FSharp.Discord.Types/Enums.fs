@@ -1,46 +1,54 @@
 ﻿namespace rec FSharp.Discord.Types
 
-open System
 open System.Text.Json
 open System.Text.Json.Serialization
 
+[<RequireQualifiedAccess>]
 type TextInputStyle =
     | SHORT     = 1
     | PARAGRAPH = 2
-
+    
+[<RequireQualifiedAccess>]
 type ButtonStyle =
     | PRIMARY   = 1
     | SECONDARY = 2
     | SUCCESS   = 3
     | DANGER    = 4
     | LINK      = 5
-
+    
+[<RequireQualifiedAccess>]
 type ForumLayout =
     | NOT_SET      = 0
     | LIST_VIEW    = 1
     | GALLERY_VIEW = 2
-
+    
+[<RequireQualifiedAccess>]
 type ChannelSortOrder =
     | LATEST_ACTIVITY = 0
     | CREATION_DATE   = 1
-
+    
+[<RequireQualifiedAccess>]
 type VideoQualityMode =
     | AUTO = 1
     | FULL = 2
-
+    
+[<RequireQualifiedAccess>]
 type PollLayout =
     | DEFAULT = 1
-
+    
+[<RequireQualifiedAccess>]
 type MembershipState =
     | INVITED  = 1
     | ACCEPTED = 2
-
+    
+[<RequireQualifiedAccess>]
 type UserPremiumTier =
     | NONE          = 0
     | NITRO_CLASSIC = 1
     | NITRO         = 2
     | NITRO_BASIC   = 3
-
+    
+[<RequireQualifiedAccess>]
 type StickerFormat = 
     | PNG    = 1
     | APNG   = 2
@@ -48,6 +56,7 @@ type StickerFormat =
     | GIF    = 4
 
 // https://discord.com/developers/docs/resources/guild#guild-object-guild-nsfw-level
+[<RequireQualifiedAccess>]
 type NsfwLevel =
     | DEFAULT        = 0
     | EXPLICIT       = 1
@@ -55,6 +64,7 @@ type NsfwLevel =
     | AGE_RESTRICTED = 3
 
 // https://discord.com/developers/docs/resources/guild#guild-object-premium-tier
+[<RequireQualifiedAccess>]
 type GuildPremiumTier =
     | NONE    = 0
     | LEVEL_1 = 1
@@ -62,22 +72,26 @@ type GuildPremiumTier =
     | LEVEL_3 = 3
 
 // https://discord.com/developers/docs/resources/guild#guild-object-mfa-level
+[<RequireQualifiedAccess>]
 type MfaLevel =
     | NONE     = 0
     | ELEVATED = 1
 
 // https://discord.com/developers/docs/resources/guild#guild-object-explicit-content-filter-level
+[<RequireQualifiedAccess>]
 type ExplicitContentFilterLevel =
     | DISABLED              = 0
     | MEMBERS_WITHOUT_ROLES = 1
     | ALL_MEMBERS           = 2
 
 // https://discord.com/developers/docs/resources/guild#guild-object-default-message-notification-level
+[<RequireQualifiedAccess>]
 type MessageNotificationLevel =
     | ALL_MESSAGES  = 0
     | ONLY_MENTIONS = 1
 
 // https://discord.com/developers/docs/resources/guild#guild-object-verification-level
+[<RequireQualifiedAccess>]
 type VerificationLevel =
     | NONE      = 0
     | LOW       = 1
@@ -86,7 +100,7 @@ type VerificationLevel =
     | VERY_HIGH = 4
 
 // https://discord.com/developers/docs/resources/guild#guild-object-guild-features
-[<JsonConverter(typeof<GuildFeature.Converter>)>]
+[<RequireQualifiedAccess>]
 type GuildFeature =
     | ANIMATED_BANNER
     | ANIMATED_ICON
@@ -116,117 +130,20 @@ type GuildFeature =
     | VIP_REGIONS
     | WELCOME_SCREEN_ENABLED
 
-module GuildFeature =
-    let toString (feature: GuildFeature) =
-        match feature with
-        | GuildFeature.ANIMATED_BANNER -> "ANIMATED_BANNER"
-        | GuildFeature.ANIMATED_ICON -> "ANIMATED_ICON"
-        | GuildFeature.APPLICATION_COMMAND_PERMISSIONS_V2 -> "APPLICATION_COMMAND_PERMISSIONS_V2"
-        | GuildFeature.AUTO_MODERATION -> "AUTO_MODERATION"
-        | GuildFeature.BANNER -> "BANNER"
-        | GuildFeature.COMMUNITY -> "COMMUNITY"
-        | GuildFeature.CREATOR_MONETIZABLE_PROVISIONAL -> "CREATOR_MONETIZABLE_PROVISIONAL"
-        | GuildFeature.CREATOR_STORE_PAGE -> "CREATOR_STORE_PAGE"
-        | GuildFeature.DEVELOPER_SUPPORT_SERVER -> "DEVELOPER_SUPPORT_SERVER"
-        | GuildFeature.DISCOVERABLE -> "DISCOVERABLE"
-        | GuildFeature.FEATURABLE -> "FEATURABLE"
-        | GuildFeature.INVITES_DISABLED -> "INVITES_DISABLED"
-        | GuildFeature.INVITE_SPLASH -> "INVITE_SPLASH"
-        | GuildFeature.MEMBER_VERIFICATION_GATE_ENABLED -> "MEMBER_VERIFICATION_GATE_ENABLED"
-        | GuildFeature.MORE_STICKERS -> "MORE_STICKERS"
-        | GuildFeature.NEWS -> "NEWS"
-        | GuildFeature.PARTNERED -> "PARTNERED"
-        | GuildFeature.PREVIEW_ENABLED -> "PREVIEW_ENABLED"
-        | GuildFeature.RAID_ALERTS_DISABLED -> "RAID_ALERTS_DISABLED"
-        | GuildFeature.ROLE_ICONS -> "ROLE_ICONS"
-        | GuildFeature.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE -> "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE"
-        | GuildFeature.ROLE_SUBSCRIPTIONS_ENABLED -> "ROLE_SUBSCRIPTIONS_ENABLED"
-        | GuildFeature.TICKETED_EVENTS_ENABLED -> "TICKETED_EVENTS_ENABLED"
-        | GuildFeature.VANITY_URL -> "VANITY_URL"
-        | GuildFeature.VERIFIED -> "VERIFIED"
-        | GuildFeature.VIP_REGIONS -> "VIP_REGIONS"
-        | GuildFeature.WELCOME_SCREEN_ENABLED -> "WELCOME_SCREEN_ENABLED"
-
-    let fromString (str: string) =
-        match str with
-        | "ANIMATED_BANNER" -> Some GuildFeature.ANIMATED_BANNER
-        | "ANIMATED_ICON" -> Some GuildFeature.ANIMATED_ICON
-        | "APPLICATION_COMMAND_PERMISSIONS_V2" -> Some GuildFeature.APPLICATION_COMMAND_PERMISSIONS_V2
-        | "AUTO_MODERATION" -> Some GuildFeature.AUTO_MODERATION
-        | "BANNER" -> Some GuildFeature.BANNER
-        | "COMMUNITY" -> Some GuildFeature.COMMUNITY
-        | "CREATOR_MONETIZABLE_PROVISIONAL" -> Some GuildFeature.CREATOR_MONETIZABLE_PROVISIONAL
-        | "CREATOR_STORE_PAGE" -> Some GuildFeature.CREATOR_STORE_PAGE
-        | "DEVELOPER_SUPPORT_SERVER" -> Some GuildFeature.DEVELOPER_SUPPORT_SERVER
-        | "DISCOVERABLE" -> Some GuildFeature.DISCOVERABLE
-        | "FEATURABLE" -> Some GuildFeature.FEATURABLE
-        | "INVITES_DISABLED" -> Some GuildFeature.INVITES_DISABLED
-        | "INVITE_SPLASH" -> Some GuildFeature.INVITE_SPLASH
-        | "MEMBER_VERIFICATION_GATE_ENABLED" -> Some GuildFeature.MEMBER_VERIFICATION_GATE_ENABLED
-        | "MORE_STICKERS" -> Some GuildFeature.MORE_STICKERS
-        | "NEWS" -> Some GuildFeature.NEWS
-        | "PARTNERED" -> Some GuildFeature.PARTNERED
-        | "PREVIEW_ENABLED" -> Some GuildFeature.PREVIEW_ENABLED
-        | "RAID_ALERTS_DISABLED" -> Some GuildFeature.RAID_ALERTS_DISABLED
-        | "ROLE_ICONS" -> Some GuildFeature.ROLE_ICONS
-        | "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE" -> Some GuildFeature.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE
-        | "ROLE_SUBSCRIPTIONS_ENABLED" -> Some GuildFeature.ROLE_SUBSCRIPTIONS_ENABLED
-        | "TICKETED_EVENTS_ENABLED" -> Some GuildFeature.TICKETED_EVENTS_ENABLED
-        | "VANITY_URL" -> Some GuildFeature.VANITY_URL
-        | "VERIFIED" -> Some GuildFeature.VERIFIED
-        | "VIP_REGIONS" -> Some GuildFeature.VIP_REGIONS
-        | "WELCOME_SCREEN_ENABLED" -> Some GuildFeature.WELCOME_SCREEN_ENABLED
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<GuildFeature> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildFeature type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
 // https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-authorization-url-example
 [<RequireQualifiedAccess>]
-[<JsonConverter(typeof<OAuthConsent.Converter>)>]
 type OAuthConsent =
     | Consent
     | None
 
-module OAuthConsent =
-    let toString (consent: OAuthConsent) =
-        match consent with
-        | OAuthConsent.Consent -> "consent"
-        | OAuthConsent.None -> "none"
-
-    let fromString (str: string) =
-        match str with
-        | "consent" -> Some OAuthConsent.Consent
-        | "none" -> Some OAuthConsent.None
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<OAuthConsent> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected OAuthConsent type")
-
-        override _.Write (writer, value, _) = 
-            value
-            |> toString
-            |> writer.WriteStringValue
-
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-onboarding-mode
+[<RequireQualifiedAccess>]
 type OnboardingMode =
     | ONBOARDING_DEFAULT  = 0
     | ONBOARDING_ADVANCED = 1
 
 [<JsonConverter(typeof<CommandInteractionDataOptionValueConverter>)>]
+[<RequireQualifiedAccess>]
 type CommandInteractionDataOptionValue =
     | String of string
     | Int    of int
@@ -252,6 +169,7 @@ and CommandInteractionDataOptionValueConverter () =
         | CommandInteractionDataOptionValue.Double v -> writer.WriteNumberValue v
 
 [<JsonConverter(typeof<MessageNonceConverter>)>]
+[<RequireQualifiedAccess>]
 type MessageNonce =
     | Number of int
     | String of string
@@ -271,6 +189,7 @@ and MessageNonceConverter () =
         | MessageNonce.String v -> writer.WriteStringValue v
 
 [<JsonConverter(typeof<ApplicationCommandOptionChoiceValueConverter>)>]
+[<RequireQualifiedAccess>]
 type ApplicationCommandOptionChoiceValue =
     | String of string
     | Int    of int
@@ -301,6 +220,7 @@ and ApplicationCommandOptionChoiceValueConverter () =
         | ApplicationCommandOptionChoiceValue.Double v -> writer.WriteNumberValue v
     
 [<JsonConverter(typeof<ApplicationCommandMinValueConverter>)>]
+[<RequireQualifiedAccess>]
 type ApplicationCommandMinValue =
     | Int    of int
     | Double of double
@@ -328,6 +248,7 @@ and ApplicationCommandMinValueConverter () =
         | ApplicationCommandMinValue.Double v -> writer.WriteNumberValue v
     
 [<JsonConverter(typeof<ApplicationCommandMaxValueConverter>)>]
+[<RequireQualifiedAccess>]
 type ApplicationCommandMaxValue =
     | Int    of int
     | Double of double
@@ -354,38 +275,14 @@ and ApplicationCommandMaxValueConverter () =
         | ApplicationCommandMaxValue.Int v -> writer.WriteNumberValue v
         | ApplicationCommandMaxValue.Double v -> writer.WriteNumberValue v
 
-[<JsonConverter(typeof<AllowedMentionsParseType.Converter>)>]
+[<RequireQualifiedAccess>]
 type AllowedMentionsParseType =
     | ROLES
     | USERS
     | EVERYONE
 
-module AllowedMentionsParseType =
-    let toString (mentions: AllowedMentionsParseType) =
-        match mentions with
-        | AllowedMentionsParseType.ROLES -> "roles"
-        | AllowedMentionsParseType.USERS -> "users"
-        | AllowedMentionsParseType.EVERYONE -> "everyone"
-
-    let fromString (str: string) =
-        match str with
-        | "roles" -> Some AllowedMentionsParseType.ROLES
-        | "users" -> Some AllowedMentionsParseType.USERS
-        | "everyone" -> Some AllowedMentionsParseType.EVERYONE
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<AllowedMentionsParseType> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected AllowedMentionsParseType type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
 [<JsonConverter(typeof<SoundboardSoundIdConverter>)>]
+[<RequireQualifiedAccess>]
 type SoundboardSoundId =
     | String of string
     | Int    of int
@@ -403,7 +300,8 @@ and SoundboardSoundIdConverter () =
         match value with
         | SoundboardSoundId.String v -> writer.WriteStringValue v
         | SoundboardSoundId.Int v -> writer.WriteNumberValue v
-
+        
+[<RequireQualifiedAccess>]
 type AutoArchiveDuration =
     | HOUR       = 60
     | DAY        = 1440
@@ -411,46 +309,25 @@ type AutoArchiveDuration =
     | WEEK       = 10080
 
 // https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-keyword-preset-types
+[<RequireQualifiedAccess>]
 type AutoModerationKeywordPreset =
     | PROFANITY      = 1
     | SEXUAL_CONTENT = 2
     | SLURS          = 3
 
 // https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-kind-enum
-[<JsonConverter(typeof<ActivityLocationKind.Converter>)>]
+[<RequireQualifiedAccess>]
 type ActivityLocationKind =
     | GUILD_CHANNEL
     | PRIVATE_CHANNEL
 
-module ActivityLocationKind =
-    let toString (kind: ActivityLocationKind) =
-        match kind with
-        | ActivityLocationKind.GUILD_CHANNEL -> "gc"
-        | ActivityLocationKind.PRIVATE_CHANNEL -> "pc"
-
-    let fromString (str: string) =
-        match str with
-        | "gc" -> Some ActivityLocationKind.GUILD_CHANNEL
-        | "pc" -> Some ActivityLocationKind.PRIVATE_CHANNEL
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<ActivityLocationKind> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected ActivityLocationKind type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
+[<RequireQualifiedAccess>]
 type IntegrationExpireBehavior =
     | REMOVE_ROLE = 0
     | KICK        = 1
 
-[<JsonConverter(typeof<OAuth2Scope.Converter>)>]
-type OAuth2Scope =
+[<RequireQualifiedAccess>]
+type OAuthScope =
     | ACTIVITIES_READ
     | ACTIVITIES_WRITE
     | APPLICATIONS_BUILDS_READ
@@ -480,127 +357,13 @@ type OAuth2Scope =
     | VOICE
     | WEBHOOK_INCOMING
 
-module OAuth2Scope =
-    let toString (scope: OAuth2Scope) =
-        match scope with
-        | OAuth2Scope.ACTIVITIES_READ -> "activities.read"
-        | OAuth2Scope.ACTIVITIES_WRITE -> "activities.write"
-        | OAuth2Scope.APPLICATIONS_BUILDS_READ -> "applications.builds.read"
-        | OAuth2Scope.APPLICATIONS_BUILDS_UPLOAD -> "applications.builds.upload"
-        | OAuth2Scope.APPLICATIONS_COMMANDS -> "applications.commands"
-        | OAuth2Scope.APPLICATIONS_COMMANDS_UPDATE -> "applications.commands.update"
-        | OAuth2Scope.APPLICATIONS_COMMANDS_PERMISSIONS_UPDATE -> "applications.commands.permissions.update"
-        | OAuth2Scope.APPLICATIONS_ENTITLEMENTS -> "applications.entitlements"
-        | OAuth2Scope.APPLICATIONS_STORE_UPDATE -> "applications.store.update"
-        | OAuth2Scope.BOT -> "bot"
-        | OAuth2Scope.CONNECTIONS -> "connections"
-        | OAuth2Scope.DM_CHANNELS_READ -> "dm_channels.read"
-        | OAuth2Scope.EMAIL -> "email"
-        | OAuth2Scope.GDM_JOIN -> "gdm.join"
-        | OAuth2Scope.GUILDS -> "guilds"
-        | OAuth2Scope.GUILDS_JOIN -> "guilds.join"
-        | OAuth2Scope.GUILDS_MEMBERS_READ -> "guilds.members.read"
-        | OAuth2Scope.IDENTIFY -> "identify"
-        | OAuth2Scope.MESSAGES_READ -> "messages.read"
-        | OAuth2Scope.RELATIONSHIPS_READ -> "relationships.read"
-        | OAuth2Scope.ROLE_CONNECTIONS_WRITE -> "role_connections.write"
-        | OAuth2Scope.RPC -> "rpc"
-        | OAuth2Scope.RPC_ACTIVITIES_WRITE -> "rpc.activities.write"
-        | OAuth2Scope.RPC_NOTIFICATIONS_READ -> "rpc.notifications.read"
-        | OAuth2Scope.RPC_VOICE_READ -> "rpc.voice.read"
-        | OAuth2Scope.RPC_VOICE_WRITE -> "rpc.voice.write"
-        | OAuth2Scope.VOICE -> "voice"
-        | OAuth2Scope.WEBHOOK_INCOMING -> "webhook.incoming"
-
-    let fromString (str: string) =
-        match str with
-        | "activities.read" -> Some OAuth2Scope.ACTIVITIES_READ
-        | "activities.write" -> Some OAuth2Scope.ACTIVITIES_WRITE
-        | "applications.builds.read" -> Some OAuth2Scope.APPLICATIONS_BUILDS_READ
-        | "applications.builds.upload" -> Some OAuth2Scope.APPLICATIONS_BUILDS_UPLOAD
-        | "applications.commands" -> Some OAuth2Scope.APPLICATIONS_COMMANDS
-        | "applications.commands.update" -> Some OAuth2Scope.APPLICATIONS_COMMANDS_UPDATE
-        | "applications.commands.permissions.update" -> Some OAuth2Scope.APPLICATIONS_COMMANDS_PERMISSIONS_UPDATE
-        | "applications.entitlements" -> Some OAuth2Scope.APPLICATIONS_ENTITLEMENTS
-        | "applications.store.update" -> Some OAuth2Scope.APPLICATIONS_STORE_UPDATE
-        | "bot" -> Some OAuth2Scope.BOT
-        | "connections" -> Some OAuth2Scope.CONNECTIONS
-        | "dm_channels.read" -> Some OAuth2Scope.DM_CHANNELS_READ
-        | "email" -> Some OAuth2Scope.EMAIL
-        | "gdm.join" -> Some OAuth2Scope.GDM_JOIN
-        | "guilds" -> Some OAuth2Scope.GUILDS
-        | "guilds.join" -> Some OAuth2Scope.GUILDS_JOIN
-        | "guilds.members.read" -> Some OAuth2Scope.GUILDS_MEMBERS_READ
-        | "identify" -> Some OAuth2Scope.IDENTIFY
-        | "messages.read" -> Some OAuth2Scope.MESSAGES_READ
-        | "relationships.read" -> Some OAuth2Scope.RELATIONSHIPS_READ
-        | "role_connections.write" -> Some OAuth2Scope.ROLE_CONNECTIONS_WRITE
-        | "rpc" -> Some OAuth2Scope.RPC
-        | "rpc.activities.write" -> Some OAuth2Scope.RPC_ACTIVITIES_WRITE
-        | "rpc.notifications.read" -> Some OAuth2Scope.RPC_NOTIFICATIONS_READ
-        | "rpc.voice.read" -> Some OAuth2Scope.RPC_VOICE_READ
-        | "rpc.voice.write" -> Some OAuth2Scope.RPC_VOICE_WRITE
-        | "voice" -> Some OAuth2Scope.VOICE
-        | "webhook.incoming" -> Some OAuth2Scope.WEBHOOK_INCOMING
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<OAuth2Scope> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
-    type ListConverter () =
-        inherit JsonConverter<OAuth2Scope list> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> _.Split(' ')
-            |> Array.map OAuth2Scope.fromString
-            |> Array.map (Option.defaultWith (JsonException.raiseThunk "Unexpected OAuth2Scope type"))
-            |> Array.toList
-
-        override _.Write (writer, value, _) =
-            value
-            |> List.map (fun v -> OAuth2Scope.toString v)
-            |> (fun v -> String.Join(' ', v))
-            |> writer.WriteStringValue
-
-[<JsonConverter(typeof<TokenTypeHint.Converter>)>]
+[<RequireQualifiedAccess>]
 type TokenTypeHint =
     | ACCESS_TOKEN
     | REFRESH_TOKEN
 
-module TokenTypeHint =
-    let toString (tokenTypeHint: TokenTypeHint) =
-        match tokenTypeHint with
-        | TokenTypeHint.ACCESS_TOKEN -> "access_token"
-        | TokenTypeHint.REFRESH_TOKEN -> "refresh_token"
-
-    let fromString (str: string) =
-        match str with
-        | "access_token" -> Some TokenTypeHint.ACCESS_TOKEN
-        | "refresh_token" -> Some TokenTypeHint.REFRESH_TOKEN
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<TokenTypeHint> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected TokenTypeHint type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
 // https://discord.com/developers/docs/resources/guild#get-guild-widget-image-widget-style-options
-[<JsonConverter(typeof<GuildWidgetStyle.Converter>)>]
+[<RequireQualifiedAccess>]
 type GuildWidgetStyle =
     | SHIELD
     | BANNER_1
@@ -608,40 +371,13 @@ type GuildWidgetStyle =
     | BANNER_3
     | BANNER_4
 
-module GuildWidgetStyle =
-    let toString (style: GuildWidgetStyle) =
-        match style with
-        | GuildWidgetStyle.SHIELD -> "shield"
-        | GuildWidgetStyle.BANNER_1 -> "banner_1"
-        | GuildWidgetStyle.BANNER_2 -> "banner_2"
-        | GuildWidgetStyle.BANNER_3 -> "banner_3"
-        | GuildWidgetStyle.BANNER_4 -> "banner_4"
-
-    let fromString (str: string) =
-        match str with
-        | "shield" -> Some GuildWidgetStyle.SHIELD
-        | "banner_1" -> Some GuildWidgetStyle.BANNER_1
-        | "banner_2" -> Some GuildWidgetStyle.BANNER_2
-        | "banner_3" -> Some GuildWidgetStyle.BANNER_3
-        | "banner_4" -> Some GuildWidgetStyle.BANNER_4
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<GuildWidgetStyle> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GuildWidgetStyle type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-       
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-privacy-level
+[<RequireQualifiedAccess>]
 type PrivacyLevel =
     | GUILD_ONLY = 2
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-status
+[<RequireQualifiedAccess>]
 type EventStatus =
     | SCHEDULED = 1
     | ACTIVE    = 2
@@ -649,6 +385,7 @@ type EventStatus =
     | CANCELED  = 4
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule-frequency
+[<RequireQualifiedAccess>]
 type RecurrenceRuleFrequency =
     | YEARLY  = 0
     | MONTHLY = 1
@@ -656,6 +393,7 @@ type RecurrenceRuleFrequency =
     | DAILY   = 3
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule-weekday
+[<RequireQualifiedAccess>]
 type RecurrenceRuleWeekday =
     | MONDAY    = 1
     | TUESDAY   = 2
@@ -666,6 +404,7 @@ type RecurrenceRuleWeekday =
     | SUNDAY    = 7
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule-month
+[<RequireQualifiedAccess>]
 type RecurrenceRuleMonth =
     | JANUARY   = 1
     | FEBRUARY  = 2
@@ -681,23 +420,27 @@ type RecurrenceRuleMonth =
     | DECEMBER  = 12
 
 // https://discord.com/developers/docs/resources/subscription#subscription-statuses
+[<RequireQualifiedAccess>]
 type SubscriptionStatus =
     | ACTIVE   = 0
     | ENDING   = 1
     | INACTIVE = 2
 
 // https://discord.com/developers/docs/resources/user#connection-object-visibility-types
+[<RequireQualifiedAccess>]
 type ConnectionVisibility =
     | NONE     = 0
     | EVERYONE = 1
 
 // https://discord.com/developers/docs/resources/application#application-object-application-event-webhook-status
+[<RequireQualifiedAccess>]
 type WebhookEventStatus =
     | DISABLED            = 1
     | ENABLED             = 2
     | DISABLED_BY_DISCORD = 3
 
 // https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
+[<RequireQualifiedAccess>]
 type Permission =
     /// Allows creation of instant invites
     | CREATE_INSTANT_INVITE               = (1L <<< 0)
@@ -868,64 +611,19 @@ module Permission =
         | _ -> false
 
 // https://discord.com/developers/docs/events/gateway#transport-compression
-[<JsonConverter(typeof<GatewayCompression.Converter>)>]
+[<RequireQualifiedAccess>]
 type GatewayCompression =
     | ZLIBSTREAM
     | ZSTDSTREAM
 
-module GatewayCompression =
-    let toString (compression: GatewayCompression) =
-        match compression with
-        | GatewayCompression.ZLIBSTREAM -> "zlib-stream"
-        | GatewayCompression.ZSTDSTREAM -> "zstd-stream"
-
-    let fromString (str: string) =
-        match str with
-        | "zlib-stream" -> Some GatewayCompression.ZLIBSTREAM
-        | "zstd-stream" -> Some GatewayCompression.ZSTDSTREAM
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<GatewayCompression> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GatewayCompression type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
 // https://discord.com/developers/docs/events/gateway#encoding-and-compression
-[<JsonConverter(typeof<GatewayEncoding.Converter>)>]
+[<RequireQualifiedAccess>]
 type GatewayEncoding =
     | JSON
     | ETF
 
-module GatewayEncoding =
-    let toString (encoding: GatewayEncoding) =
-        match encoding with
-        | GatewayEncoding.JSON -> "json"
-        | GatewayEncoding.ETF -> "etf"
-
-    let fromString (str: string) =
-        match str with
-        | "json" -> Some GatewayEncoding.JSON
-        | "etf" -> Some GatewayEncoding.ETF
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<GatewayEncoding> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected GatewayEncoding type")
-
-        override _.Write (writer, value, _) = 
-            value |> toString |> writer.WriteStringValue
-
 // https://discord.com/developers/docs/events/gateway#list-of-intents
+[<RequireQualifiedAccess>]
 type GatewayIntent =
     | GUILDS =                        (1 <<< 0)
     | GUILD_MEMBERS =                 (1 <<< 1)
@@ -978,7 +676,7 @@ module GatewayIntent =
 // TODO: Define locales and find where they are applicable in structures https://discord.com/developers/docs/reference#locales
 
 // https://discord.com/developers/docs/events/gateway-events#update-presence-status-types
-[<JsonConverter(typeof<Status.Converter>)>]
+[<RequireQualifiedAccess>]
 type Status =
     | ONLINE
     | DND
@@ -986,69 +684,12 @@ type Status =
     | INVISIBLE
     | OFFLINE
 
-module Status =
-    let toString (status: Status) =
-        match status with
-        | Status.ONLINE -> "online"
-        | Status.DND -> "dnd"
-        | Status.IDLE -> "idle"
-        | Status.INVISIBLE -> "invisible"
-        | Status.OFFLINE -> "offline"
-
-    let fromString (str: string) =
-        match str with
-        | "online" -> Some Status.ONLINE
-        | "dnd" -> Some Status.DND
-        | "idle" -> Some Status.IDLE
-        | "invisible" -> Some Status.INVISIBLE
-        | "offline" -> Some Status.OFFLINE
-        | _ -> None
-
-    type Converter () =
-        inherit JsonConverter<Status> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected Status type")
-
-        override _.Write (writer, value, _) = 
-            value
-            |> toString
-            |> writer.WriteStringValue
-        
+[<RequireQualifiedAccess>]
 type RateLimitScope =
     | USER
     | GLOBAL
     | SHARED
 
-module RateLimitScope =
-    let toString (scope: RateLimitScope) =
-        match scope with
-        | USER -> "user"
-        | GLOBAL -> "global"
-        | SHARED -> "shared"
-
-    let fromString (str: string) =
-        match str with
-        | "user" -> Some RateLimitScope.USER
-        | "global" -> Some RateLimitScope.GLOBAL
-        | "shared" -> Some RateLimitScope.SHARED
-        | _ -> None
-    
-    type Converter () =
-        inherit JsonConverter<RateLimitScope> ()
-
-        override _.Read (reader, _, _) =
-            reader.GetString()
-            |> fromString
-            |> Option.defaultWith (JsonException.raiseThunk "Unexpected RateLimitScope type")
-
-        override _.Write (writer, value, _) = 
-            value
-            |> toString
-            |> writer.WriteStringValue        
-
 // TODO: Sort alphabetically and extract more into separate files in enums folder
 // TODO: Add missing documentation links
-// TODO: Add `RequireQualifiedAccess` to all enums (and flags etc in other files)
+// TODO: Remake DUs for varied types (probably belong in Structures.fs too ?)

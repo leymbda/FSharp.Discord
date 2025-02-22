@@ -1,6 +1,7 @@
 ﻿namespace FSharp.Discord.Types
 
 // https://discord.com/developers/docs/events/gateway-events#activity-object-activity-flags
+[<RequireQualifiedAccess>]
 type ActivityFlag =
     | INSTANCE =                    (1 <<< 0)
     | JOIN =                        (1 <<< 1)
@@ -13,6 +14,7 @@ type ActivityFlag =
     | EMBEDDED =                    (1 <<< 8)
 
 // https://discord.com/developers/docs/resources/application#application-object-application-flags
+[<RequireQualifiedAccess>]
 type ApplicationFlag =
     /// Indicates if the app uses the Auto Moderation API
     | APPLICATION_AUTO_MODERATION_RULE_CREATE_BADGE = (1 <<< 6)
@@ -36,11 +38,13 @@ type ApplicationFlag =
     | APPLICATION_COMMAND_BADGE                     = (1 <<< 23)
 
 // https://discord.com/developers/docs/resources/message#attachment-object-attachment-flags
+[<RequireQualifiedAccess>]
 type AttachmentFlag =
     /// This attachment has been edited using the remix feature on mobile
     | IS_REMIX = (1 <<< 2)
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-flags
+[<RequireQualifiedAccess>]
 type ChannelFlag =
     /// This thread is pinned to the top of its parent `GUILD_FORUM` or `GUILD_MEDIA` channel
     | PINNED =                      (1 <<< 1)
@@ -50,6 +54,7 @@ type ChannelFlag =
     | HIDE_MEDIA_DOWNLOAD_OPTIONS = (1 <<< 15)
 
 // https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags
+[<RequireQualifiedAccess>]
 type GuildMemberFlag =
     /// Member has left and rejoined the guild
     | DID_REJOIN                      = (1 <<< 0)
@@ -85,6 +90,7 @@ module GuildMemberFlag =
         | _ -> false
 
 // https://discord.com/developers/docs/resources/message#message-object-message-flags
+[<RequireQualifiedAccess>]
 type MessageFlag =
     /// This message has been published to subscribed channels (via Channel Following)
     | CROSSPOSTED =                            (1 <<< 0)
@@ -112,11 +118,13 @@ type MessageFlag =
     | HAS_SNAPSHOT =                           (1 <<< 14)
 
 // https://discord.com/developers/docs/topics/permissions#role-object-role-flags
+[<RequireQualifiedAccess>]
 type RoleFlag =
     /// Role can be selected by members in an onboarding prompt
     | IN_PROMPT = (1 <<< 0)
 
 // https://discord.com/developers/docs/resources/sku#sku-object-sku-flags
+[<RequireQualifiedAccess>]
 type SkuFlag =
     /// SKU is available for purchase
     | AVAILABLE          = (1 <<< 2)
@@ -126,6 +134,7 @@ type SkuFlag =
     | USER_SUBSCRIPTION  = (1 <<< 8)
 
 // https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags
+[<RequireQualifiedAccess>]
 type SystemChannelFlag =
     /// Suppress member join notifications
     | SUPPRESS_JOIN_NOTIFICATIONS                               = (1 <<< 0)
@@ -141,6 +150,7 @@ type SystemChannelFlag =
     | SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES  = (1 <<< 5)
 
 // https://discord.com/developers/docs/resources/user#user-object-user-flags
+[<RequireQualifiedAccess>]
 type UserFlag =
     /// Discord employee
     | STAFF                    = (1 <<< 0)

@@ -19,6 +19,7 @@
 		<Compile Include="GatewayEvents.fs" />
 		<Compile Include="WebhookEvents.fs" />
 		<Compile Include="Serialization\TypeConverters.fs" />
+		<Compile Include="Serialization\EnumConverters.fs" />
 		<Compile Include="Serialization\StructureConverters.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>

@@ -1106,7 +1106,7 @@ type Integration = {
     [<JsonPropertyName "subscriber_count">] SubscriberCount: int option
     [<JsonPropertyName "revoked">] Revoked: bool option
     [<JsonPropertyName "application">] Application: IntegrationApplication option
-    [<JsonPropertyName "scopes">] Scopes: OAuth2Scope list option
+    [<JsonPropertyName "scopes">] Scopes: OAuthScope list option
 }
 
 and PartialIntegration = {
@@ -1125,7 +1125,7 @@ and PartialIntegration = {
     [<JsonPropertyName "subscriber_count">] SubscriberCount: int option
     [<JsonPropertyName "revoked">] Revoked: bool option
     [<JsonPropertyName "application">] Application: IntegrationApplication option
-    [<JsonPropertyName "scopes">] Scopes: OAuth2Scope list option
+    [<JsonPropertyName "scopes">] Scopes: OAuthScope list option
 }
 
 // https://discord.com/developers/docs/resources/guild#integration-account-object-integration-account-structure

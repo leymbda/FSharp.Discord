@@ -23,7 +23,7 @@ type WebhookReceiveEventPayload<'a> = {
 type ApplicationAuthorizedEvent = {
     [<JsonPropertyName "integration_type">] IntegrationType: ApplicationIntegrationType option
     [<JsonPropertyName "user">] User: User
-    [<JsonPropertyName "scopes">] Scopes: OAuth2Scope list
+    [<JsonPropertyName "scopes">] Scopes: OAuthScope list
     [<JsonPropertyName "guild">] Guild: Guild option
 }
 

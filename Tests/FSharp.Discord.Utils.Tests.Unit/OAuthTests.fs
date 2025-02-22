@@ -10,7 +10,7 @@ type OAuthTests () =
         // Arrange
         let clientId = "1234567890"
         let redirectUri = "https://example.com"
-        let scopes = [OAuth2Scope.IDENTIFY]
+        let scopes = [OAuthScope.IDENTIFY]
 
         // Act
         let url = OAuth.authorizationUrl clientId redirectUri scopes None OAuthConsent.None None
@@ -23,7 +23,7 @@ type OAuthTests () =
         // Arrange
         let clientId = "1234567890"
         let redirectUri = "https://example.com"
-        let scopes = [OAuth2Scope.IDENTIFY; OAuth2Scope.BOT]
+        let scopes = [OAuthScope.IDENTIFY; OAuthScope.BOT]
         let state = Some "state"
         let prompt = OAuthConsent.Consent
         let integrationType = Some ApplicationIntegrationType.GUILD_INSTALL
