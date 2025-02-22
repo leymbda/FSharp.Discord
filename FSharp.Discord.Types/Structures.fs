@@ -40,70 +40,35 @@ type Interaction = {
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
 type ApplicationCommandData = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "type">] Type: ApplicationCommandType
-    [<JsonPropertyName "resolved">] Resolved: ResolvedData option
-    [<JsonPropertyName "options">] Options: ApplicationCommandInteractionDataOption list option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "target_id">] TargetId: string option
+    Id: string
+    Name: string
+    Type: ApplicationCommandType
+    Resolved: ResolvedData option
+    Options: ApplicationCommandInteractionDataOption list option
+    GuildId: string option
+    TargetId: string option
 }
 
 // TODO: ApplicationCommandInteractionDataOption can be partial when responding to APPLICATION_COMMAND_AUTOCOMPLETE
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-message-component-data-structure
 type MessageComponentData = {
-    [<JsonPropertyName "custom_id">] CustomId: string
-    [<JsonPropertyName "component_type">] ComponentType: ComponentType
-    [<JsonPropertyName "values">] Values: SelectMenuOption list option
-    [<JsonPropertyName "esolved">] Resolved: ResolvedData option
+    CustomId: string
+    ComponentType: ComponentType
+    Values: SelectMenuOption list option
+    Resolved: ResolvedData option
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-modal-submit-data-structure
 type ModalSubmitData = {
-    [<JsonPropertyName "custom_id">] CustomId: string
-    [<JsonPropertyName "components">] Components: Component list
+    CustomId: string
+    Components: Component list
 }
 
-[<JsonConverter(typeof<InteractionData.Converter>)>]
 type InteractionData =
     | APPLICATION_COMMAND of ApplicationCommandData
     | MESSAGE_COMPONENT of MessageComponentData
     | MODAL_SUBMIT of ModalSubmitData
-
-module InteractionData =
-    type Converter () =
-        inherit JsonConverter<InteractionData> ()
-
-        override _.Read (reader, _, _) =
-            let success, document = JsonDocument.TryParseValue &reader
-            if not success then JsonException.raise "Failed to parse JSON document"
-
-            let dataType =
-                let isApplicationCommand = document.RootElement.TryGetProperty "name" |> fst
-                let isMessageComponent = document.RootElement.TryGetProperty "component_type" |> fst
-                let isModalSubmit = document.RootElement.TryGetProperty "components" |> fst
-                // Using properties that only exist on specific types to check
-
-                match isApplicationCommand, isMessageComponent, isModalSubmit with
-                | true, false, false -> InteractionDataType.APPLICATION_COMMAND
-                | false, true, false -> InteractionDataType.MESSAGE_COMPONENT
-                | false, false, true -> InteractionDataType.MODAL_SUBMIT
-                | _ -> JsonException.raise "Unexpected InteractionData provided"
-
-            let json = document.RootElement.GetRawText()
-
-            match dataType with
-            | InteractionDataType.APPLICATION_COMMAND -> InteractionData.APPLICATION_COMMAND <| Json.deserializeF<ApplicationCommandData> json
-            | InteractionDataType.MESSAGE_COMPONENT -> InteractionData.MESSAGE_COMPONENT <| Json.deserializeF<MessageComponentData> json
-            | InteractionDataType.MODAL_SUBMIT -> InteractionData.MODAL_SUBMIT <| Json.deserializeF<ModalSubmitData> json
-
-        override _.Write (writer, value, _) =
-            match value with
-            | InteractionData.APPLICATION_COMMAND a -> Json.serializeF a
-            | InteractionData.MESSAGE_COMPONENT m -> Json.serializeF m
-            | InteractionData.MODAL_SUBMIT m -> Json.serializeF m
-            |> writer.WriteRawValue
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure
 type ResolvedData = {
