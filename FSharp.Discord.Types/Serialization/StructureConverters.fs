@@ -75,9 +75,9 @@ module Interaction =
             ApplicationId = get.Required.Field Property.ApplicationId Decode.string
             Type = get.Required.Field Property.Type Decode.Enum.int<InteractionType>
             Data = get.Optional.Field Property.Data InteractionData.decoder
-            Guild = get.Optional.Field Property.Guild PartialGuild.decoder
+            Guild = get.Optional.Field Property.Guild Guild.Partial.decoder
             GuildId = get.Optional.Field Property.GuildId Decode.string
-            Channel = get.Optional.Field Property.Channel PartialChannel.decoder
+            Channel = get.Optional.Field Property.Channel Channel.Partial.decoder
             ChannelId = get.Optional.Field Property.ChannelId Decode.string
             Member = get.Optional.Field Property.Member GuildMember.decoder
             User = get.Optional.Field Property.User User.decoder
@@ -88,7 +88,7 @@ module Interaction =
             Locale = get.Optional.Field Property.Locale Decode.string
             GuildLocale = get.Optional.Field Property.GuildLocale Decode.string
             Entitlements = get.Required.Field Property.Entitlements (Decode.list Entitlement.decoder)
-            AuthorizingIntegrationOwners = get.Required.Field Property.AuthorizingIntegrationOwners (Decode.dict ApplicationIntegrationTypeConfiguration.decoder) // TODO: Ensure key is a valid option
+            AuthorizingIntegrationOwners = get.Required.Field Property.AuthorizingIntegrationOwners (Decode.dict ApplicationIntegrationTypeConfiguration.decoder) // TODO: Ensure key is a valid ApplicationIntegrationType
             Context = get.Optional.Field Property.Context Decode.Enum.int<InteractionContextType>
         }) path v
 
@@ -98,9 +98,9 @@ module Interaction =
             Property.ApplicationId, Encode.string v.ApplicationId
             Property.Type, Encode.Enum.int v.Type
             Property.Data, Encode.option InteractionData.encoder v.Data
-            Property.Guild, Encode.option Guild.encoder v.Guild
+            Property.Guild, Encode.option Guild.Partial.encoder v.Guild
             Property.GuildId, Encode.option Encode.string v.GuildId
-            Property.Channel, Encode.option PartialChannel.encoder v.Channel
+            Property.Channel, Encode.option Channel.Partial.encoder v.Channel
             Property.ChannelId, Encode.option Encode.string v.ChannelId
             Property.Member, Encode.option GuildMember.encoder v.Member
             Property.User, Encode.option User.encoder v.User
@@ -111,7 +111,7 @@ module Interaction =
             Property.Locale, Encode.option Encode.string v.Locale
             Property.GuildLocale, Encode.option Encode.string v.GuildLocale
             Property.Entitlements, (List.map Entitlement.encoder >> Encode.list) v.Entitlements
-            Property.AuthorizingIntegrationOwners, Encode.mapv ApplicationIntegrationTypeConfiguration.encoder v.AuthorizingIntegrationOwners
+            Property.AuthorizingIntegrationOwners, Encode.mapv ApplicationIntegrationTypeConfiguration.encoder v.AuthorizingIntegrationOwners // TODO: Ensure key is a valid ApplicationIntegrationType
             Property.Context, Encode.option Encode.Enum.int v.Context
         ]
 
@@ -213,20 +213,20 @@ module ResolvedData =
     let decoder path v =
         Decode.object (fun get -> {
             Users = get.Optional.Field Property.Users (Decode.dict User.decoder)
-            Members = get.Optional.Field Property.Members (Decode.dict PartialGuildMember.decoder)
+            Members = get.Optional.Field Property.Members (Decode.dict GuildMember.Partial.decoder)
             Roles = get.Optional.Field Property.Roles (Decode.dict Role.decoder)
-            Channels = get.Optional.Field Property.Channels (Decode.dict PartialChannel.decoder)
-            Messages = get.Optional.Field Property.Messages (Decode.dict PartialMessage.decoder)
+            Channels = get.Optional.Field Property.Channels (Decode.dict Channel.Partial.decoder)
+            Messages = get.Optional.Field Property.Messages (Decode.dict Message.Partial.decoder)
             Attachments = get.Optional.Field Property.Attachments (Decode.dict Attachment.decoder)
         }) path v
 
     let encoder (v: ResolvedData) =
         Encode.object [
             Property.Users, Encode.option (Encode.mapv User.encoder) v.Users
-            Property.Members, Encode.option (Encode.mapv PartialGuildMember.encoder) v.Members
+            Property.Members, Encode.option (Encode.mapv GuildMember.Partial.encoder) v.Members
             Property.Roles, Encode.option (Encode.mapv Role.encoder) v.Roles
-            Property.Channels, Encode.option (Encode.mapv PartialChannel.encoder) v.Channels
-            Property.Messages, Encode.option (Encode.mapv PartialMessage.encoder) v.Messages
+            Property.Channels, Encode.option (Encode.mapv Channel.Partial.encoder) v.Channels
+            Property.Messages, Encode.option (Encode.mapv Message.Partial.encoder) v.Messages
             Property.Attachments, Encode.option (Encode.mapv Attachment.encoder) v.Attachments
         ]
 
@@ -289,7 +289,7 @@ module MessageInteraction =
             Type = get.Required.Field Property.Type Decode.Enum.int<InteractionType>
             Name = get.Required.Field Property.Name Decode.string
             User = get.Required.Field Property.User User.decoder
-            Member = get.Optional.Field Property.Member PartialGuildMember.decoder
+            Member = get.Optional.Field Property.Member GuildMember.Partial.decoder
         }) path v
 
     let encoder (v: MessageInteraction) =
@@ -298,7 +298,7 @@ module MessageInteraction =
             Property.Type, Encode.Enum.int v.Type
             Property.Name, Encode.string v.Name
             Property.User, User.encoder v.User
-            Property.Member, Encode.option PartialGuildMember.encoder v.Member
+            Property.Member, Encode.option GuildMember.Partial.encoder v.Member
         ]
 
 module InteractionResponse =
@@ -337,7 +337,7 @@ module MessageInteractionCallbackData =
             AllowedMentions = get.Optional.Field Property.AllowedMentions AllowedMentions.decoder
             Flags = get.Optional.Field Property.Flags Decode.int
             Components = get.Optional.Field Property.Components (Decode.list Component.decoder)
-            Attachments = get.Optional.Field Property.Attachments (Decode.list PartialAttachment.decoder)
+            Attachments = get.Optional.Field Property.Attachments (Decode.list Attachment.Partial.decoder)
             Poll = get.Optional.Field Property.Poll Poll.decoder
         }) path v
 
@@ -349,7 +349,7 @@ module MessageInteractionCallbackData =
             Property.AllowedMentions, Encode.option AllowedMentions.encoder v.AllowedMentions
             Property.Flags, Encode.option Encode.int v.Flags
             Property.Components, Encode.option (List.map Component.encoder >> Encode.list) v.Components
-            Property.Attachments, Encode.option (List.map PartialAttachment.encoder >> Encode.list) v.Attachments
+            Property.Attachments, Encode.option (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
             Property.Poll, Encode.option Poll.encoder v.Poll
         ]
 
@@ -1120,4 +1120,261 @@ module ActivityButton =
         Encode.object [
             Property.Label, Encode.string v.Label
             Property.Url, Encode.string v.Url
+        ]
+
+module Application =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Icon = "icon"
+        let [<Literal>] Description = "description"
+        let [<Literal>] RpcOrigins = "rpc_origins"
+        let [<Literal>] BotPublic = "bot_public"
+        let [<Literal>] BotRequireCodeGrant = "bot_require_code_grant"
+        let [<Literal>] Bot = "bot"
+        let [<Literal>] TermsOfServiceUrl = "terms_of_service_url"
+        let [<Literal>] PrivacyPolicyUrl = "privacy_policy_url"
+        let [<Literal>] Owner = "owner"
+        let [<Literal>] VerifyKey = "verify_key"
+        let [<Literal>] Team = "team"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Guild = "guild"
+        let [<Literal>] PrimarySkuId = "primary_sku_id"
+        let [<Literal>] Slug = "slug"
+        let [<Literal>] CoverImage = "cover_image"
+        let [<Literal>] Flags = "flags"
+        let [<Literal>] ApproximateGuildCount = "approximate_guild_count"
+        let [<Literal>] ApproximateUserInstallCount = "approximate_user_install_count"
+        let [<Literal>] RedirectUris = "redirect_uris"
+        let [<Literal>] InteractionsEndpointUrl = "interactions_endpoint_url"
+        let [<Literal>] RoleConnectionsVerificationUrl = "role_connections_verification_url"
+        let [<Literal>] EventWebhooksUrl = "event_webhooks_url"
+        let [<Literal>] EventWebhooksStatus = "event_webhooks_status"
+        let [<Literal>] EventWebhooksTypes = "event_webhooks_types"
+        let [<Literal>] Tags = "tags"
+        let [<Literal>] InstallParams = "install_params"
+        let [<Literal>] IntegrationTypesConfig = "integration_types_config"
+        let [<Literal>] CustomInstallUrl = "custom_install_url"
+
+    let decoder path v: Result<Application, DecoderError> =
+        Decode.object (fun get -> {
+            Id = get.Required.Field Property.Id Decode.string
+            Name = get.Required.Field Property.Name Decode.string
+            Icon = get.Required.Field Property.Icon (Decode.option Decode.string)
+            Description = get.Required.Field Property.Description Decode.string
+            RpcOrigins = get.Optional.Field Property.RpcOrigins (Decode.list Decode.string)
+            BotPublic = get.Required.Field Property.BotPublic Decode.bool
+            BotRequireCodeGrant = get.Required.Field Property.BotRequireCodeGrant Decode.bool
+            Bot = get.Optional.Field Property.Bot User.Partial.decoder
+            TermsOfServiceUrl = get.Optional.Field Property.TermsOfServiceUrl Decode.string
+            PrivacyPolicyUrl = get.Optional.Field Property.PrivacyPolicyUrl Decode.string
+            Owner = get.Optional.Field Property.Owner User.Partial.decoder
+            VerifyKey = get.Required.Field Property.VerifyKey Decode.string
+            Team = get.Required.Field Property.Team (Decode.option Team.decoder)
+            GuildId = get.Optional.Field Property.GuildId Decode.string
+            Guild = get.Optional.Field Property.Guild Guild.Partial.decoder
+            PrimarySkuId = get.Optional.Field Property.PrimarySkuId Decode.string
+            Slug = get.Optional.Field Property.Slug Decode.string
+            CoverImage = get.Optional.Field Property.CoverImage Decode.string
+            Flags = get.Optional.Field Property.Flags Decode.int
+            ApproximateGuildCount = get.Optional.Field Property.ApproximateGuildCount Decode.int
+            ApproximateUserInstallCount = get.Optional.Field Property.ApproximateUserInstallCount Decode.int
+            RedirectUris = get.Optional.Field Property.RedirectUris (Decode.list Decode.string)
+            InteractionsEndpointUrl = get.Optional.Field Property.InteractionsEndpointUrl (Decode.option Decode.string)
+            RoleConnectionsVerificationUrl = get.Optional.Field Property.RoleConnectionsVerificationUrl (Decode.option Decode.string)
+            EventWebhooksUrl = get.Optional.Field Property.EventWebhooksUrl (Decode.option Decode.string)
+            EventWebhooksStatus = get.Optional.Field Property.EventWebhooksStatus Decode.Enum.int<WebhookEventStatus> |> Option.defaultValue WebhookEventStatus.DISABLED
+            EventWebhooksTypes = get.Optional.Field Property.EventWebhooksTypes (Decode.list WebhookEventType.decoder)
+            Tags = get.Optional.Field Property.Tags (Decode.list Decode.string)
+            InstallParams = get.Optional.Field Property.InstallParams InstallParams.decoder
+            IntegrationTypesConfig = get.Optional.Field Property.IntegrationTypesConfig (Decode.dict ApplicationIntegrationTypeConfiguration.decoder) // TODO: Ensure key is a valid ApplicationIntegrationType
+            CustomInstallUrl = get.Optional.Field Property.CustomInstallUrl Decode.string
+        }) path v
+
+    let encoder (v: Application) =
+        Encode.object [
+            Property.Id, Encode.string v.Id
+            Property.Name, Encode.string v.Name
+            Property.Icon, Encode.option Encode.string v.Icon
+            Property.Description, Encode.string v.Description
+            Property.RpcOrigins, Encode.option (List.map Encode.string >> Encode.list) v.RpcOrigins
+            Property.BotPublic, Encode.bool v.BotPublic
+            Property.BotRequireCodeGrant, Encode.bool v.BotRequireCodeGrant
+            Property.Bot, Encode.option User.Partial.encoder v.Bot
+            Property.TermsOfServiceUrl, Encode.option Encode.string v.TermsOfServiceUrl
+            Property.PrivacyPolicyUrl, Encode.option Encode.string v.PrivacyPolicyUrl
+            Property.Owner, Encode.option User.Partial.encoder v.Owner
+            Property.VerifyKey, Encode.string v.VerifyKey
+            Property.Team, Encode.option Team.encoder v.Team
+            Property.GuildId, Encode.option Encode.string v.GuildId
+            Property.Guild, Encode.option Guild.Partial.encoder v.Guild
+            Property.PrimarySkuId, Encode.option Encode.string v.PrimarySkuId
+            Property.Slug, Encode.option Encode.string v.Slug
+            Property.CoverImage, Encode.option Encode.string v.CoverImage
+            Property.Flags, Encode.option Encode.int v.Flags
+            Property.ApproximateGuildCount, Encode.option Encode.int v.ApproximateGuildCount
+            Property.ApproximateUserInstallCount, Encode.option Encode.int v.ApproximateUserInstallCount
+            Property.RedirectUris, Encode.option (List.map Encode.string >> Encode.list) v.RedirectUris
+            Property.InteractionsEndpointUrl, Encode.option Encode.string (v.InteractionsEndpointUrl |> Option.flatten)
+            Property.RoleConnectionsVerificationUrl, Encode.option Encode.string (v.RoleConnectionsVerificationUrl |> Option.flatten)
+            Property.EventWebhooksUrl, Encode.option Encode.string (v.EventWebhooksUrl |> Option.flatten)
+            Property.EventWebhooksStatus, Encode.Enum.int v.EventWebhooksStatus
+            Property.EventWebhooksTypes, Encode.option (List.map WebhookEventType.encoder >> Encode.list) v.EventWebhooksTypes
+            Property.Tags, Encode.option (List.map Encode.string >> Encode.list) v.Tags
+            Property.InstallParams, Encode.option InstallParams.encoder v.InstallParams
+            Property.IntegrationTypesConfig, Encode.option (Encode.mapv ApplicationIntegrationTypeConfiguration.encoder) v.IntegrationTypesConfig // TODO: Ensure key is a valid ApplicationIntegrationType
+            Property.CustomInstallUrl, Encode.option Encode.string v.CustomInstallUrl
+        ]
+
+    module Partial =        
+        let decoder path v =
+            Decode.object (fun get -> {
+                Id = get.Required.Field Property.Id Decode.string
+                Name = get.Optional.Field Property.Name Decode.string
+                Icon = get.Optional.Field Property.Icon (Decode.option Decode.string)
+                Description = get.Optional.Field Property.Description Decode.string
+                RpcOrigins = get.Optional.Field Property.RpcOrigins (Decode.list Decode.string)
+                BotPublic = get.Optional.Field Property.BotPublic Decode.bool
+                BotRequireCodeGrant = get.Optional.Field Property.BotRequireCodeGrant Decode.bool
+                Bot = get.Optional.Field Property.Bot User.Partial.decoder
+                TermsOfServiceUrl = get.Optional.Field Property.TermsOfServiceUrl Decode.string
+                PrivacyPolicyUrl = get.Optional.Field Property.PrivacyPolicyUrl Decode.string
+                Owner = get.Optional.Field Property.Owner User.Partial.decoder
+                VerifyKey = get.Optional.Field Property.VerifyKey Decode.string
+                Team = get.Optional.Field Property.Team (Decode.option Team.decoder)
+                GuildId = get.Optional.Field Property.GuildId Decode.string
+                Guild = get.Optional.Field Property.Guild Guild.Partial.decoder
+                PrimarySkuId = get.Optional.Field Property.PrimarySkuId Decode.string
+                Slug = get.Optional.Field Property.Slug Decode.string
+                CoverImage = get.Optional.Field Property.CoverImage Decode.string
+                Flags = get.Optional.Field Property.Flags Decode.int
+                ApproximateGuildCount = get.Optional.Field Property.ApproximateGuildCount Decode.int
+                ApproximateUserInstallCount = get.Optional.Field Property.ApproximateUserInstallCount Decode.int
+                RedirectUris = get.Optional.Field Property.RedirectUris (Decode.list Decode.string)
+                InteractionsEndpointUrl = get.Optional.Field Property.InteractionsEndpointUrl (Decode.option Decode.string)
+                RoleConnectionsVerificationUrl = get.Optional.Field Property.RoleConnectionsVerificationUrl (Decode.option Decode.string)
+                EventWebhooksUrl = get.Optional.Field Property.EventWebhooksUrl (Decode.option Decode.string)
+                EventWebhooksStatus = get.Optional.Field Property.EventWebhooksStatus Decode.Enum.int<WebhookEventStatus>
+                EventWebhooksTypes = get.Optional.Field Property.EventWebhooksTypes (Decode.list WebhookEventType.decoder)
+                Tags = get.Optional.Field Property.Tags (Decode.list Decode.string)
+                InstallParams = get.Optional.Field Property.InstallParams InstallParams.decoder
+                IntegrationTypesConfig = get.Optional.Field Property.IntegrationTypesConfig (Decode.dict ApplicationIntegrationTypeConfiguration.decoder) // TODO: Ensure key is a valid ApplicationIntegrationType
+                CustomInstallUrl = get.Optional.Field Property.CustomInstallUrl Decode.string
+            }) path v
+
+        let encoder (v: PartialApplication) =
+            Encode.object [
+                Property.Id, Encode.string v.Id
+                Property.Name, Encode.option Encode.string v.Name
+                Property.Icon, Encode.option Encode.string (v.Icon |> Option.flatten)
+                Property.Description, Encode.option Encode.string v.Description
+                Property.RpcOrigins, Encode.option (List.map Encode.string >> Encode.list) v.RpcOrigins
+                Property.BotPublic, Encode.option Encode.bool v.BotPublic
+                Property.BotRequireCodeGrant, Encode.option Encode.bool v.BotRequireCodeGrant
+                Property.Bot, Encode.option User.Partial.encoder v.Bot
+                Property.TermsOfServiceUrl, Encode.option Encode.string v.TermsOfServiceUrl
+                Property.PrivacyPolicyUrl, Encode.option Encode.string v.PrivacyPolicyUrl
+                Property.Owner, Encode.option User.Partial.encoder v.Owner
+                Property.VerifyKey, Encode.option Encode.string v.VerifyKey
+                Property.Team, Encode.option Team.encoder v.Team
+                Property.GuildId, Encode.option Encode.string v.GuildId
+                Property.Guild, Encode.option Guild.Partial.encoder v.Guild
+                Property.PrimarySkuId, Encode.option Encode.string v.PrimarySkuId
+                Property.Slug, Encode.option Encode.string v.Slug
+                Property.CoverImage, Encode.option Encode.string v.CoverImage
+                Property.Flags, Encode.option Encode.int v.Flags
+                Property.ApproximateGuildCount, Encode.option Encode.int v.ApproximateGuildCount
+                Property.ApproximateUserInstallCount, Encode.option Encode.int v.ApproximateUserInstallCount
+                Property.RedirectUris, Encode.option (List.map Encode.string >> Encode.list) v.RedirectUris
+                Property.InteractionsEndpointUrl, Encode.option Encode.string (v.InteractionsEndpointUrl |> Option.flatten)
+                Property.RoleConnectionsVerificationUrl, Encode.option Encode.string (v.RoleConnectionsVerificationUrl |> Option.flatten)
+                Property.EventWebhooksUrl, Encode.option Encode.string (v.EventWebhooksUrl |> Option.flatten)
+                Property.EventWebhooksStatus, Encode.option Encode.Enum.int v.EventWebhooksStatus
+                Property.EventWebhooksTypes, Encode.option (List.map WebhookEventType.encoder >> Encode.list) v.EventWebhooksTypes
+                Property.Tags, Encode.option (List.map Encode.string >> Encode.list) v.Tags
+                Property.InstallParams, Encode.option InstallParams.encoder v.InstallParams
+                Property.IntegrationTypesConfig, Encode.option (Encode.mapv ApplicationIntegrationTypeConfiguration.encoder) v.IntegrationTypesConfig // TODO: Ensure key is a valid ApplicationIntegrationType
+                Property.CustomInstallUrl, Encode.option Encode.string v.CustomInstallUrl
+            ]
+
+            // TODO: Figure out how serialization should work for double options (optional and nullable), applies to both Application and PartialApplication
+
+module ApplicationIntegrationTypeConfiguration =
+    module Property =
+        let [<Literal>] OAuth2InstallParams = "oauth2_install_params"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            OAuth2InstallParams = get.Optional.Field Property.OAuth2InstallParams InstallParams.decoder
+        }) path v
+
+    let encoder (v: ApplicationIntegrationTypeConfiguration) =
+        Encode.object [
+            Property.OAuth2InstallParams, Encode.option InstallParams.encoder v.OAuth2InstallParams
+        ]
+
+module InstallParams =
+    module Property =
+        let [<Literal>] Scopes = "scopes"
+        let [<Literal>] Permissions = "permissions"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Scopes = get.Required.Field Property.Scopes (Decode.list OAuthScope.decoder)
+            Permissions = get.Required.Field Property.Permissions Decode.string
+        }) path v
+
+    let encoder (v: InstallParams) =
+        Encode.object [
+            Property.Scopes, (List.map OAuthScope.encoder >> Encode.list) v.Scopes
+            Property.Permissions, Encode.string v.Permissions
+        ]
+
+module ActivityInstance =
+    module Property =
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] InstanceId = "instance_id"
+        let [<Literal>] LaunchId = "launch_id"
+        let [<Literal>] Location = "location"
+        let [<Literal>] Users = "users"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            ApplicationId = get.Required.Field Property.ApplicationId Decode.string
+            InstanceId = get.Required.Field Property.InstanceId Decode.string
+            LaunchId = get.Required.Field Property.LaunchId Decode.string
+            Location = get.Required.Field Property.Location ActivityLocation.decoder
+            Users = get.Required.Field Property.Users (Decode.list Decode.string)
+        }) path v
+
+    let encoder (v: ActivityInstance) =
+        Encode.object [
+            Property.ApplicationId, Encode.string v.ApplicationId
+            Property.InstanceId, Encode.string v.InstanceId
+            Property.LaunchId, Encode.string v.LaunchId
+            Property.Location, ActivityLocation.encoder v.Location
+            Property.Users, (List.map Encode.string >> Encode.list) v.Users
+        ]
+
+module ActivityLocation =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Kind = "kind"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] GuildId = "guild_id"
+
+    let decoder path v=
+        Decode.object (fun get -> {
+            Id = get.Required.Field Property.Id Decode.string
+            Kind = get.Required.Field Property.Kind ActivityLocationKind.decoder
+            ChannelId = get.Required.Field Property.ChannelId Decode.string
+            GuildId = get.Optional.Field Property.GuildId (Decode.option Decode.string)
+        }) path v
+
+    let encoder (v: ActivityLocation) =
+        Encode.object [
+            Property.Id, Encode.string v.Id
+            Property.Kind, ActivityLocationKind.encoder v.Kind
+            Property.ChannelId, Encode.string v.ChannelId
+            Property.GuildId, Encode.option Encode.string (v.GuildId |> Option.flatten)
         ]

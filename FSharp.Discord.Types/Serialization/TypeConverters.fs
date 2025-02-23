@@ -141,7 +141,7 @@ module SelectMenuDefaultValueType =
         | None -> Error (path, BadPrimitive("a select menu default value type", v))
         | Some res -> Ok res
 
-    let encoder (v: SelectMenuDefaultValueType) =
+    let encoder v =
         toString v |> Encode.string
 
 module WebhookEventType =
@@ -155,3 +155,19 @@ module WebhookEventType =
         | "APPLICATION_AUTHORIZED" -> Some WebhookEventType.APPLICATION_AUTHORIZED
         | "ENTITLEMENT_CREATE" -> Some WebhookEventType.ENTITLEMENT_CREATE
         | _ -> None
+
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("an application event webhook type", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string

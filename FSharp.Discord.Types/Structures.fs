@@ -449,96 +449,102 @@ type ActivityButton = {
 
 // https://discord.com/developers/docs/resources/application#application-object-application-structure
 type Application = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "description">] Description: string
-    [<JsonPropertyName "rpc_origins">] RpcOrigins: string list option
-    [<JsonPropertyName "bot_public">] BotPublic: bool
-    [<JsonPropertyName "bot_require_code_grant">] BotRequireCodeGrant: bool
-    [<JsonPropertyName "bot">] Bot: PartialUser option
-    [<JsonPropertyName "terms_of_service_url">] TermsOfServiceUrl: string option
-    [<JsonPropertyName "privacy_policy_url">] PrivacyPolicyUrl: string option
-    [<JsonPropertyName "owner">] Owner: PartialUser option
-    [<JsonPropertyName "verify_key">] VerifyKey: string
-    [<JsonPropertyName "team">] Team: Team option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "guild">] Guild: PartialGuild option
-    [<JsonPropertyName "primary_sku_id">] PrimarySkuId: string option
-    [<JsonPropertyName "slug">] Slug: string option
-    [<JsonPropertyName "cover_image">] CoverImage: string option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "approximate_guild_count">] ApproximateGuildCount: int option
-    [<JsonPropertyName "approximate_user_install_count">] ApproximateUserInstallCount: int option
-    [<JsonPropertyName "redirect_uris">] RedirectUris: string list option
-    [<JsonPropertyName "interactions_endpoint_url">] InteractionsEndpointUrl: string option
-    [<JsonPropertyName "role_connections_verification_url">] RoleConnectionsVerificationUrl: string option
-    [<JsonPropertyName "event_webhooks_url">] EventWebhooksUrl: string option
-    [<JsonPropertyName "event_webhooks_status">] EventWebhooksStatus: WebhookEventStatus
-    [<JsonPropertyName "event_webhooks_types">] EventWebhooksTypes: WebhookEventType list option
-    [<JsonPropertyName "tags">] Tags: string list option
-    [<JsonPropertyName "install_params">] InstallParams: InstallParams option
-    [<JsonPropertyName "integration_types_config">] IntegrationTypesConfig: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration> option
-    [<JsonPropertyName "custom_install_url">] CustomInstallUrl: string option
+    Id: string
+    Name: string
+    Icon: string option
+    Description: string
+    RpcOrigins: string list option
+    BotPublic: bool
+    BotRequireCodeGrant: bool
+    Bot: PartialUser option
+    TermsOfServiceUrl: string option
+    PrivacyPolicyUrl: string option
+    Owner: PartialUser option
+    VerifyKey: string
+    Team: Team option
+    GuildId: string option
+    Guild: PartialGuild option
+    PrimarySkuId: string option
+    Slug: string option
+    CoverImage: string option
+    Flags: int option
+    ApproximateGuildCount: int option
+    ApproximateUserInstallCount: int option
+    RedirectUris: string list option
+    InteractionsEndpointUrl: string option option
+    RoleConnectionsVerificationUrl: string option option
+    EventWebhooksUrl: string option option
+    EventWebhooksStatus: WebhookEventStatus
+    EventWebhooksTypes: WebhookEventType list option
+    Tags: string list option
+    InstallParams: InstallParams option
+    IntegrationTypesConfig: Map<string, ApplicationIntegrationTypeConfiguration> option
+    CustomInstallUrl: string option
 }
 
 and PartialApplication = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string option
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "rpc_origins">] RpcOrigins: string list option
-    [<JsonPropertyName "bot_public">] BotPublic: bool option
-    [<JsonPropertyName "bot_require_code_grant">] BotRequireCodeGrant: bool option
-    [<JsonPropertyName "bot">] Bot: PartialUser option
-    [<JsonPropertyName "terms_of_Service_url">] TermsOfServiceUrl: string option
-    [<JsonPropertyName "privacy_policy_url">] PrivacyPolicyUrl: string option
-    [<JsonPropertyName "owner">] Owner: PartialUser option
-    [<JsonPropertyName "verify_key">] VerifyKey: string option
-    [<JsonPropertyName "team">] Team: Team option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "guild">] Guild: PartialGuild option
-    [<JsonPropertyName "primary_sku_id">] PrimarySkuId: string option
-    [<JsonPropertyName "slug">] Slug: string option
-    [<JsonPropertyName "cover_image">] CoverImage: string option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "approximate_guild_count">] ApproximateGuildCount: int option
-    [<JsonPropertyName "redirect_uris">] RedirectUris: string list option
-    [<JsonPropertyName "interactions_endpoint_url">] InteractionsEndpointUrl: string option
-    [<JsonPropertyName "role_connections_verification_url">] RoleConnectionsVerificationUrl: string option
-    [<JsonPropertyName "tags">] Tags: string list option
-    [<JsonPropertyName "install_params">] InstallParams: InstallParams option
-    [<JsonPropertyName "integration_types_config">] IntegrationTypesConfig: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration> option
-    [<JsonPropertyName "custom_install_url">] CustomInstallUrl: string option
+    Id: string
+    Name: string option
+    Icon: string option option
+    Description: string option
+    RpcOrigins: string list option
+    BotPublic: bool option
+    BotRequireCodeGrant: bool option
+    Bot: PartialUser option
+    TermsOfServiceUrl: string option
+    PrivacyPolicyUrl: string option
+    Owner: PartialUser option
+    VerifyKey: string option
+    Team: Team option option
+    GuildId: string option
+    Guild: PartialGuild option
+    PrimarySkuId: string option
+    Slug: string option
+    CoverImage: string option
+    Flags: int option
+    ApproximateGuildCount: int option
+    ApproximateUserInstallCount: int option
+    RedirectUris: string list option
+    InteractionsEndpointUrl: string option option
+    RoleConnectionsVerificationUrl: string option option
+    EventWebhooksUrl: string option option
+    EventWebhooksStatus: WebhookEventStatus option
+    EventWebhooksTypes: WebhookEventType list option
+    Tags: string list option
+    InstallParams: InstallParams option
+    IntegrationTypesConfig: Map<string, ApplicationIntegrationTypeConfiguration> option
+    CustomInstallUrl: string option
 }
 
 // https://discord.com/developers/docs/resources/application#application-object-application-integration-type-configuration-object
 type ApplicationIntegrationTypeConfiguration = {
-    [<JsonPropertyName "oauth2_install_params">] OAuth2InstallParams: InstallParams option
+    OAuth2InstallParams: InstallParams option
 }
 
 // https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
 type InstallParams = {
-    [<JsonPropertyName "scopes">] Scopes: string list
-    [<JsonPropertyName "permissions">] Permissions: string
+    Scopes: OAuthScope list
+    Permissions: string // TODO: Serialize bitfield into permission list
 }
 
 // https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-instance-object
 type ActivityInstance = {
-    [<JsonPropertyName "application_id">] ApplicationId: string
-    [<JsonPropertyName "instance_id">] InstanceId: string
-    [<JsonPropertyName "launch_id">] LaunchId: string
-    [<JsonPropertyName "location">] Location: ActivityLocation
-    [<JsonPropertyName "users">] Users: string list
+    ApplicationId: string
+    InstanceId: string
+    LaunchId: string
+    Location: ActivityLocation
+    Users: string list
 }
 
 // https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-object
 type ActivityLocation = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "kind">] Kind: ActivityLocationKind
-    [<JsonPropertyName "scopes">] ChannelId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
+    Id: string
+    Kind: ActivityLocationKind
+    ChannelId: string
+    GuildId: string option option
 }
+
+// TODO: Should above optional + nullable properties be stored as `option option`? What alternative would there be?
 
 // ----- Resources: Application Role Connection Metadata -----
 

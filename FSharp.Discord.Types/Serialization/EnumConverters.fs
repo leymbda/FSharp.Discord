@@ -102,6 +102,22 @@ module ActivityLocationKind =
         | "gc" -> Some ActivityLocationKind.GUILD_CHANNEL
         | "pc" -> Some ActivityLocationKind.PRIVATE_CHANNEL
         | _ -> None
+        
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("an activity location kind", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
 
 module OAuthScope =
     let toString (scope: OAuthScope) =
@@ -167,6 +183,22 @@ module OAuthScope =
         | "webhook.incoming" -> Some OAuthScope.WEBHOOK_INCOMING
         | _ -> None
         
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("an oauth scope", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
+
 module TokenTypeHint =
     let toString (tokenTypeHint: TokenTypeHint) =
         match tokenTypeHint with
@@ -252,7 +284,7 @@ module Status =
         | None -> Error (path, BadPrimitive("a status", v))
         | Some res -> Ok res
 
-    let encoder (v: Status) =
+    let encoder v =
         toString v |> Encode.string
 
 module ClientDeviceStatus =
@@ -282,7 +314,7 @@ module ClientDeviceStatus =
         | None -> Error (path, BadPrimitive("a client device status", v))
         | Some res -> Ok res
 
-    let encoder (v: ClientDeviceStatus) =
+    let encoder v =
         toString v |> Encode.string
         
 module RateLimitScope =
