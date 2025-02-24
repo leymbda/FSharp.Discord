@@ -6,6 +6,10 @@ open System
 open System.Threading
 open System.Threading.Tasks
 
+type QueuedSendEvent =
+    | Pending of GatewaySendEvent
+    | Processing
+
 type Model = {
     // Args
     GatewayUrl: string
@@ -21,14 +25,13 @@ type Model = {
     HeartbeatAcked: bool
 
     // Child Models
-    SendQueue: GatewaySendQueue.Model
+    SendQueue: QueuedSendEvent list
 
     // Other state
     Socket: ISocket option
 }
 
 type Msg =
-    | Send of GatewaySendEvent
     | Receive of GatewayReceiveEvent * string
 
     // TODO: Create message to initialise with connect (and run as cmd on init?)
@@ -37,13 +40,14 @@ type Msg =
     | Connect of forceReconnect: bool
     | Ready
     | Heartbeat
+    
+    | Send of GatewaySendEvent
+    | StartProcessNext
+    | EndProcessNext
 
-    | Queue of GatewaySendQueue.Msg
     | Ignore
 
 let init (gatewayUrl, identifyEvent, handler) =
-    let sendQueue, sendQueueCmd = GatewaySendQueue.init()
-
     {
         GatewayUrl = gatewayUrl
         IdentifyEvent = identifyEvent
@@ -54,13 +58,10 @@ let init (gatewayUrl, identifyEvent, handler) =
         SequenceId = None
         Heartbeat = None
         HeartbeatAcked = true
-        SendQueue = sendQueue
-        Socket = None // TODO: How can this be passed down into the GatewaySendQueue appropriately?
+        SendQueue = []
+        Socket = None
     },
-    Cmd.batch [
-        Cmd.map Msg.Queue sendQueueCmd
-        Cmd.ofMsg (Msg.Connect true)
-    ]
+    Cmd.ofMsg (Msg.Connect true)
 
 let private receive model (ev: GatewayReceiveEvent) (raw: string) =
     match ev, raw with
@@ -136,18 +137,40 @@ let heartbeat (env: #IGetCurrentTime) model =
         Heartbeat = model.Interval |> Option.map (env.GetCurrentTime().AddMilliseconds) },
     Cmd.ofMsg (Msg.Send event)
 
+let private send model (ev: GatewaySendEvent) =
+    { model with SendQueue = model.SendQueue @ [QueuedSendEvent.Pending ev] },
+    Cmd.ofMsg Msg.StartProcessNext
+
+let private startProcessNext env model =
+    match model.SendQueue |> List.tryHead with
+    | Some (QueuedSendEvent.Pending ev) ->
+        { model with SendQueue = model.SendQueue |> List.skip 1 |> List.append [QueuedSendEvent.Processing] },
+        Cmd.ofEffect (fun dispatch -> (async {
+            // TODO: Send event `ev` here (where does the dependency to send gateway events come from?)
+
+            dispatch (Msg.EndProcessNext)
+        } |> Async.StartImmediate)) // TODO: Test if this is blocking or not
+
+    | _ -> model, Cmd.none
+
+let private endProcessNext model =
+    { model with SendQueue = model.SendQueue |> List.skip 1 },
+    Cmd.ofMsg Msg.StartProcessNext
+
+    // TODO: Should this somehow filter for `QueuedSendEvent.Processing` in some way to ensure it doesn't get stuck?
+
 let update env msg model =
     match msg with
-    | Msg.Send ev -> model, Cmd.ofMsg (Msg.Queue (GatewaySendQueue.Msg.Enqueue ev))
     | Msg.Receive (ev, raw) -> receive model ev raw
 
     | Msg.Connect forceReconnect -> connect env model forceReconnect
     | Msg.Ready -> ready model
     | Msg.Heartbeat -> heartbeat env model
 
-    | Msg.Queue msg' ->
-        let res, cmd = GatewaySendQueue.update env msg' model.SendQueue
-        { model with SendQueue = res }, Cmd.map Msg.Queue cmd
+    | Msg.Send ev -> send model ev
+    | Msg.StartProcessNext -> startProcessNext env model
+    | Msg.EndProcessNext -> endProcessNext model
+
     | Msg.Ignore -> model, Cmd.none
 
 let view model dispatch =

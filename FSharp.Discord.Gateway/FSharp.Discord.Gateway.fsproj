@@ -18,7 +18,6 @@
     <Compile Include="GatewayClient.fs" />
     <Compile Include="GatewayEnv.fs" />
     <Compile Include="Socket.fs" />
-    <Compile Include="GatewaySendQueue.fs" />
     <Compile Include="GatewayState.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
