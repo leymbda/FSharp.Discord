@@ -8,7 +8,7 @@ open System.Threading.Tasks
 
 type QueuedSendEvent =
     | Pending of GatewaySendEvent
-    | Processing
+    | Processing of Guid
 
 type Model = {
     // Args
@@ -42,8 +42,7 @@ type Msg =
     | Heartbeat
     
     | Send of GatewaySendEvent
-    | StartProcessNext
-    | EndProcessNext
+    | Sent
 
     | Ignore
 
@@ -138,26 +137,12 @@ let heartbeat (env: #IGetCurrentTime) model =
     Cmd.ofMsg (Msg.Send event)
 
 let private send model (ev: GatewaySendEvent) =
-    { model with SendQueue = model.SendQueue @ [QueuedSendEvent.Pending ev] },
-    Cmd.ofMsg Msg.StartProcessNext
+    { model with SendQueue = model.SendQueue @ [QueuedSendEvent.Pending ev] }, Cmd.none
 
-let private startProcessNext env model =
-    match model.SendQueue |> List.tryHead with
-    | Some (QueuedSendEvent.Pending ev) ->
-        { model with SendQueue = model.SendQueue |> List.skip 1 |> List.append [QueuedSendEvent.Processing] },
-        Cmd.ofEffect (fun dispatch -> (async {
-            // TODO: Send event `ev` here (where does the dependency to send gateway events come from?)
+let private sent model =
+    { model with SendQueue = model.SendQueue |> List.skip 1 }, Cmd.none
 
-            dispatch (Msg.EndProcessNext)
-        } |> Async.StartImmediate)) // TODO: Test if this is blocking or not
-
-    | _ -> model, Cmd.none
-
-let private endProcessNext model =
-    { model with SendQueue = model.SendQueue |> List.skip 1 },
-    Cmd.ofMsg Msg.StartProcessNext
-
-    // TODO: Should this somehow filter for `QueuedSendEvent.Processing` in some way to ensure it doesn't get stuck?
+    // TODO: Should this somehow filter for `QueuedSendEvent.Processing` in some way to ensure it doesn't get stuck? Could add ID to filter by
 
 let update env msg model =
     match msg with
@@ -168,8 +153,7 @@ let update env msg model =
     | Msg.Heartbeat -> heartbeat env model
 
     | Msg.Send ev -> send model ev
-    | Msg.StartProcessNext -> startProcessNext env model
-    | Msg.EndProcessNext -> endProcessNext model
+    | Msg.Sent -> sent model
 
     | Msg.Ignore -> model, Cmd.none
 
@@ -193,6 +177,11 @@ let subscribe (env: #IGetCurrentTime) model =
 
         // TODO: Test if ignore and the cts work here
 
+    let resolve (task: Task) (callback: unit -> unit) =
+        use cts = new CancellationTokenSource()
+        task.ContinueWith(fun _ -> callback()) |> ignore
+        { new IDisposable with member _.Dispose () = cts.Cancel() }
+
     let heartbeat =
         match model.HeartbeatAcked, model.Heartbeat with
         | false, Some due ->
@@ -207,7 +196,20 @@ let subscribe (env: #IGetCurrentTime) model =
             ]
         | _ -> []
 
-    socket @ heartbeat
+    let send =
+        match model.SendQueue, model.Socket with
+        | (Processing id) :: _, Some socket ->
+            [
+                ["send"; id.ToString()],
+                fun dispatch -> resolve (task { return ((* TODO: Send request *)) }) (fun () -> dispatch Msg.Sent)
+            ]
+        | _ -> []
+
+        // TODO: Check if this will keep retrying as model changes, if so, may need to store task to state to track progress
+        // TODO: How will this be retriggered after a message is successfully sent? Should it just be looping instead?
+        // TODO: I think sent probably actually belongs in an effect, not the subscribe
+
+    socket @ heartbeat @ send
 
 let program env gatewayUrl identify handler =
     Task.Run(fun () ->
