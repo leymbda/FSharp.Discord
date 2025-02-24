@@ -7,6 +7,24 @@ open Thoth.Json.Net
 // TODO: Rewrite serializers using `Get` module helpers. Consider making a CE first
 // TODO: Can piped functions be mapped instead (e.g. Option.defaultValue)
 
+module Decode =
+    let mapkv (keyMapper: string -> 'a option) (valueDecoder: Decoder<'b>) path v =
+        let decoded = Decode.dict valueDecoder path v
+
+        match decoded with
+        | Error err -> Error err
+        | Ok d ->
+            d
+            |> Map.toSeq
+            |> Seq.fold
+                (fun acc cur -> acc |> Result.bind (fun acc ->
+                    match keyMapper (fst cur) with
+                    | None -> Error (path, BadField("an invalid key", v))
+                    | Some k -> Ok (acc |> Seq.append (seq { k, snd cur }))
+                ))
+                (Ok [])
+            |> Result.map (Map.ofSeq)
+
 module Encode =
     /// Append an encoding that is required.
     let required key decoder v list =
@@ -126,7 +144,7 @@ module Interaction =
             Locale = get.Optional.Field Property.Locale Decode.string
             GuildLocale = get.Optional.Field Property.GuildLocale Decode.string
             Entitlements = get.Required.Field Property.Entitlements (Decode.list Entitlement.decoder)
-            AuthorizingIntegrationOwners = get.Required.Field Property.AuthorizingIntegrationOwners (Decode.dict ApplicationIntegrationTypeConfiguration.decoder) // TODO: Ensure key is a valid ApplicationIntegrationType
+            AuthorizingIntegrationOwners = get.Required.Field Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
             Context = get.Optional.Field Property.Context Decode.Enum.int<InteractionContextType>
         }) path v
 
@@ -149,7 +167,7 @@ module Interaction =
             Property.Locale, Encode.option Encode.string v.Locale
             Property.GuildLocale, Encode.option Encode.string v.GuildLocale
             Property.Entitlements, (List.map Entitlement.encoder >> Encode.list) v.Entitlements
-            Property.AuthorizingIntegrationOwners, Encode.mapv ApplicationIntegrationTypeConfiguration.encoder v.AuthorizingIntegrationOwners // TODO: Ensure key is a valid ApplicationIntegrationType
+            Property.AuthorizingIntegrationOwners, Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder v.AuthorizingIntegrationOwners
             Property.Context, Encode.option Encode.Enum.int v.Context
         ]
 
@@ -169,7 +187,7 @@ module ApplicationCommandData =
             Name = get.Required.Field Property.Name Decode.string
             Type = get.Required.Field Property.Type Decode.Enum.int<ApplicationCommandType>
             Resolved = get.Optional.Field Property.Resolved ResolvedData.decoder
-            Options = get.Optional.Field Property.Options (Decode.list ApplicationCommandOption.decoder)
+            Options = get.Optional.Field Property.Options (Decode.list ApplicationCommandInteractionDataOption.decoder)
             GuildId = get.Optional.Field Property.GuildId Decode.string
             TargetId = get.Optional.Field Property.TargetId Decode.string
         }) path v
@@ -798,7 +816,7 @@ module SelectMenu =
         Decode.object (fun get -> {
             Type = get.Required.Field Property.Type Decode.Enum.int<ComponentType>
             CustomId = get.Required.Field Property.CustomId Decode.string
-            Options = get.Required.Field Property.Options (Decode.list SelectMenuOption.decoder)
+            Options = get.Optional.Field Property.Options (Decode.list SelectMenuOption.decoder)
             ChannelTypes = get.Optional.Field Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
             Placeholder = get.Optional.Field Property.Placeholder Decode.string
             DefaultValues = get.Optional.Field Property.DefaultValues (Decode.list SelectMenuDefaultValue.decoder)
@@ -1225,7 +1243,7 @@ module Application =
             EventWebhooksTypes = get |> Get.optional Property.EventWebhooksTypes (Decode.list WebhookEventType.decoder)
             Tags = get |> Get.optional Property.Tags (Decode.list Decode.string)
             InstallParams = get |> Get.optional Property.InstallParams InstallParams.decoder
-            IntegrationTypesConfig = get |> Get.optional Property.IntegrationTypesConfig (Decode.dict ApplicationIntegrationTypeConfiguration.decoder) // TODO: Ensure key is a valid ApplicationIntegrationType
+            IntegrationTypesConfig = get |> Get.optional Property.IntegrationTypesConfig (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
             CustomInstallUrl  = get |> Get.optional Property.CustomInstallUrl Decode.string
         }) path v
 
@@ -1260,7 +1278,7 @@ module Application =
             |> Encode.optional Property.EventWebhooksTypes (List.map WebhookEventType.encoder >> Encode.list) v.EventWebhooksTypes
             |> Encode.optional Property.Tags (List.map Encode.string >> Encode.list) v.Tags
             |> Encode.optional Property.InstallParams InstallParams.encoder v.InstallParams
-            |> Encode.optional Property.IntegrationTypesConfig (Encode.mapv ApplicationIntegrationTypeConfiguration.encoder) v.IntegrationTypesConfig // TODO: Ensure key is a valid ApplicationIntegrationType
+            |> Encode.optional Property.IntegrationTypesConfig (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.IntegrationTypesConfig
             |> Encode.optional Property.CustomInstallUrl Encode.string v.CustomInstallUrl
         )
 
@@ -1296,7 +1314,7 @@ module Application =
                 EventWebhooksTypes = get |> Get.optional Property.EventWebhooksTypes (Decode.list WebhookEventType.decoder)
                 Tags = get |> Get.optional Property.Tags (Decode.list Decode.string)
                 InstallParams = get |> Get.optional Property.InstallParams InstallParams.decoder
-                IntegrationTypesConfig = get |> Get.optional Property.IntegrationTypesConfig (Decode.dict ApplicationIntegrationTypeConfiguration.decoder) // TODO: Ensure key is a valid ApplicationIntegrationType
+                IntegrationTypesConfig = get |> Get.optional Property.IntegrationTypesConfig (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
                 CustomInstallUrl  = get |> Get.optional Property.CustomInstallUrl Decode.string
             }) path v
 
@@ -1331,7 +1349,7 @@ module Application =
                 |> Encode.optional Property.EventWebhooksTypes (List.map WebhookEventType.encoder >> Encode.list) v.EventWebhooksTypes
                 |> Encode.optional Property.Tags (List.map Encode.string >> Encode.list) v.Tags
                 |> Encode.optional Property.InstallParams InstallParams.encoder v.InstallParams
-                |> Encode.optional Property.IntegrationTypesConfig (Encode.mapv ApplicationIntegrationTypeConfiguration.encoder) v.IntegrationTypesConfig // TODO: Ensure key is a valid ApplicationIntegrationType
+                |> Encode.optional Property.IntegrationTypesConfig (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.IntegrationTypesConfig
                 |> Encode.optional Property.CustomInstallUrl Encode.string v.CustomInstallUrl
             )
 

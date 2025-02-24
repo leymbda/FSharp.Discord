@@ -6,9 +6,9 @@ open Thoth.Json.Net
 module ApplicationIntegrationType =
     let toString (value: ApplicationIntegrationType) =
         match value with
-        | ApplicationIntegrationType.GUILD_INSTALL -> Some "GUILD_INSTALL"
-        | ApplicationIntegrationType.USER_INSTALL -> Some "USER_INSTALL"
-        | _ -> None
+        | ApplicationIntegrationType.GUILD_INSTALL -> "GUILD_INSTALL"
+        | ApplicationIntegrationType.USER_INSTALL -> "USER_INSTALL"
+        | _ -> "" // TODO: How can this be cleanly handled? (caused by int backed enum supporting string representation)
 
     let fromString (str: string) =
         match str with

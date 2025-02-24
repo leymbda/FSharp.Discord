@@ -34,7 +34,7 @@ type Interaction = {
     Locale: string option
     GuildLocale: string option
     Entitlements: Entitlement list
-    AuthorizingIntegrationOwners: Map<string, ApplicationIntegrationTypeConfiguration>
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
     Context: InteractionContextType option
 }
 
@@ -478,7 +478,7 @@ type Application = {
     EventWebhooksTypes: WebhookEventType list option
     Tags: string list option
     InstallParams: InstallParams option
-    IntegrationTypesConfig: Map<string, ApplicationIntegrationTypeConfiguration> option
+    IntegrationTypesConfig: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration> option
     CustomInstallUrl: string option
 }
 
@@ -512,7 +512,7 @@ and PartialApplication = {
     EventWebhooksTypes: WebhookEventType list option
     Tags: string list option
     InstallParams: InstallParams option
-    IntegrationTypesConfig: Map<string, ApplicationIntegrationTypeConfiguration> option
+    IntegrationTypesConfig: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration> option
     CustomInstallUrl: string option
 }
 

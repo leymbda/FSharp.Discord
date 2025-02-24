@@ -17,7 +17,7 @@ module SerializationVariantsModel =
             Required = get |> Get.required "required" Decode.string
             Optional = get |> Get.optional "optional" Decode.string
             Nullable = get |> Get.nullable "nullable" Decode.string
-            OptionalAndNullable = get |> Get.optnull "optionalAndNullable" Decode.string
+            OptionalAndNullable = get |> Get.optinull "optionalAndNullable" Decode.string
         }) path v
 
     let encoder (v: SerializationVariantsModel) =
