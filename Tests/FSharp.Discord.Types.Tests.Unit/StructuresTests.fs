@@ -34,7 +34,7 @@ type StructuresTests () =
             Emoji = None;
             CustomId = Some "custom-id";
             Url = None;
-            Disabled = None;
+            Disabled = false;
         }
 
         // Act
@@ -55,9 +55,9 @@ type StructuresTests () =
             ChannelTypes = None;
             Placeholder = None;
             DefaultValues = None;
-            MinValues = None;
-            MaxValues = None;
-            Disabled = None;
+            MinValues = 1;
+            MaxValues = 1;
+            Disabled = false;
         }
 
         // Act
@@ -78,7 +78,7 @@ type StructuresTests () =
             Label = "Label";
             MinLength = None;
             MaxLength = None;
-            Required = None;
+            Required = false;
             Value = None;
             Placeholder = None;
         }
@@ -137,7 +137,7 @@ type StructuresTests () =
             Emoji = None;
             CustomId = Some "custom-id";
             Url = None;
-            Disabled = None;
+            Disabled = false;
         }
 
         let expected = """{"type":2,"style":1,"label":"Label","emoji":null,"custom_id":"custom-id","url":null,"disabled":null}"""
@@ -158,9 +158,9 @@ type StructuresTests () =
             ChannelTypes = None;
             Placeholder = None;
             DefaultValues = None;
-            MinValues = None;
-            MaxValues = None;
-            Disabled = None;
+            MinValues = 1;
+            MaxValues = 1;
+            Disabled = false;
         }
 
         let expected = """{"type":3,"custom_id":"custom-id","options":[],"channel_types":null,"placeholder":null,"default_values":null,"min_values":null,"max_values":null,"disabled":null}"""
@@ -181,7 +181,7 @@ type StructuresTests () =
             Label = "Label";
             MinLength = None;
             MaxLength = None;
-            Required = None;
+            Required = false;
             Value = None;
             Placeholder = None;
         }
