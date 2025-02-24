@@ -198,7 +198,7 @@ module ApplicationCommandData =
             Property.Name, Encode.string v.Name
             Property.Type, Encode.Enum.int v.Type
             Property.Resolved, Encode.option ResolvedData.encoder v.Resolved
-            Property.Options, Encode.option (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
+            Property.Options, Encode.option (List.map ApplicationCommandInteractionDataOption.encoder >> Encode.list) v.Options
             Property.GuildId, Encode.option Encode.string v.GuildId
             Property.TargetId, Encode.option Encode.string v.TargetId
         ]
@@ -1239,7 +1239,7 @@ module Application =
             InteractionsEndpointUrl = get |> Get.optinull Property.InteractionsEndpointUrl Decode.string
             RoleConnectionsVerificationUrl = get |> Get.optinull Property.RoleConnectionsVerificationUrl Decode.string
             EventWebhooksUrl = get |> Get.optinull Property.EventWebhooksUrl Decode.string
-            EventWebhooksStatus = get |> Get.optional Property.EventWebhooksStatus Decode.Enum.int<WebhookEventStatus> |> Option.defaultValue WebhookEventStatus.DISABLED
+            EventWebhooksStatus = get |> Get.required Property.EventWebhooksStatus Decode.Enum.int<WebhookEventStatus>
             EventWebhooksTypes = get |> Get.optional Property.EventWebhooksTypes (Decode.list WebhookEventType.decoder)
             Tags = get |> Get.optional Property.Tags (Decode.list Decode.string)
             InstallParams = get |> Get.optional Property.InstallParams InstallParams.decoder
@@ -1310,7 +1310,7 @@ module Application =
                 InteractionsEndpointUrl = get |> Get.optinull Property.InteractionsEndpointUrl Decode.string
                 RoleConnectionsVerificationUrl = get |> Get.optinull Property.RoleConnectionsVerificationUrl Decode.string
                 EventWebhooksUrl = get |> Get.optinull Property.EventWebhooksUrl Decode.string
-                EventWebhooksStatus = get |> Get.optional Property.EventWebhooksStatus Decode.Enum.int<WebhookEventStatus> |> Option.defaultValue WebhookEventStatus.DISABLED
+                EventWebhooksStatus = get |> Get.optional Property.EventWebhooksStatus Decode.Enum.int<WebhookEventStatus>
                 EventWebhooksTypes = get |> Get.optional Property.EventWebhooksTypes (Decode.list WebhookEventType.decoder)
                 Tags = get |> Get.optional Property.Tags (Decode.list Decode.string)
                 InstallParams = get |> Get.optional Property.InstallParams InstallParams.decoder
@@ -1417,7 +1417,7 @@ module ActivityLocation =
         let [<Literal>] ChannelId = "channel_id"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder path v=
+    let decoder path v =
         Decode.object (fun get -> {
             Id = get.Required.Field Property.Id Decode.string
             Kind = get.Required.Field Property.Kind ActivityLocationKind.decoder
@@ -1432,3 +1432,168 @@ module ActivityLocation =
             Property.ChannelId, Encode.string v.ChannelId
             Property.GuildId, Encode.option Encode.string (v.GuildId |> Option.flatten)
         ]
+
+module ApplicationRoleConnectionMetadata =
+    module Property =
+        let [<Literal>] Type = "type"
+        let [<Literal>] Key = "key"
+        let [<Literal>] Name = "name"
+        let [<Literal>] NameLocalizations = "name_localizations"
+        let [<Literal>] Description = "description"
+        let [<Literal>] DescriptionLocalizations = "description_localizations"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationRoleConnectionMetadataType>
+            Key = get |> Get.required Property.Key Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            NameLocalizations = get |> Get.optional Property.NameLocalizations (Decode.dict Decode.string)
+            Description = get |> Get.required Property.Description Decode.string
+            DescriptionLocalizations = get |> Get.optional Property.DescriptionLocalizations (Decode.dict Decode.string)
+        }) path v
+
+    let encoder (v: ApplicationRoleConnectionMetadata) =
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Key Encode.string v.Key
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.optional Property.NameLocalizations (Encode.mapv Encode.string) v.NameLocalizations
+            |> Encode.required Property.Description Encode.string v.Description
+            |> Encode.optional Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
+        )
+
+module AuditLog =
+    module Property =
+        let [<Literal>] ApplicationCommands = "application_commands"
+        let [<Literal>] AuditLogEntries = "audit_log_entries"
+        let [<Literal>] AutoModerationRules = "auto_moderation_rules"
+        let [<Literal>] GuildScheduledEvents = "guild_scheduled_events"
+        let [<Literal>] Integrations = "integrations"
+        let [<Literal>] Threads = "threads"
+        let [<Literal>] Users = "users"
+        let [<Literal>] Webhooks = "webhooks"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            ApplicationCommands = get.Required.Field Property.ApplicationCommands (Decode.list ApplicationCommand.decoder)
+            AuditLogEntries = get.Required.Field Property.AuditLogEntries (Decode.list AuditLogEntry.decoder)
+            AutoModerationRules = get.Required.Field Property.AutoModerationRules (Decode.list AutoModerationRule.decoder)
+            GuildScheduledEvents = get.Required.Field Property.GuildScheduledEvents (Decode.list GuildScheduledEvent.decoder)
+            Integrations = get.Required.Field Property.Integrations (Decode.list PartialIntegration.decoder)
+            Threads = get.Required.Field Property.Threads (Decode.list Channel.decoder)
+            Users = get.Required.Field Property.Users (Decode.list User.decoder)
+            Webhooks = get.Required.Field Property.Webhooks (Decode.list Webhook.decoder)
+        }) path v
+
+    let encoder (v: AuditLog) =
+        Encode.object [
+            Property.ApplicationCommands, (List.map ApplicationCommand.encoder >> Encode.list) v.ApplicationCommands
+            Property.AuditLogEntries, (List.map AuditLogEntry.encoder >> Encode.list) v.AuditLogEntries
+            Property.AutoModerationRules, (List.map AutoModerationRule.encoder >> Encode.list) v.AutoModerationRules
+            Property.GuildScheduledEvents, (List.map GuildScheduledEvent.encoder >> Encode.list) v.GuildScheduledEvents
+            Property.Integrations, (List.map PartialIntegration.encoder >> Encode.list) v.Integrations
+            Property.Threads, (List.map Channel.encoder >> Encode.list) v.Threads
+            Property.Users, (List.map User.encoder >> Encode.list) v.Users
+            Property.Webhooks, (List.map Webhook.encoder >> Encode.list) v.Webhooks
+        ]
+
+module AuditLogEntry =
+    module Property =
+        let [<Literal>] TargetId = "target_id"
+        let [<Literal>] Changes = "changes"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] Id = "id"
+        let [<Literal>] ActionType = "action_type"
+        let [<Literal>] Options = "options"
+        let [<Literal>] Reason = "reason"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            TargetId = get |> Get.nullable Property.TargetId Decode.string
+            Changes = get |> Get.optional Property.Changes (Decode.list AuditLogChange.decoder)
+            UserId = get |> Get.nullable Property.UserId Decode.string
+            Id = get |> Get.required Property.Id Decode.string
+            ActionType = get |> Get.required Property.ActionType Decode.Enum.int<AuditLogEventType>
+            Options = get |> Get.optional Property.Options AuditLogEntryOptionalInfo.decoder
+            Reason = get |> Get.optional Property.Reason Decode.string
+        }) path v
+
+    let encoder (v: AuditLogEntry) =
+        Encode.object ([]
+            |> Encode.nullable Property.TargetId Encode.string v.TargetId
+            |> Encode.optional Property.Changes (List.map AuditLogChange.encoder >> Encode.list) v.Changes
+            |> Encode.nullable Property.UserId Encode.string v.UserId
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.ActionType Encode.Enum.int v.ActionType
+            |> Encode.optional Property.Options AuditLogEntryOptionalInfo.encoder v.Options
+            |> Encode.optional Property.Reason Encode.string v.Reason
+        )
+
+module AuditLogEntryOptionalInfo =
+    module Property =
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] AutoModerationRuleName = "auto_moderation_rule_name"
+        let [<Literal>] AutoModerationRuleTriggerType = "auto_moderation_rule_trigger_type"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] Count = "count"
+        let [<Literal>] DeleteMemberDays = "delete_member_days"
+        let [<Literal>] Id = "id"
+        let [<Literal>] MembersRemoved = "members_removed"
+        let [<Literal>] MessageId = "message_id"
+        let [<Literal>] RoleName = "role_name"
+        let [<Literal>] Type = "type"
+        let [<Literal>] IntegrationType = "integration_type"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            ApplicationId = get |> Get.optional Property.ApplicationId Decode.string
+            AutoModerationRuleName = get |> Get.optional Property.AutoModerationRuleName Decode.string
+            AutoModerationRuleTriggerType = get |> Get.optional Property.AutoModerationRuleTriggerType Decode.string
+            ChannelId = get |> Get.optional Property.ChannelId Decode.string
+            Count = get |> Get.optional Property.Count Decode.string
+            DeleteMemberDays = get |> Get.optional Property.DeleteMemberDays Decode.string
+            Id = get |> Get.optional Property.Id Decode.string
+            MembersRemoved = get |> Get.optional Property.MembersRemoved Decode.string
+            MessageId = get |> Get.optional Property.MessageId Decode.string
+            RoleName = get |> Get.optional Property.RoleName Decode.string
+            Type = get |> Get.optional Property.Type Decode.string
+            IntegrationType = get |> Get.optional Property.IntegrationType Decode.string
+        }) path v
+
+    let encoder (v: AuditLogEntryOptionalInfo) =
+        Encode.object ([]
+            |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.optional Property.AutoModerationRuleName Encode.string v.AutoModerationRuleName
+            |> Encode.optional Property.AutoModerationRuleTriggerType Encode.string v.AutoModerationRuleTriggerType
+            |> Encode.optional Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.Count Encode.string v.Count
+            |> Encode.optional Property.DeleteMemberDays Encode.string v.DeleteMemberDays
+            |> Encode.optional Property.Id Encode.string v.Id
+            |> Encode.optional Property.MembersRemoved Encode.string v.MembersRemoved
+            |> Encode.optional Property.MessageId Encode.string v.MessageId
+            |> Encode.optional Property.RoleName Encode.string v.RoleName
+            |> Encode.optional Property.Type Encode.string v.Type
+            |> Encode.optional Property.IntegrationType Encode.string v.IntegrationType
+        )
+
+module AuditLogChange =
+    module Property =
+        let [<Literal>] NewValue = "new_value"
+        let [<Literal>] OldValue = "old_value"
+        let [<Literal>] Key = "key"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            NewValue = None
+            OldValue = None
+            Key = get |> Get.required Property.Key Decode.string
+        }) path v
+
+    let encoder (v: AuditLogChange) =
+        Encode.object ([]
+            |> Encode.optional Property.NewValue Encode.unit None
+            |> Encode.optional Property.OldValue Encode.unit None
+            |> Encode.required Property.Key Encode.string v.Key
+        )
+
+    // TODO: Fix old and new value serialization to not just be `None` always

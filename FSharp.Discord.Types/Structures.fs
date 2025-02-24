@@ -550,65 +550,65 @@ type ActivityLocation = {
 
 // https://discord.com/developers/docs/resources/application-role-connection-metadata#application-role-connection-metadata-object-application-role-connection-metadata-structure
 type ApplicationRoleConnectionMetadata = {
-    [<JsonPropertyName "type">] Type: ApplicationRoleConnectionMetadataType
-    [<JsonPropertyName "key">] Key: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "name_localizations">] NameLocalizations: (string * string) seq option
-    [<JsonPropertyName "description">] Description: string
-    [<JsonPropertyName "description_localizations">] DescriptionLocalizations: (string * string) option
+    Type: ApplicationRoleConnectionMetadataType
+    Key: string
+    Name: string
+    NameLocalizations: Map<string, string> option
+    Description: string
+    DescriptionLocalizations: Map<string, string> option
 }
 
 // ----- Resources: Audit Log -----
 
 // https://discord.com/developers/docs/resources/audit-log#audit-log-object-audit-log-structure
 type AuditLog = {
-    [<JsonPropertyName "application_commands">] ApplicationCommands: ApplicationCommand list
-    [<JsonPropertyName "audit_log_entries">] AuditLogEntries: AuditLogEntry list
-    [<JsonPropertyName "auto_moderation_rules">] AutoModerationRules: AutoModerationRule list
-    [<JsonPropertyName "guild_scheduled_events">] GuildScheduledEvents: GuildScheduledEvent list
-    [<JsonPropertyName "integrations">] Integrations: PartialIntegration list
-    [<JsonPropertyName "threads">] Threads: Channel list
-    [<JsonPropertyName "users">] Users: User list
-    [<JsonPropertyName "webhooks">] Webhooks: Webhook list
+    ApplicationCommands: ApplicationCommand list
+    AuditLogEntries: AuditLogEntry list
+    AutoModerationRules: AutoModerationRule list
+    GuildScheduledEvents: GuildScheduledEvent list
+    Integrations: PartialIntegration list
+    Threads: Channel list
+    Users: User list
+    Webhooks: Webhook list
 }
 
 // https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-entry-structure
 type AuditLogEntry = {
-    [<JsonPropertyName "target_id">] TargetId: string option
-    [<JsonPropertyName "changes">] Changes: AuditLogChange list option
-    [<JsonPropertyName "user_id">] UserId: string option
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "action_type">] ActionType: AuditLogEventType
-    [<JsonPropertyName "options">] Options: AuditLogEntryOptionalInfo option
-    [<JsonPropertyName "reason">] Reason: string option
+    TargetId: string option
+    Changes: AuditLogChange list option
+    UserId: string option
+    Id: string
+    ActionType: AuditLogEventType
+    Options: AuditLogEntryOptionalInfo option
+    Reason: string option
 }
 
 // https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-optional-audit-entry-info
 type AuditLogEntryOptionalInfo = {
-    [<JsonPropertyName "application_id">] ApplicationId: string option
-    [<JsonPropertyName "auto_moderation_rule_name">] AutoModerationRuleName: string option
-    [<JsonPropertyName "auto_moderation_rule_trigger_type">] AutoModerationRuleTriggerType: string option
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "count">] Count: string option
-    [<JsonPropertyName "delete_member_days">] DeleteMemberDays: string option
-    [<JsonPropertyName "id">] Id: string option
-    [<JsonPropertyName "members_removed">] MembersRemoved: string option
-    [<JsonPropertyName "message_id">] MessageId: string option
-    [<JsonPropertyName "role_name">] RoleName: string option
-    [<JsonPropertyName "type">] Type: string option
-    [<JsonPropertyName "integration_type">] IntegrationType: string option
+    ApplicationId: string option
+    AutoModerationRuleName: string option
+    AutoModerationRuleTriggerType: string option
+    ChannelId: string option
+    Count: string option
+    DeleteMemberDays: string option
+    Id: string option
+    MembersRemoved: string option
+    MessageId: string option
+    RoleName: string option
+    Type: string option
+    IntegrationType: string option
 }
 
 // TODO: Create DU for above for specific event types
 
 // https://discord.com/developers/docs/resources/audit-log#audit-log-change-object
 type AuditLogChange = {
-    [<JsonPropertyName "new_value">] NewValue: obj option
-    [<JsonPropertyName "old_value">] OldValue: obj option
-    [<JsonPropertyName "key">] Key: string
+    NewValue: obj option
+    OldValue: obj option
+    Key: string
 }
 
-// TODO: Handle exceptions for keys as documented, and consider if obj is most appropriate for old and new value
+// TODO: Handle exceptions for keys as documented, and consider if obj is most appropriate for old and new value (DU for all json types?)
 
 // ----- Resources: Auto Moderation -----
 
