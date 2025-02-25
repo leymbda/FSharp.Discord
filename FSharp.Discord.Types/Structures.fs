@@ -453,7 +453,7 @@ type WebhookEventPayload<'a> = {
 
 // https://discord.com/developers/docs/events/webhook-events#payload-structure
 type WebhookEventBody<'a> = {
-    Type: WebhookEventType // serialize as string
+    Type: WebhookEventType
     Timestamp: DateTime
     Data: 'a option
 }
@@ -462,7 +462,7 @@ type WebhookEventBody<'a> = {
 type ApplicationAuthorizedEvent = {
     IntegrationType: ApplicationIntegrationType option
     User: User
-    Scopes: OAuthScope list // serialize as string
+    Scopes: OAuthScope list
     Guild: Guild option
 }
 

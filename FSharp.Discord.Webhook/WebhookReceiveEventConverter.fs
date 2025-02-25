@@ -15,7 +15,10 @@ module WebhookReceiveEvent =
 
         | Ok WebhookPayloadType.PING ->
             WebhookEventPayload.decoder Decode.unit path v
-            |> Result.map WebhookReceiveEvent.PING
+            |> Result.map (fun v -> WebhookReceiveEvent.PING {
+                Version = v.Version
+                ApplicationId = v.ApplicationId
+            })
 
         | Ok WebhookPayloadType.EVENT ->
             let eventType =
@@ -25,27 +28,55 @@ module WebhookReceiveEvent =
                 |> fun f -> f path v
                 |> Result.bind (function | Some v -> Ok v | None -> Error (path, BadPrimitive("a webhook event type", v)))
 
+            let event (v: WebhookEventPayload<'a>) = {
+                Version = v.Version
+                ApplicationId = v.ApplicationId
+                Timestamp = v.Event.Value.Timestamp
+                Data = v.Event.Value.Data.Value
+            }
+
             match eventType with
             | Error err ->
                 Error err
 
             | Ok WebhookEventType.ENTITLEMENT_CREATE ->
                 WebhookEventPayload.decoder EntitlementCreateEvent.decoder path v
-                |> Result.map WebhookReceiveEvent.ENTITLEMENT_CREATE
+                |> Result.map (fun v -> WebhookReceiveEvent.ENTITLEMENT_CREATE (event v))
 
             | Ok WebhookEventType.APPLICATION_AUTHORIZED ->
                 WebhookEventPayload.decoder ApplicationAuthorizedEvent.decoder path v
-                |> Result.map WebhookReceiveEvent.APPLICATION_AUTHORIZED
+                |> Result.map (fun v -> WebhookReceiveEvent.APPLICATION_AUTHORIZED (event v))
 
         | _ ->
             Error (path, BadPrimitive("a webhook payload type", v))
 
     let encoder (v: WebhookReceiveEvent) =
-        match v with
-        | WebhookReceiveEvent.PING p -> WebhookEventPayload.encoder Encode.unit p
-        | WebhookReceiveEvent.ENTITLEMENT_CREATE p -> WebhookEventPayload.encoder EntitlementCreateEvent.encoder p
-        | WebhookReceiveEvent.APPLICATION_AUTHORIZED p -> WebhookEventPayload.encoder ApplicationAuthorizedEvent.encoder p
+        let event t p = {
+            Version = p.Version
+            ApplicationId = p.ApplicationId
+            Type = WebhookPayloadType.EVENT
+            Event = Some {
+                Type = t
+                Timestamp = p.Timestamp
+                Data = Some p.Data
+            }
+        }
 
-    // TODO: The underlying type doesn't guarantee correct format as it involves options where this validates when they
-    //       should and shouldn't be optional. Probably worth redesigning this WebhookReceiveEvent to have its own
-    //       entirely different structure that is domain specific, but this should work for now.
+        match v with
+        | WebhookReceiveEvent.PING p ->
+            WebhookEventPayload.encoder Encode.unit {
+                Version = p.Version
+                ApplicationId = p.ApplicationId
+                Type = WebhookPayloadType.PING
+                Event = None
+            }
+
+        | WebhookReceiveEvent.ENTITLEMENT_CREATE p ->
+            WebhookEventPayload.encoder
+                EntitlementCreateEvent.encoder
+                (event WebhookEventType.ENTITLEMENT_CREATE p)
+
+        | WebhookReceiveEvent.APPLICATION_AUTHORIZED p ->
+            WebhookEventPayload.encoder
+                ApplicationAuthorizedEvent.encoder
+                (event WebhookEventType.APPLICATION_AUTHORIZED p)
