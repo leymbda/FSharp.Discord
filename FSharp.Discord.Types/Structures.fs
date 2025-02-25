@@ -437,8 +437,8 @@ type ActivitySecrets = {
 
 // https://discord.com/developers/docs/events/gateway-events#activity-object-activity-buttons
 type ActivityButton = {
-    [<JsonPropertyName "label">] Label: string
-    [<JsonPropertyName "url">] Url: string
+    Label: string
+    Url: string
 }
 
 // ----- Events: Webhook Events -----
