@@ -1,4 +1,4 @@
-﻿module FSharp.Discord.Webhook.Modules.Ed25519
+﻿module FSharp.Discord.Webhook.Ed25519
 
 open System
 open System.Text

@@ -443,7 +443,31 @@ type ActivityButton = {
 
 // ----- Events: Webhook Events -----
 
-// TODO: Move webhook events here from Structures/WebhookEvents.fs
+// https://discord.com/developers/docs/events/webhook-events#event-body-object
+type WebhookEventPayload<'a> = {
+    Version: int
+    ApplicationId: string
+    Type: WebhookPayloadType
+    Event: WebhookEventBody<'a> option
+}
+
+// https://discord.com/developers/docs/events/webhook-events#payload-structure
+type WebhookEventBody<'a> = {
+    Type: WebhookEventType // serialize as string
+    Timestamp: DateTime
+    Data: 'a option
+}
+
+// https://discord.com/developers/docs/events/webhook-events#application-authorized-application-authorized-structure
+type ApplicationAuthorizedEvent = {
+    IntegrationType: ApplicationIntegrationType option
+    User: User
+    Scopes: OAuthScope list // serialize as string
+    Guild: Guild option
+}
+
+// https://discord.com/developers/docs/events/webhook-events#entitlement-create-entitlement-create-structure
+type EntitlementCreateEvent = Entitlement
 
 // ----- Resources: Application -----
 

@@ -1178,6 +1178,79 @@ module ActivityButton =
             Property.Url, Encode.string v.Url
         ]
 
+module WebhookEventPayload =
+    module Property =
+        let [<Literal>] Version = "version"
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Event = "event"
+
+    let decoder eventDataDecoder path v =
+        Decode.object (fun get -> {
+            Version = get |> Get.required Property.Version Decode.int
+            ApplicationId = get |> Get.required Property.ApplicationId Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<WebhookPayloadType>
+            Event = get |> Get.optional Property.Event (WebhookEventBody.decoder eventDataDecoder)
+        }) path v
+
+    let encoder eventDataEncoder (v: WebhookEventPayload<'a>) =
+        Encode.object ([]
+            |> Encode.required Property.Version Encode.int v.Version
+            |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.required Property.Type Encode.Enum.int<WebhookPayloadType> v.Type
+            |> Encode.optional Property.Event (WebhookEventBody.encoder eventDataEncoder) v.Event
+        )
+
+module WebhookEventBody =
+    module Property =
+        let [<Literal>] Type = "type"
+        let [<Literal>] Timestamp = "timestamp"
+        let [<Literal>] Data = "data"
+
+    let decoder dataDecoder path v =
+        Decode.object (fun get -> {
+            Type = get |> Get.required Property.Type WebhookEventType.decoder
+            Timestamp = get |> Get.required Property.Timestamp Decode.datetimeUtc
+            Data = get |> Get.optional Property.Data dataDecoder
+        }) path v
+
+    let encoder dataEncoder (v: WebhookEventBody<'a>) =
+        Encode.object ([]
+            |> Encode.required Property.Type WebhookEventType.encoder v.Type
+            |> Encode.required Property.Timestamp Encode.datetime v.Timestamp
+            |> Encode.optional Property.Data dataEncoder v.Data
+        )
+
+module ApplicationAuthorizedEvent =
+    module Property =
+        let [<Literal>] IntegrationType = "integration_type"
+        let [<Literal>] User = "user"
+        let [<Literal>] Scopes = "scopes"
+        let [<Literal>] Guild = "guild"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            IntegrationType = get |> Get.optional Property.IntegrationType Decode.Enum.int<ApplicationIntegrationType>
+            User = get |> Get.required Property.User User.decoder
+            Scopes = get |> Get.required Property.Scopes (Decode.list OAuthScope.decoder)
+            Guild = get |> Get.optional Property.Guild Guild.decoder
+        }) path v
+
+    let encoder (v: ApplicationAuthorizedEvent) =
+        Encode.object ([]
+            |> Encode.optional Property.IntegrationType Encode.Enum.int<ApplicationIntegrationType> v.IntegrationType
+            |> Encode.required Property.User User.encoder v.User
+            |> Encode.required Property.Scopes (List.map OAuthScope.encoder >> Encode.list) v.Scopes
+            |> Encode.optional Property.Guild Guild.encoder v.Guild
+        )
+
+module EntitlementCreateEvent =
+    let decoder path v: Result<EntitlementCreateEvent, DecodeError> =
+        Entitlement.decoder path v
+
+    let encoder (v: EntitlementCreateEvent): JsonValue =
+        Entitlement.encoder v
+
 module Application =
     module Property =
         let [<Literal>] Id = "id"
