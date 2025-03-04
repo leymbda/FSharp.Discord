@@ -1245,7 +1245,7 @@ module ApplicationAuthorizedEvent =
         )
 
 module EntitlementCreateEvent =
-    let decoder path v: Result<EntitlementCreateEvent, DecodeError> =
+    let decoder path v: Result<EntitlementCreateEvent, DecoderError> =
         Entitlement.decoder path v
 
     let encoder (v: EntitlementCreateEvent): JsonValue =
@@ -1370,7 +1370,7 @@ module Application =
                 PrivacyPolicyUrl = get |> Get.optional Property.PrivacyPolicyUrl Decode.string
                 Owner = get |> Get.optional Property.Owner User.Partial.decoder
                 VerifyKey = get |> Get.optional Property.VerifyKey Decode.string
-                Team = get |> Get.optnull Property.Team Team.decoder
+                Team = get |> Get.optinull Property.Team Team.decoder
                 GuildId = get |> Get.optional Property.GuildId Decode.string
                 Guild = get |> Get.optional Property.Guild Guild.Partial.decoder
                 PrimarySkuId = get |> Get.optional Property.PrimarySkuId Decode.string
@@ -1552,7 +1552,7 @@ module AuditLog =
             AuditLogEntries = get.Required.Field Property.AuditLogEntries (Decode.list AuditLogEntry.decoder)
             AutoModerationRules = get.Required.Field Property.AutoModerationRules (Decode.list AutoModerationRule.decoder)
             GuildScheduledEvents = get.Required.Field Property.GuildScheduledEvents (Decode.list GuildScheduledEvent.decoder)
-            Integrations = get.Required.Field Property.Integrations (Decode.list PartialIntegration.decoder)
+            Integrations = get.Required.Field Property.Integrations (Decode.list Integration.Partial.decoder)
             Threads = get.Required.Field Property.Threads (Decode.list Channel.decoder)
             Users = get.Required.Field Property.Users (Decode.list User.decoder)
             Webhooks = get.Required.Field Property.Webhooks (Decode.list Webhook.decoder)
@@ -1564,7 +1564,7 @@ module AuditLog =
             Property.AuditLogEntries, (List.map AuditLogEntry.encoder >> Encode.list) v.AuditLogEntries
             Property.AutoModerationRules, (List.map AutoModerationRule.encoder >> Encode.list) v.AutoModerationRules
             Property.GuildScheduledEvents, (List.map GuildScheduledEvent.encoder >> Encode.list) v.GuildScheduledEvents
-            Property.Integrations, (List.map PartialIntegration.encoder >> Encode.list) v.Integrations
+            Property.Integrations, (List.map Integration.Partial.encoder >> Encode.list) v.Integrations
             Property.Threads, (List.map Channel.encoder >> Encode.list) v.Threads
             Property.Users, (List.map User.encoder >> Encode.list) v.Users
             Property.Webhooks, (List.map Webhook.encoder >> Encode.list) v.Webhooks
@@ -1779,4 +1779,354 @@ module AutoModerationActionMetadata =
             |> Encode.optional Property.ChannelId Encode.string v.ChannelId
             |> Encode.optional Property.DurationSeconds Encode.int v.DurationSeconds
             |> Encode.optional Property.CustomMessage Encode.string v.CustomMessage
+        )
+
+module Channel =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Position = "position"
+        let [<Literal>] PermissionOverwrites = "permission_overwrites"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Topic = "topic"
+        let [<Literal>] Nsfw = "nsfw"
+        let [<Literal>] LastMessageId = "last_message_id"
+        let [<Literal>] Bitrate = "bitrate"
+        let [<Literal>] UserLimit = "user_limit"
+        let [<Literal>] RateLimitPerUser = "rate_limit_per_user"
+        let [<Literal>] Recipients = "recipients"
+        let [<Literal>] Icon = "icon"
+        let [<Literal>] OwnerId = "owner_id"
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] Managed = "managed"
+        let [<Literal>] ParentId = "parent_id"
+        let [<Literal>] LastPinTimestamp = "last_pin_timestamp"
+        let [<Literal>] RtcRegion = "rtc_region"
+        let [<Literal>] VideoQualityMode = "video_quality_mode"
+        let [<Literal>] MessageCount = "message_count"
+        let [<Literal>] MemberCount = "member_count"
+        let [<Literal>] ThreadMetadata = "thread_metadata"
+        let [<Literal>] Member = "member"
+        let [<Literal>] DefaultAutoArchiveDuration = "default_auto_archive_duration"
+        let [<Literal>] Permissions = "permissions"
+        let [<Literal>] Flags = "flags"
+        let [<Literal>] TotalMessagesSent = "total_messages_sent"
+        let [<Literal>] AvailableTags = "available_tags"
+        let [<Literal>] AppliedTags = "applied_tags"
+        let [<Literal>] DefaultReactionEmoji = "default_reaction_emoji"
+        let [<Literal>] DefaultThreadRateLimitPerUser = "default_thread_rate_limit_per_user"
+        let [<Literal>] DefaultSortOrder = "default_sort_order"
+        let [<Literal>] DefaultForumLayout = "default_forum_layout"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<ChannelType>
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Position = get |> Get.optional Property.Position Decode.int
+            PermissionOverwrites = get |> Get.optional Property.PermissionOverwrites (Decode.list PermissionOverwrite.decoder)
+            Name = get |> Get.optinull Property.Name Decode.string
+            Topic = get |> Get.optinull Property.Topic Decode.string
+            Nsfw = get |> Get.optional Property.Nsfw Decode.bool
+            LastMessageId = get |> Get.optinull Property.LastMessageId Decode.string
+            Bitrate = get |> Get.optional Property.Bitrate Decode.int
+            UserLimit = get |> Get.optional Property.UserLimit Decode.int
+            RateLimitPerUser = get |> Get.optional Property.RateLimitPerUser Decode.int
+            Recipients = get |> Get.optional Property.Recipients (Decode.list User.decoder)
+            Icon = get |> Get.optinull Property.Icon Decode.string
+            OwnerId = get |> Get.optional Property.OwnerId Decode.string
+            ApplicationId = get |> Get.optional Property.ApplicationId Decode.string
+            Managed = get |> Get.optional Property.Managed Decode.bool
+            ParentId = get |> Get.optinull Property.ParentId Decode.string
+            LastPinTimestamp = get |> Get.optinull Property.LastPinTimestamp Decode.datetimeUtc
+            RtcRegion = get |> Get.optinull Property.RtcRegion Decode.string
+            VideoQualityMode = get |> Get.optional Property.VideoQualityMode Decode.Enum.int<VideoQualityMode>
+            MessageCount = get |> Get.optional Property.MessageCount Decode.int
+            MemberCount = get |> Get.optional Property.MemberCount Decode.int
+            ThreadMetadata = get |> Get.optional Property.ThreadMetadata ThreadMetadata.decoder
+            Member = get |> Get.optional Property.Member ThreadMember.decoder
+            DefaultAutoArchiveDuration = get |> Get.optional Property.DefaultAutoArchiveDuration Decode.Enum.int<AutoArchiveDuration>
+            Permissions = get |> Get.optional Property.Permissions Decode.string
+            Flags = get |> Get.optional Property.Flags Decode.int
+            TotalMessagesSent = get |> Get.optional Property.TotalMessagesSent Decode.int
+            AvailableTags = get |> Get.optional Property.AvailableTags (Decode.list ForumTag.decoder)
+            AppliedTags = get |> Get.optional Property.AppliedTags (Decode.list Decode.string)
+            DefaultReactionEmoji = get |> Get.optinull Property.DefaultReactionEmoji DefaultReaction.decoder
+            DefaultThreadRateLimitPerUser = get |> Get.optional Property.DefaultThreadRateLimitPerUser Decode.int
+            DefaultSortOrder = get |> Get.optinull Property.DefaultSortOrder Decode.Enum.int<ChannelSortOrder>
+            DefaultForumLayout = get |> Get.optional Property.DefaultForumLayout Decode.Enum.int<ForumLayout>
+        }) path v
+
+    let encoder (v: Channel) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Position Encode.int v.Position
+            |> Encode.optional Property.PermissionOverwrites (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
+            |> Encode.optinull Property.Name Encode.string v.Name
+            |> Encode.optinull Property.Topic Encode.string v.Topic
+            |> Encode.optional Property.Nsfw Encode.bool v.Nsfw
+            |> Encode.optinull Property.LastMessageId Encode.string v.LastMessageId
+            |> Encode.optional Property.Bitrate Encode.int v.Bitrate
+            |> Encode.optional Property.UserLimit Encode.int v.UserLimit
+            |> Encode.optional Property.RateLimitPerUser Encode.int v.RateLimitPerUser
+            |> Encode.optional Property.Recipients (List.map User.encoder >> Encode.list) v.Recipients
+            |> Encode.optinull Property.Icon Encode.string v.Icon
+            |> Encode.optional Property.OwnerId Encode.string v.OwnerId
+            |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.optional Property.Managed Encode.bool v.Managed
+            |> Encode.optinull Property.ParentId Encode.string v.ParentId
+            |> Encode.optinull Property.LastPinTimestamp Encode.datetime v.LastPinTimestamp
+            |> Encode.optinull Property.RtcRegion Encode.string v.RtcRegion
+            |> Encode.optional Property.VideoQualityMode Encode.Enum.int v.VideoQualityMode
+            |> Encode.optional Property.MessageCount Encode.int v.MessageCount
+            |> Encode.optional Property.MemberCount Encode.int v.MemberCount
+            |> Encode.optional Property.ThreadMetadata ThreadMetadata.encoder v.ThreadMetadata
+            |> Encode.optional Property.Member ThreadMember.encoder v.Member
+            |> Encode.optional Property.DefaultAutoArchiveDuration Encode.Enum.int v.DefaultAutoArchiveDuration
+            |> Encode.optional Property.Permissions Encode.string v.Permissions
+            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.TotalMessagesSent Encode.int v.TotalMessagesSent
+            |> Encode.optional Property.AvailableTags (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
+            |> Encode.optional Property.AppliedTags (List.map Encode.string >> Encode.list) v.AppliedTags
+            |> Encode.optinull Property.DefaultReactionEmoji DefaultReaction.encoder v.DefaultReactionEmoji
+            |> Encode.optional Property.DefaultThreadRateLimitPerUser Encode.int v.DefaultThreadRateLimitPerUser
+            |> Encode.optinull Property.DefaultSortOrder Encode.Enum.int v.DefaultSortOrder
+            |> Encode.optional Property.DefaultForumLayout Encode.Enum.int v.DefaultForumLayout
+        )
+
+    module Partial =
+        let decoder path v =
+            Decode.object (fun get -> {
+                Id = get |> Get.required Property.Id Decode.string
+                Type = get |> Get.optional Property.Type Decode.Enum.int<ChannelType>
+                GuildId = get |> Get.optional Property.GuildId Decode.string
+                Position = get |> Get.optional Property.Position Decode.int
+                PermissionOverwrites = get |> Get.optional Property.PermissionOverwrites (Decode.list PermissionOverwrite.decoder)
+                Name = get |> Get.optinull Property.Name Decode.string
+                Topic = get |> Get.optinull Property.Topic Decode.string
+                Nsfw = get |> Get.optional Property.Nsfw Decode.bool
+                LastMessageId = get |> Get.optinull Property.LastMessageId Decode.string
+                Bitrate = get |> Get.optional Property.Bitrate Decode.int
+                UserLimit = get |> Get.optional Property.UserLimit Decode.int
+                RateLimitPerUser = get |> Get.optional Property.RateLimitPerUser Decode.int
+                Recipients = get |> Get.optional Property.Recipients (Decode.list User.decoder)
+                Icon = get |> Get.optinull Property.Icon Decode.string
+                OwnerId = get |> Get.optional Property.OwnerId Decode.string
+                ApplicationId = get |> Get.optional Property.ApplicationId Decode.string
+                Managed = get |> Get.optional Property.Managed Decode.bool
+                ParentId = get |> Get.optinull Property.ParentId Decode.string
+                LastPinTimestamp = get |> Get.optinull Property.LastPinTimestamp Decode.datetimeUtc
+                RtcRegion = get |> Get.optinull Property.RtcRegion Decode.string
+                VideoQualityMode = get |> Get.optional Property.VideoQualityMode Decode.Enum.int<VideoQualityMode>
+                MessageCount = get |> Get.optional Property.MessageCount Decode.int
+                MemberCount = get |> Get.optional Property.MemberCount Decode.int
+                ThreadMetadata = get |> Get.optional Property.ThreadMetadata ThreadMetadata.decoder
+                Member = get |> Get.optional Property.Member ThreadMember.decoder
+                DefaultAutoArchiveDuration = get |> Get.optional Property.DefaultAutoArchiveDuration Decode.Enum.int<AutoArchiveDuration>
+                Permissions = get |> Get.optional Property.Permissions Decode.string
+                Flags = get |> Get.optional Property.Flags Decode.int
+                TotalMessagesSent = get |> Get.optional Property.TotalMessagesSent Decode.int
+                AvailableTags = get |> Get.optional Property.AvailableTags (Decode.list ForumTag.decoder)
+                AppliedTags = get |> Get.optional Property.AppliedTags (Decode.list Decode.string)
+                DefaultReactionEmoji = get |> Get.optinull Property.DefaultReactionEmoji DefaultReaction.decoder
+                DefaultThreadRateLimitPerUser = get |> Get.optional Property.DefaultThreadRateLimitPerUser Decode.int
+                DefaultSortOrder = get |> Get.optinull Property.DefaultSortOrder Decode.Enum.int<ChannelSortOrder>
+                DefaultForumLayout = get |> Get.optional Property.DefaultForumLayout Decode.Enum.int<ForumLayout>
+            }) path v
+
+        let encoder (v: PartialChannel) =
+            Encode.object ([]
+                |> Encode.required Property.Id Encode.string v.Id
+                |> Encode.optional Property.Type Encode.Enum.int v.Type
+                |> Encode.optional Property.GuildId Encode.string v.GuildId
+                |> Encode.optional Property.Position Encode.int v.Position
+                |> Encode.optional Property.PermissionOverwrites (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
+                |> Encode.optinull Property.Name Encode.string v.Name
+                |> Encode.optinull Property.Topic Encode.string v.Topic
+                |> Encode.optional Property.Nsfw Encode.bool v.Nsfw
+                |> Encode.optinull Property.LastMessageId Encode.string v.LastMessageId
+                |> Encode.optional Property.Bitrate Encode.int v.Bitrate
+                |> Encode.optional Property.UserLimit Encode.int v.UserLimit
+                |> Encode.optional Property.RateLimitPerUser Encode.int v.RateLimitPerUser
+                |> Encode.optional Property.Recipients (List.map User.encoder >> Encode.list) v.Recipients
+                |> Encode.optinull Property.Icon Encode.string v.Icon
+                |> Encode.optional Property.OwnerId Encode.string v.OwnerId
+                |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
+                |> Encode.optional Property.Managed Encode.bool v.Managed
+                |> Encode.optinull Property.ParentId Encode.string v.ParentId
+                |> Encode.optinull Property.LastPinTimestamp Encode.datetime v.LastPinTimestamp
+                |> Encode.optinull Property.RtcRegion Encode.string v.RtcRegion
+                |> Encode.optional Property.VideoQualityMode Encode.Enum.int v.VideoQualityMode
+                |> Encode.optional Property.MessageCount Encode.int v.MessageCount
+                |> Encode.optional Property.MemberCount Encode.int v.MemberCount
+                |> Encode.optional Property.ThreadMetadata ThreadMetadata.encoder v.ThreadMetadata
+                |> Encode.optional Property.Member ThreadMember.encoder v.Member
+                |> Encode.optional Property.DefaultAutoArchiveDuration Encode.Enum.int v.DefaultAutoArchiveDuration
+                |> Encode.optional Property.Permissions Encode.string v.Permissions
+                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.TotalMessagesSent Encode.int v.TotalMessagesSent
+                |> Encode.optional Property.AvailableTags (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
+                |> Encode.optional Property.AppliedTags (List.map Encode.string >> Encode.list) v.AppliedTags
+                |> Encode.optinull Property.DefaultReactionEmoji DefaultReaction.encoder v.DefaultReactionEmoji
+                |> Encode.optional Property.DefaultThreadRateLimitPerUser Encode.int v.DefaultThreadRateLimitPerUser
+                |> Encode.optinull Property.DefaultSortOrder Encode.Enum.int v.DefaultSortOrder
+                |> Encode.optional Property.DefaultForumLayout Encode.Enum.int v.DefaultForumLayout
+            )
+
+module FollowedChannel =
+    module Property =
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] WebhookId = "webhook_id"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            WebhookId = get |> Get.required Property.WebhookId Decode.string
+        }) path v
+
+    let encoder (v: FollowedChannel) =
+        Encode.object ([]
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.WebhookId Encode.string v.WebhookId
+        )
+
+module PermissionOverwrite =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Allow = "allow"
+        let [<Literal>] Deny = "deny"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<PermissionOverwriteType>
+            Allow = get |> Get.required Property.Allow Decode.string
+            Deny = get |> Get.required Property.Deny Decode.string
+        }) path v
+
+    let encoder (v: PermissionOverwrite) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Allow Encode.string v.Allow
+            |> Encode.required Property.Deny Encode.string v.Deny
+        )
+
+    module Partial =
+        let decoder path v =
+            Decode.object (fun get -> {
+                Id = get |> Get.required Property.Id Decode.string
+                Type = get |> Get.optional Property.Type Decode.Enum.int<PermissionOverwriteType>
+                Allow = get |> Get.optional Property.Allow Decode.string
+                Deny = get |> Get.optional Property.Deny Decode.string
+            }) path v
+
+        let encoder (v: PartialPermissionOverwrite) =
+            Encode.object ([]
+                |> Encode.required Property.Id Encode.string v.Id
+                |> Encode.optional Property.Type Encode.Enum.int v.Type
+                |> Encode.optional Property.Allow Encode.string v.Allow
+                |> Encode.optional Property.Deny Encode.string v.Deny
+            )
+
+module ThreadMetadata =
+    module Property =
+        let [<Literal>] Archived = "archived"
+        let [<Literal>] AutoArchiveDuration = "auto_archive_duration"
+        let [<Literal>] ArchiveTimestamp = "archive_timestamp"
+        let [<Literal>] Locked = "locked"
+        let [<Literal>] Invitable = "invitable"
+        let [<Literal>] CreateTimestamp = "create_timestamp"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Archived = get |> Get.required Property.Archived Decode.bool
+            AutoArchiveDuration = get |> Get.required Property.AutoArchiveDuration Decode.Enum.int<AutoArchiveDuration>
+            ArchiveTimestamp = get |> Get.required Property.ArchiveTimestamp Decode.datetimeUtc
+            Locked = get |> Get.required Property.Locked Decode.bool
+            Invitable = get |> Get.optional Property.Invitable Decode.bool
+            CreateTimestamp = get |> Get.optinull Property.CreateTimestamp Decode.datetimeUtc
+        }) path v
+
+    let encoder (v: ThreadMetadata) =
+        Encode.object ([]
+            |> Encode.required Property.Archived Encode.bool v.Archived
+            |> Encode.required Property.AutoArchiveDuration Encode.Enum.int v.AutoArchiveDuration
+            |> Encode.required Property.ArchiveTimestamp Encode.datetime v.ArchiveTimestamp
+            |> Encode.required Property.Locked Encode.bool v.Locked
+            |> Encode.optional Property.Invitable Encode.bool v.Invitable
+            |> Encode.optinull Property.CreateTimestamp Encode.datetime v.CreateTimestamp
+        )
+
+module ThreadMember =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] JoinTimestamp = "join_timestamp"
+        let [<Literal>] Flags = "flags"
+        let [<Literal>] Member = "member"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.optional Property.Id Decode.string
+            UserId = get |> Get.optional Property.UserId Decode.string
+            JoinTimestamp = get |> Get.required Property.JoinTimestamp Decode.datetimeUtc
+            Flags = get |> Get.required Property.Flags Decode.int
+            Member = get |> Get.optional Property.Member GuildMember.decoder
+        }) path v
+
+    let encoder (v: ThreadMember) =
+        Encode.object ([]
+            |> Encode.optional Property.Id Encode.string v.Id
+            |> Encode.optional Property.UserId Encode.string v.UserId
+            |> Encode.required Property.JoinTimestamp Encode.datetime v.JoinTimestamp
+            |> Encode.required Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Member GuildMember.encoder v.Member
+        )
+
+module DefaultReaction =
+    module Property =
+        let [<Literal>] EmojiId = "emoji_id"
+        let [<Literal>] EmojiName = "emoji_name"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            EmojiId = get |> Get.nullable Property.EmojiId Decode.string
+            EmojiName = get |> Get.nullable Property.EmojiName Decode.string
+        }) path v
+
+    let encoder (v: DefaultReaction) =
+        Encode.object ([]
+            |> Encode.nullable Property.EmojiId Encode.string v.EmojiId
+            |> Encode.nullable Property.EmojiName Encode.string v.EmojiName
+        )
+
+module ForumTag =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Moderated = "moderated"
+        let [<Literal>] EmojiId = "emoji_id"
+        let [<Literal>] EmojiName = "emoji_name"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Moderated = get |> Get.required Property.Moderated Decode.bool
+            EmojiId = get |> Get.nullable Property.EmojiId Decode.string
+            EmojiName = get |> Get.nullable Property.EmojiName Decode.string
+        }) path v
+
+    let encoder (v: ForumTag) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Moderated Encode.bool v.Moderated
+            |> Encode.nullable Property.EmojiId Encode.string v.EmojiId
+            |> Encode.nullable Property.EmojiName Encode.string v.EmojiName
         )

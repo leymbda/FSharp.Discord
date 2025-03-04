@@ -680,210 +680,164 @@ type AutoModerationActionMetadata = {
 // ----- Resources: Channel -----
 
 // https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
-type BaseChannel = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: ChannelType
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "position">] Position: int option
-    [<JsonPropertyName "permission_overwrites">] PermissionOverwrites: PermissionOverwrite list option
-    [<JsonPropertyName "name">] Name: string option
-    [<JsonPropertyName "topic">] Topic: string option
-    [<JsonPropertyName "nsfw">] Nsfw: bool option
-    [<JsonPropertyName "last_message_id">] LastMessageId: string option
-    [<JsonPropertyName "bitrate">] Bitrate: int option
-    [<JsonPropertyName "user_limit">] UserLimit: int option
-    [<JsonPropertyName "rate_limit_per_user">] RateLimitPerUser: int option
-    [<JsonPropertyName "recipients">] Recipients: User list option
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "owner_id">] OwnerId: string option
-    [<JsonPropertyName "application_id">] ApplicationId: string option
-    [<JsonPropertyName "managed">] Managed: bool option
-    [<JsonPropertyName "parent_id">] ParentId: string option
-    [<JsonPropertyName "last_pin_timestamp">] LastPinTimestamp: DateTime option
-    [<JsonPropertyName "rtc_region">] RtcRegion: string option
-    [<JsonPropertyName "video_quality_mode">] VideoQualityMode: VideoQualityMode option
-    [<JsonPropertyName "message_count">] MessageCount: int option
-    [<JsonPropertyName "member_count">] MemberCount: int option
-    [<JsonPropertyName "thread_metadata">] ThreadMetadata: ThreadMetadata option
-    [<JsonPropertyName "member">] Member: ThreadMember option
-    [<JsonPropertyName "default_auto_archive_duration">] DefaultAutoArchiveDuration: AutoArchiveDuration option
-    [<JsonPropertyName "permissions">] Permissions: string option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "total_messages_sent">] TotalMessagesSent: int option
-    [<JsonPropertyName "available_tags">] AvailableTags: ForumTag list option
-    [<JsonPropertyName "applied_tags">] AppliedTags: int list option
-    [<JsonPropertyName "default_reaction_emoji">] DefaultReactionEmoji: DefaultReaction option
-    [<JsonPropertyName "default_thread_rate_limit_per_user">] DefaultThreadRateLimitPerUser: int option
-    [<JsonPropertyName "default_sort_order">] DefaultSortOrder: ChannelSortOrder option
-    [<JsonPropertyName "default_forum_layout">] DefaultForumLayout: ForumLayout option
+type Channel = {
+    Id: string
+    Type: ChannelType
+    GuildId: string option
+    Position: int option
+    PermissionOverwrites: PermissionOverwrite list option
+    Name: string option option
+    Topic: string option option
+    Nsfw: bool option
+    LastMessageId: string option option
+    Bitrate: int option
+    UserLimit: int option
+    RateLimitPerUser: int option
+    Recipients: User list option
+    Icon: string option option
+    OwnerId: string option
+    ApplicationId: string option
+    Managed: bool option
+    ParentId: string option option
+    LastPinTimestamp: DateTime option option
+    RtcRegion: string option option
+    VideoQualityMode: VideoQualityMode option
+    MessageCount: int option
+    MemberCount: int option
+    ThreadMetadata: ThreadMetadata option
+    Member: ThreadMember option // only in certain endpoints (likely should be an ExtraField)
+    DefaultAutoArchiveDuration: AutoArchiveDuration option
+    Permissions: string option // TODO: Convert bitfield into permission list
+    Flags: int option
+    TotalMessagesSent: int option
+    AvailableTags: ForumTag list option
+    AppliedTags: string list option
+    DefaultReactionEmoji: DefaultReaction option option
+    DefaultThreadRateLimitPerUser: int option
+    DefaultSortOrder: ChannelSortOrder option option
+    DefaultForumLayout: ForumLayout option
 }
 
 and PartialChannel = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: ChannelType option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "position">] Position: int option
-    [<JsonPropertyName "permission_overwrites">] PermissionOverwrites: PermissionOverwrite list option
-    [<JsonPropertyName "name">] Name: string option
-    [<JsonPropertyName "topic">] Topic: string option
-    [<JsonPropertyName "nsfw">] Nsfw: bool option
-    [<JsonPropertyName "last_message_id">] LastMessageId: string option
-    [<JsonPropertyName "bitrate">] Bitrate: int option
-    [<JsonPropertyName "user_limit">] UserLimit: int option
-    [<JsonPropertyName "rate_limit_per_user">] RateLimitPerUser: int option
-    [<JsonPropertyName "recipients">] Recipients: User list option
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "owner_id">] OwnerId: string option
-    [<JsonPropertyName "application_id">] ApplicationId: string option
-    [<JsonPropertyName "managed">] Managed: bool option
-    [<JsonPropertyName "parent_id">] ParentId: string option
-    [<JsonPropertyName "last_pin_timestamp">] LastPinTimestamp: DateTime option
-    [<JsonPropertyName "rtc_region">] RtcRegion: string option
-    [<JsonPropertyName "video_quality_mode">] VideoQualityMode: VideoQualityMode option
-    [<JsonPropertyName "message_count">] MessageCount: int option
-    [<JsonPropertyName "member_count">] MemberCount: int option
-    [<JsonPropertyName "thread_metadata">] ThreadMetadata: ThreadMetadata option
-    [<JsonPropertyName "member">] Member: ThreadMember option
-    [<JsonPropertyName "default_auto_archive_duration">] DefaultAutoArchiveDuration: AutoArchiveDuration option
-    [<JsonPropertyName "permissions">] Permissions: string option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "total_messages_sent">] TotalMessagesSent: int option
-    [<JsonPropertyName "available_tags">] AvailableTags: ForumTag list option
-    [<JsonPropertyName "applied_tags">] AppliedTags: int list option
-    [<JsonPropertyName "default_reaction_emoji">] DefaultReactionEmoji: DefaultReaction option
-    [<JsonPropertyName "default_thread_rate_limit_per_user">] DefaultThreadRateLimitPerUser: int option
-    [<JsonPropertyName "default_sort_order">] DefaultSortOrder: ChannelSortOrder option
-    [<JsonPropertyName "default_forum_layout">] DefaultForumLayout: ForumLayout option
+    Id: string
+    Type: ChannelType option
+    GuildId: string option
+    Position: int option
+    PermissionOverwrites: PermissionOverwrite list option
+    Name: string option option
+    Topic: string option option
+    Nsfw: bool option
+    LastMessageId: string option option
+    Bitrate: int option
+    UserLimit: int option
+    RateLimitPerUser: int option
+    Recipients: User list option
+    Icon: string option option
+    OwnerId: string option
+    ApplicationId: string option
+    Managed: bool option
+    ParentId: string option option
+    LastPinTimestamp: DateTime option option
+    RtcRegion: string option option
+    VideoQualityMode: VideoQualityMode option
+    MessageCount: int option
+    MemberCount: int option
+    ThreadMetadata: ThreadMetadata option
+    Member: ThreadMember option // only in certain endpoints (likely should be an ExtraField)
+    DefaultAutoArchiveDuration: AutoArchiveDuration option
+    Permissions: string option // TODO: Convert bitfield into permission list
+    Flags: int option
+    TotalMessagesSent: int option
+    AvailableTags: ForumTag list option
+    AppliedTags: string list option
+    DefaultReactionEmoji: DefaultReaction option option
+    DefaultThreadRateLimitPerUser: int option
+    DefaultSortOrder: ChannelSortOrder option option
+    DefaultForumLayout: ForumLayout option
 }
 
-type GuildTextChannel = BaseChannel
-type DmChannel = BaseChannel
-type GuildVoiceChannel = BaseChannel
-type GroupDmChannel = BaseChannel
-type GuildCategoryChannel = BaseChannel
-type GuildAnnouncementChannel = BaseChannel
-type AnnouncementThreadChannel = BaseChannel
-type PublicThreadChannel = BaseChannel
-type PrivateThreadChannel = BaseChannel
-type GuildStageVoiceChannel = BaseChannel
-type GuildDirectoryChannel = BaseChannel
-type GuildForumChannel = BaseChannel
-type GuildMediaChannel = BaseChannel
+//type GuildTextChannel = BaseChannel
+//type DmChannel = BaseChannel
+//type GuildVoiceChannel = BaseChannel
+//type GroupDmChannel = BaseChannel
+//type GuildCategoryChannel = BaseChannel
+//type GuildAnnouncementChannel = BaseChannel
+//type AnnouncementThreadChannel = BaseChannel
+//type PublicThreadChannel = BaseChannel
+//type PrivateThreadChannel = BaseChannel
+//type GuildStageVoiceChannel = BaseChannel
+//type GuildDirectoryChannel = BaseChannel
+//type GuildForumChannel = BaseChannel
+//type GuildMediaChannel = BaseChannel
 
-// TODO: Define actual values available for these channel types rather than using the base
-
-[<JsonConverter(typeof<ChannelConverter>)>]
-type Channel =
-    | GUILD_TEXT          of GuildTextChannel
-    | DM                  of DmChannel
-    | GUILD_VOICE         of GuildVoiceChannel
-    | GROUP_DM            of GroupDmChannel
-    | GUILD_CATEGORY      of GuildCategoryChannel
-    | GUILD_ANNOUNCEMENT  of GuildAnnouncementChannel
-    | ANNOUNCEMENT_THREAD of AnnouncementThreadChannel
-    | PUBLIC_THREAD       of PublicThreadChannel
-    | PRIVATE_THREAD      of PrivateThreadChannel
-    | GUILD_STAGE_VOICE   of GuildStageVoiceChannel
-    | GUILD_DIRECTORY     of GuildDirectoryChannel
-    | GUILD_FORUM         of GuildForumChannel
-    | GUILD_MEDIA         of GuildMediaChannel
-
-type ChannelConverter () =
-    inherit JsonConverter<Channel> ()
-
-    override _.Read (reader, _, _) =
-        let success, document = JsonDocument.TryParseValue &reader
-        if not success then JsonException.raise "Failed to parse JSON document"
-
-        let channelType = document.RootElement.GetProperty "type" |> _.GetInt32() |> enum<ChannelType>
-        let json = document.RootElement.GetRawText()
-
-        match channelType with
-        | ChannelType.GUILD_TEXT -> Channel.GUILD_TEXT <| Json.deserializeF<GuildTextChannel> json
-        | ChannelType.DM -> Channel.DM <| Json.deserializeF<DmChannel> json
-        | ChannelType.GUILD_VOICE -> Channel.GUILD_VOICE <| Json.deserializeF<GuildVoiceChannel> json
-        | ChannelType.GROUP_DM -> Channel.GROUP_DM <| Json.deserializeF<GroupDmChannel> json
-        | ChannelType.GUILD_CATEGORY -> Channel.GUILD_CATEGORY <| Json.deserializeF<GuildCategoryChannel> json
-        | ChannelType.GUILD_ANNOUNCEMENT -> Channel.GUILD_ANNOUNCEMENT <| Json.deserializeF<GuildAnnouncementChannel> json
-        | ChannelType.ANNOUNCEMENT_THREAD -> Channel.ANNOUNCEMENT_THREAD <| Json.deserializeF<AnnouncementThreadChannel> json
-        | ChannelType.PUBLIC_THREAD -> Channel.PUBLIC_THREAD <| Json.deserializeF<PublicThreadChannel> json
-        | ChannelType.PRIVATE_THREAD -> Channel.PRIVATE_THREAD <| Json.deserializeF<PrivateThreadChannel> json
-        | ChannelType.GUILD_STAGE_VOICE -> Channel.GUILD_STAGE_VOICE <| Json.deserializeF<GuildStageVoiceChannel> json
-        | ChannelType.GUILD_DIRECTORY -> Channel.GUILD_DIRECTORY <| Json.deserializeF<GuildDirectoryChannel> json
-        | ChannelType.GUILD_FORUM -> Channel.GUILD_FORUM <| Json.deserializeF<GuildForumChannel> json
-        | ChannelType.GUILD_MEDIA -> Channel.GUILD_MEDIA <| Json.deserializeF<GuildMediaChannel> json
-        | _ -> JsonException.raise "Unexpected ChannelType provided"
-
-    override _.Write (writer, value, _) =
-        match value with
-        | Channel.GUILD_TEXT channel -> Json.serializeF channel
-        | Channel.DM channel -> Json.serializeF channel
-        | Channel.GUILD_VOICE channel -> Json.serializeF channel
-        | Channel.GROUP_DM channel -> Json.serializeF channel
-        | Channel.GUILD_CATEGORY channel -> Json.serializeF channel
-        | Channel.GUILD_ANNOUNCEMENT channel -> Json.serializeF channel
-        | Channel.ANNOUNCEMENT_THREAD channel -> Json.serializeF channel
-        | Channel.PUBLIC_THREAD channel -> Json.serializeF channel
-        | Channel.PRIVATE_THREAD channel -> Json.serializeF channel
-        | Channel.GUILD_STAGE_VOICE channel -> Json.serializeF channel
-        | Channel.GUILD_DIRECTORY channel -> Json.serializeF channel
-        | Channel.GUILD_FORUM channel -> Json.serializeF channel
-        | Channel.GUILD_MEDIA channel -> Json.serializeF channel
-        |> writer.WriteRawValue
+//type Channel =
+//    | GUILD_TEXT          of GuildTextChannel
+//    | DM                  of DmChannel
+//    | GUILD_VOICE         of GuildVoiceChannel
+//    | GROUP_DM            of GroupDmChannel
+//    | GUILD_CATEGORY      of GuildCategoryChannel
+//    | GUILD_ANNOUNCEMENT  of GuildAnnouncementChannel
+//    | ANNOUNCEMENT_THREAD of AnnouncementThreadChannel
+//    | PUBLIC_THREAD       of PublicThreadChannel
+//    | PRIVATE_THREAD      of PrivateThreadChannel
+//    | GUILD_STAGE_VOICE   of GuildStageVoiceChannel
+//    | GUILD_DIRECTORY     of GuildDirectoryChannel
+//    | GUILD_FORUM         of GuildForumChannel
+//    | GUILD_MEDIA         of GuildMediaChannel
 
 // https://discord.com/developers/docs/resources/channel#followed-channel-object-followed-channel-structure
 type FollowedChannel = {
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "webhook_id">] WebhookId: string
+    ChannelId: string
+    WebhookId: string
 }
 
 // https://discord.com/developers/docs/resources/channel#overwrite-object-overwrite-structure
 type PermissionOverwrite = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: PermissionOverwriteType
-    [<JsonPropertyName "allow">] Allow: string
-    [<JsonPropertyName "deny">] Deny: string
+    Id: string
+    Type: PermissionOverwriteType
+    Allow: string
+    Deny: string
 }
 
 and PartialPermissionOverwrite = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: PermissionOverwriteType
-    [<JsonPropertyName "allow">] Allow: string option
-    [<JsonPropertyName "deny">] Deny: string option
+    Id: string
+    Type: PermissionOverwriteType option
+    Allow: string option
+    Deny: string option
 }
 
 // https://discord.com/developers/docs/resources/channel#thread-metadata-object-thread-metadata-structure
 type ThreadMetadata = {
-    [<JsonPropertyName "archived">] Archived: bool
-    [<JsonPropertyName "auto_archive_duration">] AutoArchiveDuration: int
-    [<JsonPropertyName "archive_timestamp">] ArchiveTimestamp: DateTime
-    [<JsonPropertyName "locked">] Locked: bool
-    [<JsonPropertyName "invitable">] Invitable: bool option
-    [<JsonPropertyName "create_timestamp">] CreateTimestamp: DateTime option
+    Archived: bool
+    AutoArchiveDuration: AutoArchiveDuration
+    ArchiveTimestamp: DateTime
+    Locked: bool
+    Invitable: bool option
+    CreateTimestamp: DateTime option option
 }
 
 // https://discord.com/developers/docs/resources/channel#thread-member-object-thread-member-structure
 type ThreadMember = {
-    [<JsonPropertyName "id">] Id: string option
-    [<JsonPropertyName "user_id">] UserId: string option
-    [<JsonPropertyName "join_timestamp">] JoinTimestamp: DateTime
-    [<JsonPropertyName "flags">] Flags: int
-    [<JsonPropertyName "member">] Member: GuildMember option
+    Id: string option
+    UserId: string option
+    JoinTimestamp: DateTime
+    Flags: int
+    Member: GuildMember option
 }
 
 // https://discord.com/developers/docs/resources/channel#default-reaction-object-default-reaction-structure
 type DefaultReaction = {
-    [<JsonPropertyName "emoji_id">] EmojiId: string option
-    [<JsonPropertyName "emoji_name">] EmojiName: string option
+    EmojiId: string option
+    EmojiName: string option
 }
 
 // https://discord.com/developers/docs/resources/channel#forum-tag-object-forum-tag-structure
 type ForumTag = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "moderated">] Moderated: bool
-    [<JsonPropertyName "emoji_id">] EmojiId: string option
-    [<JsonPropertyName "emoji_name">] EmojiName: string option
+    Id: string
+    Name: string
+    Moderated: bool
+    EmojiId: string option
+    EmojiName: string option
 }
 
 // TODO: "When updating a GUILD_FORUM or a GUILD_MEDIA channel, tag objects in available_tags only require the name field."
