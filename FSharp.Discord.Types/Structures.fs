@@ -862,16 +862,16 @@ and PartialEmoji = Emoji // All emoji properties are already optional
 
 // https://discord.com/developers/docs/resources/entitlement#entitlement-object-entitlement-structure
 type Entitlement = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "sku_id">] SkuId: string
-    [<JsonPropertyName "application_id">] ApplicationId: string
-    [<JsonPropertyName "user_id">] UserId: string option
-    [<JsonPropertyName "type">] Type: EntitlementType
-    [<JsonPropertyName "deleted">] Deleted: bool
-    [<JsonPropertyName "starts_at">] StartsAt: DateTime option
-    [<JsonPropertyName "ends_at">] EndsAt: DateTime option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "consumed">] Consumed: bool option
+    Id: string
+    SkuId: string
+    ApplicationId: string
+    UserId: string option
+    Type: EntitlementType
+    Deleted: bool
+    StartsAt: DateTime option
+    EndsAt: DateTime option
+    GuildId: string option
+    Consumed: bool option
 }
 
 // ----- Resources: Guild -----

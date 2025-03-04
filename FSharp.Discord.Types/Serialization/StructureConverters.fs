@@ -2190,3 +2190,44 @@ module Emoji =
                 |> Encode.optional Property.Animated Encode.bool v.Animated
                 |> Encode.optional Property.Available Encode.bool v.Available
             )
+
+module Entitlement =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] SkuId = "sku_id"
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Deleted = "deleted"
+        let [<Literal>] StartsAt = "starts_at"
+        let [<Literal>] EndsAt = "ends_at"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Consumed = "consumed"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            SkuId = get |> Get.required Property.SkuId Decode.string
+            ApplicationId = get |> Get.required Property.ApplicationId Decode.string
+            UserId = get |> Get.optional Property.UserId Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<EntitlementType>
+            Deleted = get |> Get.required Property.Deleted Decode.bool
+            StartsAt = get |> Get.nullable Property.StartsAt Decode.datetimeUtc
+            EndsAt = get |> Get.nullable Property.EndsAt Decode.datetimeUtc
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Consumed = get |> Get.optional Property.Consumed Decode.bool
+        }) path v
+
+    let encoder (v: Entitlement) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.SkuId Encode.string v.SkuId
+            |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.optional Property.UserId Encode.string v.UserId
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Deleted Encode.bool v.Deleted
+            |> Encode.nullable Property.StartsAt Encode.datetime v.StartsAt
+            |> Encode.nullable Property.EndsAt Encode.datetime v.EndsAt
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Consumed Encode.bool v.Consumed
+        )
