@@ -1026,7 +1026,7 @@ module Activity =
             ApplicationId = get.Optional.Field Property.ApplicationId Decode.string
             Details = get.Optional.Field Property.Details Decode.string
             State = get.Optional.Field Property.State Decode.string
-            Emoji = get.Optional.Field Property.Emoji Emoji.decoder
+            Emoji = get.Optional.Field Property.Emoji ActivityEmoji.decoder
             Party = get.Optional.Field Property.Party ActivityParty.decoder
             Assets = get.Optional.Field Property.Assets ActivityAssets.decoder
             Secrets = get.Optional.Field Property.Secrets ActivitySecrets.decoder
@@ -1045,7 +1045,7 @@ module Activity =
             Property.ApplicationId, Encode.option Encode.string v.ApplicationId
             Property.Details, Encode.option Encode.string v.Details
             Property.State, Encode.option Encode.string v.State
-            Property.Emoji, Encode.option Emoji.encoder v.Emoji
+            Property.Emoji, Encode.option ActivityEmoji.encoder v.Emoji
             Property.Party, Encode.option ActivityParty.encoder v.Party
             Property.Assets, Encode.option ActivityAssets.encoder v.Assets
             Property.Secrets, Encode.option ActivitySecrets.encoder v.Secrets
@@ -2130,3 +2130,63 @@ module ForumTag =
             |> Encode.nullable Property.EmojiId Encode.string v.EmojiId
             |> Encode.nullable Property.EmojiName Encode.string v.EmojiName
         )
+
+module Emoji =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Roles = "roles"
+        let [<Literal>] User = "user"
+        let [<Literal>] RequireColons = "require_colons"
+        let [<Literal>] Managed = "managed"
+        let [<Literal>] Animated = "animated"
+        let [<Literal>] Available = "available"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.nullable Property.Id Decode.string
+            Name = get |> Get.nullable Property.Name Decode.string
+            Roles = get |> Get.optional Property.Roles (Decode.list Decode.string)
+            User = get |> Get.optional Property.User User.decoder
+            RequireColons = get |> Get.optional Property.RequireColons Decode.bool
+            Managed = get |> Get.optional Property.Managed Decode.bool
+            Animated = get |> Get.optional Property.Animated Decode.bool
+            Available = get |> Get.optional Property.Available Decode.bool
+        }) path v
+
+    let encoder (v: Emoji) =
+        Encode.object ([]
+            |> Encode.nullable Property.Id Encode.string v.Id
+            |> Encode.nullable Property.Name Encode.string v.Name
+            |> Encode.optional Property.Roles (List.map Encode.string >> Encode.list) v.Roles
+            |> Encode.optional Property.User User.encoder v.User
+            |> Encode.optional Property.RequireColons Encode.bool v.RequireColons
+            |> Encode.optional Property.Managed Encode.bool v.Managed
+            |> Encode.optional Property.Animated Encode.bool v.Animated
+            |> Encode.optional Property.Available Encode.bool v.Available
+        )
+
+    module Partial =
+        let decoder path v: Result<PartialEmoji, DecoderError> =
+            Decode.object (fun get -> {
+                Id = get |> Get.nullable Property.Id Decode.string
+                Name = get |> Get.nullable Property.Name Decode.string
+                Roles = get |> Get.optional Property.Roles (Decode.list Decode.string)
+                User = get |> Get.optional Property.User User.decoder
+                RequireColons = get |> Get.optional Property.RequireColons Decode.bool
+                Managed = get |> Get.optional Property.Managed Decode.bool
+                Animated = get |> Get.optional Property.Animated Decode.bool
+                Available = get |> Get.optional Property.Available Decode.bool
+            }) path v
+
+        let encoder (v: PartialEmoji) =
+            Encode.object ([]
+                |> Encode.nullable Property.Id Encode.string v.Id
+                |> Encode.nullable Property.Name Encode.string v.Name
+                |> Encode.optional Property.Roles (List.map Encode.string >> Encode.list) v.Roles
+                |> Encode.optional Property.User User.encoder v.User
+                |> Encode.optional Property.RequireColons Encode.bool v.RequireColons
+                |> Encode.optional Property.Managed Encode.bool v.Managed
+                |> Encode.optional Property.Animated Encode.bool v.Animated
+                |> Encode.optional Property.Available Encode.bool v.Available
+            )

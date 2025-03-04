@@ -846,14 +846,14 @@ type ForumTag = {
 
 // https://discord.com/developers/docs/resources/emoji#emoji-object-emoji-structure
 type Emoji = {
-    [<JsonPropertyName "id">] Id: string option
-    [<JsonPropertyName "name">] Name: string option
-    [<JsonPropertyName "roles">] Roles: string list option
-    [<JsonPropertyName "user">] User: User option
-    [<JsonPropertyName "require_colons">] RequireColons: bool option
-    [<JsonPropertyName "managed">] Managed: bool option
-    [<JsonPropertyName "animated">] Animated: bool option
-    [<JsonPropertyName "available">] Available: bool option
+    Id: string option
+    Name: string option
+    Roles: string list option
+    User: User option
+    RequireColons: bool option
+    Managed: bool option
+    Animated: bool option
+    Available: bool option
 }
 
 and PartialEmoji = Emoji // All emoji properties are already optional
