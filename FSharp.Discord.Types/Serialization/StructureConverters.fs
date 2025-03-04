@@ -1670,3 +1670,113 @@ module AuditLogChange =
         )
 
     // TODO: Fix old and new value serialization to not just be `None` always
+
+module AutoModerationRule =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] CreatorId = "creator_id"
+        let [<Literal>] EventType = "event_type"
+        let [<Literal>] TriggerType = "trigger_type"
+        let [<Literal>] TriggerMetadata = "trigger_metadata"
+        let [<Literal>] Actions = "actions"
+        let [<Literal>] Enabled = "enabled"
+        let [<Literal>] ExemptRoles = "exempt_roles"
+        let [<Literal>] ExemptChannels = "exempt_channels"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            CreatorId = get |> Get.required Property.CreatorId Decode.string
+            EventType = get |> Get.required Property.EventType Decode.Enum.int<AutoModerationEventType>
+            TriggerType = get |> Get.required Property.TriggerType Decode.Enum.int<AutoModerationTriggerType>
+            TriggerMetadata = get |> Get.required Property.TriggerMetadata AutoModerationTriggerMetadata.decoder
+            Actions = get |> Get.required Property.Actions (Decode.list AutoModerationAction.decoder)
+            Enabled = get |> Get.required Property.Enabled Decode.bool
+            ExemptRoles = get |> Get.required Property.ExemptRoles (Decode.list Decode.string)
+            ExemptChannels = get |> Get.required Property.ExemptChannels (Decode.list Decode.string)
+        }) path v
+
+    let encoder (v: AutoModerationRule) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.CreatorId Encode.string v.CreatorId
+            |> Encode.required Property.EventType Encode.Enum.int v.EventType
+            |> Encode.required Property.TriggerType Encode.Enum.int v.TriggerType
+            |> Encode.required Property.TriggerMetadata AutoModerationTriggerMetadata.encoder v.TriggerMetadata
+            |> Encode.required Property.Actions (List.map AutoModerationAction.encoder >> Encode.list) v.Actions
+            |> Encode.required Property.Enabled Encode.bool v.Enabled
+            |> Encode.required Property.ExemptRoles (List.map Encode.string >> Encode.list) v.ExemptRoles
+            |> Encode.required Property.ExemptChannels (List.map Encode.string >> Encode.list) v.ExemptChannels
+        )
+
+module AutoModerationTriggerMetadata =
+    module Property =
+        let [<Literal>] KeywordFilter = "keyword_filter"
+        let [<Literal>] RegexPatterns = "regex_patterns"
+        let [<Literal>] Presets = "presets"
+        let [<Literal>] AllowList = "allow_list"
+        let [<Literal>] MentionTotalLimit = "mention_total_limit"
+        let [<Literal>] MentionRaidProtectionEnabled = "mention_raid_protection_enabled"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            KeywordFilter = get |> Get.optional Property.KeywordFilter (Decode.list Decode.string)
+            RegexPatterns = get |> Get.optional Property.RegexPatterns (Decode.list Decode.string)
+            Presets = get |> Get.optional Property.Presets (Decode.list Decode.Enum.int<AutoModerationKeywordPreset>)
+            AllowList = get |> Get.optional Property.AllowList (Decode.list Decode.string)
+            MentionTotalLimit = get |> Get.optional Property.MentionTotalLimit Decode.int
+            MentionRaidProtectionEnabled = get |> Get.optional Property.MentionRaidProtectionEnabled Decode.bool
+        }) path v
+
+    let encoder (v: AutoModerationTriggerMetadata) =
+        Encode.object ([]
+            |> Encode.optional Property.KeywordFilter (List.map Encode.string >> Encode.list) v.KeywordFilter
+            |> Encode.optional Property.RegexPatterns (List.map Encode.string >> Encode.list) v.RegexPatterns
+            |> Encode.optional Property.Presets (List.map Encode.Enum.int >> Encode.list) v.Presets
+            |> Encode.optional Property.AllowList (List.map Encode.string >> Encode.list) v.AllowList
+            |> Encode.optional Property.MentionTotalLimit Encode.int v.MentionTotalLimit
+            |> Encode.optional Property.MentionRaidProtectionEnabled Encode.bool v.MentionRaidProtectionEnabled
+        )
+
+module AutoModerationAction =
+    module Property =
+        let [<Literal>] Type = "type"
+        let [<Literal>] Metadata = "metadata"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Type = get |> Get.required Property.Type Decode.Enum.int<AutoModerationActionType>
+            Metadata = get |> Get.optional Property.Metadata AutoModerationActionMetadata.decoder
+        }) path v
+
+    let encoder (v: AutoModerationAction) =
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.Metadata AutoModerationActionMetadata.encoder v.Metadata
+        )
+
+module AutoModerationActionMetadata =
+    module Property =
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] DurationSeconds = "duration_seconds"
+        let [<Literal>] CustomMessage = "custom_message"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            ChannelId = get |> Get.optional Property.ChannelId Decode.string
+            DurationSeconds = get |> Get.optional Property.DurationSeconds Decode.int
+            CustomMessage = get |> Get.optional Property.CustomMessage Decode.string
+        }) path v
+
+    let encoder (v: AutoModerationActionMetadata) =
+        Encode.object ([]
+            |> Encode.optional Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.DurationSeconds Encode.int v.DurationSeconds
+            |> Encode.optional Property.CustomMessage Encode.string v.CustomMessage
+        )
