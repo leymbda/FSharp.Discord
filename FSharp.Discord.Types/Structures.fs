@@ -1043,117 +1043,117 @@ and PartialGuildMember = {
 
 // https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
 type Integration = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "type">] Type: GuildIntegrationType
-    [<JsonPropertyName "enabled">] Enabled: bool
-    [<JsonPropertyName "syncing">] Syncing: bool option
-    [<JsonPropertyName "role_id">] RoleId: string option
-    [<JsonPropertyName "enable_emoticons">] EnableEmoticons: bool option
-    [<JsonPropertyName "expire_behavior">] ExpireBehavior: IntegrationExpireBehavior option
-    [<JsonPropertyName "expire_grace_period">] ExpireGracePeriod: int option
-    [<JsonPropertyName "user">] User: User option
-    [<JsonPropertyName "account">] Account: IntegrationAccount
-    [<JsonPropertyName "synced_at">] SyncedAt: DateTime option
-    [<JsonPropertyName "subscriber_count">] SubscriberCount: int option
-    [<JsonPropertyName "revoked">] Revoked: bool option
-    [<JsonPropertyName "application">] Application: IntegrationApplication option
-    [<JsonPropertyName "scopes">] Scopes: OAuthScope list option
+    Id: string
+    Name: string
+    Type: GuildIntegrationType
+    Enabled: bool
+    Syncing: bool option
+    RoleId: string option
+    EnableEmoticons: bool option
+    ExpireBehavior: IntegrationExpireBehavior option
+    ExpireGracePeriod: int option
+    User: User option
+    Account: IntegrationAccount
+    SyncedAt: DateTime option
+    SubscriberCount: int option
+    Revoked: bool option
+    Application: IntegrationApplication option
+    Scopes: OAuthScope list option
 }
 
 and PartialIntegration = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string option
-    [<JsonPropertyName "type">] Type: GuildIntegrationType option
-    [<JsonPropertyName "enabled">] Enabled: bool option
-    [<JsonPropertyName "syncing">] Syncing: bool option
-    [<JsonPropertyName "role_id">] RoleId: string option
-    [<JsonPropertyName "enable_emoticons">] EnableEmoticons: bool option
-    [<JsonPropertyName "expire_behavior">] ExpireBehavior: IntegrationExpireBehavior option
-    [<JsonPropertyName "expire_grace_period">] ExpireGracePeriod: int option
-    [<JsonPropertyName "user">] User: User option
-    [<JsonPropertyName "account">] Account: IntegrationAccount option
-    [<JsonPropertyName "synced_at">] SyncedAt: DateTime option
-    [<JsonPropertyName "subscriber_count">] SubscriberCount: int option
-    [<JsonPropertyName "revoked">] Revoked: bool option
-    [<JsonPropertyName "application">] Application: IntegrationApplication option
-    [<JsonPropertyName "scopes">] Scopes: OAuthScope list option
+    Id: string
+    Name: string option
+    Type: GuildIntegrationType option
+    Enabled: bool option
+    Syncing: bool option
+    RoleId: string option
+    EnableEmoticons: bool option
+    ExpireBehavior: IntegrationExpireBehavior option
+    ExpireGracePeriod: int option
+    User: User option
+    Account: IntegrationAccount option
+    SyncedAt: DateTime option
+    SubscriberCount: int option
+    Revoked: bool option
+    Application: IntegrationApplication option
+    Scopes: OAuthScope list option
 }
 
 // https://discord.com/developers/docs/resources/guild#integration-account-object-integration-account-structure
 type IntegrationAccount = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
+    Id: string
+    Name: string
 }
 
 // https://discord.com/developers/docs/resources/guild#integration-application-object-integration-application-structure
 type IntegrationApplication = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "description">] Description: string
-    [<JsonPropertyName "bot">] Bot: User option
+    Id: string
+    Name: string
+    Icon: string option
+    Description: string
+    Bot: User option
 }
 
 // https://discord.com/developers/docs/resources/guild#ban-object-ban-structure
 type Ban = {
-    [<JsonPropertyName "reason">] Reason: string option
-    [<JsonPropertyName "user">] User: User
+    Reason: string option
+    User: User
 }
 
 // https://discord.com/developers/docs/resources/guild#welcome-screen-object-welcome-screen-structure
 type WelcomeScreen = {
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "welcome_channels">] WelcomeChannels: WelcomeScreenChannel list
+    Description: string option
+    WelcomeChannels: WelcomeScreenChannel list
 }
 
 // https://discord.com/developers/docs/resources/guild#welcome-screen-object-welcome-screen-channel-structure
 type WelcomeScreenChannel = {
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "description">] Description: string
-    [<JsonPropertyName "emoji_id">] EmojiId: string option
-    [<JsonPropertyName "emoji_name">] EmojiName: string option
+    ChannelId: string
+    Description: string
+    EmojiId: string option
+    EmojiName: string option
 }
 
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-guild-onboarding-structure
 type GuildOnboarding = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "prompts">] Prompts: GuildOnboardingPrompt list
-    [<JsonPropertyName "default_channel_ids">] DefaultChannelIds: string list
-    [<JsonPropertyName "enabled">] Enabled: bool
-    [<JsonPropertyName "mode">] Mode: OnboardingMode
+    GuildId: string
+    Prompts: GuildOnboardingPrompt list
+    DefaultChannelIds: string list
+    Enabled: bool
+    Mode: OnboardingMode
 }
 
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-onboarding-prompt-structure
 type GuildOnboardingPrompt = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: OnboardingPromptType
-    [<JsonPropertyName "options">] Options: GuildOnboardingPromptOption list
-    [<JsonPropertyName "title">] Title: string
-    [<JsonPropertyName "single_select">] SingleSelect: bool
-    [<JsonPropertyName "required">] Required: bool
-    [<JsonPropertyName "in_onboarding">] InOnboarding: bool
+    Id: string
+    Type: OnboardingPromptType
+    Options: GuildOnboardingPromptOption list
+    Title: string
+    SingleSelect: bool
+    Required: bool
+    InOnboarding: bool
 }
 
 // https://discord.com/developers/docs/resources/guild#guild-onboarding-object-prompt-option-structure
 type GuildOnboardingPromptOption = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "channel_ids">] ChannelIds: string list
-    [<JsonPropertyName "role_ids">] RoleIds: string list
-    [<JsonPropertyName "emoji">] Emoji: Emoji option
-    [<JsonPropertyName "emoji_id">] EmojiId: string option
-    [<JsonPropertyName "emoji_name">] EmojiName: string option
-    [<JsonPropertyName "emoji_animated">] EmojiAnimated: bool option
-    [<JsonPropertyName "title">] Title: string
-    [<JsonPropertyName "description">] Description: string
+    Id: string
+    ChannelIds: string list
+    RoleIds: string list
+    Emoji: Emoji option
+    EmojiId: string option
+    EmojiName: string option
+    EmojiAnimated: bool option
+    Title: string
+    Description: string option
 }
 
 // https://discord.com/developers/docs/resources/guild#incidents-data-object-incidents-data-structure
 type IncidentsData = {
-    [<JsonPropertyName "invites_disabled_until">] InvitesDisabledUntil: DateTime option
-    [<JsonPropertyName "dms_disabled_until">] DmsDisabledUntil: DateTime option
-    [<JsonPropertyName "dm_spam_detected_at">] DmSpamDetectedAt: DateTime option
-    [<JsonPropertyName "raid_detected_at">] RaidDetectedAt: DateTime option
+    InvitesDisabledUntil: DateTime option
+    DmsDisabledUntil: DateTime option
+    DmSpamDetectedAt: DateTime option option
+    RaidDetectedAt: DateTime option option
 }
 
 // ----- Resources: Guild Scheduled Event -----

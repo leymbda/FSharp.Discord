@@ -2661,3 +2661,322 @@ module GuildMember =
                 |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
                 |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
             )
+
+module Integration =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Enabled = "enabled"
+        let [<Literal>] Syncing = "syncing"
+        let [<Literal>] RoleId = "role_id"
+        let [<Literal>] EnableEmoticons = "enable_emoticons"
+        let [<Literal>] ExpireBehavior = "expire_behavior"
+        let [<Literal>] ExpireGracePeriod = "expire_grace_period"
+        let [<Literal>] User = "user"
+        let [<Literal>] Account = "account"
+        let [<Literal>] SyncedAt = "synced_at"
+        let [<Literal>] SubscriberCount = "subscriber_count"
+        let [<Literal>] Revoked = "revoked"
+        let [<Literal>] Application = "application"
+        let [<Literal>] Scopes = "scopes"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Integration.Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Type = get |> Get.required Property.Type GuildIntegrationType.decoder
+            Enabled = get |> Get.required Property.Enabled Decode.bool
+            Syncing = get |> Get.optional Property.Syncing Decode.bool
+            RoleId = get |> Get.optional Property.RoleId Decode.string
+            EnableEmoticons = get |> Get.optional Property.EnableEmoticons Decode.bool
+            ExpireBehavior = get |> Get.optional Property.ExpireBehavior Decode.Enum.int<IntegrationExpireBehavior>
+            ExpireGracePeriod = get |> Get.optional Property.ExpireGracePeriod Decode.int
+            User = get |> Get.optional Property.User User.decoder
+            Account = get |> Get.required Property.Account IntegrationAccount.decoder
+            SyncedAt = get |> Get.optional Property.SyncedAt Decode.datetimeUtc
+            SubscriberCount = get |> Get.optional Property.SubscriberCount Decode.int
+            Revoked = get |> Get.optional Property.Revoked Decode.bool
+            Application = get |> Get.optional Property.Application IntegrationApplication.decoder
+            Scopes = get |> Get.optional Property.Scopes (Decode.list OAuthScope.decoder)
+        }) path v
+
+    let encoder (v: Integration) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Type GuildIntegrationType.encoder v.Type
+            |> Encode.required Property.Enabled Encode.bool v.Enabled
+            |> Encode.optional Property.Syncing Encode.bool v.Syncing
+            |> Encode.optional Property.RoleId Encode.string v.RoleId
+            |> Encode.optional Property.EnableEmoticons Encode.bool v.EnableEmoticons
+            |> Encode.optional Property.ExpireBehavior Encode.Enum.int v.ExpireBehavior
+            |> Encode.optional Property.ExpireGracePeriod Encode.int v.ExpireGracePeriod
+            |> Encode.optional Property.User User.encoder v.User
+            |> Encode.required Property.Account IntegrationAccount.encoder v.Account
+            |> Encode.optional Property.SyncedAt Encode.datetime v.SyncedAt
+            |> Encode.optional Property.SubscriberCount Encode.int v.SubscriberCount
+            |> Encode.optional Property.Revoked Encode.bool v.Revoked
+            |> Encode.optional Property.Application IntegrationApplication.encoder v.Application
+            |> Encode.optional Property.Scopes (List.map OAuthScope.encoder >> Encode.list) v.Scopes
+        )
+
+    module Partial =
+        let decoder path v =
+            Decode.object (fun get -> {
+                Id = get |> Get.required Property.Id Decode.string
+                Name = get |> Get.optional Property.Name Decode.string
+                Type = get |> Get.optional Property.Type GuildIntegrationType.decoder
+                Enabled = get |> Get.optional Property.Enabled Decode.bool
+                Syncing = get |> Get.optional Property.Syncing Decode.bool
+                RoleId = get |> Get.optional Property.RoleId Decode.string
+                EnableEmoticons = get |> Get.optional Property.EnableEmoticons Decode.bool
+                ExpireBehavior = get |> Get.optional Property.ExpireBehavior Decode.Enum.int<IntegrationExpireBehavior>
+                ExpireGracePeriod = get |> Get.optional Property.ExpireGracePeriod Decode.int
+                User = get |> Get.optional Property.User User.decoder
+                Account = get |> Get.optional Property.Account IntegrationAccount.decoder
+                SyncedAt = get |> Get.optional Property.SyncedAt Decode.datetimeUtc
+                SubscriberCount = get |> Get.optional Property.SubscriberCount Decode.int
+                Revoked = get |> Get.optional Property.Revoked Decode.bool
+                Application = get |> Get.optional Property.Application IntegrationApplication.decoder
+                Scopes = get |> Get.optional Property.Scopes (Decode.list OAuthScope.decoder)
+            }) path v
+
+        let encoder (v: PartialIntegration) =
+            Encode.object ([]
+                |> Encode.required Property.Id Encode.string v.Id
+                |> Encode.optional Property.Name Encode.string v.Name
+                |> Encode.optional Property.Type GuildIntegrationType.encoder v.Type
+                |> Encode.optional Property.Enabled Encode.bool v.Enabled
+                |> Encode.optional Property.Syncing Encode.bool v.Syncing
+                |> Encode.optional Property.RoleId Encode.string v.RoleId
+                |> Encode.optional Property.EnableEmoticons Encode.bool v.EnableEmoticons
+                |> Encode.optional Property.ExpireBehavior Encode.Enum.int v.ExpireBehavior
+                |> Encode.optional Property.ExpireGracePeriod Encode.int v.ExpireGracePeriod
+                |> Encode.optional Property.User User.encoder v.User
+                |> Encode.optional Property.Account IntegrationAccount.encoder v.Account
+                |> Encode.optional Property.SyncedAt Encode.datetime v.SyncedAt
+                |> Encode.optional Property.SubscriberCount Encode.int v.SubscriberCount
+                |> Encode.optional Property.Revoked Encode.bool v.Revoked
+                |> Encode.optional Property.Application IntegrationApplication.encoder v.Application
+                |> Encode.optional Property.Scopes (List.map OAuthScope.encoder >> Encode.list) v.Scopes
+            )
+
+module IntegrationAccount =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+        }) path v
+
+    let encoder (v: IntegrationAccount) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+        )
+
+module IntegrationApplication =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Icon = "icon"
+        let [<Literal>] Description = "description"
+        let [<Literal>] Summary = "summary"
+        let [<Literal>] Bot = "bot"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Icon = get |> Get.nullable Property.Icon Decode.string
+            Description = get |> Get.required Property.Description Decode.string
+            Bot = get |> Get.optional Property.Bot User.decoder
+        }) path v
+
+    let encoder (v: IntegrationApplication) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.nullable Property.Icon Encode.string v.Icon
+            |> Encode.required Property.Description Encode.string v.Description
+            |> Encode.optional Property.Bot User.encoder v.Bot
+        )
+
+module Ban =
+    module Property =
+        let [<Literal>] Reason = "reason"
+        let [<Literal>] User = "user"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Reason = get |> Get.nullable Property.Reason Decode.string
+            User = get |> Get.required Property.User User.decoder
+        }) path v
+    let encoder (v: Ban) =
+        Encode.object ([]
+            |> Encode.nullable Property.Reason Encode.string v.Reason
+            |> Encode.required Property.User User.encoder v.User
+        )
+
+module WelcomeScreen =
+    module Property =
+        let [<Literal>] Description = "description"
+        let [<Literal>] WelcomeChannels = "welcome_channels"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Description = get |> Get.nullable Property.Description Decode.string
+            WelcomeChannels = get |> Get.required Property.WelcomeChannels (Decode.list WelcomeScreenChannel.decoder)
+        }) path v
+
+    let encoder (v: WelcomeScreen) =
+        Encode.object ([]
+            |> Encode.nullable Property.Description Encode.string v.Description
+            |> Encode.required Property.WelcomeChannels (List.map WelcomeScreenChannel.encoder >> Encode.list) v.WelcomeChannels
+        )
+
+module WelcomeScreenChannel =
+    module Property =
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] Description = "description"
+        let [<Literal>] EmojiId = "emoji_id"
+        let [<Literal>] EmojiName = "emoji_name"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            Description = get |> Get.required Property.Description Decode.string
+            EmojiId = get |> Get.nullable Property.EmojiId Decode.string
+            EmojiName = get |> Get.nullable Property.EmojiName Decode.string
+        }) path v
+
+    let encoder (v: WelcomeScreenChannel) =
+        Encode.object ([]
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.Description Encode.string v.Description
+            |> Encode.nullable Property.EmojiId Encode.string v.EmojiId
+            |> Encode.nullable Property.EmojiName Encode.string v.EmojiName
+        )
+
+module GuildOnboarding =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Prompts = "prompts"
+        let [<Literal>] DefaultChannelIds = "default_channel_ids"
+        let [<Literal>] Enabled = "enabled"
+        let [<Literal>] Mode = "mode"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Prompts = get |> Get.required Property.Prompts (Decode.list GuildOnboardingPrompt.decoder)
+            DefaultChannelIds = get |> Get.required Property.DefaultChannelIds (Decode.list Decode.string)
+            Enabled = get |> Get.required Property.Enabled Decode.bool
+            Mode = get |> Get.required Property.Mode Decode.Enum.int<OnboardingMode>
+        }) path v
+
+    let encoder (v: GuildOnboarding) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Prompts (List.map GuildOnboardingPrompt.encoder >> Encode.list) v.Prompts
+            |> Encode.required Property.DefaultChannelIds (List.map Encode.string >> Encode.list) v.DefaultChannelIds
+            |> Encode.required Property.Enabled Encode.bool v.Enabled
+            |> Encode.required Property.Mode Encode.Enum.int v.Mode
+        )
+
+module GuildOnboardingPrompt =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Options = "options"
+        let [<Literal>] Title = "title"
+        let [<Literal>] SingleSelect = "single_select"
+        let [<Literal>] Required = "required"
+        let [<Literal>] InOnboarding = "in_onboarding"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<OnboardingPromptType>
+            Options = get |> Get.required Property.Options (Decode.list GuildOnboardingPromptOption.decoder)
+            Title = get |> Get.required Property.Title Decode.string
+            SingleSelect = get |> Get.required Property.SingleSelect Decode.bool
+            Required = get |> Get.required Property.Required Decode.bool
+            InOnboarding = get |> Get.required Property.InOnboarding Decode.bool
+        }) path v
+
+    let encoder (v: GuildOnboardingPrompt) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Options (List.map GuildOnboardingPromptOption.encoder >> Encode.list) v.Options
+            |> Encode.required Property.Title Encode.string v.Title
+            |> Encode.required Property.SingleSelect Encode.bool v.SingleSelect
+            |> Encode.required Property.Required Encode.bool v.Required
+            |> Encode.required Property.InOnboarding Encode.bool v.InOnboarding
+        )
+
+module GuildOnboardingPromptOption =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] ChannelIds = "channel_ids"
+        let [<Literal>] RoleIds = "role_ids"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] EmojiId = "emoji_id"
+        let [<Literal>] EmojiName = "emoji_name"
+        let [<Literal>] EmojiAnimated = "emoji_animated"
+        let [<Literal>] Title = "title"
+        let [<Literal>] Description = "description"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            ChannelIds = get |> Get.required Property.ChannelIds (Decode.list Decode.string)
+            RoleIds = get |> Get.required Property.RoleIds (Decode.list Decode.string)
+            Emoji = get |> Get.optional Property.Emoji Emoji.decoder
+            EmojiId = get |> Get.optional Property.EmojiId Decode.string
+            EmojiName = get |> Get.optional Property.EmojiName Decode.string
+            EmojiAnimated = get |> Get.optional Property.EmojiAnimated Decode.bool
+            Title = get |> Get.required Property.Title Decode.string
+            Description = get |> Get.nullable Property.Description Decode.string
+        }) path v
+
+    let encoder (v: GuildOnboardingPromptOption) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.ChannelIds (List.map Encode.string >> Encode.list) v.ChannelIds
+            |> Encode.required Property.RoleIds (List.map Encode.string >> Encode.list) v.RoleIds
+            |> Encode.optional Property.Emoji Emoji.encoder v.Emoji
+            |> Encode.optional Property.EmojiId Encode.string v.EmojiId
+            |> Encode.optional Property.EmojiName Encode.string v.EmojiName
+            |> Encode.optional Property.EmojiAnimated Encode.bool v.EmojiAnimated
+            |> Encode.required Property.Title Encode.string v.Title
+            |> Encode.nullable Property.Description Encode.string v.Description
+        )
+
+module IncidentsData =
+    module Property =
+        let [<Literal>] InvitesDisabledUntil = "invites_disabled_until"
+        let [<Literal>] DmsDisabledUntil = "dms_disabled_until"
+        let [<Literal>] DmSpamDetectedAt = "dm_spam_detected_at"
+        let [<Literal>] RaidDetectedAt = "raid_detected_at"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            InvitesDisabledUntil = get |> Get.nullable Property.InvitesDisabledUntil Decode.datetimeUtc
+            DmsDisabledUntil = get |> Get.nullable Property.DmsDisabledUntil Decode.datetimeUtc
+            DmSpamDetectedAt = get |> Get.optinull Property.DmSpamDetectedAt Decode.datetimeUtc
+            RaidDetectedAt = get |> Get.optinull Property.RaidDetectedAt Decode.datetimeUtc
+        }) path v
+
+    let encoder (v: IncidentsData) =
+        Encode.object ([]
+            |> Encode.nullable Property.InvitesDisabledUntil Encode.datetime v.InvitesDisabledUntil
+            |> Encode.nullable Property.DmsDisabledUntil Encode.datetime v.DmsDisabledUntil
+            |> Encode.optinull Property.DmSpamDetectedAt Encode.datetime v.DmSpamDetectedAt
+            |> Encode.optinull Property.RaidDetectedAt Encode.datetime v.RaidDetectedAt
+        )
