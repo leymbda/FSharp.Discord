@@ -2231,3 +2231,433 @@ module Entitlement =
             |> Encode.optional Property.GuildId Encode.string v.GuildId
             |> Encode.optional Property.Consumed Encode.bool v.Consumed
         )
+
+module Guild =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Icon = "icon"
+        let [<Literal>] IconHash = "icon_hash"
+        let [<Literal>] Splash = "splash"
+        let [<Literal>] DiscoverySplash = "discovery_splash"
+        let [<Literal>] Owner = "owner"
+        let [<Literal>] OwnerId = "owner_id"
+        let [<Literal>] Permissions = "permissions"
+        let [<Literal>] AfkChannelId = "afk_channel_id"
+        let [<Literal>] AfkTimeout = "afk_timeout"
+        let [<Literal>] WidgetEnabled = "widget_enabled"
+        let [<Literal>] WidgetChannelId = "widget_channel_id"
+        let [<Literal>] VerificationLevel = "verification_level"
+        let [<Literal>] DefaultMessageNotifications = "default_message_notifications"
+        let [<Literal>] ExplicitContentFilter = "explicit_content_filter"
+        let [<Literal>] Roles = "roles"
+        let [<Literal>] Emojis = "emojis"
+        let [<Literal>] Features = "features"
+        let [<Literal>] MfaLevel = "mfa_level"
+        let [<Literal>] ApplicationId = "applicationId"
+        let [<Literal>] SystemChannelId = "system_channel_id"
+        let [<Literal>] SystemChannelFlags = "system_channel_flags"
+        let [<Literal>] RulesChannelId = "rules_channel_id"
+        let [<Literal>] MaxPresences = "max_presences"
+        let [<Literal>] MaxMembers = "max_members"
+        let [<Literal>] VanityUrlCode = "vanity_url_code"
+        let [<Literal>] Description = "description"
+        let [<Literal>] Banner = "banner"
+        let [<Literal>] PremiumTier = "premium_tier"
+        let [<Literal>] PremiumSubscriptionCount = "premium_subscription_count"
+        let [<Literal>] PreferredLocale = "preferred_locale"
+        let [<Literal>] PublicUpdatesChannelId = "public_updates_channel_id"
+        let [<Literal>] MaxVideoChannelUsers = "max_video_channel_users"
+        let [<Literal>] MaxStageVideoChannelUsers = "max_stage_video_channel_users"
+        let [<Literal>] ApproximateMemberCount = "approximate_member_count"
+        let [<Literal>] ApproximatePresenceCount = "approximate_presence_count"
+        let [<Literal>] WelcomeScreen = "welcome_screen"
+        let [<Literal>] NsfwLevel = "nsfw_level"
+        let [<Literal>] Stickers = "stickers"
+        let [<Literal>] PremiumProgressBarEnabled = "premium_progress_bar_enabled"
+        let [<Literal>] SafetyAlertsChannelId = "safety_alerts_channel_id"
+        let [<Literal>] IncidentsData = "incidents_data"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Icon = get |> Get.nullable Property.Icon Decode.string
+            IconHash = get |> Get.optinull Property.IconHash Decode.string
+            Splash = get |> Get.nullable Property.Splash Decode.string
+            DiscoverySplash = get |> Get.nullable Property.DiscoverySplash Decode.string
+            Owner = get |> Get.optional Property.Owner Decode.bool
+            OwnerId = get |> Get.required Property.OwnerId Decode.string
+            Permissions = get |> Get.optional Property.Permissions Decode.string
+            AfkChannelId = get |> Get.nullable Property.AfkChannelId Decode.string
+            AfkTimeout = get |> Get.required Property.AfkTimeout Decode.int
+            WidgetEnabled = get |> Get.optional Property.WidgetEnabled Decode.bool
+            WidgetChannelId = get |> Get.optinull Property.WidgetChannelId Decode.string
+            VerificationLevel = get |> Get.required Property.VerificationLevel Decode.Enum.int<VerificationLevel>
+            DefaultMessageNotifications = get |> Get.required Property.DefaultMessageNotifications Decode.Enum.int<MessageNotificationLevel>
+            ExplicitContentFilter = get |> Get.required Property.ExplicitContentFilter Decode.Enum.int<ExplicitContentFilterLevel>
+            Roles = get |> Get.required Property.Roles (Decode.list Role.decoder)
+            Emojis = get |> Get.required Property.Emojis (Decode.list Emoji.decoder)
+            Features = get |> Get.required Property.Features (Decode.list GuildFeature.decoder)
+            MfaLevel = get |> Get.required Property.MfaLevel Decode.Enum.int<MfaLevel>
+            ApplicationId = get |> Get.nullable Property.ApplicationId Decode.string
+            SystemChannelId = get |> Get.nullable Property.SystemChannelId Decode.string
+            SystemChannelFlags = get |> Get.required Property.SystemChannelFlags Decode.int
+            RulesChannelId = get |> Get.nullable Property.RulesChannelId Decode.string
+            MaxPresences = get |> Get.optinull Property.MaxPresences Decode.int
+            MaxMembers = get |> Get.optional Property.MaxMembers Decode.int
+            VanityUrlCode = get |> Get.nullable Property.VanityUrlCode Decode.string
+            Description = get |> Get.nullable Property.Description Decode.string
+            Banner = get |> Get.nullable Property.Banner Decode.string
+            PremiumTier = get |> Get.required Property.PremiumTier Decode.Enum.int<GuildPremiumTier>
+            PremiumSubscriptionCount = get |> Get.optional Property.PremiumSubscriptionCount Decode.int
+            PreferredLocale = get |> Get.required Property.PreferredLocale Decode.string
+            PublicUpdatesChannelId = get |> Get.nullable Property.PublicUpdatesChannelId Decode.string
+            MaxVideoChannelUsers = get |> Get.optional Property.MaxVideoChannelUsers Decode.int
+            MaxStageVideoChannelUsers = get |> Get.optional Property.MaxStageVideoChannelUsers Decode.int
+            ApproximateMemberCount = get |> Get.optional Property.ApproximateMemberCount Decode.int
+            ApproximatePresenceCount = get |> Get.optional Property.ApproximatePresenceCount Decode.int
+            WelcomeScreen = get |> Get.optional Property.WelcomeScreen WelcomeScreen.decoder
+            NsfwLevel = get |> Get.required Property.NsfwLevel Decode.Enum.int<NsfwLevel>
+            Stickers = get |> Get.optional Property.Stickers (Decode.list Sticker.decoder)
+            PremiumProgressBarEnabled = get |> Get.required Property.PremiumProgressBarEnabled Decode.bool
+            SafetyAlertsChannelId = get |> Get.nullable Property.SafetyAlertsChannelId Decode.string
+            IncidentsData = get |> Get.nullable Property.IncidentsData IncidentData.decoder
+        }) path v
+
+    let encoder (v: Guild) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.nullable Property.Icon Encode.string v.Icon
+            |> Encode.optinull Property.IconHash Encode.string v.IconHash
+            |> Encode.nullable Property.Splash Encode.string v.Splash
+            |> Encode.nullable Property.DiscoverySplash Encode.string v.DiscoverySplash
+            |> Encode.optional Property.Owner Encode.bool v.Owner
+            |> Encode.required Property.OwnerId Encode.string v.OwnerId
+            |> Encode.optional Property.Permissions Encode.string v.Permissions
+            |> Encode.nullable Property.AfkChannelId Encode.string v.AfkChannelId
+            |> Encode.required Property.AfkTimeout Encode.int v.AfkTimeout
+            |> Encode.optional Property.WidgetEnabled Encode.bool v.WidgetEnabled
+            |> Encode.optinull Property.WidgetChannelId Encode.string v.WidgetChannelId
+            |> Encode.required Property.VerificationLevel Encode.Enum.int v.VerificationLevel
+            |> Encode.required Property.DefaultMessageNotifications Encode.Enum.int v.DefaultMessageNotifications
+            |> Encode.required Property.ExplicitContentFilter Encode.Enum.int v.ExplicitContentFilter
+            |> Encode.required Property.Roles (List.map Role.encoder >> Encode.list) v.Roles
+            |> Encode.required Property.Emojis (List.map Emoji.encoder >> Encode.list) v.Emojis
+            |> Encode.required Property.Features (List.map GuildFeature.encoder >> Encode.list) v.Features
+            |> Encode.required Property.MfaLevel Encode.Enum.int v.MfaLevel
+            |> Encode.nullable Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.nullable Property.SystemChannelId Encode.string v.SystemChannelId
+            |> Encode.required Property.SystemChannelFlags Encode.int v.SystemChannelFlags
+            |> Encode.nullable Property.RulesChannelId Encode.string v.RulesChannelId
+            |> Encode.optinull Property.MaxPresences Encode.int v.MaxPresences
+            |> Encode.optional Property.MaxMembers Encode.int v.MaxMembers
+            |> Encode.nullable Property.VanityUrlCode Encode.string v.VanityUrlCode
+            |> Encode.nullable Property.Description Encode.string v.Description
+            |> Encode.required Property.PremiumTier Encode.Enum.int v.PremiumTier
+            |> Encode.optional Property.PremiumSubscriptionCount Encode.int v.PremiumSubscriptionCount
+            |> Encode.required Property.PreferredLocale Encode.string v.PreferredLocale
+            |> Encode.nullable Property.PublicUpdatesChannelId Encode.string v.PublicUpdatesChannelId
+            |> Encode.optional Property.MaxVideoChannelUsers Encode.int v.MaxVideoChannelUsers
+            |> Encode.optional Property.MaxStageVideoChannelUsers Encode.int v.MaxStageVideoChannelUsers
+            |> Encode.optional Property.ApproximateMemberCount Encode.int v.ApproximateMemberCount
+            |> Encode.optional Property.ApproximatePresenceCount Encode.int v.ApproximatePresenceCount
+            |> Encode.optional Property.WelcomeScreen WelcomeScreen.encoder v.WelcomeScreen
+            |> Encode.required Property.NsfwLevel Encode.Enum.int v.NsfwLevel
+            |> Encode.optional Property.Stickers (List.map Sticker.encoder >> Encode.list) v.Stickers
+            |> Encode.required Property.PremiumProgressBarEnabled Encode.bool v.PremiumProgressBarEnabled
+            |> Encode.nullable Property.SafetyAlertsChannelId Encode.string v.SafetyAlertsChannelId
+            |> Encode.nullable Property.IncidentsData IncidentData.encoder v.IncidentsData
+        )
+
+    module Partial =
+        let decoder path v =
+            Decode.object (fun get -> {
+                Id = get |> Get.required Property.Id Decode.string
+                Name = get |> Get.optional Property.Name Decode.string
+                Icon = get |> Get.optinull Property.Icon Decode.string
+                IconHash = get |> Get.optinull Property.IconHash Decode.string
+                Splash = get |> Get.optinull Property.Splash Decode.string
+                DiscoverySplash = get |> Get.optinull Property.DiscoverySplash Decode.string
+                Owner = get |> Get.optional Property.Owner Decode.bool
+                OwnerId = get |> Get.optional Property.OwnerId Decode.string
+                Permissions = get |> Get.optional Property.Permissions Decode.string
+                AfkChannelId = get |> Get.optinull Property.AfkChannelId Decode.string
+                AfkTimeout = get |> Get.optional Property.AfkTimeout Decode.int
+                WidgetEnabled = get |> Get.optional Property.WidgetEnabled Decode.bool
+                WidgetChannelId = get |> Get.optinull Property.WidgetChannelId Decode.string
+                VerificationLevel = get |> Get.optional Property.VerificationLevel Decode.Enum.int<VerificationLevel>
+                DefaultMessageNotifications = get |> Get.optional Property.DefaultMessageNotifications Decode.Enum.int<MessageNotificationLevel>
+                ExplicitContentFilter = get |> Get.optional Property.ExplicitContentFilter Decode.Enum.int<ExplicitContentFilterLevel>
+                Roles = get |> Get.optional Property.Roles (Decode.list Role.decoder)
+                Emojis = get |> Get.optional Property.Emojis (Decode.list Emoji.decoder)
+                Features = get |> Get.optional Property.Features (Decode.list GuildFeature.decoder)
+                MfaLevel = get |> Get.optional Property.MfaLevel Decode.Enum.int<MfaLevel>
+                ApplicationId = get |> Get.optinull Property.ApplicationId Decode.string
+                SystemChannelId = get |> Get.optinull Property.SystemChannelId Decode.string
+                SystemChannelFlags = get |> Get.optional Property.SystemChannelFlags Decode.int
+                RulesChannelId = get |> Get.optinull Property.RulesChannelId Decode.string
+                MaxPresences = get |> Get.optinull Property.MaxPresences Decode.int
+                MaxMembers = get |> Get.optional Property.MaxMembers Decode.int
+                VanityUrlCode = get |> Get.optinull Property.VanityUrlCode Decode.string
+                Description = get |> Get.optinull Property.Description Decode.string
+                Banner = get |> Get.optinull Property.Banner Decode.string
+                PremiumTier = get |> Get.optional Property.PremiumTier Decode.Enum.int<GuildPremiumTier>
+                PremiumSubscriptionCount = get |> Get.optional Property.PremiumSubscriptionCount Decode.int
+                PreferredLocale = get |> Get.optional Property.PreferredLocale Decode.string
+                PublicUpdatesChannelId = get |> Get.optinull Property.PublicUpdatesChannelId Decode.string
+                MaxVideoChannelUsers = get |> Get.optional Property.MaxVideoChannelUsers Decode.int
+                MaxStageVideoChannelUsers = get |> Get.optional Property.MaxStageVideoChannelUsers Decode.int
+                ApproximateMemberCount = get |> Get.optional Property.ApproximateMemberCount Decode.int
+                ApproximatePresenceCount = get |> Get.optional Property.ApproximatePresenceCount Decode.int
+                WelcomeScreen = get |> Get.optional Property.WelcomeScreen WelcomeScreen.decoder
+                NsfwLevel = get |> Get.optional Property.NsfwLevel Decode.Enum.int<NsfwLevel>
+                Stickers = get |> Get.optional Property.Stickers (Decode.list Sticker.decoder)
+                PremiumProgressBarEnabled = get |> Get.optional Property.PremiumProgressBarEnabled Decode.bool
+                SafetyAlertsChannelId = get |> Get.optinull Property.SafetyAlertsChannelId Decode.string
+                IncidentsData = get |> Get.optinull Property.IncidentsData IncidentData.decoder
+            }) path v
+
+        let encoder (v: PartialGuild) =
+            Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.optional Property.Name Encode.string v.Name
+            |> Encode.optinull Property.Icon Encode.string v.Icon
+            |> Encode.optinull Property.IconHash Encode.string v.IconHash
+            |> Encode.optinull Property.Splash Encode.string v.Splash
+            |> Encode.optinull Property.DiscoverySplash Encode.string v.DiscoverySplash
+            |> Encode.optional Property.Owner Encode.bool v.Owner
+            |> Encode.optional Property.OwnerId Encode.string v.OwnerId
+            |> Encode.optional Property.Permissions Encode.string v.Permissions
+            |> Encode.optinull Property.AfkChannelId Encode.string v.AfkChannelId
+            |> Encode.optional Property.AfkTimeout Encode.int v.AfkTimeout
+            |> Encode.optional Property.WidgetEnabled Encode.bool v.WidgetEnabled
+            |> Encode.optinull Property.WidgetChannelId Encode.string v.WidgetChannelId
+            |> Encode.optional Property.VerificationLevel Encode.Enum.int v.VerificationLevel
+            |> Encode.optional Property.DefaultMessageNotifications Encode.Enum.int v.DefaultMessageNotifications
+            |> Encode.optional Property.ExplicitContentFilter Encode.Enum.int v.ExplicitContentFilter
+            |> Encode.optional Property.Roles (List.map Role.encoder >> Encode.list) v.Roles
+            |> Encode.optional Property.Emojis (List.map Emoji.encoder >> Encode.list) v.Emojis
+            |> Encode.optional Property.Features (List.map GuildFeature.encoder >> Encode.list) v.Features
+            |> Encode.optional Property.MfaLevel Encode.Enum.int v.MfaLevel
+            |> Encode.optinull Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.optinull Property.SystemChannelId Encode.string v.SystemChannelId
+            |> Encode.optional Property.SystemChannelFlags Encode.int v.SystemChannelFlags
+            |> Encode.optinull Property.RulesChannelId Encode.string v.RulesChannelId
+            |> Encode.optinull Property.MaxPresences Encode.int v.MaxPresences
+            |> Encode.optional Property.MaxMembers Encode.int v.MaxMembers
+            |> Encode.optinull Property.VanityUrlCode Encode.string v.VanityUrlCode
+            |> Encode.optinull Property.Description Encode.string v.Description
+            |> Encode.optional Property.PremiumTier Encode.Enum.int v.PremiumTier
+            |> Encode.optional Property.PremiumSubscriptionCount Encode.int v.PremiumSubscriptionCount
+            |> Encode.optional Property.PreferredLocale Encode.string v.PreferredLocale
+            |> Encode.optinull Property.PublicUpdatesChannelId Encode.string v.PublicUpdatesChannelId
+            |> Encode.optional Property.MaxVideoChannelUsers Encode.int v.MaxVideoChannelUsers
+            |> Encode.optional Property.MaxStageVideoChannelUsers Encode.int v.MaxStageVideoChannelUsers
+            |> Encode.optional Property.ApproximateMemberCount Encode.int v.ApproximateMemberCount
+            |> Encode.optional Property.ApproximatePresenceCount Encode.int v.ApproximatePresenceCount
+            |> Encode.optional Property.WelcomeScreen WelcomeScreen.encoder v.WelcomeScreen
+            |> Encode.optional Property.NsfwLevel Encode.Enum.int v.NsfwLevel
+            |> Encode.optional Property.Stickers (List.map Sticker.encoder >> Encode.list) v.Stickers
+            |> Encode.optional Property.PremiumProgressBarEnabled Encode.bool v.PremiumProgressBarEnabled
+            |> Encode.optinull Property.SafetyAlertsChannelId Encode.string v.SafetyAlertsChannelId
+            |> Encode.optinull Property.IncidentsData IncidentData.encoder v.IncidentsData
+            )
+
+module UnavailableGuild =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Unavailable = "unavailable"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Unavailable = get |> Get.required Property.Unavailable Decode.bool
+        }) path v
+
+    let encoder (v: UnavailableGuild) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Unavailable Encode.bool v.Unavailable
+        )
+
+module GuildPreview =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Icon = "icon"
+        let [<Literal>] Splash = "splash"
+        let [<Literal>] DiscoverySplash = "discovery_splash"
+        let [<Literal>] Emojis = "emojis"
+        let [<Literal>] Features = "features"
+        let [<Literal>] ApproximateMemberCount = "approximate_member_count"
+        let [<Literal>] ApproximatePresenceCount = "approximate_presence_count"
+        let [<Literal>] Description = "description"
+        let [<Literal>] Stickers = "stickers"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Icon = get |> Get.nullable Property.Icon Decode.string
+            Splash = get |> Get.nullable Property.Splash Decode.string
+            DiscoverySplash = get |> Get.nullable Property.DiscoverySplash Decode.string
+            Emojis = get |> Get.required Property.Emojis (Decode.list Emoji.decoder)
+            Features = get |> Get.required Property.Features (Decode.list GuildFeature.decoder)
+            ApproximateMemberCount = get |> Get.required Property.ApproximateMemberCount Decode.int
+            ApproximatePresenceCount = get |> Get.required Property.ApproximatePresenceCount Decode.int
+            Description = get |> Get.nullable Property.Description Decode.string
+            Stickers = get |> Get.required Property.Stickers (Decode.list Sticker.decoder)
+        }) path v
+
+    let encoder (v: GuildPreview) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.nullable Property.Icon Encode.string v.Icon
+            |> Encode.nullable Property.Splash Encode.string v.Splash
+            |> Encode.nullable Property.DiscoverySplash Encode.string v.DiscoverySplash
+            |> Encode.required Property.Emojis (List.map Emoji.encoder >> Encode.list) v.Emojis
+            |> Encode.required Property.Features (List.map GuildFeature.encoder >> Encode.list) v.Features
+            |> Encode.required Property.ApproximateMemberCount Encode.int v.ApproximateMemberCount
+            |> Encode.required Property.ApproximatePresenceCount Encode.int v.ApproximatePresenceCount
+            |> Encode.nullable Property.Description Encode.string v.Description
+            |> Encode.required Property.Stickers (List.map Sticker.encoder >> Encode.list) v.Stickers
+        )
+
+module GuildWidgetSettings =
+    module Property =
+        let [<Literal>] Enabled = "enabled"
+        let [<Literal>] ChannelId = "channel_id"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Enabled = get |> Get.required Property.Enabled Decode.bool
+            ChannelId = get |> Get.nullable Property.ChannelId Decode.string
+        }) path v
+
+    let encoder (v: GuildWidgetSettings) =
+        Encode.object ([]
+            |> Encode.required Property.Enabled Encode.bool v.Enabled
+            |> Encode.nullable Property.ChannelId Encode.string v.ChannelId
+        )
+
+module GuildWidget =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] InstantInvite = "instant_invite"
+        let [<Literal>] Channels = "channels"
+        let [<Literal>] Members = "members"
+        let [<Literal>] PresenceCount = "presence_count"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            InstantInvite = get |> Get.nullable Property.InstantInvite Decode.string
+            Channels = get |> Get.required Property.Channels (Decode.list Channel.Partial.decoder)
+            Members = get |> Get.required Property.Members (Decode.list User.Partial.decoder)
+            PresenceCount = get |> Get.required Property.PresenceCount Decode.int
+        })
+
+    let encoder (v: GuildWidget) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.nullable Property.InstantInvite Encode.string v.InstantInvite
+            |> Encode.required Property.Channels (List.map Channel.Partial.encoder >> Encode.list) v.Channels
+            |> Encode.required Property.Members (List.map User.Partial.encoder >> Encode.list) v.Members
+            |> Encode.required Property.PresenceCount Encode.int v.PresenceCount
+        )
+
+module GuildMember =
+    module Property =
+        let [<Literal>] User = "user"
+        let [<Literal>] Nick = "nick"
+        let [<Literal>] Avatar = "avatar"
+        let [<Literal>] Banner = "banner"
+        let [<Literal>] Roles = "roles"
+        let [<Literal>] JoinedAt = "joined_at"
+        let [<Literal>] PremiumSince = "premium_since"
+        let [<Literal>] Deaf = "deaf"
+        let [<Literal>] Mute = "mute"
+        let [<Literal>] Flags = "flags"
+        let [<Literal>] Pending = "pending"
+        let [<Literal>] Permissions = "permissions"
+        let [<Literal>] CommunicationDisabledUntil = "communication_disabled_until"
+        let [<Literal>] AvatarDecorationData = "avatar_decoration_data"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            User = get |> Get.required Property.User User.decoder
+            Nick = get |> Get.optinull Property.Nick Decode.string
+            Avatar = get |> Get.optinull Property.Avatar Decode.string
+            Banner = get |> Get.optinull Property.Banner Decode.string
+            Roles = get |> Get.required Property.Roles (Decode.list Decode.string)
+            JoinedAt = get |> Get.required Property.JoinedAt Decode.datetimeUtc
+            PremiumSince = get |> Get.optinull Property.PremiumSince Decode.datetimeUtc
+            Deaf = get |> Get.required Property.Deaf Decode.bool
+            Mute = get |> Get.required Property.Mute Decode.bool
+            Flags = get |> Get.required Property.Flags Decode.int
+            Pending = get |> Get.optional Property.Pending Decode.bool
+            Permissions = get |> Get.optional Property.Permissions Decode.string
+            CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
+            AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
+        }) path v
+
+    let encoder (v: GuildMember) =
+        Encode.object ([]
+            |> Encode.required Property.User User.encoder v.User
+            |> Encode.optinull Property.Nick Encode.string v.Nick
+            |> Encode.optinull Property.Avatar Encode.string v.Avatar
+            |> Encode.optinull Property.Banner Encode.string v.Banner
+            |> Encode.required Property.Roles (List.map Encode.string >> Encode.list) v.Roles
+            |> Encode.required Property.JoinedAt Encode.datetime v.JoinedAt
+            |> Encode.optinull Property.PremiumSince Encode.datetime v.PremiumSince
+            |> Encode.required Property.Deaf Encode.bool v.Deaf
+            |> Encode.required Property.Mute Encode.bool v.Mute
+            |> Encode.required Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Pending Encode.bool v.Pending
+            |> Encode.optional Property.Permissions Encode.string v.Permissions
+            |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
+            |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
+        )
+
+    module Partial =
+        let decoder path v =
+            Decode.object (fun get -> {
+                User = get |> Get.optional Property.User User.decoder
+                Nick = get |> Get.optinull Property.Nick Decode.string
+                Avatar = get |> Get.optinull Property.Avatar Decode.string
+                Banner = get |> Get.optinull Property.Banner Decode.string
+                Roles = get |> Get.optional Property.Roles (Decode.list Decode.string)
+                JoinedAt = get |> Get.optional Property.JoinedAt Decode.datetimeUtc
+                PremiumSince = get |> Get.optinull Property.PremiumSince Decode.datetimeUtc
+                Deaf = get |> Get.optional Property.Deaf Decode.bool
+                Mute = get |> Get.optional Property.Mute Decode.bool
+                Flags = get |> Get.optional Property.Flags Decode.int
+                Pending = get |> Get.optional Property.Pending Decode.bool
+                Permissions = get |> Get.optional Property.Permissions Decode.string
+                CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
+                AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
+            }) path v
+
+        let encoder (v: PartialGuildMember) =
+            Encode.object ([]
+                |> Encode.optional Property.User User.encoder v.User
+                |> Encode.optinull Property.Nick Encode.string v.Nick
+                |> Encode.optinull Property.Avatar Encode.string v.Avatar
+                |> Encode.optinull Property.Banner Encode.string v.Banner
+                |> Encode.optional Property.Roles (List.map Encode.string >> Encode.list) v.Roles
+                |> Encode.optional Property.JoinedAt Encode.datetime v.JoinedAt
+                |> Encode.optinull Property.PremiumSince Encode.datetime v.PremiumSince
+                |> Encode.optional Property.Deaf Encode.bool v.Deaf
+                |> Encode.optional Property.Mute Encode.bool v.Mute
+                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.Pending Encode.bool v.Pending
+                |> Encode.optional Property.Permissions Encode.string v.Permissions
+                |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
+                |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
+            )

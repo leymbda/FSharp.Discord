@@ -64,6 +64,22 @@ module GuildFeature =
         | "VIP_REGIONS" -> Some GuildFeature.VIP_REGIONS
         | "WELCOME_SCREEN_ENABLED" -> Some GuildFeature.WELCOME_SCREEN_ENABLED
         | _ -> None
+        
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a guild feature", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
 
 module OAuthConsent =
     let toString (consent: OAuthConsent) =
@@ -76,6 +92,22 @@ module OAuthConsent =
         | "consent" -> Some OAuthConsent.Consent
         | "none" -> Some OAuthConsent.None
         | _ -> None
+        
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("an oauth consent", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
 
 module AllowedMentionsParseType =
     let toString (mentions: AllowedMentionsParseType) =
@@ -90,6 +122,22 @@ module AllowedMentionsParseType =
         | "users" -> Some AllowedMentionsParseType.USERS
         | "everyone" -> Some AllowedMentionsParseType.EVERYONE
         | _ -> None
+        
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("an allowed mention parse type", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
 
 module ActivityLocationKind =
     let toString (kind: ActivityLocationKind) =
@@ -211,6 +259,22 @@ module TokenTypeHint =
         | "refresh_token" -> Some TokenTypeHint.REFRESH_TOKEN
         | _ -> None
         
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a token type hint", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
+        
 module GuildWidgetStyle =
     let toString (style: GuildWidgetStyle) =
         match style with
@@ -229,6 +293,22 @@ module GuildWidgetStyle =
         | "banner_4" -> Some GuildWidgetStyle.BANNER_4
         | _ -> None
         
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a guild widget style", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
+        
 module GatewayCompression =
     let toString (compression: GatewayCompression) =
         match compression with
@@ -241,6 +321,22 @@ module GatewayCompression =
         | "zstd-stream" -> Some GatewayCompression.ZSTDSTREAM
         | _ -> None
         
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a gateway compression", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
+        
 module GatewayEncoding =
     let toString (encoding: GatewayEncoding) =
         match encoding with
@@ -252,6 +348,22 @@ module GatewayEncoding =
         | "json" -> Some GatewayEncoding.JSON
         | "etf" -> Some GatewayEncoding.ETF
         | _ -> None
+        
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a gateway encoding", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
         
 module Status =
     let toString (status: Status) =
@@ -330,4 +442,21 @@ module RateLimitScope =
         | "global" -> Some RateLimitScope.GLOBAL
         | "shared" -> Some RateLimitScope.SHARED
         | _ -> None
+        
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a rate limit scope", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
     
+// TODO: Create modules within each to define strings once

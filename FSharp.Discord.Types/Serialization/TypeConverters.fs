@@ -8,13 +8,29 @@ module ApplicationIntegrationType =
         match value with
         | ApplicationIntegrationType.GUILD_INSTALL -> "GUILD_INSTALL"
         | ApplicationIntegrationType.USER_INSTALL -> "USER_INSTALL"
-        | _ -> "" // TODO: How can this be cleanly handled? (caused by int backed enum supporting string representation)
+        | _ -> "GUILD_INSTALL" // defaulting to guild install to handle int backed enums
 
     let fromString (str: string) =
         match str with
         | "GUILD_INSTALL" -> Some ApplicationIntegrationType.GUILD_INSTALL
         | "USER_INSTALL" -> Some ApplicationIntegrationType.USER_INSTALL
         | _ -> None
+
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("an application integration type", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
 
 module ConnectionServiceType =
     let toString (connectionServiceType: ConnectionServiceType) =
@@ -76,6 +92,22 @@ module ConnectionServiceType =
         | "youtube" -> Some ConnectionServiceType.YOUTUBE
         | _ -> None
 
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a connection service type", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
+
 module EmbedType =
     let toString (embedType: EmbedType) =
         match embedType with
@@ -98,6 +130,22 @@ module EmbedType =
         | "poll_result" -> Some EmbedType.POLL_RESULT
         | _ -> None
 
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("an embed type", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
+
 module GuildIntegrationType =
     let toString (guildIntegrationType: GuildIntegrationType) =
         match guildIntegrationType with
@@ -113,6 +161,22 @@ module GuildIntegrationType =
         | "discord" -> Some GuildIntegrationType.DISCORD
         | "guild_subscription" -> Some GuildIntegrationType.GUILD_SUBSCRIPTION
         | _ -> None
+
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+
+        match res with
+        | None -> Error (path, BadPrimitive("a guild integration type", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
         
 module SelectMenuDefaultValueType =
     let toString (selectMenuDefaultValue: SelectMenuDefaultValueType) =
@@ -171,3 +235,5 @@ module WebhookEventType =
 
     let encoder v =
         toString v |> Encode.string
+
+// TODO: Create modules within each to define strings once

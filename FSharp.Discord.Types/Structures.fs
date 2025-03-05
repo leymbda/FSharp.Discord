@@ -878,166 +878,167 @@ type Entitlement = {
 
 // https://discord.com/developers/docs/resources/guild#guild-object-guild-structure
 type Guild = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "icon_hash">] IconHash: string option
-    [<JsonPropertyName "splash">] Splash: string option
-    [<JsonPropertyName "discovery_splash">] DiscoverySplash: string option
-    [<JsonPropertyName "owner">] Owner: bool option
-    [<JsonPropertyName "owner_id">] OwnerId: string
-    [<JsonPropertyName "permissions">] Permissions: string option
-    [<JsonPropertyName "afk_channel_id">] AfkChannelId: string option
-    [<JsonPropertyName "afk_timeout">] AfkTimeout: int
-    [<JsonPropertyName "widget_enabled">] WidgetEnabled: bool option
-    [<JsonPropertyName "widget_channel_id">] WidgetChannelId: string option
-    [<JsonPropertyName "verification_level">] VerificationLevel: VerificationLevel
-    [<JsonPropertyName "default_message_notifications">] DefaultMessageNotifications: MessageNotificationLevel
-    [<JsonPropertyName "explicit_content_filter">] ExplicitContentFilter: ExplicitContentFilterLevel
-    [<JsonPropertyName "roles">] Roles: Role list
-    [<JsonPropertyName "emojis">] Emojis: Emoji list
-    [<JsonPropertyName "features">] Features: GuildFeature list
-    [<JsonPropertyName "mfa_level">] MfaLevel: MfaLevel
-    [<JsonPropertyName "application_id">] ApplicationId: string option
-    [<JsonPropertyName "system_channel_id">] SystemChannelId: string option
-    [<JsonPropertyName "system_channel_flags">] SystemChannelFlags: int
-    [<JsonPropertyName "rules_channel_id">] RulesChannelId: string option
-    [<JsonPropertyName "max_presences">] MaxPresences: int option
-    [<JsonPropertyName "max_members">] MaxMembers: int option
-    [<JsonPropertyName "vanity_url_code">] VanityUrlCode: string option
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "banner">] Banner: string option
-    [<JsonPropertyName "premium_tier">] PremiumTier: GuildPremiumTier
-    [<JsonPropertyName "premium_subscription_count">] PremiumSubscriptionCount: int option
-    [<JsonPropertyName "preferred_locale">] PreferredLocale: string
-    [<JsonPropertyName "public_updates_channel_id">] PublicUpdatesChannelId: string option
-    [<JsonPropertyName "max_video_channel_users">] MaxVideoChannelUsers: int option
-    [<JsonPropertyName "max_stage_video_channel_users">] MaxStageVideoChannelUsers: int option
-    [<JsonPropertyName "approximate_member_count">] ApproximateMemberCount: int option
-    [<JsonPropertyName "approximate_presence_count">] ApproximatePresenceCount: int option
-    [<JsonPropertyName "welcome_screen">] WelcomeScreen: WelcomeScreen option
-    [<JsonPropertyName "nsfw_level">] NsfwLevel: NsfwLevel
-    [<JsonPropertyName "stickers">] Stickers: Sticker list option
-    [<JsonPropertyName "premium_progress_bar_enabled">] PremiumProgressBarEnabled: bool
-    [<JsonPropertyName "safety_alerts_channel_id">] SafetyAlertsChannelId: string option
-    [<JsonPropertyName "incidents_data">] IncidentsData: IncidentsData option
+    Id: string
+    Name: string
+    Icon: string option
+    IconHash: string option option
+    Splash: string option
+    DiscoverySplash: string option
+    Owner: bool option
+    OwnerId: string
+    Permissions: string option
+    AfkChannelId: string option
+    AfkTimeout: int
+    WidgetEnabled: bool option
+    WidgetChannelId: string option option
+    VerificationLevel: VerificationLevel
+    DefaultMessageNotifications: MessageNotificationLevel
+    ExplicitContentFilter: ExplicitContentFilterLevel
+    Roles: Role list
+    Emojis: Emoji list
+    Features: GuildFeature list
+    MfaLevel: MfaLevel
+    ApplicationId: string option
+    SystemChannelId: string option
+    SystemChannelFlags: int
+    RulesChannelId: string option
+    MaxPresences: int option option
+    MaxMembers: int option
+    VanityUrlCode: string option
+    Description: string option
+    Banner: string option
+    PremiumTier: GuildPremiumTier
+    PremiumSubscriptionCount: int option
+    PreferredLocale: string
+    PublicUpdatesChannelId: string option
+    MaxVideoChannelUsers: int option
+    MaxStageVideoChannelUsers: int option
+    ApproximateMemberCount: int option
+    ApproximatePresenceCount: int option
+    WelcomeScreen: WelcomeScreen option
+    NsfwLevel: NsfwLevel
+    Stickers: Sticker list option
+    PremiumProgressBarEnabled: bool
+    SafetyAlertsChannelId: string option
+    IncidentsData: IncidentsData option
 }
 
 and PartialGuild = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string option
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "icon_hash">] IconHash: string option
-    [<JsonPropertyName "splash">] Splash: string option
-    [<JsonPropertyName "discovery_splash">] DiscoverySplash: string option
-    [<JsonPropertyName "owner">] Owner: bool option
-    [<JsonPropertyName "owner_id">] OwnerId: string option
-    [<JsonPropertyName "permissions">] Permissions: string option
-    [<JsonPropertyName "afk_channel_id">] AfkChannelId: string option
-    [<JsonPropertyName "afk_timeout">] AfkTimeout: int option
-    [<JsonPropertyName "widget_enabled">] WidgetEnabled: bool option
-    [<JsonPropertyName "widget_channel_id">] WidgetChannelId: string option
-    [<JsonPropertyName "verification_level">] VerificationLevel: VerificationLevel option
-    [<JsonPropertyName "default_message_notifications">] DefaultMessageNotifications: MessageNotificationLevel option
-    [<JsonPropertyName "explicit_content_filter">] ExplicitContentFilter: ExplicitContentFilterLevel option
-    [<JsonPropertyName "roles">] Roles: Role list option
-    [<JsonPropertyName "emojis">] Emojis: Emoji list option
-    [<JsonPropertyName "features">] Features: GuildFeature list option
-    [<JsonPropertyName "mfa_level">] MfaLevel: MfaLevel option
-    [<JsonPropertyName "application_id">] ApplicationId: string option
-    [<JsonPropertyName "system_channel_id">] SystemChannelId: string option
-    [<JsonPropertyName "system_channel_flags">] SystemChannelFlags: int option
-    [<JsonPropertyName "rules_channel_id">] RulesChannelId: string option
-    [<JsonPropertyName "max_presences">] MaxPresences: int option
-    [<JsonPropertyName "max_members">] MaxMembers: int option
-    [<JsonPropertyName "vanity_url_code">] VanityUrlCode: string option
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "banner">] Banner: string option
-    [<JsonPropertyName "premium_tier">] PremiumTier: GuildPremiumTier option
-    [<JsonPropertyName "premium_subscription_count">] PremiumSubscriptionCount: int option
-    [<JsonPropertyName "preferred_locale">] PreferredLocale: string option
-    [<JsonPropertyName "public_updates_channel_id">] PublicUpdatesChannelId: string option
-    [<JsonPropertyName "max_video_channel_users">] MaxVideoChannelUsers: int option
-    [<JsonPropertyName "max_stage_video_channel_users">] MaxStageVideoChannelUsers: int option
-    [<JsonPropertyName "approximate_member_count">] ApproximateMemberCount: int option
-    [<JsonPropertyName "approximate_presence_count">] ApproximatePresenceCount: int option
-    [<JsonPropertyName "welcome_screen">] WelcomeScreen: WelcomeScreen option
-    [<JsonPropertyName "nsfw_level">] NsfwLevel: NsfwLevel option
-    [<JsonPropertyName "stickers">] Stickers: Sticker list option
-    [<JsonPropertyName "premium_progress_bar_enabled">] PremiumProgressBarEnabled: bool option
-    [<JsonPropertyName "safety_alerts_channel_id">] SafetyAlertsChannelId: string option
+    Id: string
+    Name: string option
+    Icon: string option option
+    IconHash: string option option
+    Splash: string option option
+    DiscoverySplash: string option option
+    Owner: bool option
+    OwnerId: string option
+    Permissions: string option
+    AfkChannelId: string option option
+    AfkTimeout: int option
+    WidgetEnabled: bool option
+    WidgetChannelId: string option option
+    VerificationLevel: VerificationLevel option
+    DefaultMessageNotifications: MessageNotificationLevel option
+    ExplicitContentFilter: ExplicitContentFilterLevel option
+    Roles: Role list option
+    Emojis: Emoji list option
+    Features: GuildFeature list option
+    MfaLevel: MfaLevel option
+    ApplicationId: string option option
+    SystemChannelId: string option option
+    SystemChannelFlags: int option
+    RulesChannelId: string option option
+    MaxPresences: int option option
+    MaxMembers: int option
+    VanityUrlCode: string option option
+    Description: string option option
+    Banner: string option option
+    PremiumTier: GuildPremiumTier option
+    PremiumSubscriptionCount: int option
+    PreferredLocale: string option
+    PublicUpdatesChannelId: string option option
+    MaxVideoChannelUsers: int option
+    MaxStageVideoChannelUsers: int option
+    ApproximateMemberCount: int option
+    ApproximatePresenceCount: int option
+    WelcomeScreen: WelcomeScreen option
+    NsfwLevel: NsfwLevel option
+    Stickers: Sticker list option
+    PremiumProgressBarEnabled: bool option
+    SafetyAlertsChannelId: string option option
+    IncidentsData: IncidentsData option option
 }
 
 // https://discord.com/developers/docs/resources/guild#unavailable-guild-object
 type UnavailableGuild = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "unavailable">] Unavailable: bool
+    Id: string
+    Unavailable: bool
 }
 
 // https://discord.com/developers/docs/resources/guild#guild-preview-object-guild-preview-structure
 type GuildPreview = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "splash">] Splash: string option
-    [<JsonPropertyName "discovery_splash">] DiscoverySplash: string option
-    [<JsonPropertyName "emojis">] Emojis: Emoji list
-    [<JsonPropertyName "features">] Features: GuildFeature list
-    [<JsonPropertyName "approximate_member_count">] ApproximateMemberCount: int
-    [<JsonPropertyName "approximate_presence_count">] ApproximatePresenceCount: int
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "stickers">] Stickers: Sticker list
+    Id: string
+    Name: string
+    Icon: string option
+    Splash: string option
+    DiscoverySplash: string option
+    Emojis: Emoji list
+    Features: GuildFeature list
+    ApproximateMemberCount: int
+    ApproximatePresenceCount: int
+    Description: string option
+    Stickers: Sticker list
 }
 
 // https://discord.com/developers/docs/resources/guild#guild-widget-settings-object-guild-widget-settings-structure
 type GuildWidgetSettings = {
-    [<JsonPropertyName "enabled">] Enabled: bool
-    [<JsonPropertyName "channel_id">] ChannelId: string option
+    Enabled: bool
+    ChannelId: string option
 }
 
 // https://discord.com/developers/docs/resources/guild#guild-widget-object-guild-widget-structure
 type GuildWidget = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "instant_invite">] InstantInvite: string option
-    [<JsonPropertyName "channels">] Channels: PartialChannel list
-    [<JsonPropertyName "members">] Members: PartialUser list
-    [<JsonPropertyName "presence_count">] PresenceCount: int
+    Id: string
+    Name: string
+    InstantInvite: string option
+    Channels: PartialChannel list
+    Members: PartialUser list
+    PresenceCount: int
 }
 
 // https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-structure
 type GuildMember = {
-    [<JsonPropertyName "user">] User: User option
-    [<JsonPropertyName "nick">] Nick: string option
-    [<JsonPropertyName "avatar">] Avatar: string option
-    [<JsonPropertyName "banner">] Banner: string option
-    [<JsonPropertyName "roles">] Roles: string list
-    [<JsonPropertyName "joined_at">] JoinedAt: DateTime option
-    [<JsonPropertyName "premium_since">] PremiumSince: DateTime option
-    [<JsonPropertyName "deaf">] Deaf: bool
-    [<JsonPropertyName "mute">] Mute: bool
-    [<JsonPropertyName "flags">] Flags: int
-    [<JsonPropertyName "pending">] Pending: bool option
-    [<JsonPropertyName "permissions">] Permissions: string option
-    [<JsonPropertyName "communication_disabled_until">] CommunicationDisabledUntil: DateTime option
-    [<JsonPropertyName "avatar_decoration_metadata">] AvatarDecorationData: AvatarDecorationData option
+    User: User option // TODO: Not included in MESSAGE_CREATE and MESSAGE_UPDATE (how do handle this?)
+    Nick: string option option
+    Avatar: string option option
+    Banner: string option option
+    Roles: string list
+    JoinedAt: DateTime
+    PremiumSince: DateTime option option
+    Deaf: bool
+    Mute: bool
+    Flags: int
+    Pending: bool option // TODO: Only in GUILD_ events (should it be in ExtraFields?)
+    Permissions: string option
+    CommunicationDisabledUntil: DateTime option option
+    AvatarDecorationData: AvatarDecorationData option option
 }
 
 and PartialGuildMember = {
-    [<JsonPropertyName "user">] User: User option
-    [<JsonPropertyName "nick">] Nick: string option
-    [<JsonPropertyName "avatar">] Avatar: string option
-    [<JsonPropertyName "banner">] Banner: string option
-    [<JsonPropertyName "roles">] Roles: string list option
-    [<JsonPropertyName "joined_at">] JoinedAt: DateTime option
-    [<JsonPropertyName "premium_since">] PremiumSince: DateTime option
-    [<JsonPropertyName "deaf">] Deaf: bool option
-    [<JsonPropertyName "mute">] Mute: bool option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "pending">] Pending: bool option
-    [<JsonPropertyName "permissions">] Permissions: string option
-    [<JsonPropertyName "communication_disabled_until">] CommunicationDisabledUntil: DateTime option
-    [<JsonPropertyName "avatar_decoration_metadata">] AvatarDecorationData: AvatarDecorationData option
+    User: User option // TODO: Not included in MESSAGE_CREATE and MESSAGE_UPDATE (how do handle this?)
+    Nick: string option option
+    Avatar: string option option
+    Banner: string option option
+    Roles: string list option
+    JoinedAt: DateTime option
+    PremiumSince: DateTime option option
+    Deaf: bool option
+    Mute: bool option
+    Flags: int option
+    Pending: bool option // TODO: Only in GUILD_ events (should it be in ExtraFields?)
+    Permissions: string option
+    CommunicationDisabledUntil: DateTime option option
+    AvatarDecorationData: AvatarDecorationData option option
 }
 
 // https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
