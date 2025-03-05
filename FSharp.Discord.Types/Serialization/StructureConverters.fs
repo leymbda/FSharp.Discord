@@ -2980,3 +2980,157 @@ module IncidentsData =
             |> Encode.optinull Property.DmSpamDetectedAt Encode.datetime v.DmSpamDetectedAt
             |> Encode.optinull Property.RaidDetectedAt Encode.datetime v.RaidDetectedAt
         )
+
+module GuildScheduledEvent =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] CreatorId = "creator_id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Description = "description"
+        let [<Literal>] ScheduledStartTime = "scheduled_start_time"
+        let [<Literal>] ScheduledEndTime = "scheduled_end_time"
+        let [<Literal>] PrivacyLevel = "privacy_level"
+        let [<Literal>] Status = "status"
+        let [<Literal>] EntityType = "entity_type"
+        let [<Literal>] EntityId = "entity_id"
+        let [<Literal>] EntityMetadata = "entity_metadata"
+        let [<Literal>] Creator = "creator"
+        let [<Literal>] UserCount = "user_count"
+        let [<Literal>] Image = "image"
+        let [<Literal>] RecurrenceRule = "recurrence_rule"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            ChannelId = get |> Get.nullable Property.ChannelId Decode.string
+            CreatorId = get |> Get.optinull Property.CreatorId Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Description = get |> Get.optinull Property.Description Decode.string
+            ScheduledStartTime = get |> Get.required Property.ScheduledStartTime Decode.datetimeUtc
+            ScheduledEndTime = get |> Get.nullable Property.ScheduledEndTime Decode.datetimeUtc
+            PrivacyLevel = get |> Get.required Property.PrivacyLevel Decode.Enum.int<PrivacyLevel>
+            Status = get |> Get.required Property.Status Decode.Enum.int<EventStatus>
+            EntityType = get |> Get.required Property.EntityType Decode.Enum.int<ScheduledEntityType>
+            EntityId = get |> Get.nullable Property.EntityId Decode.string
+            EntityMetadata = get |> Get.nullable Property.EntityMetadata EntityMetadata.decoder
+            Creator = get |> Get.optional Property.Creator User.decoder
+            UserCount = get |> Get.optional Property.UserCount Decode.int
+            Image = get |> Get.optinull Property.Image Decode.string
+            RecurrenceRule = get |> Get.nullable Property.RecurrenceRule RecurrenceRule.decoder
+        }) path v
+
+    let encoder (v: GuildScheduledEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.nullable Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optinull Property.CreatorId Encode.string v.CreatorId
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.optinull Property.Description Encode.string v.Description
+            |> Encode.required Property.ScheduledStartTime Encode.datetime v.ScheduledStartTime
+            |> Encode.nullable Property.ScheduledEndTime Encode.datetime v.ScheduledEndTime
+            |> Encode.required Property.PrivacyLevel Encode.Enum.int v.PrivacyLevel
+            |> Encode.required Property.Status Encode.Enum.int v.Status
+            |> Encode.required Property.EntityType Encode.Enum.int v.EntityType
+            |> Encode.nullable Property.EntityId Encode.string v.EntityId
+            |> Encode.nullable Property.EntityMetadata EntityMetadata.encoder v.EntityMetadata
+            |> Encode.optional Property.Creator User.encoder v.Creator
+            |> Encode.optional Property.UserCount Encode.int v.UserCount
+            |> Encode.optinull Property.Image Encode.string v.Image
+            |> Encode.nullable Property.RecurrenceRule RecurrenceRule.encoder v.RecurrenceRule
+        )
+
+module EntityMetadata =
+    module Property =
+        let [<Literal>] Location = "location"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Location = get |> Get.optional Property.Location Decode.string
+        }) path v
+
+    let encoder (v: EntityMetadata) =
+        Encode.object ([]
+            |> Encode.optional Property.Location Encode.string v.Location
+        )
+
+module GuildScheduledEventUser =
+    module Property =
+        let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
+        let [<Literal>] User = "user"
+        let [<Literal>] Member = "member"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            GuildScheduledEventId = get |> Get.required Property.GuildScheduledEventId Decode.string
+            User = get |> Get.required Property.User User.decoder
+            Member = get |> Get.optional Property.Member GuildMember.decoder
+        }) path v
+
+    let encoder (v: GuildScheduledEventUser) =
+        Encode.object ([]
+            |> Encode.required Property.GuildScheduledEventId Encode.string v.GuildScheduledEventId
+            |> Encode.required Property.User User.encoder v.User
+            |> Encode.optional Property.Member GuildMember.encoder v.Member
+        )
+
+module RecurrenceRule =
+    module Property =
+        let [<Literal>] Start = "start"
+        let [<Literal>] End = "end"
+        let [<Literal>] Frequency = "frequency"
+        let [<Literal>] Interval = "interval"
+        let [<Literal>] ByWeekday = "by_weekday"
+        let [<Literal>] ByWeekend = "by_weekend"
+        let [<Literal>] ByMonth = "by_month"
+        let [<Literal>] ByMonthDay = "by_month_day"
+        let [<Literal>] ByYearDay = "by_year_day"
+        let [<Literal>] Count = "count"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Start = get |> Get.required Property.Start Decode.datetimeUtc
+            End = get |> Get.nullable Property.End Decode.datetimeUtc
+            Frequency = get |> Get.required Property.Frequency Decode.Enum.int<RecurrenceRuleFrequency>
+            Interval = get |> Get.required Property.Interval Decode.int
+            ByWeekday = get |> Get.nullable Property.ByWeekday (Decode.list Decode.Enum.int<RecurrenceRuleWeekday>)
+            ByWeekend = get |> Get.nullable Property.ByWeekend (Decode.list RecurrenceRuleNWeekday.decoder)
+            ByMonth = get |> Get.nullable Property.ByMonth (Decode.list Decode.Enum.int<RecurrenceRuleMonth>)
+            ByMonthDay = get |> Get.nullable Property.ByMonthDay (Decode.list Decode.int)
+            ByYearDay = get |> Get.nullable Property.ByYearDay (Decode.list Decode.int)
+            Count = get |> Get.nullable Property.Count Decode.int
+        }) path v
+
+    let encoder (v: RecurrenceRule) =
+        Encode.object ([]
+            |> Encode.required Property.Start Encode.datetime v.Start
+            |> Encode.nullable Property.End Encode.datetime v.End
+            |> Encode.required Property.Frequency Encode.Enum.int v.Frequency
+            |> Encode.required Property.Interval Encode.int v.Interval
+            |> Encode.nullable Property.ByWeekday (List.map Encode.Enum.int >> Encode.list) v.ByWeekday
+            |> Encode.nullable Property.ByWeekend (List.map RecurrenceRuleNWeekday.encoder >> Encode.list) v.ByWeekend
+            |> Encode.nullable Property.ByMonth (List.map Encode.Enum.int >> Encode.list) v.ByMonth
+            |> Encode.nullable Property.ByMonthDay (List.map Encode.int >> Encode.list) v.ByMonthDay
+            |> Encode.nullable Property.ByYearDay (List.map Encode.int >> Encode.list) v.ByYearDay
+            |> Encode.nullable Property.Count Encode.int v.Count
+        )
+
+module RecurrenceRuleNWeekday =
+    module Property =
+        let [<Literal>] N = "n"
+        let [<Literal>] Day = "day"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            N = get |> Get.required Property.N Decode.int
+            Day = get |> Get.required Property.Day Decode.Enum.int<RecurrenceRuleWeekday>
+        }) path v
+
+    let encoder (v: RecurrenceRuleNWeekday) =
+        Encode.object ([]
+            |> Encode.required Property.N Encode.int v.N
+            |> Encode.required Property.Day Encode.Enum.int v.Day
+        )
