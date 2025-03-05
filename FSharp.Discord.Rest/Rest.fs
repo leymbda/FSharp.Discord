@@ -2321,12 +2321,14 @@ let executeWebhook
     (webhookToken: string)
     (wait: bool option)
     (threadId: string option)
+    (withComponents: bool option)
     (content: ExecuteWebhookPayload)
     (client: IBotClient) =
         req {
             post $"webhooks/{webhookId}/{webhookToken}"
             query "wait" (Option.map string wait)
             query "thread_id" threadId
+            query "with_components" (Option.map string withComponents)
             payload content
         }
         |> client.SendAsync
