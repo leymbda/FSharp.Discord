@@ -21,12 +21,12 @@ module SerializationVariantsModel =
         }) path v
 
     let encoder (v: SerializationVariantsModel) =
-        Encode.object [
-            "required", Encode.string v.Required
-            match v.Optional with | Some p -> "optional", Encode.string p | None -> ()
-            "nullable", Encode.option Encode.string v.Nullable
-            match v.OptionalAndNullable with | Some p -> "optionalAndNullable", Encode.option Encode.string p | None -> ()
-        ]
+        Encode.object ([]
+            |> Encode.required "required" Encode.string v.Required
+            |> Encode.optional "optional" Encode.string v.Optional
+            |> Encode.nullable "nullable" Encode.string v.Nullable
+            |> Encode.optinull "optionalAndNullable" Encode.string v.OptionalAndNullable
+        )
 
 type Pair<'a> = {
     Decoded: 'a

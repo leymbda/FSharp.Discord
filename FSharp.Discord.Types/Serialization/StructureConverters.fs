@@ -11,17 +11,17 @@ module ErrorResponse =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Code = get.Required.Field Property.Code Decode.Enum.int<JsonErrorCode>
-            Message = get.Required.Field Property.Message Decode.string
-            Errors = get.Required.Field Property.Errors (Decode.dict Decode.string)
+            Code = get |> Get.required Property.Code Decode.Enum.int<JsonErrorCode>
+            Message = get |> Get.required Property.Message Decode.string
+            Errors = get |> Get.required Property.Errors (Decode.dict Decode.string)
         }) path v
 
     let encoder (v: ErrorResponse) =
-        Encode.object [
-            Property.Code, Encode.Enum.int v.Code
-            Property.Message, Encode.string v.Message
-            Property.Errors, Encode.mapv Encode.string v.Errors
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Code Encode.Enum.int v.Code
+            |> Encode.required Property.Message Encode.string v.Message
+            |> Encode.required Property.Errors (Encode.mapv Encode.string) v.Errors
+        )
 
 module Interaction =
     module Property =
@@ -674,15 +674,15 @@ module ActionRow =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Type = get.Required.Field Property.Type Decode.Enum.int<ComponentType>
-            Components = get.Required.Field Property.Components (Decode.list Component.decoder)
+            Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
+            Components = get |> Get.required Property.Components (Decode.list Component.decoder)
         }) path v
 
     let encoder (v: ActionRow) =
-        Encode.object [
-            Property.Type, Encode.Enum.int v.Type
-            Property.Components, (List.map Component.encoder >> Encode.list) v.Components
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Components (List.map Component.encoder >> Encode.list) v.Components
+        )
 
 module Button =
     module Property =
@@ -863,19 +863,19 @@ module SessionStartLimit =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Total = get.Required.Field Property.Total Decode.int
-            Remaining = get.Required.Field Property.Remaining Decode.int
-            ResetAfter = get.Required.Field Property.ResetAfter Decode.int
-            MaxConcurrency = get.Required.Field Property.MaxConcurrency Decode.int
+            Total = get |> Get.required Property.Total Decode.int
+            Remaining = get |> Get.required Property.Remaining Decode.int
+            ResetAfter = get |> Get.required Property.ResetAfter Decode.int
+            MaxConcurrency = get |> Get.required Property.MaxConcurrency Decode.int
         }) path v
 
     let encoder (v: SessionStartLimit) =
-        Encode.object [
-            Property.Total, Encode.int v.Total
-            Property.Remaining, Encode.int v.Remaining
-            Property.ResetAfter, Encode.int v.ResetAfter
-            Property.MaxConcurrency, Encode.int v.MaxConcurrency
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Total Encode.int v.Total
+            |> Encode.required Property.Remaining Encode.int v.Remaining
+            |> Encode.required Property.ResetAfter Encode.int v.ResetAfter
+            |> Encode.required Property.MaxConcurrency Encode.int v.MaxConcurrency
+        )
 
 module IdentifyConnectionProperties =
     module Property =
@@ -885,17 +885,17 @@ module IdentifyConnectionProperties =
 
     let decoder path v =
         Decode.object (fun get -> {
-            OperatingSystem = get.Required.Field Property.OperatingSystem Decode.string
-            Browser = get.Required.Field Property.Browser Decode.string
-            Device = get.Required.Field Property.Device Decode.string
+            OperatingSystem = get |> Get.required Property.OperatingSystem Decode.string
+            Browser = get |> Get.required Property.Browser Decode.string
+            Device = get |> Get.required Property.Device Decode.string
         }) path v
 
     let encoder (v: IdentifyConnectionProperties) =
-        Encode.object [
-            Property.OperatingSystem, Encode.string v.OperatingSystem
-            Property.Browser, Encode.string v.Browser
-            Property.Device, Encode.string v.Device
-        ]
+        Encode.object ([]
+            |> Encode.required Property.OperatingSystem Encode.string v.OperatingSystem
+            |> Encode.required Property.Browser Encode.string v.Browser
+            |> Encode.required Property.Device Encode.string v.Device
+        )
 
 module ClientStatus =
     module Property =
@@ -905,17 +905,17 @@ module ClientStatus =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Desktop = get.Optional.Field Property.Desktop ClientDeviceStatus.decoder
-            Mobile = get.Optional.Field Property.Mobile ClientDeviceStatus.decoder
-            Web = get.Optional.Field Property.Web ClientDeviceStatus.decoder
+            Desktop = get |> Get.optional Property.Desktop ClientDeviceStatus.decoder
+            Mobile = get |> Get.optional Property.Mobile ClientDeviceStatus.decoder
+            Web = get |> Get.optional Property.Web ClientDeviceStatus.decoder
         }) path v
 
     let encoder (v: ClientStatus) =
-        Encode.object [
-            Property.Desktop, Encode.option ClientDeviceStatus.encoder v.Desktop
-            Property.Mobile, Encode.option ClientDeviceStatus.encoder v.Mobile
-            Property.Web, Encode.option ClientDeviceStatus.encoder v.Web
-        ]
+        Encode.object ([]
+            |> Encode.optional Property.Desktop ClientDeviceStatus.encoder v.Desktop
+            |> Encode.optional Property.Mobile ClientDeviceStatus.encoder v.Mobile
+            |> Encode.optional Property.Web ClientDeviceStatus.encoder v.Web
+        )
 
 module Activity =
     module Property =
@@ -937,41 +937,41 @@ module Activity =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Name = get.Required.Field Property.Name Decode.string
-            Type = get.Required.Field Property.Type Decode.Enum.int<ActivityType>
-            Url = get.Optional.Field Property.Url Decode.string
-            CreatedAt = get.Optional.Field Property.CreatedAt UnixTimestamp.decoder
-            Timestamps = get.Optional.Field Property.Timestamps ActivityTimestamps.decoder
-            ApplicationId = get.Optional.Field Property.ApplicationId Decode.string
-            Details = get.Optional.Field Property.Details Decode.string
-            State = get.Optional.Field Property.State Decode.string
-            Emoji = get.Optional.Field Property.Emoji ActivityEmoji.decoder
-            Party = get.Optional.Field Property.Party ActivityParty.decoder
-            Assets = get.Optional.Field Property.Assets ActivityAssets.decoder
-            Secrets = get.Optional.Field Property.Secrets ActivitySecrets.decoder
-            Instance = get.Optional.Field Property.Instance Decode.bool
-            Flags = get.Optional.Field Property.Flags Decode.int
-            Buttons = get.Optional.Field Property.Buttons (Decode.list ActivityButton.decoder)
+            Name = get |> Get.required Property.Name Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<ActivityType>
+            Url = get |> Get.optinull Property.Url Decode.string
+            CreatedAt = get |> Get.required Property.CreatedAt UnixTimestamp.decoder
+            Timestamps = get |> Get.optional Property.Timestamps ActivityTimestamps.decoder
+            ApplicationId = get |> Get.optional Property.ApplicationId Decode.string
+            Details = get |> Get.optinull Property.Details Decode.string
+            State = get |> Get.optinull Property.State Decode.string
+            Emoji = get |> Get.optinull Property.Emoji ActivityEmoji.decoder
+            Party = get |> Get.optional Property.Party ActivityParty.decoder
+            Assets = get |> Get.optional Property.Assets ActivityAssets.decoder
+            Secrets = get |> Get.optional Property.Secrets ActivitySecrets.decoder
+            Instance = get |> Get.optional Property.Instance Decode.bool
+            Flags = get |> Get.optional Property.Flags Decode.int
+            Buttons = get |> Get.optional Property.Buttons (Decode.list ActivityButton.decoder)
         }) path v
 
     let encoder (v: Activity) =
-        Encode.object [
-            Property.Name, Encode.string v.Name
-            Property.Type, Encode.Enum.int v.Type
-            Property.Url, Encode.option Encode.string v.Url
-            Property.CreatedAt, Encode.option UnixTimestamp.encoder v.CreatedAt
-            Property.Timestamps, Encode.option ActivityTimestamps.encoder v.Timestamps
-            Property.ApplicationId, Encode.option Encode.string v.ApplicationId
-            Property.Details, Encode.option Encode.string v.Details
-            Property.State, Encode.option Encode.string v.State
-            Property.Emoji, Encode.option ActivityEmoji.encoder v.Emoji
-            Property.Party, Encode.option ActivityParty.encoder v.Party
-            Property.Assets, Encode.option ActivityAssets.encoder v.Assets
-            Property.Secrets, Encode.option ActivitySecrets.encoder v.Secrets
-            Property.Instance, Encode.option Encode.bool v.Instance
-            Property.Flags, Encode.option Encode.int v.Flags
-            Property.Buttons, Encode.option (List.map ActivityButton.encoder >> Encode.list) v.Buttons
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optinull Property.Url Encode.string v.Url
+            |> Encode.required Property.CreatedAt UnixTimestamp.encoder v.CreatedAt
+            |> Encode.optional Property.Timestamps ActivityTimestamps.encoder v.Timestamps
+            |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.optinull Property.Details Encode.string v.Details
+            |> Encode.optinull Property.State Encode.string v.State
+            |> Encode.optinull Property.Emoji ActivityEmoji.encoder v.Emoji
+            |> Encode.optional Property.Party ActivityParty.encoder v.Party
+            |> Encode.optional Property.Assets ActivityAssets.encoder v.Assets
+            |> Encode.optional Property.Secrets ActivitySecrets.encoder v.Secrets
+            |> Encode.optional Property.Instance Encode.bool v.Instance
+            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Buttons (List.map ActivityButton.encoder >> Encode.list) v.Buttons
+        )
 
 module ActivityTimestamps =
     module Property =
@@ -980,15 +980,15 @@ module ActivityTimestamps =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Start = get.Optional.Field Property.Start UnixTimestamp.decoder
-            End = get.Optional.Field Property.End UnixTimestamp.decoder
+            Start = get |> Get.optional Property.Start UnixTimestamp.decoder
+            End = get |> Get.optional Property.End UnixTimestamp.decoder
         }) path v
 
     let encoder (v: ActivityTimestamps) =
-        Encode.object [
-            Property.Start, Encode.option UnixTimestamp.encoder v.Start
-            Property.End, Encode.option UnixTimestamp.encoder v.End
-        ]
+        Encode.object ([]
+            |> Encode.optional Property.Start UnixTimestamp.encoder v.Start
+            |> Encode.optional Property.End UnixTimestamp.encoder v.End
+        )
 
 module ActivityEmoji =
     module Property =
@@ -998,17 +998,17 @@ module ActivityEmoji =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Name = get.Required.Field Property.Name Decode.string
-            Id = get.Optional.Field Property.Id Decode.string
-            Animated = get.Optional.Field Property.Animated Decode.bool
+            Name = get |> Get.required Property.Name Decode.string
+            Id = get |> Get.optional Property.Id Decode.string
+            Animated = get |> Get.optional Property.Animated Decode.bool
         }) path v
 
     let encoder (v: ActivityEmoji) =
-        Encode.object [
-            Property.Name, Encode.string v.Name
-            Property.Id, Encode.option Encode.string v.Id
-            Property.Animated, Encode.option Encode.bool v.Animated
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.optional Property.Id Encode.string v.Id
+            |> Encode.optional Property.Animated Encode.bool v.Animated
+        )
 
 module ActivityParty =
     module Property =
@@ -1017,15 +1017,15 @@ module ActivityParty =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Optional.Field Property.Id Decode.string
-            Size = get.Optional.Field Property.Size ActivityPartySize.decoder
+            Id = get |> Get.optional Property.Id Decode.string
+            Size = get |> Get.optional Property.Size ActivityPartySize.decoder
         }) path v
 
     let encoder (v: ActivityParty) =
-        Encode.object [
-            Property.Id, Encode.option Encode.string v.Id
-            Property.Size, Encode.option ActivityPartySize.encoder v.Size
-        ]
+        Encode.object ([]
+            |> Encode.optional Property.Id Encode.string v.Id
+            |> Encode.optional Property.Size ActivityPartySize.encoder v.Size
+        )
 
 module ActivityPartySize =
     let decoder path v =
@@ -1046,19 +1046,19 @@ module ActivityAssets =
 
     let decoder path v =
         Decode.object (fun get -> {
-            LargeImage = get.Optional.Field Property.LargeImage Decode.string
-            LargeText = get.Optional.Field Property.LargeText Decode.string
-            SmallImage = get.Optional.Field Property.SmallImage Decode.string
-            SmallText = get.Optional.Field Property.SmallText Decode.string
+            LargeImage = get |> Get.optional Property.LargeImage Decode.string
+            LargeText = get |> Get.optional Property.LargeText Decode.string
+            SmallImage = get |> Get.optional Property.SmallImage Decode.string
+            SmallText = get |> Get.optional Property.SmallText Decode.string
         }) path v
 
     let encoder (v: ActivityAssets) =
-        Encode.object [
-            Property.LargeImage, Encode.option Encode.string v.LargeImage
-            Property.LargeText, Encode.option Encode.string v.LargeText
-            Property.SmallImage, Encode.option Encode.string v.SmallImage
-            Property.SmallText, Encode.option Encode.string v.SmallText
-        ]
+        Encode.object ([]
+            |> Encode.optional Property.LargeImage Encode.string v.LargeImage
+            |> Encode.optional Property.LargeText Encode.string v.LargeText
+            |> Encode.optional Property.SmallImage Encode.string v.SmallImage
+            |> Encode.optional Property.SmallText Encode.string v.SmallText
+        )
 
 module ActivitySecrets =
     module Property =
@@ -1068,17 +1068,17 @@ module ActivitySecrets =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Join = get.Optional.Field Property.Join Decode.string
-            Spectate = get.Optional.Field Property.Spectate Decode.string
-            Match = get.Optional.Field Property.Match Decode.string
+            Join = get |> Get.optional Property.Join Decode.string
+            Spectate = get |> Get.optional Property.Spectate Decode.string
+            Match = get |> Get.optional Property.Match Decode.string
         }) path v
 
     let encoder (v: ActivitySecrets) =
-        Encode.object [
-            Property.Join, Encode.option Encode.string v.Join
-            Property.Spectate, Encode.option Encode.string v.Spectate
-            Property.Match, Encode.option Encode.string v.Match
-        ]
+        Encode.object ([]
+            |> Encode.optional Property.Join Encode.string v.Join
+            |> Encode.optional Property.Spectate Encode.string v.Spectate
+            |> Encode.optional Property.Match Encode.string v.Match
+        )
 
 module ActivityButton =
     module Property =
@@ -1087,15 +1087,15 @@ module ActivityButton =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Label = get.Required.Field Property.Label Decode.string
-            Url = get.Required.Field Property.Url Decode.string
+            Label = get |> Get.required Property.Label Decode.string
+            Url = get |> Get.required Property.Url Decode.string
         }) path v
 
     let encoder (v: ActivityButton) =
-        Encode.object [
-            Property.Label, Encode.string v.Label
-            Property.Url, Encode.string v.Url
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Label Encode.string v.Label
+            |> Encode.required Property.Url Encode.string v.Url
+        )
 
 module WebhookEventPayload =
     module Property =
@@ -1351,13 +1351,13 @@ module ApplicationIntegrationTypeConfiguration =
 
     let decoder path v =
         Decode.object (fun get -> {
-            OAuth2InstallParams = get.Optional.Field Property.OAuth2InstallParams InstallParams.decoder
+            OAuth2InstallParams = get |> Get.optional Property.OAuth2InstallParams InstallParams.decoder
         }) path v
 
     let encoder (v: ApplicationIntegrationTypeConfiguration) =
-        Encode.object [
-            Property.OAuth2InstallParams, Encode.option InstallParams.encoder v.OAuth2InstallParams
-        ]
+        Encode.object ([]
+            |> Encode.optional Property.OAuth2InstallParams InstallParams.encoder v.OAuth2InstallParams
+        )
 
 module InstallParams =
     module Property =
@@ -1366,15 +1366,15 @@ module InstallParams =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Scopes = get.Required.Field Property.Scopes (Decode.list OAuthScope.decoder)
-            Permissions = get.Required.Field Property.Permissions Decode.string
+            Scopes = get |> Get.required Property.Scopes (Decode.list OAuthScope.decoder)
+            Permissions = get |> Get.required Property.Permissions Decode.string
         }) path v
 
     let encoder (v: InstallParams) =
-        Encode.object [
-            Property.Scopes, (List.map OAuthScope.encoder >> Encode.list) v.Scopes
-            Property.Permissions, Encode.string v.Permissions
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Scopes (List.map OAuthScope.encoder >> Encode.list) v.Scopes
+            |> Encode.required Property.Permissions Encode.string v.Permissions
+        )
 
 module ActivityInstance =
     module Property =
@@ -1386,21 +1386,21 @@ module ActivityInstance =
 
     let decoder path v =
         Decode.object (fun get -> {
-            ApplicationId = get.Required.Field Property.ApplicationId Decode.string
-            InstanceId = get.Required.Field Property.InstanceId Decode.string
-            LaunchId = get.Required.Field Property.LaunchId Decode.string
-            Location = get.Required.Field Property.Location ActivityLocation.decoder
-            Users = get.Required.Field Property.Users (Decode.list Decode.string)
+            ApplicationId = get |> Get.required Property.ApplicationId Decode.string
+            InstanceId = get |> Get.required Property.InstanceId Decode.string
+            LaunchId = get |> Get.required Property.LaunchId Decode.string
+            Location = get |> Get.required Property.Location ActivityLocation.decoder
+            Users = get |> Get.required Property.Users (Decode.list Decode.string)
         }) path v
 
     let encoder (v: ActivityInstance) =
-        Encode.object [
-            Property.ApplicationId, Encode.string v.ApplicationId
-            Property.InstanceId, Encode.string v.InstanceId
-            Property.LaunchId, Encode.string v.LaunchId
-            Property.Location, ActivityLocation.encoder v.Location
-            Property.Users, (List.map Encode.string >> Encode.list) v.Users
-        ]
+        Encode.object ([]
+            |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.required Property.InstanceId Encode.string v.InstanceId
+            |> Encode.required Property.LaunchId Encode.string v.LaunchId
+            |> Encode.required Property.Location ActivityLocation.encoder v.Location
+            |> Encode.required Property.Users (List.map Encode.string >> Encode.list) v.Users
+        )
 
 module ActivityLocation =
     module Property =
@@ -1411,19 +1411,19 @@ module ActivityLocation =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
-            Kind = get.Required.Field Property.Kind ActivityLocationKind.decoder
-            ChannelId = get.Required.Field Property.ChannelId Decode.string
-            GuildId = get.Optional.Field Property.GuildId (Decode.option Decode.string)
+            Id = get |> Get.required Property.Id Decode.string
+            Kind = get |> Get.required Property.Kind ActivityLocationKind.decoder
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            GuildId = get |> Get.optinull Property.GuildId Decode.string
         }) path v
 
     let encoder (v: ActivityLocation) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-            Property.Kind, ActivityLocationKind.encoder v.Kind
-            Property.ChannelId, Encode.string v.ChannelId
-            Property.GuildId, Encode.option Encode.string (v.GuildId |> Option.flatten)
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Kind ActivityLocationKind.encoder v.Kind
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optinull Property.GuildId Encode.string v.GuildId
+        )
 
 module ApplicationRoleConnectionMetadata =
     module Property =
@@ -1467,27 +1467,27 @@ module AuditLog =
 
     let decoder path v =
         Decode.object (fun get -> {
-            ApplicationCommands = get.Required.Field Property.ApplicationCommands (Decode.list ApplicationCommand.decoder)
-            AuditLogEntries = get.Required.Field Property.AuditLogEntries (Decode.list AuditLogEntry.decoder)
-            AutoModerationRules = get.Required.Field Property.AutoModerationRules (Decode.list AutoModerationRule.decoder)
-            GuildScheduledEvents = get.Required.Field Property.GuildScheduledEvents (Decode.list GuildScheduledEvent.decoder)
-            Integrations = get.Required.Field Property.Integrations (Decode.list Integration.Partial.decoder)
-            Threads = get.Required.Field Property.Threads (Decode.list Channel.decoder)
-            Users = get.Required.Field Property.Users (Decode.list User.decoder)
-            Webhooks = get.Required.Field Property.Webhooks (Decode.list Webhook.decoder)
+            ApplicationCommands = get |> Get.required Property.ApplicationCommands (Decode.list ApplicationCommand.decoder)
+            AuditLogEntries = get |> Get.required Property.AuditLogEntries (Decode.list AuditLogEntry.decoder)
+            AutoModerationRules = get |> Get.required Property.AutoModerationRules (Decode.list AutoModerationRule.decoder)
+            GuildScheduledEvents = get |> Get.required Property.GuildScheduledEvents (Decode.list GuildScheduledEvent.decoder)
+            Integrations = get |> Get.required Property.Integrations (Decode.list Integration.Partial.decoder)
+            Threads = get |> Get.required Property.Threads (Decode.list Channel.decoder)
+            Users = get |> Get.required Property.Users (Decode.list User.decoder)
+            Webhooks = get |> Get.required Property.Webhooks (Decode.list Webhook.decoder)
         }) path v
 
     let encoder (v: AuditLog) =
-        Encode.object [
-            Property.ApplicationCommands, (List.map ApplicationCommand.encoder >> Encode.list) v.ApplicationCommands
-            Property.AuditLogEntries, (List.map AuditLogEntry.encoder >> Encode.list) v.AuditLogEntries
-            Property.AutoModerationRules, (List.map AutoModerationRule.encoder >> Encode.list) v.AutoModerationRules
-            Property.GuildScheduledEvents, (List.map GuildScheduledEvent.encoder >> Encode.list) v.GuildScheduledEvents
-            Property.Integrations, (List.map Integration.Partial.encoder >> Encode.list) v.Integrations
-            Property.Threads, (List.map Channel.encoder >> Encode.list) v.Threads
-            Property.Users, (List.map User.encoder >> Encode.list) v.Users
-            Property.Webhooks, (List.map Webhook.encoder >> Encode.list) v.Webhooks
-        ]
+        Encode.object ([]
+            |> Encode.required Property.ApplicationCommands (List.map ApplicationCommand.encoder >> Encode.list) v.ApplicationCommands
+            |> Encode.required Property.AuditLogEntries (List.map AuditLogEntry.encoder >> Encode.list) v.AuditLogEntries
+            |> Encode.required Property.AutoModerationRules (List.map AutoModerationRule.encoder >> Encode.list) v.AutoModerationRules
+            |> Encode.required Property.GuildScheduledEvents (List.map GuildScheduledEvent.encoder >> Encode.list) v.GuildScheduledEvents
+            |> Encode.required Property.Integrations (List.map Integration.Partial.encoder >> Encode.list) v.Integrations
+            |> Encode.required Property.Threads (List.map Channel.encoder >> Encode.list) v.Threads
+            |> Encode.required Property.Users (List.map User.encoder >> Encode.list) v.Users
+            |> Encode.required Property.Webhooks (List.map Webhook.encoder >> Encode.list) v.Webhooks
+        )
 
 module AuditLogEntry =
     module Property =

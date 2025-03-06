@@ -384,13 +384,13 @@ type ClientStatus = {
 type Activity = {
     Name: string
     Type: ActivityType
-    Url: string option
-    CreatedAt: DateTime option
+    Url: string option option
+    CreatedAt: DateTime
     Timestamps: ActivityTimestamps option
     ApplicationId: string option
-    Details: string option
-    State: string option
-    Emoji: ActivityEmoji option
+    Details: string option option
+    State: string option option
+    Emoji: ActivityEmoji option option
     Party: ActivityParty option
     Assets: ActivityAssets option
     Secrets: ActivitySecrets option

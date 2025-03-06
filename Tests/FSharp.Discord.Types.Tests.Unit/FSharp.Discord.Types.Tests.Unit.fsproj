@@ -10,9 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Common\JsonTests.fs" />
     <Compile Include="CodesTests.fs" />
-    <Compile Include="StructuresTests.fs" />
     <Compile Include="Serialization\ThothTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
