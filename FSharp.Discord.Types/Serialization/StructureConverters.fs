@@ -1,87 +1,7 @@
 ﻿namespace rec FSharp.Discord.Types.Serialization
 
 open FSharp.Discord.Types
-open System
 open Thoth.Json.Net
-
-// TODO: Rewrite serializers using `Get` module helpers. Consider making a CE first
-// TODO: Can piped functions be mapped instead (e.g. Option.defaultValue)
-
-module Decode =
-    let mapkv (keyMapper: string -> 'a option) (valueDecoder: Decoder<'b>) path v =
-        let decoded = Decode.dict valueDecoder path v
-
-        match decoded with
-        | Error err -> Error err
-        | Ok d ->
-            d
-            |> Map.toSeq
-            |> Seq.fold
-                (fun acc cur -> acc |> Result.bind (fun acc ->
-                    match keyMapper (fst cur) with
-                    | None -> Error (path, BadField("an invalid key", v))
-                    | Some k -> Ok (acc |> Seq.append (seq { k, snd cur }))
-                ))
-                (Ok [])
-            |> Result.map (Map.ofSeq)
-
-module Encode =
-    /// Append an encoding that is required.
-    let required key decoder v list =
-        list @ [key, decoder v]
-
-    /// Append an encoding that is optional.
-    let optional key decoder v list =
-        match v with
-        | Some s -> list @ [key, decoder s]
-        | None -> list
-
-    /// Append an encoding that is nullable.
-    let nullable key decoder v list =
-        list @ [key, Encode.option decoder v]
-
-    /// Append an encoding that is optional and nullable.
-    let optinull key decoder v list =
-        match v with
-        | Some s -> list @ [key, Encode.option decoder s]
-        | None -> list
-
-    /// Encode a map to an object with a value encoder.
-    let mapv (encoder: Encoder<'a>) value =
-        Map.map (fun _ v -> encoder v) value
-        |> Encode.dict
-
-    /// Encode a map to an object with a key mapper and value encoder.
-    let mapkv (mapper: 'a -> string) (encoder: Encoder<'b>) value =
-        value
-        |> Map.toSeq
-        |> Seq.map (fun (k, v) -> mapper k, encoder v)
-        |> Map.ofSeq
-        |> Encode.dict
-        
-module Get =
-    /// Get a required decoded value.
-    let required key decoder (get: Decode.IGetters) =
-        get.Required.Field key decoder
-
-    /// Get an optional decoded value.
-    let optional key decoder (get: Decode.IGetters) =
-        get.Optional.Field key decoder
-
-    /// Get a nullable decoded value.
-    let nullable key decoder (get: Decode.IGetters) =
-        get.Required.Field key (Decode.option decoder)
-
-    /// Get an optional and nullable decoded value.
-    let optinull key decoder (get: Decode.IGetters) =
-        get.Optional.Raw (Decode.field key (Decode.option decoder))
-        
-module UnixTimestamp =
-    let decoder path v =
-        Decode.map (DateTimeOffset.FromUnixTimeMilliseconds >> _.DateTime) Decode.int64 path v
-
-    let encoder (v: DateTime) =
-        DateTimeOffset v |> _.ToUnixTimeMilliseconds() |> Encode.int64
 
 module ErrorResponse =
     module Property =
@@ -127,49 +47,49 @@ module Interaction =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
-            ApplicationId = get.Required.Field Property.ApplicationId Decode.string
-            Type = get.Required.Field Property.Type Decode.Enum.int<InteractionType>
-            Data = get.Optional.Field Property.Data InteractionData.decoder
-            Guild = get.Optional.Field Property.Guild Guild.Partial.decoder
-            GuildId = get.Optional.Field Property.GuildId Decode.string
-            Channel = get.Optional.Field Property.Channel Channel.Partial.decoder
-            ChannelId = get.Optional.Field Property.ChannelId Decode.string
-            Member = get.Optional.Field Property.Member GuildMember.decoder
-            User = get.Optional.Field Property.User User.decoder
-            Token = get.Required.Field Property.Token Decode.string
-            Version = get.Required.Field Property.Version Decode.int
-            Message = get.Optional.Field Property.Message Message.decoder
-            AppPermissions = get.Required.Field Property.AppPermissions Decode.string
-            Locale = get.Optional.Field Property.Locale Decode.string
-            GuildLocale = get.Optional.Field Property.GuildLocale Decode.string
-            Entitlements = get.Required.Field Property.Entitlements (Decode.list Entitlement.decoder)
-            AuthorizingIntegrationOwners = get.Required.Field Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
-            Context = get.Optional.Field Property.Context Decode.Enum.int<InteractionContextType>
+            Id = get |> Get.required Property.Id Decode.string
+            ApplicationId = get |> Get.required Property.ApplicationId Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
+            Data = get |> Get.optional Property.Data InteractionData.decoder
+            Guild = get |> Get.optional Property.Guild Guild.Partial.decoder
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Channel = get |> Get.optional Property.Channel Channel.Partial.decoder
+            ChannelId = get |> Get.optional Property.ChannelId Decode.string
+            Member = get |> Get.optional Property.Member GuildMember.decoder
+            User = get |> Get.optional Property.User User.decoder
+            Token = get |> Get.required Property.Token Decode.string
+            Version = get |> Get.required Property.Version Decode.int
+            Message = get |> Get.optional Property.Message Message.decoder
+            AppPermissions = get |> Get.required Property.AppPermissions Decode.string
+            Locale = get |> Get.optional Property.Locale Decode.string
+            GuildLocale = get |> Get.optional Property.GuildLocale Decode.string
+            Entitlements = get |> Get.required Property.Entitlements (Decode.list Entitlement.decoder)
+            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
+            Context = get |> Get.optional Property.Context Decode.Enum.int<InteractionContextType>
         }) path v
 
     let encoder (v: Interaction) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-            Property.ApplicationId, Encode.string v.ApplicationId
-            Property.Type, Encode.Enum.int v.Type
-            Property.Data, Encode.option InteractionData.encoder v.Data
-            Property.Guild, Encode.option Guild.Partial.encoder v.Guild
-            Property.GuildId, Encode.option Encode.string v.GuildId
-            Property.Channel, Encode.option Channel.Partial.encoder v.Channel
-            Property.ChannelId, Encode.option Encode.string v.ChannelId
-            Property.Member, Encode.option GuildMember.encoder v.Member
-            Property.User, Encode.option User.encoder v.User
-            Property.Token, Encode.string v.Token
-            Property.Version, Encode.int v.Version
-            Property.Message, Encode.option Message.encoder v.Message
-            Property.AppPermissions, Encode.string v.AppPermissions
-            Property.Locale, Encode.option Encode.string v.Locale
-            Property.GuildLocale, Encode.option Encode.string v.GuildLocale
-            Property.Entitlements, (List.map Entitlement.encoder >> Encode.list) v.Entitlements
-            Property.AuthorizingIntegrationOwners, Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder v.AuthorizingIntegrationOwners
-            Property.Context, Encode.option Encode.Enum.int v.Context
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.Data InteractionData.encoder v.Data
+            |> Encode.optional Property.Guild Guild.Partial.encoder v.Guild
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Channel Channel.Partial.encoder v.Channel
+            |> Encode.optional Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.Member GuildMember.encoder v.Member
+            |> Encode.optional Property.User User.encoder v.User
+            |> Encode.required Property.Token Encode.string v.Token
+            |> Encode.required Property.Version Encode.int v.Version
+            |> Encode.optional Property.Message Message.encoder v.Message
+            |> Encode.required Property.AppPermissions Encode.string v.AppPermissions
+            |> Encode.optional Property.Locale Encode.string v.Locale
+            |> Encode.optional Property.GuildLocale Encode.string v.GuildLocale
+            |> Encode.required Property.Entitlements (List.map Entitlement.encoder >> Encode.list) v.Entitlements
+            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.AuthorizingIntegrationOwners
+            |> Encode.optional Property.Context Encode.Enum.int v.Context
+        )
 
 module ApplicationCommandData =
     module Property =
@@ -183,25 +103,25 @@ module ApplicationCommandData =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
-            Name = get.Required.Field Property.Name Decode.string
-            Type = get.Required.Field Property.Type Decode.Enum.int<ApplicationCommandType>
-            Resolved = get.Optional.Field Property.Resolved ResolvedData.decoder
-            Options = get.Optional.Field Property.Options (Decode.list ApplicationCommandInteractionDataOption.decoder)
-            GuildId = get.Optional.Field Property.GuildId Decode.string
-            TargetId = get.Optional.Field Property.TargetId Decode.string
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationCommandType>
+            Resolved = get |> Get.optional Property.Resolved ResolvedData.decoder
+            Options = get |> Get.optional Property.Options (Decode.list ApplicationCommandInteractionDataOption.decoder)
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            TargetId = get |> Get.optional Property.TargetId Decode.string
         }) path v
 
     let encoder (v: ApplicationCommandData) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-            Property.Name, Encode.string v.Name
-            Property.Type, Encode.Enum.int v.Type
-            Property.Resolved, Encode.option ResolvedData.encoder v.Resolved
-            Property.Options, Encode.option (List.map ApplicationCommandInteractionDataOption.encoder >> Encode.list) v.Options
-            Property.GuildId, Encode.option Encode.string v.GuildId
-            Property.TargetId, Encode.option Encode.string v.TargetId
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.Resolved ResolvedData.encoder v.Resolved
+            |> Encode.optional Property.Options (List.map ApplicationCommandInteractionDataOption.encoder >> Encode.list) v.Options
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.TargetId Encode.string v.TargetId
+        )
 
 module MessageComponentData =
     module Property =
@@ -212,19 +132,19 @@ module MessageComponentData =
 
     let decoder path v =
         Decode.object (fun get -> {
-            CustomId = get.Required.Field Property.CustomId Decode.string
-            ComponentType = get.Required.Field Property.ComponentType Decode.Enum.int<ComponentType>
-            Values = get.Optional.Field Property.Values (Decode.list SelectMenuOption.decoder)
-            Resolved = get.Optional.Field Property.Resolved ResolvedData.decoder
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            ComponentType = get |> Get.required Property.ComponentType Decode.Enum.int<ComponentType>
+            Values = get |> Get.optional Property.Values (Decode.list SelectMenuOption.decoder)
+            Resolved = get |> Get.optional Property.Resolved ResolvedData.decoder
         }) path v
 
     let encoder (v: MessageComponentData) =
-        Encode.object [
-            Property.CustomId, Encode.string v.CustomId
-            Property.ComponentType, Encode.Enum.int v.ComponentType
-            Property.Values, Encode.option (List.map SelectMenuOption.encoder >> Encode.list) v.Values
-            Property.Resolved, Encode.option ResolvedData.encoder v.Resolved
-        ]
+        Encode.object ([]
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.required Property.ComponentType Encode.Enum.int v.ComponentType
+            |> Encode.optional Property.Values (List.map SelectMenuOption.encoder >> Encode.list) v.Values
+            |> Encode.optional Property.Resolved ResolvedData.encoder v.Resolved
+        )
 
 module ModalSubmitData =
     module Property =
@@ -233,15 +153,15 @@ module ModalSubmitData =
 
     let decoder path v =
         Decode.object (fun get -> {
-            CustomId = get.Required.Field Property.CustomId Decode.string
-            Components = get.Required.Field Property.Components (Decode.list Component.decoder)
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Components = get |> Get.required Property.Components (Decode.list Component.decoder)
         }) path v
 
     let encoder (v: ModalSubmitData) =
-        Encode.object [
-            Property.CustomId, Encode.string v.CustomId
-            Property.Components, (List.map Component.encoder >> Encode.list) v.Components
-        ]
+        Encode.object ([]
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.required Property.Components (List.map Component.encoder >> Encode.list) v.Components
+        )
 
 module InteractionData =
     let decoder path v =
@@ -268,23 +188,23 @@ module ResolvedData =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Users = get.Optional.Field Property.Users (Decode.dict User.decoder)
-            Members = get.Optional.Field Property.Members (Decode.dict GuildMember.Partial.decoder)
-            Roles = get.Optional.Field Property.Roles (Decode.dict Role.decoder)
-            Channels = get.Optional.Field Property.Channels (Decode.dict Channel.Partial.decoder)
-            Messages = get.Optional.Field Property.Messages (Decode.dict Message.Partial.decoder)
-            Attachments = get.Optional.Field Property.Attachments (Decode.dict Attachment.decoder)
+            Users = get |> Get.optional Property.Users (Decode.dict User.decoder)
+            Members = get |> Get.optional Property.Members (Decode.dict GuildMember.Partial.decoder)
+            Roles = get |> Get.optional Property.Roles (Decode.dict Role.decoder)
+            Channels = get |> Get.optional Property.Channels (Decode.dict Channel.Partial.decoder)
+            Messages = get |> Get.optional Property.Messages (Decode.dict Message.Partial.decoder)
+            Attachments = get |> Get.optional Property.Attachments (Decode.dict Attachment.decoder)
         }) path v
 
     let encoder (v: ResolvedData) =
-        Encode.object [
-            Property.Users, Encode.option (Encode.mapv User.encoder) v.Users
-            Property.Members, Encode.option (Encode.mapv GuildMember.Partial.encoder) v.Members
-            Property.Roles, Encode.option (Encode.mapv Role.encoder) v.Roles
-            Property.Channels, Encode.option (Encode.mapv Channel.Partial.encoder) v.Channels
-            Property.Messages, Encode.option (Encode.mapv Message.Partial.encoder) v.Messages
-            Property.Attachments, Encode.option (Encode.mapv Attachment.encoder) v.Attachments
-        ]
+        Encode.object ([]
+            |> Encode.optional Property.Users (Encode.mapv User.encoder) v.Users
+            |> Encode.optional Property.Members (Encode.mapv GuildMember.Partial.encoder) v.Members
+            |> Encode.optional Property.Roles (Encode.mapv Role.encoder) v.Roles
+            |> Encode.optional Property.Channels (Encode.mapv Channel.Partial.encoder) v.Channels
+            |> Encode.optional Property.Messages (Encode.mapv Message.Partial.encoder) v.Messages
+            |> Encode.optional Property.Attachments (Encode.mapv Attachment.encoder) v.Attachments
+        )
 
 module ApplicationCommandInteractionDataOption =
     module Property =
@@ -296,21 +216,21 @@ module ApplicationCommandInteractionDataOption =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Name = get.Required.Field Property.Name Decode.string
-            Type = get.Required.Field Property.Type Decode.Enum.int<ApplicationCommandOptionType>
-            Value = get.Optional.Field Property.Value ApplicationCommandInteractionDataOptionValue.decoder
-            Options = get.Optional.Field Property.Options (Decode.list ApplicationCommandInteractionDataOption.decoder)
-            Focused = get.Optional.Field Property.Focused Decode.bool
+            Name = get |> Get.required Property.Name Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationCommandOptionType>
+            Value = get |> Get.optional Property.Value ApplicationCommandInteractionDataOptionValue.decoder
+            Options = get |> Get.optional Property.Options (Decode.list ApplicationCommandInteractionDataOption.decoder)
+            Focused = get |> Get.optional Property.Focused Decode.bool
         }) path v
 
     let encoder (v: ApplicationCommandInteractionDataOption) =
-        Encode.object [
-            Property.Name, Encode.string v.Name
-            Property.Type, Encode.Enum.int v.Type
-            Property.Value, Encode.option ApplicationCommandInteractionDataOptionValue.encoder v.Value
-            Property.Options, Encode.option (List.map ApplicationCommandInteractionDataOption.encoder >> Encode.list) v.Options
-            Property.Focused, Encode.option Encode.bool v.Focused
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.Value ApplicationCommandInteractionDataOptionValue.encoder v.Value
+            |> Encode.optional Property.Options (List.map ApplicationCommandInteractionDataOption.encoder >> Encode.list) v.Options
+            |> Encode.optional Property.Focused Encode.bool v.Focused
+        )
 
 module ApplicationCommandInteractionDataOptionValue =
     let decoder path v =
@@ -341,21 +261,21 @@ module MessageInteraction =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
-            Type = get.Required.Field Property.Type Decode.Enum.int<InteractionType>
-            Name = get.Required.Field Property.Name Decode.string
-            User = get.Required.Field Property.User User.decoder
-            Member = get.Optional.Field Property.Member GuildMember.Partial.decoder
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
+            Name = get |> Get.required Property.Name Decode.string
+            User = get |> Get.required Property.User User.decoder
+            Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
         }) path v
 
     let encoder (v: MessageInteraction) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-            Property.Type, Encode.Enum.int v.Type
-            Property.Name, Encode.string v.Name
-            Property.User, User.encoder v.User
-            Property.Member, Encode.option GuildMember.Partial.encoder v.Member
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.User User.encoder v.User
+            |> Encode.optional Property.Member GuildMember.Partial.encoder v.Member
+        )
 
 module InteractionResponse =
     module Property =
@@ -364,15 +284,15 @@ module InteractionResponse =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Type = get.Required.Field Property.Type Decode.Enum.int<InteractionCallbackType>
-            Data = get.Optional.Field Property.Data InteractionCallbackData.decoder
+            Type = get |> Get.required Property.Type Decode.Enum.int<InteractionCallbackType>
+            Data = get |> Get.optional Property.Data InteractionCallbackData.decoder
         }) path v
 
     let encoder (v: InteractionResponse) =
-        Encode.object [
-            Property.Type, Encode.Enum.int v.Type
-            Property.Data, Encode.option InteractionCallbackData.encoder v.Data
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.Data InteractionCallbackData.encoder v.Data
+        )
 
 module MessageInteractionCallbackData =
     module Property =
@@ -387,27 +307,27 @@ module MessageInteractionCallbackData =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Tts = get.Optional.Field Property.Tts Decode.bool
-            Content = get.Optional.Field Property.Content Decode.string
-            Embeds = get.Optional.Field Property.Embeds (Decode.list Embed.decoder)
-            AllowedMentions = get.Optional.Field Property.AllowedMentions AllowedMentions.decoder
-            Flags = get.Optional.Field Property.Flags Decode.int
-            Components = get.Optional.Field Property.Components (Decode.list Component.decoder)
-            Attachments = get.Optional.Field Property.Attachments (Decode.list Attachment.Partial.decoder)
-            Poll = get.Optional.Field Property.Poll Poll.decoder
+            Tts = get |> Get.optional Property.Tts Decode.bool
+            Content = get |> Get.optional Property.Content Decode.string
+            Embeds = get |> Get.optional Property.Embeds (Decode.list Embed.decoder)
+            AllowedMentions = get |> Get.optional Property.AllowedMentions AllowedMentions.decoder
+            Flags = get |> Get.optional Property.Flags Decode.int
+            Components = get |> Get.optional Property.Components (Decode.list Component.decoder)
+            Attachments = get |> Get.optional Property.Attachments (Decode.list Attachment.Partial.decoder)
+            Poll = get |> Get.optional Property.Poll Poll.decoder
         }) path v
 
     let encoder (v: MessageInteractionCallbackData) =
-        Encode.object [
-            Property.Tts, Encode.option Encode.bool v.Tts
-            Property.Content, Encode.option Encode.string v.Content
-            Property.Embeds, Encode.option (List.map Embed.encoder >> Encode.list) v.Embeds
-            Property.AllowedMentions, Encode.option AllowedMentions.encoder v.AllowedMentions
-            Property.Flags, Encode.option Encode.int v.Flags
-            Property.Components, Encode.option (List.map Component.encoder >> Encode.list) v.Components
-            Property.Attachments, Encode.option (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
-            Property.Poll, Encode.option Poll.encoder v.Poll
-        ]
+        Encode.object ([]
+            |> Encode.optional Property.Tts Encode.bool v.Tts
+            |> Encode.optional Property.Content Encode.string v.Content
+            |> Encode.optional Property.Embeds (List.map Embed.encoder >> Encode.list) v.Embeds
+            |> Encode.optional Property.AllowedMentions AllowedMentions.encoder v.AllowedMentions
+            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Components (List.map Component.encoder >> Encode.list) v.Components
+            |> Encode.optional Property.Attachments (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
+            |> Encode.optional Property.Poll Poll.encoder v.Poll
+        )
 
 module AutocompleteInteractionCallbackData =
     module Property =
@@ -415,13 +335,13 @@ module AutocompleteInteractionCallbackData =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Choices = get.Required.Field Property.Choices (Decode.list ApplicationCommandOptionChoice.decoder)
+            Choices = get |> Get.required Property.Choices (Decode.list ApplicationCommandOptionChoice.decoder)
         }) path v
 
     let encoder (v: AutocompleteInteractionCallbackData) =
-        Encode.object [
-            Property.Choices, (List.map ApplicationCommandOptionChoice.encoder >> Encode.list) v.Choices
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Choices (List.map ApplicationCommandOptionChoice.encoder >> Encode.list) v.Choices
+        )
 
 module ModalInteractionCallbackData =
     module Property =
@@ -431,17 +351,17 @@ module ModalInteractionCallbackData =
 
     let decoder path v =
         Decode.object (fun get -> {
-            CustomId = get.Required.Field Property.CustomId Decode.string
-            Title = get.Required.Field Property.Title Decode.string
-            Components = get.Required.Field Property.Components (Decode.list Component.decoder)
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Title = get |> Get.required Property.Title Decode.string
+            Components = get |> Get.required Property.Components (Decode.list Component.decoder)
         }) path v
 
     let encoder (v: ModalInteractionCallbackData) =
-        Encode.object [
-            Property.CustomId, Encode.string v.CustomId
-            Property.Title, Encode.string v.Title
-            Property.Components, (List.map Component.encoder >> Encode.list) v.Components
-        ]
+        Encode.object ([]
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.required Property.Title Encode.string v.Title
+            |> Encode.required Property.Components (List.map Component.encoder >> Encode.list) v.Components
+        )
 
 module InteractionCallbackData =
     let decoder path v =
@@ -464,15 +384,15 @@ module InteractionCallbackResponse =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Interaction = get.Required.Field Property.Interaction InteractionCallback.decoder
-            Resource = get.Optional.Field Property.Resource InteractionCallbackResource.decoder
+            Interaction = get |> Get.required Property.Interaction InteractionCallback.decoder
+            Resource = get |> Get.optional Property.Resource InteractionCallbackResource.decoder
         }) path v
 
     let encoder (v: InteractionCallbackResponse) =
-        Encode.object [
-            Property.Interaction, InteractionCallback.encoder v.Interaction
-            Property.Resource, Encode.option InteractionCallbackResource.encoder v.Resource
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Interaction InteractionCallback.encoder v.Interaction
+            |> Encode.optional Property.Resource InteractionCallbackResource.encoder v.Resource
+        )
 
 module InteractionCallback =
     module Property =
@@ -485,23 +405,23 @@ module InteractionCallback =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
-            Type = get.Required.Field Property.Type Decode.Enum.int<InteractionType>
-            ActivityInstanceId = get.Optional.Field Property.ActivityInstanceId Decode.string
-            ResponseMessageId = get.Optional.Field Property.ResponseMessageId Decode.string
-            ResponseMessageLoading = get.Optional.Field Property.ResponseMessageLoading Decode.bool
-            ResponseMessageEphemeral = get.Optional.Field Property.ResponseMessageEphemeral Decode.bool
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
+            ActivityInstanceId = get |> Get.optional Property.ActivityInstanceId Decode.string
+            ResponseMessageId = get |> Get.optional Property.ResponseMessageId Decode.string
+            ResponseMessageLoading = get |> Get.optional Property.ResponseMessageLoading Decode.bool
+            ResponseMessageEphemeral = get |> Get.optional Property.ResponseMessageEphemeral Decode.bool
         }) path v
 
     let encoder (v: InteractionCallback) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-            Property.Type, Encode.Enum.int v.Type
-            Property.ActivityInstanceId, Encode.option Encode.string v.ActivityInstanceId
-            Property.ResponseMessageId, Encode.option Encode.string v.ResponseMessageId
-            Property.ResponseMessageLoading, Encode.option Encode.bool v.ResponseMessageLoading
-            Property.ResponseMessageEphemeral, Encode.option Encode.bool v.ResponseMessageEphemeral
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.ActivityInstanceId Encode.string v.ActivityInstanceId
+            |> Encode.optional Property.ResponseMessageId Encode.string v.ResponseMessageId
+            |> Encode.optional Property.ResponseMessageLoading Encode.bool v.ResponseMessageLoading
+            |> Encode.optional Property.ResponseMessageEphemeral Encode.bool v.ResponseMessageEphemeral
+        )
 
 module InteractionCallbackResource =
     module Property =
@@ -511,17 +431,17 @@ module InteractionCallbackResource =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Type = get.Required.Field Property.Type Decode.Enum.int<InteractionCallbackType>
-            ActivityInstance = get.Optional.Field Property.ActivityInstance InteractionCallbackActivityInstance.decoder
-            Message = get.Optional.Field Property.Message Message.decoder
+            Type = get |> Get.required Property.Type Decode.Enum.int<InteractionCallbackType>
+            ActivityInstance = get |> Get.optional Property.ActivityInstance InteractionCallbackActivityInstance.decoder
+            Message = get |> Get.optional Property.Message Message.decoder
         }) path v
 
     let encoder (v: InteractionCallbackResource) =
-        Encode.object [
-            Property.Type, Encode.Enum.int v.Type
-            Property.ActivityInstance, Encode.option InteractionCallbackActivityInstance.encoder v.ActivityInstance
-            Property.Message, Encode.option Message.encoder v.Message
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.ActivityInstance InteractionCallbackActivityInstance.encoder v.ActivityInstance
+            |> Encode.optional Property.Message Message.encoder v.Message
+        )
 
 module InteractionCallbackActivityInstance =
     module Property =
@@ -529,13 +449,13 @@ module InteractionCallbackActivityInstance =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
+            Id = get |> Get.required Property.Id Decode.string
         }) path v
 
     let encoder (v: InteractionCallbackActivityInstance) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+        )
 
 module ApplicationCommand =
     module Property =

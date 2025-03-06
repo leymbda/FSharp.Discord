@@ -117,10 +117,10 @@ type MessageInteractionCallbackData = {
     Content: string option
     Embeds: Embed list option
     AllowedMentions: AllowedMentions option
-    Flags: int option
+    Flags: int option // TODO: Convert to list of flag enums (and check for other instances of `Flag: int` for same change)
     Components: Component list option
     Attachments: PartialAttachment list option
-    Poll: Poll option
+    Poll: Poll option // TODO: Poll REQUEST object, not poll itself
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-autocomplete
