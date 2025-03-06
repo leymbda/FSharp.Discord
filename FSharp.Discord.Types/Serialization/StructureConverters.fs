@@ -477,41 +477,41 @@ module ApplicationCommand =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
-            Type = get.Optional.Field Property.Type Decode.Enum.int<ApplicationCommandType> |> Option.defaultValue ApplicationCommandType.CHAT_INPUT
-            ApplicationId = get.Required.Field Property.ApplicationId Decode.string
-            GuildId = get.Optional.Field Property.GuildId Decode.string
-            Name = get.Required.Field Property.Name Decode.string
-            NameLocalizations = get.Optional.Field Property.NameLocalizations (Decode.dict Decode.string)
-            Description = get.Required.Field Property.Description Decode.string
-            DescriptionLocalizations = get.Optional.Field Property.DescriptionLocalizations (Decode.dict Decode.string)
-            Options = get.Optional.Field Property.Options (Decode.list ApplicationCommandOption.decoder)
-            DefaultMemberPermissions = get.Optional.Field Property.DefaultMemberPermissions Decode.string
-            Nsfw = get.Optional.Field Property.Nsfw Decode.bool |> Option.defaultValue false
-            IntegrationTypes = get.Optional.Field Property.IntegrationTypes (Decode.list Decode.Enum.int<ApplicationIntegrationType>) |> Option.defaultValue [ApplicationIntegrationType.GUILD_INSTALL; ApplicationIntegrationType.USER_INSTALL]
-            Contexts = get.Optional.Field Property.Contexts (Decode.list Decode.Enum.int<InteractionContextType>)
-            Version = get.Required.Field Property.Version Decode.string
-            Handler = get.Optional.Field Property.Handler Decode.Enum.int<ApplicationCommandHandlerType>
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.optional Property.Type Decode.Enum.int<ApplicationCommandType> |> Option.defaultValue ApplicationCommandType.CHAT_INPUT
+            ApplicationId = get |> Get.required Property.ApplicationId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            NameLocalizations = get |> Get.optinull Property.NameLocalizations (Decode.dict Decode.string)
+            Description = get |> Get.required Property.Description Decode.string
+            DescriptionLocalizations = get |> Get.optinull Property.DescriptionLocalizations (Decode.dict Decode.string)
+            Options = get |> Get.optional Property.Options (Decode.list ApplicationCommandOption.decoder)
+            DefaultMemberPermissions = get |> Get.nullable Property.DefaultMemberPermissions Decode.string
+            Nsfw = get |> Get.optional Property.Nsfw Decode.bool |> Option.defaultValue false
+            IntegrationTypes = get |> Get.optional Property.IntegrationTypes (Decode.list Decode.Enum.int<ApplicationIntegrationType>) |> Option.defaultValue [ApplicationIntegrationType.GUILD_INSTALL; ApplicationIntegrationType.USER_INSTALL]
+            Contexts = get |> Get.optional Property.Contexts (Decode.list Decode.Enum.int<InteractionContextType>)
+            Version = get |> Get.required Property.Version Decode.string
+            Handler = get |> Get.optional Property.Handler Decode.Enum.int<ApplicationCommandHandlerType>
         }) path v
 
     let encoder (v: ApplicationCommand) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-            Property.Type, Encode.Enum.int v.Type
-            Property.ApplicationId, Encode.string v.ApplicationId
-            Property.GuildId, Encode.option Encode.string v.GuildId
-            Property.Name, Encode.string v.Name
-            Property.NameLocalizations, Encode.option (Encode.mapv Encode.string) v.NameLocalizations
-            Property.Description, Encode.string v.Description
-            Property.DescriptionLocalizations, Encode.option (Encode.mapv Encode.string) v.DescriptionLocalizations
-            Property.Options, Encode.option (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
-            Property.DefaultMemberPermissions, Encode.option Encode.string v.DefaultMemberPermissions
-            Property.Nsfw, Encode.bool v.Nsfw
-            Property.IntegrationTypes, (List.map Encode.Enum.int >> Encode.list) v.IntegrationTypes
-            Property.Contexts, Encode.option (List.map Encode.Enum.int >> Encode.list) v.Contexts
-            Property.Version, Encode.string v.Version
-            Property.Handler, Encode.option Encode.Enum.int v.Handler
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.optinull Property.NameLocalizations (Encode.mapv Encode.string) v.NameLocalizations
+            |> Encode.required Property.Description Encode.string v.Description
+            |> Encode.optinull Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
+            |> Encode.optional Property.Options (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
+            |> Encode.nullable Property.DefaultMemberPermissions Encode.string v.DefaultMemberPermissions
+            |> Encode.required Property.Nsfw Encode.bool v.Nsfw
+            |> Encode.required Property.IntegrationTypes (List.map Encode.Enum.int >> Encode.list) v.IntegrationTypes
+            |> Encode.optional Property.Contexts (List.map Encode.Enum.int >> Encode.list) v.Contexts
+            |> Encode.required Property.Version Encode.string v.Version
+            |> Encode.optional Property.Handler Encode.Enum.int v.Handler
+        )
 
 module ApplicationCommandOption =
     module Property =
@@ -532,39 +532,39 @@ module ApplicationCommandOption =
 
     let decoder path v: Result<ApplicationCommandOption, DecoderError> =
         Decode.object (fun get -> {
-            Type = get.Required.Field Property.Type Decode.Enum.int<ApplicationCommandOptionType>
-            Name = get.Required.Field Property.Name Decode.string
-            NameLocalizations = get.Optional.Field Property.NameLocalizations (Decode.dict Decode.string)
-            Description = get.Required.Field Property.Description Decode.string
-            DescriptionLocalizations = get.Optional.Field Property.DescriptionLocalizations (Decode.dict Decode.string)
-            Required = get.Optional.Field Property.Required Decode.bool |> Option.defaultValue false
-            Choices = get.Optional.Field Property.Choices (Decode.list ApplicationCommandOptionChoice.decoder)
-            Options = get.Optional.Field Property.Options (Decode.list ApplicationCommandOption.decoder)
-            ChannelTypes = get.Optional.Field Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
-            MinValue = get.Optional.Field Property.MinValue ApplicationCommandOptionMinValue.decoder
-            MaxValue = get.Optional.Field Property.MaxValue ApplicationCommandOptionMaxValue.decoder
-            MinLength = get.Optional.Field Property.MinLength Decode.int
-            MaxLength = get.Optional.Field Property.MaxLength Decode.int
-            Autocomplete = get.Optional.Field Property.Autocomplete Decode.bool
+            Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationCommandOptionType>
+            Name = get |> Get.required Property.Name Decode.string
+            NameLocalizations = get |> Get.optinull Property.NameLocalizations (Decode.dict Decode.string)
+            Description = get |> Get.required Property.Description Decode.string
+            DescriptionLocalizations = get |> Get.optinull Property.DescriptionLocalizations (Decode.dict Decode.string)
+            Required = get |> Get.optional Property.Required Decode.bool |> Option.defaultValue false
+            Choices = get |> Get.optional Property.Choices (Decode.list ApplicationCommandOptionChoice.decoder)
+            Options = get |> Get.optional Property.Options (Decode.list ApplicationCommandOption.decoder)
+            ChannelTypes = get |> Get.optional Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
+            MinValue = get |> Get.optional Property.MinValue ApplicationCommandOptionMinValue.decoder
+            MaxValue = get |> Get.optional Property.MaxValue ApplicationCommandOptionMaxValue.decoder
+            MinLength = get |> Get.optional Property.MinLength Decode.int
+            MaxLength = get |> Get.optional Property.MaxLength Decode.int
+            Autocomplete = get |> Get.optional Property.Autocomplete Decode.bool
         }) path v
 
     let encoder (v: ApplicationCommandOption) =
-        Encode.object [
-            Property.Type, Encode.Enum.int v.Type
-            Property.Name, Encode.string v.Name
-            Property.NameLocalizations, Encode.option (Encode.mapv Encode.string) v.NameLocalizations
-            Property.Description, Encode.string v.Description
-            Property.DescriptionLocalizations, Encode.option (Encode.mapv Encode.string) v.DescriptionLocalizations
-            Property.Required, Encode.bool v.Required
-            Property.Choices, Encode.option (List.map ApplicationCommandOptionChoice.encoder >> Encode.list) v.Choices
-            Property.Options, Encode.option (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
-            Property.ChannelTypes, Encode.option (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes
-            Property.MinValue, Encode.option ApplicationCommandOptionMinValue.encoder v.MinValue
-            Property.MaxValue, Encode.option ApplicationCommandOptionMaxValue.encoder v.MaxValue
-            Property.MinLength, Encode.option Encode.int v.MinLength
-            Property.MaxLength, Encode.option Encode.int v.MaxLength
-            Property.Autocomplete, Encode.option Encode.bool v.Autocomplete
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.optinull Property.NameLocalizations (Encode.mapv Encode.string) v.NameLocalizations
+            |> Encode.required Property.Description Encode.string v.Description
+            |> Encode.optinull Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
+            |> Encode.required Property.Required Encode.bool v.Required
+            |> Encode.optional Property.Choices (List.map ApplicationCommandOptionChoice.encoder >> Encode.list) v.Choices
+            |> Encode.optional Property.Options (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
+            |> Encode.optional Property.ChannelTypes (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes
+            |> Encode.optional Property.MinValue ApplicationCommandOptionMinValue.encoder v.MinValue
+            |> Encode.optional Property.MaxValue ApplicationCommandOptionMaxValue.encoder v.MaxValue
+            |> Encode.optional Property.MinLength Encode.int v.MinLength
+            |> Encode.optional Property.MaxLength Encode.int v.MaxLength
+            |> Encode.optional Property.Autocomplete Encode.bool v.Autocomplete
+        )
 
 module ApplicationCommandOptionMinValue =
     let decoder path v =
@@ -578,8 +578,6 @@ module ApplicationCommandOptionMinValue =
         | ApplicationCommandOptionMinValue.INT data -> Encode.int data
         | ApplicationCommandOptionMinValue.DOUBLE data -> Encode.float data
 
-    // TODO: Ensure min 0, max 6000 (create single DU with this requirement)
-
 module ApplicationCommandOptionMaxValue =
     let decoder path v =
         Decode.oneOf [
@@ -592,8 +590,6 @@ module ApplicationCommandOptionMaxValue =
         | ApplicationCommandOptionMaxValue.INT data -> Encode.int data
         | ApplicationCommandOptionMaxValue.DOUBLE data -> Encode.float data
 
-    // TODO: Ensure min 1, max 6000 (create single DU with this requirement)
-
 module ApplicationCommandOptionChoice =
     module Property =
         let [<Literal>] Name = "name"
@@ -602,17 +598,17 @@ module ApplicationCommandOptionChoice =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Name = get.Required.Field Property.Name Decode.string
-            NameLocalizations = get.Optional.Field Property.NameLocalizations (Decode.dict Decode.string)
-            Value = get.Required.Field Property.Value ApplicationCommandOptionChoiceValue.decoder
+            Name = get |> Get.required Property.Name Decode.string
+            NameLocalizations = get |> Get.optinull Property.NameLocalizations (Decode.dict Decode.string)
+            Value = get |> Get.required Property.Value ApplicationCommandOptionChoiceValue.decoder
         }) path v
 
     let encoder (v: ApplicationCommandOptionChoice) =
-        Encode.object [
-            Property.Name, Encode.string v.Name
-            Property.NameLocalizations, Encode.option (Encode.mapv Encode.string) v.NameLocalizations
-            Property.Value, ApplicationCommandOptionChoiceValue.encoder v.Value
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.optinull Property.NameLocalizations (Encode.mapv Encode.string) v.NameLocalizations
+            |> Encode.required Property.Value ApplicationCommandOptionChoiceValue.encoder v.Value
+        )
 
 module ApplicationCommandOptionChoiceValue =
     let decoder path v =
@@ -637,19 +633,19 @@ module GuildApplicationCommandPermissions =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
-            ApplicationId = get.Required.Field Property.ApplicationId Decode.string
-            GuildId = get.Required.Field Property.GuildId Decode.string
-            Permissions = get.Required.Field Property.Permissions (Decode.list ApplicationCommandPermission.decoder)
+            Id = get |> Get.required Property.Id Decode.string
+            ApplicationId = get |> Get.required Property.ApplicationId Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Permissions = get |> Get.required Property.Permissions (Decode.list ApplicationCommandPermission.decoder)
         }) path v
 
     let encoder (v: GuildApplicationCommandPermissions) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-            Property.ApplicationId, Encode.string v.ApplicationId
-            Property.GuildId, Encode.string v.GuildId
-            Property.Permissions, (List.map ApplicationCommandPermission.encoder >> Encode.list) v.Permissions
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Permissions (List.map ApplicationCommandPermission.encoder >> Encode.list) v.Permissions
+        )
 
 module ApplicationCommandPermission =
     module Property =
@@ -659,17 +655,17 @@ module ApplicationCommandPermission =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
-            Type = get.Required.Field Property.Type Decode.Enum.int<ApplicationCommandPermissionType>
-            Permission = get.Required.Field Property.Permission Decode.bool
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationCommandPermissionType>
+            Permission = get |> Get.required Property.Permission Decode.bool
         }) path v
 
     let encoder (v: ApplicationCommandPermission) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-            Property.Type, Encode.Enum.int v.Type
-            Property.Permission, Encode.bool v.Permission
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Permission Encode.bool v.Permission
+        )
 
 module ActionRow =
     module Property =

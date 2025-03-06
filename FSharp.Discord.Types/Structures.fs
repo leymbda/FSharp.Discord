@@ -178,10 +178,10 @@ type ApplicationCommand = {
     Type: ApplicationCommandType
     ApplicationId: string
     GuildId: string option
-    Name: string
-    NameLocalizations: Map<string, string> option
+    Name: string // TODO: Enforce 1-32 character name with valid chars
+    NameLocalizations: Map<string, string> option option
     Description: string
-    DescriptionLocalizations: Map<string, string> option
+    DescriptionLocalizations: Map<string, string> option option
     Options: ApplicationCommandOption list option
     DefaultMemberPermissions: string option // TODO: Serialize bitfield into permission list
     Nsfw: bool
@@ -196,10 +196,10 @@ type ApplicationCommand = {
 // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-structure
 type ApplicationCommandOption = {
     Type: ApplicationCommandOptionType
-    Name: string
-    NameLocalizations: Map<string, string> option
+    Name: string // TODO: Enforce 1-32 character name with valid chars
+    NameLocalizations: Map<string, string> option option
     Description: string
-    DescriptionLocalizations: Map<string, string> option
+    DescriptionLocalizations: Map<string, string> option option
     Required: bool
     Choices: ApplicationCommandOptionChoice list option
     Options: ApplicationCommandOption list option
@@ -218,15 +218,19 @@ type ApplicationCommandOptionMinValue =
     | INT    of int
     | DOUBLE of double
 
+// TODO: Ensure min 1, max 6000 (create single DU with this requirement)
+
 [<RequireQualifiedAccess>]
 type ApplicationCommandOptionMaxValue =
     | INT    of int
     | DOUBLE of double
 
+// TODO: Ensure min 1, max 6000 (create single DU with this requirement)
+
 // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
 type ApplicationCommandOptionChoice = {
     Name: string
-    NameLocalizations: Map<string, string> option
+    NameLocalizations: Map<string, string> option option
     Value: ApplicationCommandOptionChoiceValue
 }
 
