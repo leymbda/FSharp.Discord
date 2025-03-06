@@ -306,7 +306,7 @@ type CreateAutoModerationRulePayload (
     event_type:        AutoModerationEventType,
     trigger_type:      AutoModerationTriggerType,
     actions:           AutoModerationAction list,
-    ?trigger_metadata: TriggerMetadata,
+    ?trigger_metadata: AutoModerationTriggerMetadata,
     ?enabled:          bool,
     ?exempt_roles:     string list,
     ?exempt_channels:  string list
@@ -329,7 +329,7 @@ type CreateAutoModerationRulePayload (
 type ModifyAutoModerationRulePayload (
     ?name:             string,
     ?event_type:       AutoModerationEventType,
-    ?trigger_metadata: TriggerMetadata,
+    ?trigger_metadata: AutoModerationTriggerMetadata,
     ?actions:          AutoModerationAction list,
     ?enabled:          bool,
     ?exempt_roles:     string list,
