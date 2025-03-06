@@ -497,7 +497,7 @@ module ApplicationCommand =
     let encoder (v: ApplicationCommand) =
         Encode.object ([]
             |> Encode.required Property.Id Encode.string v.Id
-            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.Type Encode.Enum.int (Some v.Type)
             |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
             |> Encode.optional Property.GuildId Encode.string v.GuildId
             |> Encode.required Property.Name Encode.string v.Name
@@ -506,7 +506,7 @@ module ApplicationCommand =
             |> Encode.optinull Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
             |> Encode.optional Property.Options (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
             |> Encode.nullable Property.DefaultMemberPermissions Encode.string v.DefaultMemberPermissions
-            |> Encode.required Property.Nsfw Encode.bool v.Nsfw
+            |> Encode.optional Property.Nsfw Encode.bool (Some v.Nsfw)
             |> Encode.required Property.IntegrationTypes (List.map Encode.Enum.int >> Encode.list) v.IntegrationTypes
             |> Encode.optional Property.Contexts (List.map Encode.Enum.int >> Encode.list) v.Contexts
             |> Encode.required Property.Version Encode.string v.Version
@@ -555,7 +555,7 @@ module ApplicationCommandOption =
             |> Encode.optinull Property.NameLocalizations (Encode.mapv Encode.string) v.NameLocalizations
             |> Encode.required Property.Description Encode.string v.Description
             |> Encode.optinull Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
-            |> Encode.required Property.Required Encode.bool v.Required
+            |> Encode.optional Property.Required Encode.bool (Some v.Required)
             |> Encode.optional Property.Choices (List.map ApplicationCommandOptionChoice.encoder >> Encode.list) v.Choices
             |> Encode.optional Property.Options (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
             |> Encode.optional Property.ChannelTypes (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes
@@ -691,30 +691,33 @@ module Button =
         let [<Literal>] Label = "label"
         let [<Literal>] Emoji = "emoji"
         let [<Literal>] CustomId = "custom_id"
+        let [<Literal>] SkuId = "sku_id"
         let [<Literal>] Url = "url"
         let [<Literal>] Disabled = "disabled"
 
     let decoder path v =
         Decode.object (fun get -> {
-            Type = get.Required.Field Property.Type Decode.Enum.int<ComponentType>
-            Style = get.Required.Field Property.Style Decode.Enum.int<ButtonStyle>
-            Label = get.Required.Field Property.Label Decode.string
-            Emoji = get.Optional.Field Property.Emoji Emoji.decoder
-            CustomId = get.Optional.Field Property.CustomId Decode.string
-            Url = get.Optional.Field Property.Url Decode.string
-            Disabled = get.Optional.Field Property.Disabled Decode.bool |> Option.defaultValue false
+            Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
+            Style = get |> Get.required Property.Style Decode.Enum.int<ButtonStyle>
+            Label = get |> Get.optional Property.Label Decode.string
+            Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
+            CustomId = get |> Get.optional Property.CustomId Decode.string
+            SkuId = get |> Get.optional Property.SkuId Decode.string
+            Url = get |> Get.optional Property.Url Decode.string
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         }) path v
 
     let encoder (v: Button) =
-        Encode.object [
-            Property.Type, Encode.Enum.int v.Type
-            Property.Style, Encode.Enum.int v.Style
-            Property.Label, Encode.string v.Label
-            Property.Emoji, Encode.option Emoji.encoder v.Emoji
-            Property.CustomId, Encode.option Encode.string v.CustomId
-            Property.Url, Encode.option Encode.string v.Url
-            Property.Disabled, Encode.bool v.Disabled
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Style Encode.Enum.int v.Style
+            |> Encode.optional Property.Label Encode.string v.Label
+            |> Encode.optional Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.optional Property.CustomId Encode.string v.CustomId
+            |> Encode.optional Property.SkuId Encode.string v.SkuId
+            |> Encode.optional Property.Url Encode.string v.Url
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
 
 module SelectMenu =
     module Property =
@@ -730,29 +733,29 @@ module SelectMenu =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Type = get.Required.Field Property.Type Decode.Enum.int<ComponentType>
-            CustomId = get.Required.Field Property.CustomId Decode.string
-            Options = get.Optional.Field Property.Options (Decode.list SelectMenuOption.decoder)
-            ChannelTypes = get.Optional.Field Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
-            Placeholder = get.Optional.Field Property.Placeholder Decode.string
-            DefaultValues = get.Optional.Field Property.DefaultValues (Decode.list SelectMenuDefaultValue.decoder)
-            MinValues = get.Optional.Field Property.MinValues Decode.int |> Option.defaultValue 1
-            MaxValues = get.Optional.Field Property.MaxValues Decode.int |> Option.defaultValue 1
-            Disabled = get.Optional.Field Property.Disabled Decode.bool |> Option.defaultValue false
+            Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Options = get |> Get.optional Property.Options (Decode.list SelectMenuOption.decoder)
+            ChannelTypes = get |> Get.optional Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
+            Placeholder = get |> Get.optional Property.Placeholder Decode.string
+            DefaultValues = get |> Get.optional Property.DefaultValues (Decode.list SelectMenuDefaultValue.decoder)
+            MinValues = get |> Get.optional Property.MinValues Decode.int |> Option.defaultValue 1
+            MaxValues = get |> Get.optional Property.MaxValues Decode.int |> Option.defaultValue 1
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         }) path v
 
     let encoder (v: SelectMenu) =
-        Encode.object [
-            Property.Type, Encode.Enum.int v.Type
-            Property.CustomId, Encode.string v.CustomId
-            Property.Options, Encode.option (List.map SelectMenuOption.encoder >> Encode.list) v.Options
-            Property.ChannelTypes, Encode.option (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes
-            Property.Placeholder, Encode.option Encode.string v.Placeholder
-            Property.DefaultValues, Encode.option (List.map SelectMenuDefaultValue.encoder >> Encode.list) v.DefaultValues
-            Property.MinValues, Encode.int v.MinValues
-            Property.MaxValues, Encode.int v.MaxValues
-            Property.Disabled, Encode.bool v.Disabled
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.optional Property.Options (List.map SelectMenuOption.encoder >> Encode.list) v.Options
+            |> Encode.optional Property.ChannelTypes (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes
+            |> Encode.optional Property.Placeholder Encode.string v.Placeholder
+            |> Encode.optional Property.DefaultValues (List.map SelectMenuDefaultValue.encoder >> Encode.list) v.DefaultValues
+            |> Encode.optional Property.MinValues Encode.int (Some v.MinValues)
+            |> Encode.optional Property.MaxValues Encode.int (Some v.MaxValues)
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
 
 module SelectMenuOption =
     module Property =
@@ -764,21 +767,21 @@ module SelectMenuOption =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Label = get.Required.Field Property.Label Decode.string
-            Value = get.Required.Field Property.Value Decode.string
-            Description = get.Optional.Field Property.Description Decode.string
-            Emoji = get.Optional.Field Property.Emoji Emoji.decoder
-            Default = get.Optional.Field Property.Default Decode.bool
+            Label = get |> Get.required Property.Label Decode.string
+            Value = get |> Get.required Property.Value Decode.string
+            Description = get |> Get.optional Property.Description Decode.string
+            Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
+            Default = get |> Get.optional Property.Default Decode.bool
         }) path v
 
     let encoder (v: SelectMenuOption) =
-        Encode.object [
-            Property.Label, Encode.string v.Label
-            Property.Value, Encode.string v.Value
-            Property.Description, Encode.option Encode.string v.Description
-            Property.Emoji, Encode.option Emoji.encoder v.Emoji
-            Property.Default, Encode.option Encode.bool v.Default
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Label Encode.string v.Label
+            |> Encode.required Property.Value Encode.string v.Value
+            |> Encode.optional Property.Description Encode.string v.Description
+            |> Encode.optional Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.optional Property.Default Encode.bool v.Default
+        )
 
 module SelectMenuDefaultValue =
     module Property =
@@ -787,15 +790,15 @@ module SelectMenuDefaultValue =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Id = get.Required.Field Property.Id Decode.string
-            Type = get.Required.Field Property.Type SelectMenuDefaultValueType.decoder
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type SelectMenuDefaultValueType.decoder
         }) path v
 
     let encoder (v: SelectMenuDefaultValue) =
-        Encode.object [
-            Property.Id, Encode.string v.Id
-            Property.Type, SelectMenuDefaultValueType.encoder v.Type
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type SelectMenuDefaultValueType.encoder v.Type
+        )
 
 module TextInput =
     module Property =
@@ -811,29 +814,29 @@ module TextInput =
 
     let decoder path v =
         Decode.object (fun get -> {
-            Type = get.Required.Field Property.Type Decode.Enum.int<ComponentType>
-            CustomId = get.Required.Field Property.CustomId Decode.string
-            Style = get.Required.Field Property.Style Decode.Enum.int<TextInputStyle>
-            Label = get.Required.Field Property.Label Decode.string
-            MinLength = get.Optional.Field Property.MinLength Decode.int
-            MaxLength = get.Optional.Field Property.MaxLength Decode.int
-            Required = get.Optional.Field Property.Required Decode.bool |> Option.defaultValue true
-            Value = get.Optional.Field Property.Value Decode.string
-            Placeholder = get.Optional.Field Property.Placeholder Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Style = get |> Get.required Property.Style Decode.Enum.int<TextInputStyle>
+            Label = get |> Get.required Property.Label Decode.string
+            MinLength = get |> Get.optional Property.MinLength Decode.int
+            MaxLength = get |> Get.optional Property.MaxLength Decode.int
+            Required = get |> Get.optional Property.Required Decode.bool |> Option.defaultValue true
+            Value = get |> Get.optional Property.Value Decode.string
+            Placeholder = get |> Get.optional Property.Placeholder Decode.string
         }) path v
 
     let encoder (v: TextInput) =
-        Encode.object [
-            Property.Type, Encode.Enum.int v.Type
-            Property.CustomId, Encode.string v.CustomId
-            Property.Style, Encode.Enum.int v.Style
-            Property.Label, Encode.string v.Label
-            Property.MinLength, Encode.option Encode.int v.MinLength
-            Property.MaxLength, Encode.option Encode.int v.MaxLength
-            Property.Required, Encode.bool v.Required
-            Property.Value, Encode.option Encode.string v.Value
-            Property.Placeholder, Encode.option Encode.string v.Placeholder
-        ]
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.required Property.Style Encode.Enum.int v.Style
+            |> Encode.required Property.Label Encode.string v.Label
+            |> Encode.optional Property.MinLength Encode.int v.MinLength
+            |> Encode.optional Property.MaxLength Encode.int v.MaxLength
+            |> Encode.optional Property.Required Encode.bool (Some v.Required)
+            |> Encode.optional Property.Value Encode.string v.Value
+            |> Encode.optional Property.Placeholder Encode.string v.Placeholder
+        )
 
 module Component =
     let decoder path v =

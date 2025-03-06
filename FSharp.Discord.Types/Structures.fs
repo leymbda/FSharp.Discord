@@ -283,9 +283,10 @@ type ActionRow = {
 type Button = {
     Type: ComponentType
     Style: ButtonStyle
-    Label: string
-    Emoji: Emoji option
+    Label: string option
+    Emoji: PartialEmoji option
     CustomId: string option
+    SkuId: string option
     Url: string option
     Disabled: bool
 }
@@ -313,7 +314,7 @@ type SelectMenuOption = {
     Label: string
     Value: string
     Description: string option
-    Emoji: Emoji option
+    Emoji: PartialEmoji option
     Default: bool option
 }
 
