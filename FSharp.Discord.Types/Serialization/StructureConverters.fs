@@ -3053,3 +3053,47 @@ module RecurrenceRuleNWeekday =
             |> Encode.required Property.N Encode.int v.N
             |> Encode.required Property.Day Encode.Enum.int v.Day
         )
+
+module GuildTemplate =
+    module Property =
+        let [<Literal>] Code = "code"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Description = "description"
+        let [<Literal>] UsageCount = "usage_count"
+        let [<Literal>] CreatorId = "creator_id"
+        let [<Literal>] Creator = "creator"
+        let [<Literal>] CreatedAt = "created_at"
+        let [<Literal>] UpdatedAt = "updated_at"
+        let [<Literal>] SourceGuildId = "source_guild_id"
+        let [<Literal>] SerializedSourceGuild = "serialized_source_guild"
+        let [<Literal>] IsDirty = "is_dirty"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Code = get |> Get.required Property.Code Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Description = get |> Get.nullable Property.Description Decode.string
+            UsageCount = get |> Get.required Property.UsageCount Decode.int
+            CreatorId = get |> Get.required Property.CreatorId Decode.string
+            Creator = get |> Get.required Property.Creator User.Partial.decoder
+            CreatedAt = get |> Get.required Property.CreatedAt Decode.datetimeUtc
+            UpdatedAt = get |> Get.required Property.UpdatedAt Decode.datetimeUtc
+            SourceGuildId = get |> Get.required Property.SourceGuildId Decode.string
+            SerializedSourceGuild = get |> Get.required Property.SerializedSourceGuild Guild.Partial.decoder
+            IsDirty = get |> Get.nullable Property.IsDirty Decode.bool
+        }) path v
+
+    let encoder (v: GuildTemplate) =
+        Encode.object ([]
+            |> Encode.required Property.Code Encode.string v.Code
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.nullable Property.Description Encode.string v.Description
+            |> Encode.required Property.UsageCount Encode.int v.UsageCount
+            |> Encode.required Property.CreatorId Encode.string v.CreatorId
+            |> Encode.required Property.Creator User.Partial.encoder v.Creator
+            |> Encode.required Property.CreatedAt Encode.datetime v.CreatedAt
+            |> Encode.required Property.UpdatedAt Encode.datetime v.UpdatedAt
+            |> Encode.required Property.SourceGuildId Encode.string v.SourceGuildId
+            |> Encode.required Property.SerializedSourceGuild Guild.Partial.encoder v.SerializedSourceGuild
+            |> Encode.nullable Property.IsDirty Encode.bool v.IsDirty
+        )

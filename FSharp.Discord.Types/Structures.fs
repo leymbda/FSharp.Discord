@@ -1222,17 +1222,17 @@ type RecurrenceRuleNWeekday = {
 
 // https://discord.com/developers/docs/resources/guild-template#guild-template-object-guild-template-structure
 type GuildTemplate = {
-    [<JsonPropertyName "code">] Code: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "usage_count">] UsageCount: int
-    [<JsonPropertyName "creator_id">] CreatorId: string
-    [<JsonPropertyName "creator">] Creator: User
-    [<JsonPropertyName "created_at">] CreatedAt: DateTime
-    [<JsonPropertyName "updated_at">] UpdatedAt: DateTime
-    [<JsonPropertyName "source_guild_id">] SourceGuildId: string
-    [<JsonPropertyName "serialized_source_guild">] SerializedSourceGuild: PartialGuild
-    [<JsonPropertyName "is_dirty">] IsDirty: bool option
+    Code: string
+    Name: string
+    Description: string option
+    UsageCount: int
+    CreatorId: string
+    Creator: User
+    CreatedAt: DateTime
+    UpdatedAt: DateTime
+    SourceGuildId: string
+    SerializedSourceGuild: PartialGuild
+    IsDirty: bool option
 }
 
 // ----- Resources: Invite -----
