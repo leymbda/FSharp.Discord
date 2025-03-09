@@ -1,4 +1,4 @@
-﻿namespace FSharp.Discord.Webhook.Modules
+﻿namespace FSharp.Discord.Webhook
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open System

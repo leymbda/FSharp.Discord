@@ -2241,7 +2241,7 @@ module Guild =
             Stickers = get |> Get.optional Property.Stickers (Decode.list Sticker.decoder)
             PremiumProgressBarEnabled = get |> Get.required Property.PremiumProgressBarEnabled Decode.bool
             SafetyAlertsChannelId = get |> Get.nullable Property.SafetyAlertsChannelId Decode.string
-            IncidentsData = get |> Get.nullable Property.IncidentsData IncidentData.decoder
+            IncidentsData = get |> Get.nullable Property.IncidentsData IncidentsData.decoder
         }) path v
 
     let encoder (v: Guild) =
@@ -2287,7 +2287,7 @@ module Guild =
             |> Encode.optional Property.Stickers (List.map Sticker.encoder >> Encode.list) v.Stickers
             |> Encode.required Property.PremiumProgressBarEnabled Encode.bool v.PremiumProgressBarEnabled
             |> Encode.nullable Property.SafetyAlertsChannelId Encode.string v.SafetyAlertsChannelId
-            |> Encode.nullable Property.IncidentsData IncidentData.encoder v.IncidentsData
+            |> Encode.nullable Property.IncidentsData IncidentsData.encoder v.IncidentsData
         )
 
     module Partial =
@@ -2335,7 +2335,7 @@ module Guild =
                 Stickers = get |> Get.optional Property.Stickers (Decode.list Sticker.decoder)
                 PremiumProgressBarEnabled = get |> Get.optional Property.PremiumProgressBarEnabled Decode.bool
                 SafetyAlertsChannelId = get |> Get.optinull Property.SafetyAlertsChannelId Decode.string
-                IncidentsData = get |> Get.optinull Property.IncidentsData IncidentData.decoder
+                IncidentsData = get |> Get.optinull Property.IncidentsData IncidentsData.decoder
             }) path v
 
         let encoder (v: PartialGuild) =
@@ -2381,7 +2381,7 @@ module Guild =
             |> Encode.optional Property.Stickers (List.map Sticker.encoder >> Encode.list) v.Stickers
             |> Encode.optional Property.PremiumProgressBarEnabled Encode.bool v.PremiumProgressBarEnabled
             |> Encode.optinull Property.SafetyAlertsChannelId Encode.string v.SafetyAlertsChannelId
-            |> Encode.optinull Property.IncidentsData IncidentData.encoder v.IncidentsData
+            |> Encode.optinull Property.IncidentsData IncidentsData.encoder v.IncidentsData
             )
 
 module UnavailableGuild =
@@ -2510,7 +2510,7 @@ module GuildMember =
 
     let decoder path v =
         Decode.object (fun get -> {
-            User = get |> Get.required Property.User User.decoder
+            User = get |> Get.optional Property.User User.decoder
             Nick = get |> Get.optinull Property.Nick Decode.string
             Avatar = get |> Get.optinull Property.Avatar Decode.string
             Banner = get |> Get.optinull Property.Banner Decode.string
@@ -2528,7 +2528,7 @@ module GuildMember =
 
     let encoder (v: GuildMember) =
         Encode.object ([]
-            |> Encode.required Property.User User.encoder v.User
+            |> Encode.optional Property.User User.encoder v.User
             |> Encode.optinull Property.Nick Encode.string v.Nick
             |> Encode.optinull Property.Avatar Encode.string v.Avatar
             |> Encode.optinull Property.Banner Encode.string v.Banner
@@ -3075,7 +3075,7 @@ module GuildTemplate =
             Description = get |> Get.nullable Property.Description Decode.string
             UsageCount = get |> Get.required Property.UsageCount Decode.int
             CreatorId = get |> Get.required Property.CreatorId Decode.string
-            Creator = get |> Get.required Property.Creator User.Partial.decoder
+            Creator = get |> Get.required Property.Creator User.decoder
             CreatedAt = get |> Get.required Property.CreatedAt Decode.datetimeUtc
             UpdatedAt = get |> Get.required Property.UpdatedAt Decode.datetimeUtc
             SourceGuildId = get |> Get.required Property.SourceGuildId Decode.string
@@ -3090,7 +3090,7 @@ module GuildTemplate =
             |> Encode.nullable Property.Description Encode.string v.Description
             |> Encode.required Property.UsageCount Encode.int v.UsageCount
             |> Encode.required Property.CreatorId Encode.string v.CreatorId
-            |> Encode.required Property.Creator User.Partial.encoder v.Creator
+            |> Encode.required Property.Creator User.encoder v.Creator
             |> Encode.required Property.CreatedAt Encode.datetime v.CreatedAt
             |> Encode.required Property.UpdatedAt Encode.datetime v.UpdatedAt
             |> Encode.required Property.SourceGuildId Encode.string v.SourceGuildId
@@ -3122,7 +3122,7 @@ module Invite =
             Channel = get |> Get.nullable Property.Channel Channel.Partial.decoder
             Inviter = get |> Get.optional Property.Inviter User.Partial.decoder
             TargetType = get |> Get.optional Property.TargetType Decode.Enum.int<InviteTargetType>
-            TargetUser = get |> Get.optional Property.TargetUser User.Partial.decoder
+            TargetUser = get |> Get.optional Property.TargetUser User.decoder
             TargetApplication = get |> Get.optional Property.TargetApplication Application.Partial.decoder
             ApproximatePresenceCount = get |> Get.optional Property.ApproximatePresenceCount Decode.int
             ApproximateMemberCount = get |> Get.optional Property.ApproximateMemberCount Decode.int
@@ -3138,7 +3138,7 @@ module Invite =
         |> Encode.nullable Property.Channel Channel.Partial.encoder v.Channel
         |> Encode.optional Property.Inviter User.Partial.encoder v.Inviter
         |> Encode.optional Property.TargetType Encode.Enum.int v.TargetType
-        |> Encode.optional Property.TargetUser User.Partial.encoder v.TargetUser
+        |> Encode.optional Property.TargetUser User.encoder v.TargetUser
         |> Encode.optional Property.TargetApplication Application.Partial.encoder v.TargetApplication
         |> Encode.optional Property.ApproximatePresenceCount Encode.int v.ApproximatePresenceCount
         |> Encode.optional Property.ApproximateMemberCount Encode.int v.ApproximateMemberCount
@@ -3223,10 +3223,20 @@ module Message =
         let [<Literal>] Poll = "poll"
         let [<Literal>] Call = "call"
 
+    let decoder: Decoder<Message> = raise (System.NotImplementedException())
+    let encoder: Encoder<Message> = raise (System.NotImplementedException())
+
+    module Partial =
+        let decoder: Decoder<PartialMessage> = raise (System.NotImplementedException())
+        let encoder: Encoder<PartialMessage> = raise (System.NotImplementedException())
+
 module MessageActivity =
     module Property =
         let [<Literal>] Tyoe = "type"
         let [<Literal>] PartyId = "party_id"
+
+    let decoder: Decoder<MessageActivity> = raise (System.NotImplementedException())
+    let encoder: Encoder<MessageActivity> = raise (System.NotImplementedException())
 
 module ApplicationCommandInteractionMetadata =
     module Property =
@@ -3238,6 +3248,9 @@ module ApplicationCommandInteractionMetadata =
         let [<Literal>] TargetUser = "target_user"
         let [<Literal>] TargetMessageId = "target_message_id"
 
+    let decoder: Decoder<ApplicationCommandInteractionMetadata> = raise (System.NotImplementedException())
+    let encoder: Encoder<ApplicationCommandInteractionMetadata> = raise (System.NotImplementedException())
+
 module MessageComponentInteractionMetadata =
     module Property =
         let [<Literal>] Id = "id"
@@ -3246,6 +3259,9 @@ module MessageComponentInteractionMetadata =
         let [<Literal>] AuthorizingIntegrationOwners = "authorizing_integration_owners"
         let [<Literal>] OriginalResponseMessageId = "original_response_message_id"
         let [<Literal>] InteractedMessageId = "interacted_message_id"
+
+    let decoder: Decoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
+    let encoder: Encoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
 
 module ModalSubmitInteractionMetadata =
     module Property =
@@ -3256,10 +3272,16 @@ module ModalSubmitInteractionMetadata =
         let [<Literal>] OriginalResponseMessageId = "original_response_message_id"
         let [<Literal>] TriggeringInteractionMetadata = "triggering_interaction_metadata"
 
+    let decoder: Decoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
+    let encoder: Encoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
+
 module MessageCall =
     module Property =
         let [<Literal>] Participants = "participants"
         let [<Literal>] EndedTimestamp = "ended_timestamp"
+
+    let decoder: Decoder<MessageCall> = raise (System.NotImplementedException())
+    let encoder: Encoder<MessageCall> = raise (System.NotImplementedException())
 
 module MessageReference =
     module Property =
@@ -3269,9 +3291,15 @@ module MessageReference =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] FailIfNotExists = "fail_if_not_exists"
 
+    let decoder: Decoder<MessageReference> = raise (System.NotImplementedException())
+    let encoder: Encoder<MessageReference> = raise (System.NotImplementedException())
+
 module MessageSnapshot =
     module Property =
         let [<Literal>] Message = "message"
+
+    let decoder: Decoder<MessageSnapshot> = raise (System.NotImplementedException())
+    let encoder: Encoder<MessageSnapshot> = raise (System.NotImplementedException())
 
 module Reaction =
     module Property =
@@ -3282,10 +3310,16 @@ module Reaction =
         let [<Literal>] Emoji = "emoji"
         let [<Literal>] BurstColors = "burst_colors"
 
+    let decoder: Decoder<Reaction> = raise (System.NotImplementedException())
+    let encoder: Encoder<Reaction> = raise (System.NotImplementedException())
+
 module ReactionCountDetails =
     module Property =
         let [<Literal>] Burst = "burst"
         let [<Literal>] Normal = "normal"
+
+    let decoder: Decoder<ReactionCountDetails> = raise (System.NotImplementedException())
+    let encoder: Encoder<ReactionCountDetails> = raise (System.NotImplementedException())
 
 module Embed =
     module Property =
@@ -3303,12 +3337,18 @@ module Embed =
         let [<Literal>] Author = "author"
         let [<Literal>] Fields = "fields"
 
+    let decoder: Decoder<Embed> = raise (System.NotImplementedException())
+    let encoder: Encoder<Embed> = raise (System.NotImplementedException())
+
 module EmbedThumbnail =
     module Property =
         let [<Literal>] Url = "url"
         let [<Literal>] ProxyUrl = "proxy_url"
         let [<Literal>] Height = "height"
         let [<Literal>] Width = "width"
+
+    let decoder: Decoder<EmbedThumbnail> = raise (System.NotImplementedException())
+    let encoder: Encoder<EmbedThumbnail> = raise (System.NotImplementedException())
 
 module EmbedVideo =
     module Property =
@@ -3317,6 +3357,9 @@ module EmbedVideo =
         let [<Literal>] Height = "height"
         let [<Literal>] Width = "width"
 
+    let decoder: Decoder<EmbedVideo> = raise (System.NotImplementedException())
+    let encoder: Encoder<EmbedVideo> = raise (System.NotImplementedException())
+
 module EmbedImage =
     module Property =
         let [<Literal>] Url = "url"
@@ -3324,10 +3367,16 @@ module EmbedImage =
         let [<Literal>] Height = "height"
         let [<Literal>] Width = "width"
 
+    let decoder: Decoder<EmbedImage> = raise (System.NotImplementedException())
+    let encoder: Encoder<EmbedImage> = raise (System.NotImplementedException())
+
 module EmbedProvider =
     module Property =
         let [<Literal>] Name = "name"
         let [<Literal>] Url = "url"
+
+    let decoder: Decoder<EmbedProvider> = raise (System.NotImplementedException())
+    let encoder: Encoder<EmbedProvider> = raise (System.NotImplementedException())
 
 module EmbedAuthor =
     module Property =
@@ -3336,17 +3385,26 @@ module EmbedAuthor =
         let [<Literal>] IconUrl = "icon_url"
         let [<Literal>] ProxyIconUrl = "proxy_icon_url"
 
+    let decoder: Decoder<EmbedAuthor> = raise (System.NotImplementedException())
+    let encoder: Encoder<EmbedAuthor> = raise (System.NotImplementedException())
+
 module EmbedFooter =
     module Property =
         let [<Literal>] Text = "text"
         let [<Literal>] IconUrl = "icon_url"
         let [<Literal>] ProxyIconUrl = "proxy_icon_url"
 
+    let decoder: Decoder<EmbedFooter> = raise (System.NotImplementedException())
+    let encoder: Encoder<EmbedFooter> = raise (System.NotImplementedException())
+
 module EmbedField =
     module Property =
         let [<Literal>] Name = "name"
         let [<Literal>] Value = "value"
         let [<Literal>] Inline = "inline"
+
+    let decoder: Decoder<EmbedField> = raise (System.NotImplementedException())
+    let encoder: Encoder<EmbedField> = raise (System.NotImplementedException())
 
 module Attachment =
     module Property =
@@ -3364,12 +3422,22 @@ module Attachment =
         let [<Literal>] Waveform = "waveform"
         let [<Literal>] Flags = "flags"
 
+    let decoder: Decoder<Attachment> = raise (System.NotImplementedException())
+    let encoder: Encoder<Attachment> = raise (System.NotImplementedException())
+
+    module Partial =
+        let decoder: Decoder<PartialAttachment> = raise (System.NotImplementedException())
+        let encoder: Encoder<PartialAttachment> = raise (System.NotImplementedException())
+
 module ChannelMention =
     module Property =
         let [<Literal>] Id = "id"
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Type = "type"
         let [<Literal>] Name = "name"
+
+    let decoder: Decoder<ChannelMention> = raise (System.NotImplementedException())
+    let encoder: Encoder<ChannelMention> = raise (System.NotImplementedException())
 
 module AllowedMentions =
     module Property =
@@ -3378,12 +3446,18 @@ module AllowedMentions =
         let [<Literal>] Users = "users"
         let [<Literal>] RepliedUser = "replied_user"
 
+    let decoder: Decoder<AllowedMentions> = raise (System.NotImplementedException())
+    let encoder: Encoder<AllowedMentions> = raise (System.NotImplementedException())
+
 module RoleSubscriptionData =
     module Property =
         let [<Literal>] RoleSubscriptionListingId = "role_subscription_listing_id"
         let [<Literal>] TierName = "tier_name"
         let [<Literal>] TotalMonthsSubscribed = "total_months_subscribed"
         let [<Literal>] IsRenewal = "is_renewal"
+
+    let decoder: Decoder<RoleSubscriptionData> = raise (System.NotImplementedException())
+    let encoder: Encoder<RoleSubscriptionData> = raise (System.NotImplementedException())
 
 module Poll =
     module Property =
@@ -3394,26 +3468,41 @@ module Poll =
         let [<Literal>] LayoutType = "layout_type"
         let [<Literal>] Results = "results"
 
+    let decoder: Decoder<Poll> = raise (System.NotImplementedException())
+    let encoder: Encoder<Poll> = raise (System.NotImplementedException())
+
 module PollMedia =
     module Property =
         let [<Literal>] Text = "text"
         let [<Literal>] Emoji = "emoji"
+
+    let decoder: Decoder<PollMedia> = raise (System.NotImplementedException())
+    let encoder: Encoder<PollMedia> = raise (System.NotImplementedException())
 
 module PollAnswer =
     module Property =
         let [<Literal>] AnswerId = "answer_id"
         let [<Literal>] PollMedia = "poll_media"
 
+    let decoder: Decoder<PollAnswer> = raise (System.NotImplementedException())
+    let encoder: Encoder<PollAnswer> = raise (System.NotImplementedException())
+
 module PollResults =
     module Property =
         let [<Literal>] IsFinalized = "is_finalized"
         let [<Literal>] AnswerCounts = "answer_counts"
+
+    let decoder: Decoder<PollResults> = raise (System.NotImplementedException())
+    let encoder: Encoder<PollResults> = raise (System.NotImplementedException())
 
 module PollAnswerCount =
     module Property =
         let [<Literal>] Id = "id"
         let [<Literal>] Count = "count"
         let [<Literal>] MeVoted = "me_voted"
+
+    let decoder: Decoder<PollAnswerCount> = raise (System.NotImplementedException())
+    let encoder: Encoder<PollAnswerCount> = raise (System.NotImplementedException())
 
 module Sku =
     module Property =
@@ -3423,6 +3512,9 @@ module Sku =
         let [<Literal>] Name = "name"
         let [<Literal>] Slug = "slug"
         let [<Literal>] Flags = "flags"
+
+    let decoder: Decoder<Sku> = raise (System.NotImplementedException())
+    let encoder: Encoder<Sku> = raise (System.NotImplementedException())
 
 module SoundboardSound =
     module Property =
@@ -3435,6 +3527,9 @@ module SoundboardSound =
         let [<Literal>] Available = "available"
         let [<Literal>] User = "user"
 
+    let decoder: Decoder<SoundboardSound> = raise (System.NotImplementedException())
+    let encoder: Encoder<SoundboardSound> = raise (System.NotImplementedException())
+
 module StageInstance =
     module Property =
         let [<Literal>] Id = "id"
@@ -3444,6 +3539,9 @@ module StageInstance =
         let [<Literal>] PrivacyLevel = "privacy_level"
         let [<Literal>] DiscoverableEnabled = "discoverable_enabled"
         let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
+
+    let decoder: Decoder<StageInstance> = raise (System.NotImplementedException())
+    let encoder: Encoder<StageInstance> = raise (System.NotImplementedException())
 
 module Sticker =
     module Property =
@@ -3459,11 +3557,17 @@ module Sticker =
         let [<Literal>] User = "user"
         let [<Literal>] SortValue = "sort_value"
 
+    let decoder: Decoder<Sticker> = raise (System.NotImplementedException())
+    let encoder: Encoder<Sticker> = raise (System.NotImplementedException())
+
 module StickerItem =
     module Property =
         let [<Literal>] Id = "id"
         let [<Literal>] Name = "name"
         let [<Literal>] FormatType = "format_type"
+
+    let decoder: Decoder<StickerItem> = raise (System.NotImplementedException())
+    let encoder: Encoder<StickerItem> = raise (System.NotImplementedException())
 
 module StickerPack =
     module Property =
@@ -3474,6 +3578,9 @@ module StickerPack =
         let [<Literal>] CoverStickerId = "cover_sticker_id"
         let [<Literal>] Description = "description"
         let [<Literal>] BannerAssetId = "banner_asset_id"
+
+    let decoder: Decoder<StickerPack> = raise (System.NotImplementedException())
+    let encoder: Encoder<StickerPack> = raise (System.NotImplementedException())
 
 module Subscription =
     module Property =
@@ -3487,6 +3594,9 @@ module Subscription =
         let [<Literal>] Status = "status"
         let [<Literal>] CreatedAt = "created_at"
         let [<Literal>] Country = "country"
+
+    let decoder: Decoder<Subscription> = raise (System.NotImplementedException())
+    let encoder: Encoder<Subscription> = raise (System.NotImplementedException())
 
 module User =
     module Property =
@@ -3506,12 +3616,22 @@ module User =
         let [<Literal>] Flags = "flags"
         let [<Literal>] PremiumType = "premium_type"
         let [<Literal>] PublicFlags = "public_flags"
-        let [<Literal>] AvatarDecorationMetadata = "avatar_decoration_metadata"
+        let [<Literal>] AvatarDecorationData = "avatar_decoration_data"
 
-module AvatarDecorationMetadata =
+    let decoder: Decoder<User> = raise (System.NotImplementedException())
+    let encoder: Encoder<User> = raise (System.NotImplementedException())
+
+    module Partial =
+        let decoder: Decoder<PartialUser> = raise (System.NotImplementedException())
+        let encoder: Encoder<PartialUser> = raise (System.NotImplementedException())
+
+module AvatarDecorationData =
     module Property =
         let [<Literal>] Asset = "asset"
         let [<Literal>] SkuId = "sku_id"
+
+    let decoder: Decoder<AvatarDecorationData> = raise (System.NotImplementedException())
+    let encoder: Encoder<AvatarDecorationData> = raise (System.NotImplementedException())
 
 module Connection =
     module Property =
@@ -3526,11 +3646,17 @@ module Connection =
         let [<Literal>] TwoWayLink = "two_way_link"
         let [<Literal>] Visibility = "visibility"
 
+    let decoder: Decoder<Connection> = raise (System.NotImplementedException())
+    let encoder: Encoder<Connection> = raise (System.NotImplementedException())
+
 module ApplicationRoleConnection =
     module Property =
         let [<Literal>] PlatformName = "platform_name"
         let [<Literal>] PlatformUsername = "platform_username"
         let [<Literal>] Metadata = "metadata"
+
+    let decoder: Decoder<ApplicationRoleConnection> = raise (System.NotImplementedException())
+    let encoder: Encoder<ApplicationRoleConnection> = raise (System.NotImplementedException())
 
 module VoiceState =
     module Property =
@@ -3548,6 +3674,9 @@ module VoiceState =
         let [<Literal>] Suppress = "suppress"
         let [<Literal>] RequestToSpeakTimestamp = "request_to_speak_timestamp"
 
+    let decoder: Decoder<VoiceState> = raise (System.NotImplementedException())
+    let encoder: Encoder<VoiceState> = raise (System.NotImplementedException())
+
 module VoiceRegion =
     module Property =
         let [<Literal>] Id = "id"
@@ -3555,6 +3684,9 @@ module VoiceRegion =
         let [<Literal>] Optimal = "optimal"
         let [<Literal>] Deprecated = "deprecated"
         let [<Literal>] Custom = "custom"
+
+    let decoder: Decoder<VoiceRegion> = raise (System.NotImplementedException())
+    let encoder: Encoder<VoiceRegion> = raise (System.NotImplementedException())
 
 module Webhook =
     module Property =
@@ -3571,6 +3703,9 @@ module Webhook =
         let [<Literal>] SourceChannel = "source_channel"
         let [<Literal>] Url = "url"
 
+    let decoder: Decoder<Webhook> = raise (System.NotImplementedException())
+    let encoder: Encoder<Webhook> = raise (System.NotImplementedException())
+
 module Role =
     module Property =
         let [<Literal>] Id = "id"
@@ -3586,6 +3721,9 @@ module Role =
         let [<Literal>] Tags = "tags"
         let [<Literal>] Flags = "flags"
 
+    let decoder: Decoder<Role> = raise (System.NotImplementedException())
+    let encoder: Encoder<Role> = raise (System.NotImplementedException())
+
 module RoleTags =
     module Property =
         let [<Literal>] BotId = "bot_id"
@@ -3597,12 +3735,18 @@ module RoleTags =
 
     // TODO: These 3 bool properties are the ones that use null or undefined as true or false
 
+    let decoder: Decoder<RoleTags> = raise (System.NotImplementedException())
+    let encoder: Encoder<RoleTags> = raise (System.NotImplementedException())
+
 module RateLimitResponse =
     module Property =
         let [<Literal>] Message = "message"
         let [<Literal>] RetryAfter = "retry_after"
         let [<Literal>] Global = "global"
         let [<Literal>] Code = "code"
+
+    let decoder: Decoder<RateLimitResponse> = raise (System.NotImplementedException())
+    let encoder: Encoder<RateLimitResponse> = raise (System.NotImplementedException())
 
 module Team =
     module Property =
@@ -3612,9 +3756,15 @@ module Team =
         let [<Literal>] Name = "name"
         let [<Literal>] OwnerUserId = "owner_user_id"
 
+    let decoder: Decoder<Team> = raise (System.NotImplementedException())
+    let encoder: Encoder<Team> = raise (System.NotImplementedException())
+
 module TeamMember =
     module Property =
         let [<Literal>] MembershipState = "membership_state"
         let [<Literal>] TeamId = "team_id"
         let [<Literal>] User = "user"
         let [<Literal>] Role = "role"
+
+    let decoder: Decoder<TeamMember> = raise (System.NotImplementedException())
+    let encoder: Encoder<TeamMember> = raise (System.NotImplementedException())
