@@ -3097,3 +3097,233 @@ module GuildTemplate =
             |> Encode.required Property.SerializedSourceGuild Guild.Partial.encoder v.SerializedSourceGuild
             |> Encode.nullable Property.IsDirty Encode.bool v.IsDirty
         )
+
+// TODO: Deserialisers from here down
+
+module Invite =
+    module Property =
+        let [<Literal>] Type = "type"
+        let [<Literal>] Code = "code"
+        let [<Literal>] Guild = "guild"
+        let [<Literal>] Channel = "channel"
+        let [<Literal>] Inviter = "inviter"
+        let [<Literal>] TargetType = "target_type"
+        let [<Literal>] TargetUser = "target_user"
+        let [<Literal>] TargetApplication = "target_application"
+        let [<Literal>] ApproximatePresenceCount = "approximate_presence_count"
+        let [<Literal>] ApproximateMemberCount = "approximate_member_count"
+        let [<Literal>] ExpiresAt = "expires_at"
+        let [<Literal>] GuildScheduledEvent = "guild_scheduled_event"
+
+module InviteMetadata =
+    module Property =
+        let [<Literal>] Uses = "uses"
+        let [<Literal>] MaxUses = "max_uses"
+        let [<Literal>] Temporary = "temporary"
+        let [<Literal>] CreatedAt = "created_at"
+
+module InviteStageInstance =
+    module Property =
+        let [<Literal>] Members = "members"
+        let [<Literal>] ParticipantCount = "participant_count"
+        let [<Literal>] SpeakerCount = "speaker_count"
+        let [<Literal>] Topic = "topic"
+
+module Message =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] Author = "author"
+        let [<Literal>] Content = "content"
+        let [<Literal>] Timestamp = "timestamp"
+        let [<Literal>] EditedTimestamp = "edited_timestamp"
+        let [<Literal>] Tts = "tts"
+        let [<Literal>] MentionEveryone = "mention_everyone"
+        let [<Literal>] Mentions = "mentions"
+        let [<Literal>] MentionRoles = "mention_roles"
+        let [<Literal>] MentionChannels = "mention_channels"
+        let [<Literal>] Attachments = "attachments"
+        let [<Literal>] Embeds = "embeds"
+        let [<Literal>] Reactions = "reactions"
+        let [<Literal>] Nonce = "nonce"
+        let [<Literal>] Pinned = "pinned"
+        let [<Literal>] WebhookId = "webhook_id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Activity = "activity"
+        let [<Literal>] Application = "application"
+        let [<Literal>] Flags = "flags"
+        let [<Literal>] MessageReference = "message_reference"
+        let [<Literal>] MessageSnapshots = "message_snapshots"
+        let [<Literal>] ReferencedMessage = "referenced_message"
+        let [<Literal>] InteractionMetadata = "interaction_metadata"
+        let [<Literal>] Interaction = "interaction"
+        let [<Literal>] Thread = "thread"
+        let [<Literal>] Components = "components"
+        let [<Literal>] StickerItems = "sticker_items"
+        let [<Literal>] Position = "position"
+        let [<Literal>] RoleSubscriptionData = "role_subscription_data"
+        let [<Literal>] Resolved = "resolved"
+        let [<Literal>] Poll = "poll"
+        let [<Literal>] Call = "call"
+
+module MessageActivity =
+    module Property =
+        let [<Literal>] Tyoe = "type"
+        let [<Literal>] PartyId = "party_id"
+
+module ApplicationCommandInteractionMetadata =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] User = "user"
+        let [<Literal>] AuthorizingIntegrationOwners = "authorizing_integration_owners"
+        let [<Literal>] OriginalResponseMessageId = "original_response_message_id"
+        let [<Literal>] TargetUser = "target_user"
+        let [<Literal>] TargetMessageId = "target_message_id"
+
+module MessageComponentInteractionMetadata =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] User = "user"
+        let [<Literal>] AuthorizingIntegrationOwners = "authorizing_integration_owners"
+        let [<Literal>] OriginalResponseMessageId = "original_response_message_id"
+        let [<Literal>] InteractedMessageId = "interacted_message_id"
+
+module ModalSubmitInteractionMetadata =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] User = "user"
+        let [<Literal>] AuthorizingIntegrationOwners = "authorizing_integration_owners"
+        let [<Literal>] OriginalResponseMessageId = "original_response_message_id"
+        let [<Literal>] TriggeringInteractionMetadata = "triggering_interaction_metadata"
+
+module MessageCall =
+    module Property =
+        let [<Literal>] Participants = "participants"
+        let [<Literal>] EndedTimestamp = "ended_timestamp"
+
+module MessageReference =
+    module Property =
+        let [<Literal>] Type = "type"
+        let [<Literal>] MessageId = "message_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] FailIfNotExists = "fail_if_not_exists"
+
+module MessageSnapshot =
+    module Property =
+        let [<Literal>] Message = "message"
+
+module Reaction =
+    module Property =
+        let [<Literal>] Count = "count"
+        let [<Literal>] CountDetails = "count_details"
+        let [<Literal>] Me = "me"
+        let [<Literal>] MeBurst = "me_burst"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] BurstColors = "burst_colors"
+
+module ReactionCountDetails =
+    module Property =
+        let [<Literal>] Burst = "burst"
+        let [<Literal>] Normal = "normal"
+
+module Embed =
+    module Property =
+        let [<Literal>] Title = "title"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Description = "description"
+        let [<Literal>] Url = "url"
+        let [<Literal>] Timestamp = "timestamp"
+        let [<Literal>] Color = "color"
+        let [<Literal>] Footer = "footer"
+        let [<Literal>] Image = "image"
+        let [<Literal>] Thumbnail = "thumbnail"
+        let [<Literal>] Video = "video"
+        let [<Literal>] Provider = "provider"
+        let [<Literal>] Author = "author"
+        let [<Literal>] Fields = "fields"
+
+module EmbedThumbnail =
+    module Property =
+        let [<Literal>] Url = "url"
+        let [<Literal>] ProxyUrl = "proxy_url"
+        let [<Literal>] Height = "height"
+        let [<Literal>] Width = "width"
+
+module EmbedVideo =
+    module Property =
+        let [<Literal>] Url = "url"
+        let [<Literal>] ProxyUrl = "proxy_url"
+        let [<Literal>] Height = "height"
+        let [<Literal>] Width = "width"
+
+module EmbedImage =
+    module Property =
+        let [<Literal>] Url = "url"
+        let [<Literal>] ProxyUrl = "proxy_url"
+        let [<Literal>] Height = "height"
+        let [<Literal>] Width = "width"
+
+module EmbedProvider =
+    module Property =
+        let [<Literal>] Name = "name"
+        let [<Literal>] Url = "url"
+
+module EmbedAuthor =
+    module Property =
+        let [<Literal>] Name = "name"
+        let [<Literal>] Url = "url"
+        let [<Literal>] IconUrl = "icon_url"
+        let [<Literal>] ProxyIconUrl = "proxy_icon_url"
+
+module EmbedFooter =
+    module Property =
+        let [<Literal>] Text = "text"
+        let [<Literal>] IconUrl = "icon_url"
+        let [<Literal>] ProxyIconUrl = "proxy_icon_url"
+
+module EmbedField =
+    module Property =
+        let [<Literal>] Name = "name"
+        let [<Literal>] Value = "value"
+        let [<Literal>] Inline = "inline"
+
+module Attachment =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Filename = "filename"
+        let [<Literal>] Description = "description"
+        let [<Literal>] ContentType = "content_type"
+        let [<Literal>] Size = "size"
+        let [<Literal>] Url = "url"
+        let [<Literal>] ProxyUrl = "proxy_url"
+        let [<Literal>] Height = "height"
+        let [<Literal>] Width = "width"
+        let [<Literal>] Ephemeral = "ephemeral"
+        let [<Literal>] DurationSecs = "duration_secs"
+        let [<Literal>] Waveform = "waveform"
+        let [<Literal>] Flags = "flags"
+
+module ChannelMention =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Name = "name"
+
+module AllowedMentions =
+    module Property =
+        let [<Literal>] Parse = "parse"
+        let [<Literal>] Roles = "roles"
+        let [<Literal>] Users = "users"
+        let [<Literal>] RepliedUser = "replied_user"
+
+module RoleSubscriptionData =
+    module Property =
+        let [<Literal>] RoleSubscriptionListingId = "role_subscription_listing_id"
+        let [<Literal>] TierName = "tier_name"
+        let [<Literal>] TotalMonthsSubscribed = "total_months_subscribed"
+        let [<Literal>] IsRenewal = "is_renewal"

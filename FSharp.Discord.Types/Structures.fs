@@ -1186,7 +1186,7 @@ type GuildScheduledEvent = {
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-entity-metadata
 type EntityMetadata = {
-    [<JsonPropertyName "location">] Location: string option
+    Location: string option
 }
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-user-object-guild-scheduled-event-user-structure
@@ -1239,352 +1239,288 @@ type GuildTemplate = {
 
 // https://discord.com/developers/docs/resources/invite#invite-object-invite-structure
 type Invite = {
-    [<JsonPropertyName "type">] Type: InviteType
-    [<JsonPropertyName "code">] Code: string
-    [<JsonPropertyName "guild">] Guild: Guild option
-    [<JsonPropertyName "channel">] Channel: PartialChannel option
-    [<JsonPropertyName "inviter">] Inviter: PartialUser option
-    [<JsonPropertyName "target_type">] TargetType: InviteTargetType option
-    [<JsonPropertyName "target_user">] TargetUser: User option
-    [<JsonPropertyName "target_application">] TargetApplication: PartialApplication option
-    [<JsonPropertyName "approximate_presence_count">] ApproximatePresenceCount: int option
-    [<JsonPropertyName "approximate_member_count">] ApproximateMemberCount: int option
-    [<JsonPropertyName "expires_at">] ExpiresAt: DateTime
-    [<JsonPropertyName "guild_scheduled_event">] GuildScheduledEvent: GuildScheduledEvent option
+    Type: InviteType
+    Code: string
+    Guild: Guild option
+    Channel: PartialChannel option
+    Inviter: PartialUser option
+    TargetType: InviteTargetType option
+    TargetUser: User option
+    TargetApplication: PartialApplication option
+    ApproximatePresenceCount: int option
+    ApproximateMemberCount: int option
+    ExpiresAt: DateTime
+    GuildScheduledEvent: GuildScheduledEvent option
 }
 
 // https://discord.com/developers/docs/resources/invite#invite-metadata-object-invite-metadata-structure
 type InviteMetadata = {
-    [<JsonPropertyName "uses">] Uses: int
-    [<JsonPropertyName "max_uses">] MaxUses: int
-    [<JsonPropertyName "max_age">] MaxAge: int
-    [<JsonPropertyName "temporary">] Temporary: bool
-    [<JsonPropertyName "created_at">] CreatedAt: DateTime
+    Uses: int
+    MaxUses: int
+    MaxAge: int
+    Temporary: bool
+    CreatedAt: DateTime
 }
 
-[<JsonConverter(typeof<InviteWithmetadataConverter>)>]
 type InviteWithMetadata = {
     Invite: Invite
     Metadata: InviteMetadata
 }
 
-and InviteWithmetadataConverter () =
-    inherit JsonConverter<InviteWithMetadata> ()
-    
-    override _.Read (reader, typeToConvert, options) =
-        let success, document = JsonDocument.TryParseValue &reader
-        if not success then raise (JsonException())
-
-        let json = document.RootElement.GetRawText()
-
-        {
-            Invite = Json.deserializeF json;
-            Metadata = Json.deserializeF json;
-        }
-
-    override _.Write (writer, value, options) =
-        let invite = Json.serializeF value.Invite
-        let metadata = Json.serializeF value.Metadata
-
-        writer.WriteRawValue (Json.merge invite metadata)
-
 // https://discord.com/developers/docs/resources/invite#invite-stage-instance-object-invite-stage-instance-structure
 type InviteStageInstance = {
-    [<JsonPropertyName "members">] Members: PartialGuildMember list
-    [<JsonPropertyName "participant_count">] ParticipantCount: int
-    [<JsonPropertyName "speaker_count">] SpeakerCount: int
-    [<JsonPropertyName "topic">] Topic: string
+    Members: PartialGuildMember list
+    ParticipantCount: int
+    SpeakerCount: int
+    Topic: string
 }
 
 // ----- Resources: Message -----
 
 // https://discord.com/developers/docs/resources/message#message-object-message-structure
 type Message = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "author">] Author: User
-    [<JsonPropertyName "content">] Content: string option
-    [<JsonPropertyName "timestamp">] Timestamp: DateTime
-    [<JsonPropertyName "edited_timestamp">] EditedTimestamp: DateTime option
-    [<JsonPropertyName "tts">] Tts: bool
-    [<JsonPropertyName "mention_everyone">] MentionEveryone: bool
-    [<JsonPropertyName "mentions">] Mentions: User list
-    [<JsonPropertyName "mention_roles">] MentionRoles: string list
-    [<JsonPropertyName "mention_channels">] MentionChannels: ChannelMention list
-    [<JsonPropertyName "attachments">] Attachments: Attachment list
-    [<JsonPropertyName "embeds">] Embeds: Embed list
-    [<JsonPropertyName "reactions">] Reactions: Reaction list
-    [<JsonPropertyName "nonce">] Nonce: MessageNonce option
-    [<JsonPropertyName "pinned">] Pinned: bool
-    [<JsonPropertyName "webhook_id">] WebhookId: string option
-    [<JsonPropertyName "type">] Type: MessageType
-    [<JsonPropertyName "activity">] Activity: MessageActivity option
-    [<JsonPropertyName "application">] Application: PartialApplication option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "message_reference">] MessageReference: MessageReference option
-    [<JsonPropertyName "message_snapshots">] MessageSnapshots: MessageSnapshot list option
-    [<JsonPropertyName "referenced_message">] ReferencedMessage: Message option
-    [<JsonPropertyName "interaction_metadata">] InteractionMetadata: MessageInteractionMetadata option
-    [<JsonPropertyName "interaction">] Interaction: MessageInteraction option
-    [<JsonPropertyName "thread">] Thread: Channel option
-    [<JsonPropertyName "components">] Components: Component list option
-    [<JsonPropertyName "sticker_items">] StickerItems: StickerItem list option
-    [<JsonPropertyName "position">] Position: int option
-    [<JsonPropertyName "role_subscription_data">] RoleSubscriptionData: RoleSubscriptionData option
-    [<JsonPropertyName "resolved">] Resolved: ResolvedData option
-    [<JsonPropertyName "poll">] Poll: Poll option
-    [<JsonPropertyName "call">] Call: MessageCall option
+    Id: string
+    ChannelId: string
+    Author: User
+    Content: string option
+    Timestamp: DateTime
+    EditedTimestamp: DateTime option
+    Tts: bool
+    MentionEveryone: bool
+    Mentions: User list
+    MentionRoles: string list
+    MentionChannels: ChannelMention list
+    Attachments: Attachment list
+    Embeds: Embed list
+    Reactions: Reaction list
+    Nonce: MessageNonce option
+    Pinned: bool
+    WebhookId: string option
+    Type: MessageType
+    Activity: MessageActivity option
+    Application: PartialApplication option
+    Flags: int option
+    MessageReference: MessageReference option
+    MessageSnapshots: MessageSnapshot list option
+    ReferencedMessage: Message option
+    InteractionMetadata: MessageInteractionMetadata option
+    Interaction: MessageInteraction option
+    Thread: Channel option
+    Components: Component list option
+    StickerItems: StickerItem list option
+    Position: int option
+    RoleSubscriptionData: RoleSubscriptionData option
+    Resolved: ResolvedData option
+    Poll: Poll option
+    Call: MessageCall option
 }
 
 and PartialMessage = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "author">] Author: User option
-    [<JsonPropertyName "content">] Content: string option
-    [<JsonPropertyName "timestamp">] Timestamp: DateTime option
-    [<JsonPropertyName "edited_timestamp">] EditedTimestamp: DateTime option
-    [<JsonPropertyName "tts">] Tts: bool option
-    [<JsonPropertyName "mention_everyone">] MentionEveryone: bool option
-    [<JsonPropertyName "mentions">] Mentions: User list option
-    [<JsonPropertyName "mention_roles">] MentionRoles: string list option
-    [<JsonPropertyName "mention_channels">] MentionChannels: ChannelMention list option
-    [<JsonPropertyName "attachments">] Attachments: Attachment list option
-    [<JsonPropertyName "embeds">] Embeds: Embed list option
-    [<JsonPropertyName "reactions">] Reactions: Reaction list option
-    [<JsonPropertyName "nonce">] Nonce: MessageNonce option
-    [<JsonPropertyName "pinned">] Pinned: bool option
-    [<JsonPropertyName "webhook_id">] WebhookId: string option
-    [<JsonPropertyName "type">] Type: MessageType option
-    [<JsonPropertyName "activity">] Activity: MessageActivity option
-    [<JsonPropertyName "application">] Application: PartialApplication option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "message_reference">] MessageReference: MessageReference option
-    [<JsonPropertyName "message_snapshots">] MessageSnapshots: MessageSnapshot list option
-    [<JsonPropertyName "referenced_message">] ReferencedMessage: Message option
-    [<JsonPropertyName "interaction_metadata">] InteractionMetadata: MessageInteractionMetadata option
-    [<JsonPropertyName "interaction">] Interaction: MessageInteraction option
-    [<JsonPropertyName "thread">] Thread: Channel option
-    [<JsonPropertyName "components">] Components: Component list option
-    [<JsonPropertyName "sticker_items">] StickerItems: StickerItem list option
-    [<JsonPropertyName "position">] Position: int option
-    [<JsonPropertyName "role_subscription_data">] RoleSubscriptionData: RoleSubscriptionData option
-    [<JsonPropertyName "resolved">] Resolved: ResolvedData option
-    [<JsonPropertyName "poll">] Poll: Poll option
-    [<JsonPropertyName "call">] Call: MessageCall option
+    Id: string
+    ChannelId: string option
+    Author: User option
+    Content: string option
+    Timestamp: DateTime option
+    EditedTimestamp: DateTime option
+    Tts: bool option
+    MentionEveryone: bool option
+    Mentions: User list option
+    MentionRoles: string list option
+    MentionChannels: ChannelMention list option
+    Attachments: Attachment list option
+    Embeds: Embed list option
+    Reactions: Reaction list option
+    Nonce: MessageNonce option
+    Pinned: bool option
+    WebhookId: string option
+    Type: MessageType option
+    Activity: MessageActivity option
+    Application: PartialApplication option
+    Flags: int option
+    MessageReference: MessageReference option
+    MessageSnapshots: MessageSnapshot list option
+    ReferencedMessage: Message option
+    InteractionMetadata: MessageInteractionMetadata option
+    Interaction: MessageInteraction option
+    Thread: Channel option
+    Components: Component list option
+    StickerItems: StickerItem list option
+    Position: int option
+    RoleSubscriptionData: RoleSubscriptionData option
+    Resolved: ResolvedData option
+    Poll: Poll option
+    Call: MessageCall option
 }
 
-[<JsonConverter(typeof<MessageNonceConverter>)>]
+/// A partial message specifically for message snapshots
+and SnapshotPartialMessage = {
+    Content: string option
+    Timestamp: DateTime
+    EditedTimestamp: DateTime option
+    Mentions: User list
+    MentionRoles: string list
+    Attachments: Attachment list
+    Embeds: Embed list
+    Type: MessageType
+    Flags: int option
+    Components: Component list option
+    StickerItems: StickerItem list option
+}
+
 [<RequireQualifiedAccess>]
 type MessageNonce =
     | Number of int
     | String of string
 
-and MessageNonceConverter () =
-    inherit JsonConverter<MessageNonce> ()
-
-    override _.Read (reader, _, _) =
-        match reader.TokenType with
-        | JsonTokenType.Number -> MessageNonce.Number (reader.GetInt32())
-        | JsonTokenType.String -> MessageNonce.String (reader.GetString())
-        | _ -> raise (JsonException "Unexpected MessageNonce value")
-
-    override _.Write (writer, value, _) =
-        match value with
-        | MessageNonce.Number v -> writer.WriteNumberValue v
-        | MessageNonce.String v -> writer.WriteStringValue v
-
-/// A partial message specifically for message snapshots
-and SnapshotPartialMessage = {
-    [<JsonPropertyName "content">] Content: string option
-    [<JsonPropertyName "timestamp">] Timestamp: DateTime
-    [<JsonPropertyName "edited_timestamp">] EditedTimestamp: DateTime option
-    [<JsonPropertyName "mentions">] Mentions: User list
-    [<JsonPropertyName "mention_roles">] MentionRoles: string list
-    [<JsonPropertyName "attachments">] Attachments: Attachment list
-    [<JsonPropertyName "embeds">] Embeds: Embed list
-    [<JsonPropertyName "type">] Type: MessageType
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "components">] Components: Component list option
-    [<JsonPropertyName "sticker_items">] StickerItems: StickerItem list option
-}
-
 // TODO: Handle documented conditions?
 
 // https://discord.com/developers/docs/resources/message#message-object-message-activity-structure
 type MessageActivity = {
-    [<JsonPropertyName "type">] Type: MessageActivityType
-    [<JsonPropertyName "party_id">] PartyId: string option
+    Type: MessageActivityType
+    PartyId: string option
 }
 
 // https://discord.com/developers/docs/resources/message#message-interaction-metadata-object-application-command-interaction-metadata-structure
 type ApplicationCommandInteractionMetadata = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: InteractionType
-    [<JsonPropertyName "user">] User: User
-    [<JsonPropertyName "authorizing_integration_owners">] AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
-    [<JsonPropertyName "original_response_message_id">] OriginalResponseMessageId: string option
-    [<JsonPropertyName "target_user">] TargetUser: User option
-    [<JsonPropertyName "target_message_id">] TargetMessageId: string option
+    Id: string
+    Type: InteractionType
+    User: User
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
+    OriginalResponseMessageId: string option
+    TargetUser: User option
+    TargetMessageId: string option
 }
 
 // https://discord.com/developers/docs/resources/message#message-interaction-metadata-object-message-component-interaction-metadata-structure
 type MessageComponentInteractionMetadata = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: InteractionType
-    [<JsonPropertyName "user">] User: User
-    [<JsonPropertyName "authorizing_integration_owners">] AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
-    [<JsonPropertyName "original_response_message_id">] OriginalResponseMessageId: string option
-    [<JsonPropertyName "interacted_message_id">] InteractedMessageId: string
+    Id: string
+    Type: InteractionType
+    User: User
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
+    OriginalResponseMessageId: string option
+    InteractedMessageId: string
 }
 
 // https://discord.com/developers/docs/resources/message#message-interaction-metadata-object-modal-submit-interaction-metadata-structure
 type ModalSubmitInteractionMetadata = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: InteractionType
-    [<JsonPropertyName "user">] User: User
-    [<JsonPropertyName "authorizing_integration_owners">] AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
-    [<JsonPropertyName "original_response_message_id">] OriginalResponseMessageId: string option
-    [<JsonPropertyName "triggering_interaction_metadata">] TriggeringInteractionMetadata: MessageInteractionMetadata // TODO: Make this not allowed to be a ModalSubmitInteractionMetadata
+    Id: string
+    Type: InteractionType
+    User: User
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
+    OriginalResponseMessageId: string option
+    TriggeringInteractionMetadata: MessageInteractionMetadata // TODO: Make this not allowed to be a ModalSubmitInteractionMetadata
 }
 
-[<JsonConverter(typeof<MessageInteractionMetadataConverter>)>]
 type MessageInteractionMetadata =
     | APPLICATION_COMMAND of ApplicationCommandInteractionMetadata
     | MESSAGE_COMPONENT of MessageComponentInteractionMetadata
     | MODAL_SUBMIT of ModalSubmitInteractionMetadata
 
-type MessageInteractionMetadataConverter () =
-    inherit JsonConverter<MessageInteractionMetadata> ()
-
-    override _.Read (reader, _, _) =
-        let success, document = JsonDocument.TryParseValue &reader
-        if not success then JsonException.raise "Failed to parse JSON document"
-
-        let interactionType =
-            document.RootElement.GetProperty "type"
-            |> _.GetInt32()
-            |> enum<InteractionType>
-
-        let json = document.RootElement.GetRawText()
-
-        match interactionType with
-        | InteractionType.APPLICATION_COMMAND -> MessageInteractionMetadata.APPLICATION_COMMAND <| Json.deserializeF<ApplicationCommandInteractionMetadata> json
-        | InteractionType.MESSAGE_COMPONENT -> MessageInteractionMetadata.MESSAGE_COMPONENT <| Json.deserializeF<MessageComponentInteractionMetadata> json
-        | InteractionType.MODAL_SUBMIT -> MessageInteractionMetadata.MODAL_SUBMIT <| Json.deserializeF<ModalSubmitInteractionMetadata> json
-        | _ -> JsonException.raise "Unexpected InteractionType provided"
-
-    override _.Write (writer, value, _) =
-        match value with
-        | MessageInteractionMetadata.APPLICATION_COMMAND a -> Json.serializeF a
-        | MessageInteractionMetadata.MESSAGE_COMPONENT m -> Json.serializeF m
-        | MessageInteractionMetadata.MODAL_SUBMIT m -> Json.serializeF m
-        |> writer.WriteRawValue
-
 // https://discord.com/developers/docs/resources/message#message-call-object-message-call-object-structure
 type MessageCall = {
-    [<JsonPropertyName "participants">] Participants: string list
-    [<JsonPropertyName "ended_timestamp">] EndedTimestamp: DateTime option
+    Participants: string list
+    EndedTimestamp: DateTime option
 }
 
 // https://discord.com/developers/docs/resources/message#message-reference-structure
 type MessageReference = {
-    [<JsonPropertyName "type">] Type: MessageReferenceType option
-    [<JsonPropertyName "message_id">] MessageId: string option
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "fail_if_not_exists">] FailIfNotExists: bool option
+    Type: MessageReferenceType option
+    MessageId: string option
+    ChannelId: string option
+    GuildId: string option
+    FailIfNotExists: bool option
 }
 
 // TODO: Handle documented conditions?
 
 // https://discord.com/developers/docs/resources/message#message-snapshot-structure
 type MessageSnapshot = {
-    [<JsonPropertyName "message">] Message: SnapshotPartialMessage
+    Message: SnapshotPartialMessage
 }
 
 // https://discord.com/developers/docs/resources/message#reaction-object-reaction-structure
 type Reaction = {
-    [<JsonPropertyName "count">] Count: int
-    [<JsonPropertyName "count_details">] CountDetails: ReactionCountDetails
-    [<JsonPropertyName "me">] Me: bool
-    [<JsonPropertyName "me_burst">] MeBurst: bool
-    [<JsonPropertyName "emoji">] Emoji: PartialEmoji
-    [<JsonPropertyName "burst_colors">] BurstColors: int list
+    Count: int
+    CountDetails: ReactionCountDetails
+    Me: bool
+    MeBurst: bool
+    Emoji: PartialEmoji
+    BurstColors: int list
 }
 
 // https://discord.com/developers/docs/resources/message#reaction-count-details-object-reaction-count-details-structure
 type ReactionCountDetails = {
-    [<JsonPropertyName "burst">] Burst: int
-    [<JsonPropertyName "normal">] Normal: int
+    Burst: int
+    Normal: int
 }
 
 // https://discord.com/developers/docs/resources/message#embed-object-embed-structure
 type Embed = {
-    [<JsonPropertyName "title">] Title: string option
-    [<JsonPropertyName "type">] Type: EmbedType option
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "url">] Url: string option
-    [<JsonPropertyName "timestamp">] Timestamp: DateTime option
-    [<JsonPropertyName "color">] Color: int option
-    [<JsonPropertyName "footer">] Footer: EmbedFooter option
-    [<JsonPropertyName "image">] Image: EmbedImage option
-    [<JsonPropertyName "thumbnail">] Thumbnail: EmbedThumbnail option
-    [<JsonPropertyName "video">] Video: EmbedVideo option
-    [<JsonPropertyName "provider">] Provider: EmbedProvider option
-    [<JsonPropertyName "author">] Author: EmbedAuthor option
-    [<JsonPropertyName "fields">] Fields: EmbedField list option
+    Title: string option
+    Type: EmbedType option
+    Description: string option
+    Url: string option
+    Timestamp: DateTime option
+    Color: int option
+    Footer: EmbedFooter option
+    Image: EmbedImage option
+    Thumbnail: EmbedThumbnail option
+    Video: EmbedVideo option
+    Provider: EmbedProvider option
+    Author: EmbedAuthor option
+    Fields: EmbedField list option
 }
 
 // https://discord.com/developers/docs/resources/message#embed-object-embed-thumbnail-structure
 type EmbedThumbnail = {
-    [<JsonPropertyName "url">] Url: string
-    [<JsonPropertyName "proxy_url">] ProxyUrl: string option
-    [<JsonPropertyName "height">] Height: int option
-    [<JsonPropertyName "width">] Width: int option
+    Url: string
+    ProxyUrl: string option
+    Height: int option
+    Width: int option
 }
 
 // https://discord.com/developers/docs/resources/message#embed-object-embed-video-structure
 type EmbedVideo = {
-    [<JsonPropertyName "url">] Url: string option
-    [<JsonPropertyName "proxy_url">] ProxyUrl: string option
-    [<JsonPropertyName "height">] Height: int option
-    [<JsonPropertyName "width">] Width: int option
+    Url: string option
+    ProxyUrl: string option
+    Height: int option
+    Width: int option
 }
 
 // https://discord.com/developers/docs/resources/message#embed-object-embed-image-structure
 type EmbedImage = {
-    [<JsonPropertyName "url">] Url: string
-    [<JsonPropertyName "proxy_url">] ProxyUrl: string option
-    [<JsonPropertyName "height">] Height: int option
-    [<JsonPropertyName "width">] Width: int option
+    Url: string
+    ProxyUrl: string option
+    Height: int option
+    Width: int option
 }
 
 // https://discord.com/developers/docs/resources/message#embed-object-embed-provider-structure
 type EmbedProvider = {
-    [<JsonPropertyName "name">] Name: string option
-    [<JsonPropertyName "url">] Url: string option
+    Name: string option
+    Url: string option
 }
 
 // https://discord.com/developers/docs/resources/message#embed-object-embed-author-structure
 type EmbedAuthor = {
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "url">] Url: string option
-    [<JsonPropertyName "icon_url">] IconUrl: string option
-    [<JsonPropertyName "proxy_icon_url">] ProxyIconUrl: string option
+    Name: string
+    Url: string option
+    IconUrl: string option
+    ProxyIconUrl: string option
 }
 
 // https://discord.com/developers/docs/resources/message#embed-object-embed-footer-structure
 type EmbedFooter = {
-    [<JsonPropertyName "text">] Text: string
-    [<JsonPropertyName "icon_url">] IconUrl: string option
-    [<JsonPropertyName "proxy_icon_url">] ProxyIconUrl: string option
+    Text: string
+    IconUrl: string option
+    ProxyIconUrl: string option
 }
 
 // https://discord.com/developers/docs/resources/message#embed-object-embed-field-structure
 type EmbedField = {
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "value">] Value: string
-    [<JsonPropertyName "inline">] Inline: bool option
+    Name: string
+    Value: string
+    Inline: bool option
 }
 
 // TODO: Handle documented embed limits
@@ -1592,59 +1528,59 @@ type EmbedField = {
 
 // https://discord.com/developers/docs/resources/message#attachment-object-attachment-structure
 type Attachment = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "filename">] Filename: string
-    [<JsonPropertyName "description">] Description: string
-    [<JsonPropertyName "content_type">] ContentType: string option
-    [<JsonPropertyName "size">] Size: int
-    [<JsonPropertyName "url">] Url: string
-    [<JsonPropertyName "proxy_url">] ProxyUrl: string
-    [<JsonPropertyName "height">] Height: int option
-    [<JsonPropertyName "width">] Width: int option
-    [<JsonPropertyName "ephemeral">] Ephemeral: bool option
-    [<JsonPropertyName "duration_secs">] DurationSecs: float option
-    [<JsonPropertyName "waveform">] Waveform: string option
-    [<JsonPropertyName "flags">] Flags: int option
+    Id: string
+    Filename: string
+    Description: string
+    ContentType: string option
+    Size: int
+    Url: string
+    ProxyUrl: string
+    Height: int option
+    Width: int option
+    Ephemeral: bool option
+    DurationSecs: float option
+    Waveform: string option
+    Flags: int option
 }
 
 and PartialAttachment = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "filename">] Filename: string option
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "content_type">] ContentType: string option
-    [<JsonPropertyName "size">] Size: int option
-    [<JsonPropertyName "url">] Url: string option
-    [<JsonPropertyName "proxy_url">] ProxyUrl: string option
-    [<JsonPropertyName "height">] Height: int option
-    [<JsonPropertyName "width">] Width: int option
-    [<JsonPropertyName "ephemeral">] Ephemeral: bool option
-    [<JsonPropertyName "duration_secs">] DurationSecs: float option
-    [<JsonPropertyName "waveform">] Waveform: string option
-    [<JsonPropertyName "flags">] Flags: int option
+    Id: string
+    Filename: string option
+    Description: string option
+    ContentType: string option
+    Size: int option
+    Url: string option
+    ProxyUrl: string option
+    Height: int option
+    Width: int option
+    Ephemeral: bool option
+    DurationSecs: float option
+    Waveform: string option
+    Flags: int option
 }
 
 // https://discord.com/developers/docs/resources/message#channel-mention-object-channel-mention-structure
 type ChannelMention = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "type">] Type: ChannelType
-    [<JsonPropertyName "name">] Name: string
+    Id: string
+    GuildId: string
+    Type: ChannelType
+    Name: string
 }
 
 // https://discord.com/developers/docs/resources/message#allowed-mentions-object-allowed-mentions-structure
 type AllowedMentions = {
-    [<JsonPropertyName "parse">] Parse: AllowedMentionsParseType list
-    [<JsonPropertyName "roles">] Roles: string list option
-    [<JsonPropertyName "users">] Users: string list option
-    [<JsonPropertyName "replied_user">] RepliedUser: bool option
+    Parse: AllowedMentionsParseType list
+    Roles: string list option
+    Users: string list option
+    RepliedUser: bool option
 }
 
 // https://discord.com/developers/docs/resources/message#role-subscription-data-object-role-subscription-data-object-structure
 type RoleSubscriptionData = {
-    [<JsonPropertyName "role_subscription_listing_id">] RoleSubscriptionListingId: string
-    [<JsonPropertyName "tier_name">] TierName: string
-    [<JsonPropertyName "total_months_subscribed">] TotalMonthsSubscribed: int
-    [<JsonPropertyName "is_renewal">] IsRenewal: bool
+    RoleSubscriptionListingId: string
+    TierName: string
+    TotalMonthsSubscribed: int
+    IsRenewal: bool
 }
 
 // ----- Resources: Poll -----
