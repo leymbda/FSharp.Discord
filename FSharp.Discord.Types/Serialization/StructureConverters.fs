@@ -3430,3 +3430,134 @@ module Subscription =
         let [<Literal>] Status = "status"
         let [<Literal>] CreatedAt = "created_at"
         let [<Literal>] Country = "country"
+
+module User =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Username = "username"
+        let [<Literal>] Discriminator = "discriminator"
+        let [<Literal>] GlobalName = "global_name"
+        let [<Literal>] Avatar = "avatar"
+        let [<Literal>] Bot = "bot"
+        let [<Literal>] System = "system"
+        let [<Literal>] MfaEnabled = "mfa_enabled"
+        let [<Literal>] Banner = "banner"
+        let [<Literal>] AccentColor = "accent_color"
+        let [<Literal>] Locale = "locale"
+        let [<Literal>] Verified = "verified"
+        let [<Literal>] Email = "email"
+        let [<Literal>] Flags = "flags"
+        let [<Literal>] PremiumType = "premium_type"
+        let [<Literal>] PublicFlags = "public_flags"
+        let [<Literal>] AvatarDecorationMetadata = "avatar_decoration_metadata"
+
+module AvatarDecorationMetadata =
+    module Property =
+        let [<Literal>] Asset = "asset"
+        let [<Literal>] SkuId = "sku_id"
+
+module Connection =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Type = "type"
+        let [<Literal>] Revoked = "revoked"
+        let [<Literal>] Integrations = "integrations"
+        let [<Literal>] Verified = "verified"
+        let [<Literal>] FriendSync = "friend_sync"
+        let [<Literal>] ShowActivity = "show_activity"
+        let [<Literal>] TwoWayLink = "two_way_link"
+        let [<Literal>] Visibility = "visibility"
+
+module ApplicationRoleConnection =
+    module Property =
+        let [<Literal>] PlatformName = "platform_name"
+        let [<Literal>] PlatformUsername = "platform_username"
+        let [<Literal>] Metadata = "metadata"
+
+module VoiceState =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] Member = "member"
+        let [<Literal>] SessionId = "session_id"
+        let [<Literal>] Deaf = "deaf"
+        let [<Literal>] Mute = "mute"
+        let [<Literal>] SelfDeaf = "self_deaf"
+        let [<Literal>] SelfMute = "self_mute"
+        let [<Literal>] SelfStream = "self_stream"
+        let [<Literal>] SelfVideo = "self_video"
+        let [<Literal>] Suppress = "suppress"
+        let [<Literal>] RequestToSpeakTimestamp = "request_to_speak_timestamp"
+
+module VoiceRegion =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Optimal = "optimal"
+        let [<Literal>] Deprecated = "deprecated"
+        let [<Literal>] Custom = "custom"
+
+module Webhook =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] WebhookType = "webhook_type"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] User = "user"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Avatar = "avatar"
+        let [<Literal>] Token = "token"
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] SourceGuild = "source_guild"
+        let [<Literal>] SourceChannel = "source_channel"
+        let [<Literal>] Url = "url"
+
+module Role =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Color = "color"
+        let [<Literal>] Hoist = "hoist"
+        let [<Literal>] Icon = "icon"
+        let [<Literal>] UnicodeEmoji = "unicode_emoji"
+        let [<Literal>] Position = "position"
+        let [<Literal>] Permissions = "permissions"
+        let [<Literal>] Managed = "managed"
+        let [<Literal>] Mentionable = "mentionable"
+        let [<Literal>] Tags = "tags"
+        let [<Literal>] Flags = "flags"
+
+module RoleTags =
+    module Property =
+        let [<Literal>] BotId = "bot_id"
+        let [<Literal>] IntegrationId = "integration_id"
+        let [<Literal>] PremiumSubscriber = "premium_subscriber"
+        let [<Literal>] SubscriptionListingId = "subscription_listing_id"
+        let [<Literal>] AvailableForPurchase = "available_for_purchase"
+        let [<Literal>] GuildConnections = "guild_connections"
+
+    // TODO: These 3 bool properties are the ones that use null or undefined as true or false
+
+module RateLimitResponse =
+    module Property =
+        let [<Literal>] Message = "message"
+        let [<Literal>] RetryAfter = "retry_after"
+        let [<Literal>] Global = "global"
+        let [<Literal>] Code = "code"
+
+module Team =
+    module Property =
+        let [<Literal>] Icon = "icon"
+        let [<Literal>] Id = "id"
+        let [<Literal>] Members = "members"
+        let [<Literal>] Name = "name"
+        let [<Literal>] OwnerUserId = "owner_user_id"
+
+module TeamMember =
+    module Property =
+        let [<Literal>] MembershipState = "membership_state"
+        let [<Literal>] TeamId = "team_id"
+        let [<Literal>] User = "user"
+        let [<Literal>] Role = "role"

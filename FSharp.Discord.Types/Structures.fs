@@ -1,8 +1,6 @@
 ﻿namespace rec FSharp.Discord.Types
 
 open System
-open System.Text.Json
-open System.Text.Json.Serialization
 
 // ----- API Reference -----
 
@@ -1716,43 +1714,43 @@ type Subscription = {
 
 // https://discord.com/developers/docs/resources/user#user-object-user-structure
 type User = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "username">] Username: string
-    [<JsonPropertyName "discriminator">] Discriminator: string
-    [<JsonPropertyName "global_name">] GlobalName: string option
-    [<JsonPropertyName "avatar">] Avatar: string option
-    [<JsonPropertyName "bot">] Bot: bool option
-    [<JsonPropertyName "system">] System: bool option
-    [<JsonPropertyName "mfa_enabled">] MfaEnabled: bool option
-    [<JsonPropertyName "banner">] Banner: string option
-    [<JsonPropertyName "accent_color">] AccentColor: int option
-    [<JsonPropertyName "locale">] Locale: string option
-    [<JsonPropertyName "verified">] Verified: bool option
-    [<JsonPropertyName "email">] Email: string option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "premium_type">] PremiumType: UserPremiumTier option
-    [<JsonPropertyName "public_flags">] PublicFlags: int option
-    [<JsonPropertyName "avatar_decoration_data">] AvatarDecorationData: AvatarDecorationData option
+    Id: string
+    Username: string
+    Discriminator: string
+    GlobalName: string option
+    Avatar: string option
+    Bot: bool option
+    System: bool option
+    MfaEnabled: bool option
+    Banner: string option
+    AccentColor: int option
+    Locale: string option
+    Verified: bool option
+    Email: string option
+    Flags: int option
+    PremiumType: UserPremiumTier option
+    PublicFlags: int option
+    AvatarDecorationData: AvatarDecorationData option
 }
 
 and PartialUser = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "username">] Username: string option
-    [<JsonPropertyName "discriminator">] Discriminator: string option
-    [<JsonPropertyName "global_name">] GlobalName: string option
-    [<JsonPropertyName "avatar">] Avatar: string option
-    [<JsonPropertyName "bot">] Bot: bool option
-    [<JsonPropertyName "system">] System: bool option
-    [<JsonPropertyName "mfa_enabled">] MfaEnabled: bool option
-    [<JsonPropertyName "banner">] Banner: string option
-    [<JsonPropertyName "accent_color">] AccentColor: int option
-    [<JsonPropertyName "locale">] Locale: string option
-    [<JsonPropertyName "verified">] Verified: bool option
-    [<JsonPropertyName "email">] Email: string option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "premium_type">] PremiumType: UserPremiumTier option
-    [<JsonPropertyName "public_flags">] PublicFlags: int option
-    [<JsonPropertyName "avatar_decoration_data">] AvatarDecorationData: AvatarDecorationData option
+    Id: string
+    Username: string option
+    Discriminator: string option
+    GlobalName: string option
+    Avatar: string option
+    Bot: bool option
+    System: bool option
+    MfaEnabled: bool option
+    Banner: string option
+    AccentColor: int option
+    Locale: string option
+    Verified: bool option
+    Email: string option
+    Flags: int option
+    PremiumType: UserPremiumTier option
+    PublicFlags: int option
+    AvatarDecorationData: AvatarDecorationData option
 }
 
 module User =
@@ -1764,91 +1762,91 @@ module User =
 
 // https://discord.com/developers/docs/resources/user#avatar-decoration-data-object-avatar-decoration-data-structure
 type AvatarDecorationData = {
-    [<JsonPropertyName "asset">] Asset: string
-    [<JsonPropertyName "sku_id">] SkuId: string
+    Asset: string
+    SkuId: string
 }
 
 // https://discord.com/developers/docs/resources/user#connection-object-connection-structure
 type Connection = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "type">] Type: ConnectionServiceType
-    [<JsonPropertyName "revoked">] Revoked: bool option
-    [<JsonPropertyName "integrations">] Integrations: PartialIntegration list option
-    [<JsonPropertyName "verified">] Verified: bool
-    [<JsonPropertyName "friend_sync">] FriendSync: bool
-    [<JsonPropertyName "show_activity">] ShowActivity: bool
-    [<JsonPropertyName "two_way_link">] TwoWayLink: bool
-    [<JsonPropertyName "visibility">] Visibility: ConnectionVisibility
+    Id: string
+    Name: string
+    Type: ConnectionServiceType
+    Revoked: bool option
+    Integrations: PartialIntegration list option
+    Verified: bool
+    FriendSync: bool
+    ShowActivity: bool
+    TwoWayLink: bool
+    Visibility: ConnectionVisibility
 }
 
 // https://discord.com/developers/docs/resources/user#application-role-connection-object-application-role-connection-structure
 type ApplicationRoleConnection = {
-    [<JsonPropertyName "platform_name">] PlatformName: string option
-    [<JsonPropertyName "platform_username">] PlatformUsername: string option
-    [<JsonPropertyName "metadata">] Metadata: (string * string) seq // value is the "stringified value" of the metadata
+    PlatformName: string option
+    PlatformUsername: string option
+    Metadata: Map<string, string> // value is the "stringified value" of the metadata
 }
 
 // ----- Resources: Voice -----
 
 // https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure
 type VoiceState = {
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "user_id">] UserId: string option
-    [<JsonPropertyName "member">] Member: GuildMember option
-    [<JsonPropertyName "session_id">] SessionId: string
-    [<JsonPropertyName "deaf">] Deaf: bool
-    [<JsonPropertyName "mute">] Mute: bool
-    [<JsonPropertyName "self_deaf">] SelfDeaf: bool
-    [<JsonPropertyName "self_mute">] SelfMute: bool
-    [<JsonPropertyName "self_stream">] SelfStream: bool option
-    [<JsonPropertyName "self_video">] SelfVideo: bool
-    [<JsonPropertyName "suppress">] Suppress: bool
-    [<JsonPropertyName "request_to_speak_timestamp">] RequestToSpeakTimestamp: DateTime option
+    GuildId: string option
+    ChannelId: string option
+    UserId: string option
+    Member: GuildMember option
+    SessionId: string
+    Deaf: bool
+    Mute: bool
+    SelfDeaf: bool
+    SelfMute: bool
+    SelfStream: bool option
+    SelfVideo: bool
+    Suppress: bool
+    RequestToSpeakTimestamp: DateTime option
 }
 
 and PartialVoiceState = {
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "user_id">] UserId: string option
-    [<JsonPropertyName "member">] Member: GuildMember option
-    [<JsonPropertyName "session_id">] SessionId: string option
-    [<JsonPropertyName "deaf">] Deaf: bool option
-    [<JsonPropertyName "mute">] Mute: bool option
-    [<JsonPropertyName "self_deaf">] SelfDeaf: bool option
-    [<JsonPropertyName "self_mute">] SelfMute: bool option
-    [<JsonPropertyName "self_stream">] SelfStream: bool option
-    [<JsonPropertyName "self_video">] SelfVideo: bool option
-    [<JsonPropertyName "suppress">] Suppress: bool option
-    [<JsonPropertyName "request_to_speak_timestamp">] RequestToSpeakTimestamp: DateTime option
+    GuildId: string option
+    ChannelId: string option
+    UserId: string option
+    Member: GuildMember option
+    SessionId: string option
+    Deaf: bool option
+    Mute: bool option
+    SelfDeaf: bool option
+    SelfMute: bool option
+    SelfStream: bool option
+    SelfVideo: bool option
+    Suppress: bool option
+    RequestToSpeakTimestamp: DateTime option
 }
 
 // https://discord.com/developers/docs/resources/voice#voice-region-object-voice-region-structure
 type VoiceRegion = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "optimal">] Optimal: bool
-    [<JsonPropertyName "deprecated">] Deprecated: bool
-    [<JsonPropertyName "custom">] Custom: bool
+    Id: string
+    Name: string
+    Optimal: bool
+    Deprecated: bool
+    Custom: bool
 }
 
 // ----- Resources: Webhook -----
 
 // https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure
 type Webhook = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "webhook_type">] Type: WebhookType
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "user">] User: User option
-    [<JsonPropertyName "name">] Name: string option
-    [<JsonPropertyName "avatar">] Avatar: string option
-    [<JsonPropertyName "token">] Token: string option
-    [<JsonPropertyName "application_id">] ApplicationId: string option
-    [<JsonPropertyName "source_guild">] SourceGuild: PartialGuild option
-    [<JsonPropertyName "source_channel">] SourceChannel: PartialChannel option
-    [<JsonPropertyName "url">] Url: string option
+    Id: string
+    WebhookType: WebhookType // TODO: Confirm this is actually `webhook_type` not just `type`
+    GuildId: string option
+    ChannelId: string option
+    User: User option
+    Name: string option
+    Avatar: string option
+    Token: string option
+    ApplicationId: string option
+    SourceGuild: PartialGuild option
+    SourceChannel: PartialChannel option
+    Url: string option
 }
 
 // ----- Topics: Permissions -----
@@ -1857,28 +1855,28 @@ type Webhook = {
 
 // https://discord.com/developers/docs/topics/permissions#role-object-role-structure
 type Role = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "color">] Color: int
-    [<JsonPropertyName "hoist">] Hoist: bool
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "unicode_emoji">] UnicodeEmoji: string option
-    [<JsonPropertyName "position">] Position: int
-    [<JsonPropertyName "permissions">] Permissions: string
-    [<JsonPropertyName "managed">] Managed: bool
-    [<JsonPropertyName "mentionable">] Mentionable: bool
-    [<JsonPropertyName "tags">] Tags: RoleTags option
-    [<JsonPropertyName "flags">] Flags: int
+    Id: string
+    Name: string
+    Color: int
+    Hoist: bool
+    Icon: string option
+    UnicodeEmoji: string option
+    Position: int
+    Permissions: string
+    Managed: bool
+    Mentionable: bool
+    Tags: RoleTags option
+    Flags: int
 }
 
 // https://discord.com/developers/docs/topics/permissions#role-object-role-tags-structure
 type RoleTags = {
-    [<JsonPropertyName "bot_id">] BotId: string option
-    [<JsonPropertyName "integration_id">] IntegrationId: string option
-    [<JsonPropertyName "premium_subscriber">] [<JsonConverter(typeof<JsonConverter.NullUndefinedAsBool>)>] PremiumSubscriber: bool
-    [<JsonPropertyName "subscription_listing_id">] SubscriptionListingId: string option
-    [<JsonPropertyName "available_for_purchase">] [<JsonConverter(typeof<JsonConverter.NullUndefinedAsBool>)>] AvailableForPurchase: bool
-    [<JsonPropertyName "guild_connections">] [<JsonConverter(typeof<JsonConverter.NullUndefinedAsBool>)>] GuildConnections: bool
+    BotId: string option
+    IntegrationId: string option
+    PremiumSubscriber: bool
+    SubscriptionListingId: string option
+    AvailableForPurchase: bool
+    GuildConnections: bool
 }
 
 // ----- Topics: Rate Limits -----
@@ -1887,27 +1885,27 @@ type RoleTags = {
 
 // https://discord.com/developers/docs/topics/rate-limits#exceeding-a-rate-limit-rate-limit-response-structure
 type RateLimitResponse = {
-    [<JsonPropertyName "message">] Message: string
-    [<JsonPropertyName "retry_after">] RetryAfter: float
-    [<JsonPropertyName "global">] Global: bool
-    [<JsonPropertyName "code">] Code: JsonErrorCode option
+    Message: string
+    RetryAfter: float
+    Global: bool
+    Code: JsonErrorCode option
 }
 
 // ----- Topics: Teams -----
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-object
 type Team = {
-    [<JsonPropertyName "icon">] Icon: string option
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "members">] Members: TeamMember list
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "owner_user_id">] OwnerUserId: string
+    Icon: string option
+    Id: string
+    Members: TeamMember list
+    Name: string
+    OwnerUserId: string
 }
 
 // https://discord.com/developers/docs/topics/teams#data-models-team-member-object
 type TeamMember = {
-    [<JsonPropertyName "membership_state">] MembershipState: MembershipState
-    [<JsonPropertyName "team_id">] TeamId: string
-    [<JsonPropertyName "user">] User: PartialUser // avatar, discriminator, id, username
-    [<JsonPropertyName "role">] Role: string
+    MembershipState: MembershipState
+    TeamId: string
+    User: PartialUser // avatar, discriminator, id, username
+    Role: string
 }
