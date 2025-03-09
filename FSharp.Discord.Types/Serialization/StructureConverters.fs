@@ -3377,3 +3377,56 @@ module SoundboardSound =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Available = "available"
         let [<Literal>] User = "user"
+
+module StageInstance =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] Topic = "topic"
+        let [<Literal>] PrivacyLevel = "privacy_level"
+        let [<Literal>] DiscoverableEnabled = "discoverable_enabled"
+        let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
+
+module Sticker =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] PackId = "pack_id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Description = "description"
+        let [<Literal>] Tags = "tags"
+        let [<Literal>] Type = "type"
+        let [<Literal>] FormatType = "format_type"
+        let [<Literal>] Available = "available"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] User = "user"
+        let [<Literal>] SortValue = "sort_value"
+
+module StickerItem =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] FormatType = "format_type"
+
+module StickerPack =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Stickers = "stickers"
+        let [<Literal>] Name = "name"
+        let [<Literal>] SkuId = "sku_id"
+        let [<Literal>] CoverStickerId = "cover_sticker_id"
+        let [<Literal>] Description = "description"
+        let [<Literal>] BannerAssetId = "banner_asset_id"
+
+module Subscription =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] SkuIds = "sku_ids"
+        let [<Literal>] EntitlementIds = "entitlement_ids"
+        let [<Literal>] RenewalSkuIds = "renewal_sku_ids"
+        let [<Literal>] CurrentPeriodStart = "current_period_start"
+        let [<Literal>] CurrentPeriodEnd = "current_period_end"
+        let [<Literal>] Status = "status"
+        let [<Literal>] CreatedAt = "created_at"
+        let [<Literal>] Country = "country"

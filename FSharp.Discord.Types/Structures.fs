@@ -1652,64 +1652,64 @@ type SoundboardSound = {
 
 // https://discord.com/developers/docs/resources/stage-instance#stage-instance-object-stage-instance-structure
 type StageInstance = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "topic">] Topic: string
-    [<JsonPropertyName "privacy_level">] PrivacyLevel: PrivacyLevel
-    [<JsonPropertyName "discoverable_enabled">] DiscoverableEnabled: bool
-    [<JsonPropertyName "guild_scheduled_event_id">] GuildScheduledEventId: string option
+    Id: string
+    GuildId: string
+    ChannelId: string
+    Topic: string
+    PrivacyLevel: PrivacyLevel
+    DiscoverableEnabled: bool
+    GuildScheduledEventId: string option
 }
 
 // ----- Resources: Sticker -----
 
 // https://discord.com/developers/docs/resources/sticker#sticker-object-sticker-structure
 type Sticker = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "pack_id">] PackId: string option
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "description">] Description: string option
-    [<JsonPropertyName "tags">] Tags: string
-    [<JsonPropertyName "type">] Type: StickerType
-    [<JsonPropertyName "format_type">] FormatType: StickerFormat
-    [<JsonPropertyName "available">] Available: bool option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "user">] User: User option
-    [<JsonPropertyName "sort_value">] SortValue: int option
+    Id: string
+    PackId: string option
+    Name: string
+    Description: string option
+    Tags: string
+    Type: StickerType
+    FormatType: StickerFormat
+    Available: bool option
+    GuildId: string option
+    User: User option
+    SortValue: int option
 }
 
 // https://discord.com/developers/docs/resources/sticker#sticker-item-object-sticker-item-structure
 type StickerItem = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "format_type">] FormatType: StickerFormat
+    Id: string
+    Name: string
+    FormatType: StickerFormat
 }
 
 // https://discord.com/developers/docs/resources/sticker#sticker-pack-object
 type StickerPack = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "stickers">] Stickers: Sticker list
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "sku_id">] SkuId: string
-    [<JsonPropertyName "cover_sticker_id">] CoverStickerId: string option
-    [<JsonPropertyName "description">] Description: string
-    [<JsonPropertyName "banner_asset_id">] BannerAssetId: string option
+    Id: string
+    Stickers: Sticker list
+    Name: string
+    SkuId: string
+    CoverStickerId: string option
+    Description: string
+    BannerAssetId: string option
 }
 
 // ----- Resources: Subscription -----
 
 // https://discord.com/developers/docs/resources/subscription#subscription-object
 type Subscription = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "sku_ids">] SkuIds: string list
-    [<JsonPropertyName "entitlement_ids">] EntitlmentIds: string list
-    [<JsonPropertyName "renewal_sku_ids">] RenewalSkuIds: string list option
-    [<JsonPropertyName "current_period_start">] CurrentPeriodStart: DateTime
-    [<JsonPropertyName "current_period_end">] CurrentPeriodEnd: DateTime
-    [<JsonPropertyName "status">] Status: SubscriptionStatus
-    [<JsonPropertyName "created_at">] CanceledAt: DateTime option
-    [<JsonPropertyName "country">] Country: string option
+    Id: string
+    UserId: string
+    SkuIds: string list
+    EntitlmentIds: string list
+    RenewalSkuIds: string list option
+    CurrentPeriodStart: DateTime
+    CurrentPeriodEnd: DateTime
+    Status: SubscriptionStatus
+    CanceledAt: DateTime option
+    Country: string option
 }
 
 // ----- Resources: User -----
