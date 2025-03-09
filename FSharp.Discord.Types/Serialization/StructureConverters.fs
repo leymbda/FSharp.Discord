@@ -3098,8 +3098,6 @@ module GuildTemplate =
             |> Encode.nullable Property.IsDirty Encode.bool v.IsDirty
         )
 
-// TODO: Deserialisers from here down
-
 module Invite =
     module Property =
         let [<Literal>] Type = "type"
@@ -3113,21 +3111,80 @@ module Invite =
         let [<Literal>] ApproximatePresenceCount = "approximate_presence_count"
         let [<Literal>] ApproximateMemberCount = "approximate_member_count"
         let [<Literal>] ExpiresAt = "expires_at"
+        let [<Literal>] StageInstance = "stage_instance"
         let [<Literal>] GuildScheduledEvent = "guild_scheduled_event"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Type = get |> Get.required Property.Type Decode.Enum.int<InviteType>
+            Code = get |> Get.required Property.Code Decode.string
+            Guild = get |> Get.optional Property.Guild Guild.Partial.decoder
+            Channel = get |> Get.nullable Property.Channel Channel.Partial.decoder
+            Inviter = get |> Get.optional Property.Inviter User.Partial.decoder
+            TargetType = get |> Get.optional Property.TargetType Decode.Enum.int<InviteTargetType>
+            TargetUser = get |> Get.optional Property.TargetUser User.Partial.decoder
+            TargetApplication = get |> Get.optional Property.TargetApplication Application.Partial.decoder
+            ApproximatePresenceCount = get |> Get.optional Property.ApproximatePresenceCount Decode.int
+            ApproximateMemberCount = get |> Get.optional Property.ApproximateMemberCount Decode.int
+            ExpiresAt = get |> Get.optinull Property.ExpiresAt Decode.datetimeUtc
+            GuildScheduledEvent = get |> Get.optional Property.GuildScheduledEvent GuildScheduledEvent.decoder
+        }) path v
+
+    let internal encodeProperties (v: Invite) =
+        []
+        |> Encode.required Property.Type Encode.Enum.int v.Type
+        |> Encode.required Property.Code Encode.string v.Code
+        |> Encode.optional Property.Guild Guild.Partial.encoder v.Guild
+        |> Encode.nullable Property.Channel Channel.Partial.encoder v.Channel
+        |> Encode.optional Property.Inviter User.Partial.encoder v.Inviter
+        |> Encode.optional Property.TargetType Encode.Enum.int v.TargetType
+        |> Encode.optional Property.TargetUser User.Partial.encoder v.TargetUser
+        |> Encode.optional Property.TargetApplication Application.Partial.encoder v.TargetApplication
+        |> Encode.optional Property.ApproximatePresenceCount Encode.int v.ApproximatePresenceCount
+        |> Encode.optional Property.ApproximateMemberCount Encode.int v.ApproximateMemberCount
+        |> Encode.optinull Property.ExpiresAt Encode.datetime v.ExpiresAt
+        |> Encode.optional Property.GuildScheduledEvent GuildScheduledEvent.encoder v.GuildScheduledEvent
+
+    let encoder (v: Invite) =
+        Encode.object (encodeProperties v)
 
 module InviteMetadata =
     module Property =
         let [<Literal>] Uses = "uses"
         let [<Literal>] MaxUses = "max_uses"
+        let [<Literal>] MaxAge = "max_age"
         let [<Literal>] Temporary = "temporary"
         let [<Literal>] CreatedAt = "created_at"
 
-module InviteStageInstance =
-    module Property =
-        let [<Literal>] Members = "members"
-        let [<Literal>] ParticipantCount = "participant_count"
-        let [<Literal>] SpeakerCount = "speaker_count"
-        let [<Literal>] Topic = "topic"
+    let decoder path v =
+        Decode.object (fun get -> {
+            Uses = get |> Get.required Property.Uses Decode.int
+            MaxUses = get |> Get.required Property.MaxUses Decode.int
+            MaxAge = get |> Get.required Property.MaxAge Decode.int
+            Temporary = get |> Get.required Property.Temporary Decode.bool
+            CreatedAt = get |> Get.required Property.CreatedAt Decode.datetimeUtc
+        }) path v
+
+    let internal encodeProperties (v: InviteMetadata) =
+        []
+        |> Encode.required Property.Uses Encode.int v.Uses
+        |> Encode.required Property.MaxUses Encode.int v.MaxUses
+        |> Encode.required Property.MaxAge Encode.int v.MaxAge
+        |> Encode.required Property.Temporary Encode.bool v.Temporary
+        |> Encode.required Property.CreatedAt Encode.datetime v.CreatedAt
+
+    let encoder (v: InviteMetadata) =
+        Encode.object (encodeProperties v)
+
+module InviteWithMetadata =
+    let decoder path v =
+        Decode.object (fun get -> {
+            Invite = get |> Get.extract Invite.decoder
+            Metadata = get |> Get.extract InviteMetadata.decoder
+        }) path v
+
+    let encoder (v: InviteWithMetadata) =
+        Encode.object (Invite.encodeProperties v.Invite @ InviteMetadata.encodeProperties v.Metadata)
 
 module Message =
     module Property =

@@ -48,6 +48,68 @@ module Pair =
             }
             """{"code":40002,"message":"message","errors":{"name":"value"}}"""
 
+type ChildA = {
+    A: bool
+}
+
+module ChildA =
+    let decoder path v =
+        Decode.object (fun get -> {
+            A = get |> Get.required "A" Decode.bool
+        }) path v
+        
+    let internal encodeProperties (v: ChildA) =
+        Encode.required "A" Encode.bool v.A []
+
+    let encoder (v: ChildA) =
+        Encode.object (encodeProperties v)
+
+type ChildB = {
+    B: bool
+}
+
+module ChildB =
+    let decoder path v =
+        Decode.object (fun get -> {
+            B = get |> Get.required "B" Decode.bool
+        }) path v
+
+    let internal encodeProperties (v: ChildB) =
+        Encode.required "B" Encode.bool v.B []
+
+    let encoder (v: ChildB) =
+        Encode.object (encodeProperties v)
+
+type Parent = {
+    A: ChildA
+    B: ChildB
+}
+
+module Parent =
+    let decoder path v =
+        Decode.object (fun get -> {
+            A = get |> Get.extract ChildA.decoder
+            B = get |> Get.extract ChildB.decoder
+        }) path v
+
+    let encoder (v: Parent) =
+        Encode.object (ChildA.encodeProperties v.A @ ChildB.encodeProperties v.B)
+        
+type ParentOpt = {
+    A: ChildA
+    B: ChildB option
+}
+
+module ParentOpt =
+    let decoder path v =
+        Decode.object (fun get -> {
+            A = get |> Get.extract ChildA.decoder
+            B = get |> Get.extractOpt ChildB.decoder
+        }) path v
+
+    let encoder (v: ParentOpt) =
+        Encode.object (ChildA.encodeProperties v.A @ (v.B |> Option.map ChildB.encodeProperties |> Option.defaultValue []))
+
 [<TestClass>]
 type ThothTests () =
     [<TestMethod>]
@@ -190,3 +252,31 @@ type ThothTests () =
         // Assert
         Assert.AreEqual<string>(expected, actual)
         
+    [<TestMethod>]
+    member _.``Get.extract - Extracts child records from single parent json payload`` () =
+        // Arrange
+        let data = """{ "A": true, "B": true }"""
+
+        // Act
+        let res = Decode.fromString Parent.decoder data
+
+        // Assert
+        match res with
+        | Error err -> Assert.Fail err
+        | Ok actual ->
+            Assert.AreEqual<bool>(true, actual.A.A)
+            Assert.AreEqual<bool>(true, actual.B.B)
+
+    [<TestMethod>]
+    member _.``Get.extractOpt - Doesn't fail when optional child record is missing`` () =
+        // Arrange
+        let data = """{ "A": true }"""
+        // Act
+        let res = Decode.fromString ParentOpt.decoder data
+        // Assert
+        match res with
+        | Error err -> Assert.Fail err
+        | Ok actual ->
+            Assert.AreEqual<bool>(true, actual.A.A)
+            Assert.AreEqual(None, actual.B)
+    

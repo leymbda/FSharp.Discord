@@ -1239,7 +1239,7 @@ type GuildTemplate = {
 type Invite = {
     Type: InviteType
     Code: string
-    Guild: Guild option
+    Guild: PartialGuild option
     Channel: PartialChannel option
     Inviter: PartialUser option
     TargetType: InviteTargetType option
@@ -1247,9 +1247,11 @@ type Invite = {
     TargetApplication: PartialApplication option
     ApproximatePresenceCount: int option
     ApproximateMemberCount: int option
-    ExpiresAt: DateTime
+    ExpiresAt: DateTime option option
     GuildScheduledEvent: GuildScheduledEvent option
 }
+
+// TODO: ApproximatePresenceCount ApproximateMemberCount ExpiresAt all only returned in certain endpoints (should they be ExtraFields?)
 
 // https://discord.com/developers/docs/resources/invite#invite-metadata-object-invite-metadata-structure
 type InviteMetadata = {
@@ -1263,14 +1265,6 @@ type InviteMetadata = {
 type InviteWithMetadata = {
     Invite: Invite
     Metadata: InviteMetadata
-}
-
-// https://discord.com/developers/docs/resources/invite#invite-stage-instance-object-invite-stage-instance-structure
-type InviteStageInstance = {
-    Members: PartialGuildMember list
-    ParticipantCount: int
-    SpeakerCount: int
-    Topic: string
 }
 
 // ----- Resources: Message -----

@@ -72,6 +72,14 @@ module Get =
     /// Get an optional and nullable decoded value.
     let optinull key decoder (get: Decode.IGetters) =
         get.Optional.Raw (Decode.field key (Decode.option decoder))
+
+    /// Extract a child record from the greater json payload.
+    let extract decoder (get: Decode.IGetters) =
+        get.Required.Raw decoder
+
+    /// Extract a child record from the greater json payload that is optional.
+    let extractOpt decoder (get: Decode.IGetters) =
+        get.Optional.Raw decoder
         
 module UnixTimestamp =
     let decoder path v =
