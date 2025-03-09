@@ -3327,3 +3327,53 @@ module RoleSubscriptionData =
         let [<Literal>] TierName = "tier_name"
         let [<Literal>] TotalMonthsSubscribed = "total_months_subscribed"
         let [<Literal>] IsRenewal = "is_renewal"
+
+module Poll =
+    module Property =
+        let [<Literal>] Question = "question"
+        let [<Literal>] Answers = "answers"
+        let [<Literal>] Expiry = "expiry"
+        let [<Literal>] AllowMultiselect = "allow_multiselect"
+        let [<Literal>] LayoutType = "layout_type"
+        let [<Literal>] Results = "results"
+
+module PollMedia =
+    module Property =
+        let [<Literal>] Text = "text"
+        let [<Literal>] Emoji = "emoji"
+
+module PollAnswer =
+    module Property =
+        let [<Literal>] AnswerId = "answer_id"
+        let [<Literal>] PollMedia = "poll_media"
+
+module PollResults =
+    module Property =
+        let [<Literal>] IsFinalized = "is_finalized"
+        let [<Literal>] AnswerCounts = "answer_counts"
+
+module PollAnswerCount =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Count = "count"
+        let [<Literal>] MeVoted = "me_voted"
+
+module Sku =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] Name = "name"
+        let [<Literal>] Slug = "slug"
+        let [<Literal>] Flags = "flags"
+
+module SoundboardSound =
+    module Property =
+        let [<Literal>] Name = "name"
+        let [<Literal>] SoundId = "sound_id"
+        let [<Literal>] Volume = "volume"
+        let [<Literal>] EmojiId = "emoji_id"
+        let [<Literal>] EmojiName = "emoji_name"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Available = "available"
+        let [<Literal>] User = "user"

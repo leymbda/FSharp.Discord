@@ -1587,65 +1587,65 @@ type RoleSubscriptionData = {
 
 // https://discord.com/developers/docs/resources/poll#poll-object-poll-object-structure
 type Poll = {
-    [<JsonPropertyName "question">] Question: PollMedia
-    [<JsonPropertyName "answers">] Answers: PollAnswer list
-    [<JsonPropertyName "expiry">] Expiry: DateTime option
-    [<JsonPropertyName "allow_multiselect">] AllowMultiselect: bool
-    [<JsonPropertyName "layout_type">] LayoutType: PollLayout
-    [<JsonPropertyName "results">] Results: PollResults option
+    Question: PollMedia
+    Answers: PollAnswer list
+    Expiry: DateTime option
+    AllowMultiselect: bool
+    LayoutType: PollLayout
+    Results: PollResults option
 }
 
 // TODO: Is "Poll Create Request Object Structure" needed?
 
 // https://discord.com/developers/docs/resources/poll#poll-media-object-poll-media-object-structure
 type PollMedia = {
-    [<JsonPropertyName "text">] Text: string option
-    [<JsonPropertyName "emoji">] Emoji: PartialEmoji option
+    Text: string option
+    Emoji: PartialEmoji option
 }
 
 // https://discord.com/developers/docs/resources/poll#poll-answer-object
 type PollAnswer = {
-    [<JsonPropertyName "answer_id">] AnswerId: int
-    [<JsonPropertyName "poll_media">] PollMedia: PollMedia
+    AnswerId: int
+    PollMedia: PollMedia
 }
 
 // https://discord.com/developers/docs/resources/poll#poll-results-object-poll-results-object-structure
 type PollResults = {
-    [<JsonPropertyName "is_finalized">] IsFinalized: bool
-    [<JsonPropertyName "answer_counts">] AnswerCounts: PollAnswerCount list
+    IsFinalized: bool
+    AnswerCounts: PollAnswerCount list
 }
 
 // https://discord.com/developers/docs/resources/poll#poll-results-object-poll-answer-count-object-structure
 type PollAnswerCount = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "count">] Count: int
-    [<JsonPropertyName "me_voted">] MeVoted: bool
+    Id: string
+    Count: int
+    MeVoted: bool
 }
 
 // ----- Resources: SKU -----
 
 // https://discord.com/developers/docs/resources/sku#sku-object-sku-structure
 type Sku = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "type">] Type: SkuType
-    [<JsonPropertyName "application_id">] ApplicationId: string
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "slug">] Slug: string
-    [<JsonPropertyName "flags">] Flags: int
+    Id: string
+    Type: SkuType
+    ApplicationId: string
+    Name: string
+    Slug: string
+    Flags: int
 }
 
 // ----- Resources: Soundboard -----
 
 // https://discord.com/developers/docs/resources/soundboard#soundboard-sound-object-soundboard-sound-structure
 type SoundboardSound = {
-    [<JsonPropertyName "name">] Name: string
-    [<JsonPropertyName "sound_id">] SoundId: string
-    [<JsonPropertyName "volume">] Volume: double
-    [<JsonPropertyName "emoji_id">] EmojiId: string option
-    [<JsonPropertyName "emoji_name">] EmojiName: string option
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "available">] Available: bool
-    [<JsonPropertyName "user">] User: User
+    Name: string
+    SoundId: string
+    Volume: double
+    EmojiId: string option
+    EmojiName: string option
+    GuildId: string option
+    Available: bool
+    User: User
 }
 
 // ----- Resources: Stage Instance -----
