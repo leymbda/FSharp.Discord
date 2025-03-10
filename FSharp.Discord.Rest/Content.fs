@@ -1215,8 +1215,8 @@ type CreateMessagePayload (
         member _.Content =
             let payload = payload {
                 optional "content" content
-                optional "nonce" (match nonce with | Some (MessageNonce.Number n) -> Some n | _ -> None)
-                optional "nonce" (match nonce with | Some (MessageNonce.String s) -> Some s | _ -> None)
+                optional "nonce" (match nonce with | Some (MessageNonce.INT n) -> Some n | _ -> None)
+                optional "nonce" (match nonce with | Some (MessageNonce.STRING s) -> Some s | _ -> None)
                 optional "tts" tts
                 optional "embeds" embeds
                 optional "allowed_mentions" allow_mentions

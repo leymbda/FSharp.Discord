@@ -1281,20 +1281,21 @@ type Message = {
     MentionEveryone: bool
     Mentions: User list
     MentionRoles: string list
-    MentionChannels: ChannelMention list
+    MentionChannels: ChannelMention list option
     Attachments: Attachment list
     Embeds: Embed list
-    Reactions: Reaction list
+    Reactions: Reaction list option
     Nonce: MessageNonce option
     Pinned: bool
     WebhookId: string option
     Type: MessageType
     Activity: MessageActivity option
     Application: PartialApplication option
+    ApplicationId: string option
     Flags: int option
     MessageReference: MessageReference option
     MessageSnapshots: MessageSnapshot list option
-    ReferencedMessage: Message option
+    ReferencedMessage: Message option option
     InteractionMetadata: MessageInteractionMetadata option
     Interaction: MessageInteraction option
     Thread: Channel option
@@ -1311,9 +1312,9 @@ and PartialMessage = {
     Id: string
     ChannelId: string option
     Author: User option
-    Content: string option
+    Content: string option option
     Timestamp: DateTime option
-    EditedTimestamp: DateTime option
+    EditedTimestamp: DateTime option option
     Tts: bool option
     MentionEveryone: bool option
     Mentions: User list option
@@ -1328,10 +1329,11 @@ and PartialMessage = {
     Type: MessageType option
     Activity: MessageActivity option
     Application: PartialApplication option
+    ApplicationId: string option
     Flags: int option
     MessageReference: MessageReference option
     MessageSnapshots: MessageSnapshot list option
-    ReferencedMessage: Message option
+    ReferencedMessage: Message option option
     InteractionMetadata: MessageInteractionMetadata option
     Interaction: MessageInteraction option
     Thread: Channel option
@@ -1361,8 +1363,8 @@ and SnapshotPartialMessage = {
 
 [<RequireQualifiedAccess>]
 type MessageNonce =
-    | Number of int
-    | String of string
+    | INT of int
+    | STRING of string
 
 // TODO: Handle documented conditions?
 
@@ -1695,7 +1697,7 @@ type Subscription = {
     Id: string
     UserId: string
     SkuIds: string list
-    EntitlmentIds: string list
+    EntitlementIds: string list
     RenewalSkuIds: string list option
     CurrentPeriodStart: DateTime
     CurrentPeriodEnd: DateTime

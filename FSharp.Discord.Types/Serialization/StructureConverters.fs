@@ -219,7 +219,7 @@ module ApplicationCommandInteractionDataOption =
             Name = get |> Get.required Property.Name Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationCommandOptionType>
             Value = get |> Get.optional Property.Value ApplicationCommandInteractionDataOptionValue.decoder
-            Options = get |> Get.optional Property.Options (Decode.list ApplicationCommandInteractionDataOption.decoder)
+            Options = get |> Get.optional Property.Options (Decode.list decoder)
             Focused = get |> Get.optional Property.Focused Decode.bool
         }) path v
 
@@ -228,7 +228,7 @@ module ApplicationCommandInteractionDataOption =
             |> Encode.required Property.Name Encode.string v.Name
             |> Encode.required Property.Type Encode.Enum.int v.Type
             |> Encode.optional Property.Value ApplicationCommandInteractionDataOptionValue.encoder v.Value
-            |> Encode.optional Property.Options (List.map ApplicationCommandInteractionDataOption.encoder >> Encode.list) v.Options
+            |> Encode.optional Property.Options (List.map encoder >> Encode.list) v.Options
             |> Encode.optional Property.Focused Encode.bool v.Focused
         )
 
@@ -539,7 +539,7 @@ module ApplicationCommandOption =
             DescriptionLocalizations = get |> Get.optinull Property.DescriptionLocalizations (Decode.dict Decode.string)
             Required = get |> Get.optional Property.Required Decode.bool |> Option.defaultValue false
             Choices = get |> Get.optional Property.Choices (Decode.list ApplicationCommandOptionChoice.decoder)
-            Options = get |> Get.optional Property.Options (Decode.list ApplicationCommandOption.decoder)
+            Options = get |> Get.optional Property.Options (Decode.list decoder)
             ChannelTypes = get |> Get.optional Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
             MinValue = get |> Get.optional Property.MinValue ApplicationCommandOptionMinValue.decoder
             MaxValue = get |> Get.optional Property.MaxValue ApplicationCommandOptionMaxValue.decoder
@@ -557,7 +557,7 @@ module ApplicationCommandOption =
             |> Encode.optinull Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
             |> Encode.optional Property.Required Encode.bool (Some v.Required)
             |> Encode.optional Property.Choices (List.map ApplicationCommandOptionChoice.encoder >> Encode.list) v.Choices
-            |> Encode.optional Property.Options (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
+            |> Encode.optional Property.Options (List.map encoder >> Encode.list) v.Options
             |> Encode.optional Property.ChannelTypes (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes
             |> Encode.optional Property.MinValue ApplicationCommandOptionMinValue.encoder v.MinValue
             |> Encode.optional Property.MaxValue ApplicationCommandOptionMaxValue.encoder v.MaxValue
@@ -2479,7 +2479,7 @@ module GuildWidget =
             Channels = get |> Get.required Property.Channels (Decode.list Channel.Partial.decoder)
             Members = get |> Get.required Property.Members (Decode.list User.Partial.decoder)
             PresenceCount = get |> Get.required Property.PresenceCount Decode.int
-        })
+        }) path v
 
     let encoder (v: GuildWidget) =
         Encode.object ([]
@@ -3208,6 +3208,7 @@ module Message =
         let [<Literal>] Type = "type"
         let [<Literal>] Activity = "activity"
         let [<Literal>] Application = "application"
+        let [<Literal>] ApplicationId = "application_id"
         let [<Literal>] Flags = "flags"
         let [<Literal>] MessageReference = "message_reference"
         let [<Literal>] MessageSnapshots = "message_snapshots"
@@ -3223,16 +3224,209 @@ module Message =
         let [<Literal>] Poll = "poll"
         let [<Literal>] Call = "call"
 
-    let decoder: Decoder<Message> = raise (System.NotImplementedException())
-    let encoder: Encoder<Message> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            Author = get |> Get.required Property.Author User.decoder
+            Content = get |> Get.nullable Property.Content Decode.string
+            Timestamp = get |> Get.required Property.Timestamp Decode.datetimeUtc
+            EditedTimestamp = get |> Get.nullable Property.EditedTimestamp Decode.datetimeUtc
+            Tts = get |> Get.required Property.Tts Decode.bool
+            MentionEveryone = get |> Get.required Property.MentionEveryone Decode.bool
+            Mentions = get |> Get.required Property.Mentions (Decode.list User.decoder)
+            MentionRoles = get |> Get.required Property.MentionRoles (Decode.list Decode.string)
+            MentionChannels = get |> Get.optional Property.MentionChannels (Decode.list ChannelMention.decoder)
+            Attachments = get |> Get.required Property.Attachments (Decode.list Attachment.decoder)
+            Embeds = get |> Get.required Property.Embeds (Decode.list Embed.decoder)
+            Reactions = get |> Get.optional Property.Reactions (Decode.list Reaction.decoder)
+            Nonce = get |> Get.optional Property.Nonce MessageNonce.decoder
+            Pinned = get |> Get.required Property.Pinned Decode.bool
+            WebhookId = get |> Get.optional Property.WebhookId Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<MessageType>
+            Activity = get |> Get.optional Property.Activity MessageActivity.decoder
+            Application = get |> Get.optional Property.Application Application.Partial.decoder
+            ApplicationId = get |> Get.optional Property.ApplicationId Decode.string
+            Flags = get |> Get.optional Property.Flags Decode.int
+            MessageReference = get |> Get.optional Property.MessageReference MessageReference.decoder
+            MessageSnapshots = get |> Get.optional Property.MessageSnapshots (Decode.list MessageSnapshot.decoder)
+            ReferencedMessage = get |> Get.optinull Property.ReferencedMessage decoder
+            InteractionMetadata = get |> Get.optional Property.InteractionMetadata MessageInteractionMetadata.decoder
+            Interaction = get |> Get.optional Property.Interaction MessageInteraction.decoder
+            Thread = get |> Get.optional Property.Thread Channel.decoder
+            Components = get |> Get.optional Property.Components (Decode.list Component.decoder)
+            StickerItems = get |> Get.optional Property.StickerItems (Decode.list StickerItem.decoder)
+            Position = get |> Get.optional Property.Position Decode.int
+            RoleSubscriptionData = get |> Get.optional Property.RoleSubscriptionData RoleSubscriptionData.decoder
+            Resolved = get |> Get.optional Property.Resolved ResolvedData.decoder
+            Poll = get |> Get.optional Property.Poll Poll.decoder
+            Call = get |> Get.optional Property.Call MessageCall.decoder
+        }) path v
+
+    let encoder (v: Message) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.Author User.encoder v.Author
+            |> Encode.nullable Property.Content Encode.string v.Content
+            |> Encode.required Property.Timestamp Encode.datetime v.Timestamp
+            |> Encode.nullable Property.EditedTimestamp Encode.datetime v.EditedTimestamp
+            |> Encode.required Property.Tts Encode.bool v.Tts
+            |> Encode.required Property.MentionEveryone Encode.bool v.MentionEveryone
+            |> Encode.required Property.Mentions (List.map User.encoder >> Encode.list) v.Mentions
+            |> Encode.required Property.MentionRoles (List.map Encode.string >> Encode.list) v.MentionRoles
+            |> Encode.optional Property.MentionChannels (List.map ChannelMention.encoder >> Encode.list) v.MentionChannels
+            |> Encode.required Property.Attachments (List.map Attachment.encoder >> Encode.list) v.Attachments
+            |> Encode.required Property.Embeds (List.map Embed.encoder >> Encode.list) v.Embeds
+            |> Encode.optional Property.Reactions (List.map Reaction.encoder >> Encode.list) v.Reactions
+            |> Encode.optional Property.Nonce MessageNonce.encoder v.Nonce
+            |> Encode.required Property.Pinned Encode.bool v.Pinned
+            |> Encode.optional Property.WebhookId Encode.string v.WebhookId
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.Activity MessageActivity.encoder v.Activity
+            |> Encode.optional Property.Application Application.Partial.encoder v.Application
+            |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.MessageReference MessageReference.encoder v.MessageReference
+            |> Encode.optional Property.MessageSnapshots (List.map MessageSnapshot.encoder >> Encode.list) v.MessageSnapshots
+            |> Encode.optinull Property.ReferencedMessage encoder v.ReferencedMessage
+            |> Encode.optional Property.InteractionMetadata MessageInteractionMetadata.encoder v.InteractionMetadata
+            |> Encode.optional Property.Interaction MessageInteraction.encoder v.Interaction
+            |> Encode.optional Property.Thread Channel.encoder v.Thread
+            |> Encode.optional Property.Components (List.map Component.encoder >> Encode.list) v.Components
+            |> Encode.optional Property.StickerItems (List.map StickerItem.encoder >> Encode.list) v.StickerItems
+            |> Encode.optional Property.Position Encode.int v.Position
+            |> Encode.optional Property.RoleSubscriptionData RoleSubscriptionData.encoder v.RoleSubscriptionData
+            |> Encode.optional Property.Resolved ResolvedData.encoder v.Resolved
+            |> Encode.optional Property.Poll Poll.encoder v.Poll
+            |> Encode.optional Property.Call MessageCall.encoder v.Call
+        )
 
     module Partial =
-        let decoder: Decoder<PartialMessage> = raise (System.NotImplementedException())
-        let encoder: Encoder<PartialMessage> = raise (System.NotImplementedException())
+        let decoder path v =
+            Decode.object (fun get -> {
+                Id = get |> Get.required Property.Id Decode.string
+                ChannelId = get |> Get.optional Property.ChannelId Decode.string
+                Author = get |> Get.optional Property.Author User.decoder
+                Content = get |> Get.optinull Property.Content Decode.string
+                Timestamp = get |> Get.optional Property.Timestamp Decode.datetimeUtc
+                EditedTimestamp = get |> Get.optinull Property.EditedTimestamp Decode.datetimeUtc
+                Tts = get |> Get.optional Property.Tts Decode.bool
+                MentionEveryone = get |> Get.optional Property.MentionEveryone Decode.bool
+                Mentions = get |> Get.optional Property.Mentions (Decode.list User.decoder)
+                MentionRoles = get |> Get.optional Property.MentionRoles (Decode.list Decode.string)
+                MentionChannels = get |> Get.optional Property.MentionChannels (Decode.list ChannelMention.decoder)
+                Attachments = get |> Get.optional Property.Attachments (Decode.list Attachment.decoder)
+                Embeds = get |> Get.optional Property.Embeds (Decode.list Embed.decoder)
+                Reactions = get |> Get.optional Property.Reactions (Decode.list Reaction.decoder)
+                Nonce = get |> Get.optional Property.Nonce MessageNonce.decoder
+                Pinned = get |> Get.optional Property.Pinned Decode.bool
+                WebhookId = get |> Get.optional Property.WebhookId Decode.string
+                Type = get |> Get.optional Property.Type Decode.Enum.int<MessageType>
+                Activity = get |> Get.optional Property.Activity MessageActivity.decoder
+                Application = get |> Get.optional Property.Application Application.Partial.decoder
+                ApplicationId = get |> Get.optional Property.ApplicationId Decode.string
+                Flags = get |> Get.optional Property.Flags Decode.int
+                MessageReference = get |> Get.optional Property.MessageReference MessageReference.decoder
+                MessageSnapshots = get |> Get.optional Property.MessageSnapshots (Decode.list MessageSnapshot.decoder)
+                ReferencedMessage = get |> Get.optinull Property.ReferencedMessage Message.decoder
+                InteractionMetadata = get |> Get.optional Property.InteractionMetadata MessageInteractionMetadata.decoder
+                Interaction = get |> Get.optional Property.Interaction MessageInteraction.decoder
+                Thread = get |> Get.optional Property.Thread Channel.decoder
+                Components = get |> Get.optional Property.Components (Decode.list Component.decoder)
+                StickerItems = get |> Get.optional Property.StickerItems (Decode.list StickerItem.decoder)
+                Position = get |> Get.optional Property.Position Decode.int
+                RoleSubscriptionData = get |> Get.optional Property.RoleSubscriptionData RoleSubscriptionData.decoder
+                Resolved = get |> Get.optional Property.Resolved ResolvedData.decoder
+                Poll = get |> Get.optional Property.Poll Poll.decoder
+                Call = get |> Get.optional Property.Call MessageCall.decoder
+            }) path v
+        
+        let encoder (v: PartialMessage) =
+            Encode.object ([]
+                |> Encode.required Property.Id Encode.string v.Id
+                |> Encode.optional Property.ChannelId Encode.string v.ChannelId
+                |> Encode.optional Property.Author User.encoder v.Author
+                |> Encode.optinull Property.Content Encode.string v.Content
+                |> Encode.optional Property.Timestamp Encode.datetime v.Timestamp
+                |> Encode.optinull Property.EditedTimestamp Encode.datetime v.EditedTimestamp
+                |> Encode.optional Property.Tts Encode.bool v.Tts
+                |> Encode.optional Property.MentionEveryone Encode.bool v.MentionEveryone
+                |> Encode.optional Property.Mentions (List.map User.encoder >> Encode.list) v.Mentions
+                |> Encode.optional Property.MentionRoles (List.map Encode.string >> Encode.list) v.MentionRoles
+                |> Encode.optional Property.MentionChannels (List.map ChannelMention.encoder >> Encode.list) v.MentionChannels
+                |> Encode.optional Property.Attachments (List.map Attachment.encoder >> Encode.list) v.Attachments
+                |> Encode.optional Property.Embeds (List.map Embed.encoder >> Encode.list) v.Embeds
+                |> Encode.optional Property.Reactions (List.map Reaction.encoder >> Encode.list) v.Reactions
+                |> Encode.optional Property.Nonce MessageNonce.encoder v.Nonce
+                |> Encode.optional Property.Pinned Encode.bool v.Pinned
+                |> Encode.optional Property.WebhookId Encode.string v.WebhookId
+                |> Encode.optional Property.Type Encode.Enum.int v.Type
+                |> Encode.optional Property.Activity MessageActivity.encoder v.Activity
+                |> Encode.optional Property.Application Application.Partial.encoder v.Application
+                |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
+                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.MessageReference MessageReference.encoder v.MessageReference
+                |> Encode.optional Property.MessageSnapshots (List.map MessageSnapshot.encoder >> Encode.list) v.MessageSnapshots
+                |> Encode.optinull Property.ReferencedMessage Message.encoder v.ReferencedMessage
+                |> Encode.optional Property.InteractionMetadata MessageInteractionMetadata.encoder v.InteractionMetadata
+                |> Encode.optional Property.Interaction MessageInteraction.encoder v.Interaction
+                |> Encode.optional Property.Thread Channel.encoder v.Thread
+                |> Encode.optional Property.Components (List.map Component.encoder >> Encode.list) v.Components
+                |> Encode.optional Property.StickerItems (List.map StickerItem.encoder >> Encode.list) v.StickerItems
+                |> Encode.optional Property.Position Encode.int v.Position
+                |> Encode.optional Property.RoleSubscriptionData RoleSubscriptionData.encoder v.RoleSubscriptionData
+                |> Encode.optional Property.Resolved ResolvedData.encoder v.Resolved
+                |> Encode.optional Property.Poll Poll.encoder v.Poll
+                |> Encode.optional Property.Call MessageCall.encoder v.Call
+            )
+
+    module Snapshot =
+        let decoder path v =
+            Decode.object (fun get -> {
+                Content = get |> Get.nullable Property.Content Decode.string
+                Timestamp = get |> Get.required Property.Timestamp Decode.datetimeUtc
+                EditedTimestamp = get |> Get.optional Property.EditedTimestamp Decode.datetimeUtc
+                Mentions = get |> Get.required Property.Mentions (Decode.list User.decoder)
+                MentionRoles = get |> Get.required Property.MentionRoles (Decode.list Decode.string)
+                Attachments = get |> Get.required Property.Attachments (Decode.list Attachment.decoder)
+                Embeds = get |> Get.required Property.Embeds (Decode.list Embed.decoder)
+                Type = get |> Get.required Property.Type Decode.Enum.int<MessageType>
+                Flags = get |> Get.optional Property.Flags Decode.int
+                Components = get |> Get.optional Property.Components (Decode.list Component.decoder)
+                StickerItems = get |> Get.optional Property.StickerItems (Decode.list StickerItem.decoder)
+            }) path v
+        
+        let encoder (v: Message) =
+            Encode.object ([]
+                |> Encode.nullable Property.Content Encode.string v.Content
+                |> Encode.required Property.Timestamp Encode.datetime v.Timestamp
+                |> Encode.nullable Property.EditedTimestamp Encode.datetime v.EditedTimestamp
+                |> Encode.required Property.Mentions (List.map User.encoder >> Encode.list) v.Mentions
+                |> Encode.required Property.MentionRoles (List.map Encode.string >> Encode.list) v.MentionRoles
+                |> Encode.required Property.Attachments (List.map Attachment.encoder >> Encode.list) v.Attachments
+                |> Encode.required Property.Embeds (List.map Embed.encoder >> Encode.list) v.Embeds
+                |> Encode.required Property.Type Encode.Enum.int v.Type
+                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.Components (List.map Component.encoder >> Encode.list) v.Components
+                |> Encode.optional Property.StickerItems (List.map StickerItem.encoder >> Encode.list) v.StickerItems
+            )
+
+module MessageNonce =
+    let decoder =
+        Decode.oneOf [
+            Decode.map MessageNonce.INT Decode.int
+            Decode.map MessageNonce.STRING Decode.string
+        ]
+        
+    let encoder (v: MessageNonce) =
+        match v with
+        | MessageNonce.INT v -> Encode.int v
+        | MessageNonce.STRING v -> Encode.string v
 
 module MessageActivity =
     module Property =
-        let [<Literal>] Tyoe = "type"
+        let [<Literal>] Type = "type"
         let [<Literal>] PartyId = "party_id"
 
     let decoder: Decoder<MessageActivity> = raise (System.NotImplementedException())
@@ -3274,6 +3468,10 @@ module ModalSubmitInteractionMetadata =
 
     let decoder: Decoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
     let encoder: Encoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
+
+module MessageInteractionMetadata =
+    let decoder: Decoder<MessageInteractionMetadata> = raise (System.NotImplementedException())
+    let encoder: Encoder<MessageInteractionMetadata> = raise (System.NotImplementedException())
 
 module MessageCall =
     module Property =
