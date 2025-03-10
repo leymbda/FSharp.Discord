@@ -1379,7 +1379,7 @@ type ApplicationCommandInteractionMetadata = {
     Id: string
     Type: InteractionType
     User: User
-    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
     OriginalResponseMessageId: string option
     TargetUser: User option
     TargetMessageId: string option
@@ -1390,7 +1390,7 @@ type MessageComponentInteractionMetadata = {
     Id: string
     Type: InteractionType
     User: User
-    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
     OriginalResponseMessageId: string option
     InteractedMessageId: string
 }
@@ -1400,7 +1400,7 @@ type ModalSubmitInteractionMetadata = {
     Id: string
     Type: InteractionType
     User: User
-    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
     OriginalResponseMessageId: string option
     TriggeringInteractionMetadata: MessageInteractionMetadata // TODO: Make this not allowed to be a ModalSubmitInteractionMetadata
 }
@@ -1413,12 +1413,12 @@ type MessageInteractionMetadata =
 // https://discord.com/developers/docs/resources/message#message-call-object-message-call-object-structure
 type MessageCall = {
     Participants: string list
-    EndedTimestamp: DateTime option
+    EndedTimestamp: DateTime option option
 }
 
 // https://discord.com/developers/docs/resources/message#message-reference-structure
 type MessageReference = {
-    Type: MessageReferenceType option
+    Type: MessageReferenceType
     MessageId: string option
     ChannelId: string option
     GuildId: string option
@@ -1524,13 +1524,14 @@ type EmbedField = {
 type Attachment = {
     Id: string
     Filename: string
-    Description: string
+    Title: string option
+    Description: string option
     ContentType: string option
     Size: int
     Url: string
     ProxyUrl: string
-    Height: int option
-    Width: int option
+    Height: int option option
+    Width: int option option
     Ephemeral: bool option
     DurationSecs: float option
     Waveform: string option
@@ -1540,13 +1541,14 @@ type Attachment = {
 and PartialAttachment = {
     Id: string
     Filename: string option
+    Title: string option
     Description: string option
     ContentType: string option
     Size: int option
     Url: string option
     ProxyUrl: string option
-    Height: int option
-    Width: int option
+    Height: int option option
+    Width: int option option
     Ephemeral: bool option
     DurationSecs: float option
     Waveform: string option
@@ -1563,7 +1565,7 @@ type ChannelMention = {
 
 // https://discord.com/developers/docs/resources/message#allowed-mentions-object-allowed-mentions-structure
 type AllowedMentions = {
-    Parse: AllowedMentionsParseType list
+    Parse: AllowedMentionsParseType list option
     Roles: string list option
     Users: string list option
     RepliedUser: bool option

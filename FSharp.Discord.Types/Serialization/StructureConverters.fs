@@ -3397,7 +3397,7 @@ module Message =
                 StickerItems = get |> Get.optional Property.StickerItems (Decode.list StickerItem.decoder)
             }) path v
         
-        let encoder (v: Message) =
+        let encoder (v: SnapshotPartialMessage) =
             Encode.object ([]
                 |> Encode.nullable Property.Content Encode.string v.Content
                 |> Encode.required Property.Timestamp Encode.datetime v.Timestamp
@@ -3429,8 +3429,17 @@ module MessageActivity =
         let [<Literal>] Type = "type"
         let [<Literal>] PartyId = "party_id"
 
-    let decoder: Decoder<MessageActivity> = raise (System.NotImplementedException())
-    let encoder: Encoder<MessageActivity> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Type = get |> Get.required Property.Type Decode.Enum.int<MessageActivityType>
+            PartyId = get |> Get.optional Property.PartyId Decode.string
+        }) path v
+    
+    let encoder (v: MessageActivity) =
+        Encode.object ([]
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.PartyId Encode.string v.PartyId
+        )
 
 module ApplicationCommandInteractionMetadata =
     module Property =
@@ -3442,8 +3451,27 @@ module ApplicationCommandInteractionMetadata =
         let [<Literal>] TargetUser = "target_user"
         let [<Literal>] TargetMessageId = "target_message_id"
 
-    let decoder: Decoder<ApplicationCommandInteractionMetadata> = raise (System.NotImplementedException())
-    let encoder: Encoder<ApplicationCommandInteractionMetadata> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
+            User = get |> Get.required Property.User User.decoder
+            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
+            OriginalResponseMessageId = get |> Get.optional Property.OriginalResponseMessageId Decode.string
+            TargetUser = get |> Get.optional Property.TargetUser User.decoder
+            TargetMessageId = get |> Get.optional Property.TargetMessageId Decode.string
+        }) path v
+
+    let encoder (v: ApplicationCommandInteractionMetadata) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.User User.encoder v.User
+            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.AuthorizingIntegrationOwners
+            |> Encode.optional Property.OriginalResponseMessageId Encode.string v.OriginalResponseMessageId
+            |> Encode.optional Property.TargetUser User.encoder v.TargetUser
+            |> Encode.optional Property.TargetMessageId Encode.string v.TargetMessageId
+        )
 
 module MessageComponentInteractionMetadata =
     module Property =
@@ -3454,8 +3482,25 @@ module MessageComponentInteractionMetadata =
         let [<Literal>] OriginalResponseMessageId = "original_response_message_id"
         let [<Literal>] InteractedMessageId = "interacted_message_id"
 
-    let decoder: Decoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
-    let encoder: Encoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
+            User = get |> Get.required Property.User User.decoder
+            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
+            OriginalResponseMessageId = get |> Get.optional Property.OriginalResponseMessageId Decode.string
+            InteractedMessageId = get |> Get.required Property.InteractedMessageId Decode.string
+        }) path v
+
+    let encoder (v: MessageComponentInteractionMetadata) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.User User.encoder v.User
+            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.AuthorizingIntegrationOwners
+            |> Encode.optional Property.OriginalResponseMessageId Encode.string v.OriginalResponseMessageId
+            |> Encode.required Property.InteractedMessageId Encode.string v.InteractedMessageId
+        )
 
 module ModalSubmitInteractionMetadata =
     module Property =
@@ -3466,20 +3511,56 @@ module ModalSubmitInteractionMetadata =
         let [<Literal>] OriginalResponseMessageId = "original_response_message_id"
         let [<Literal>] TriggeringInteractionMetadata = "triggering_interaction_metadata"
 
-    let decoder: Decoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
-    let encoder: Encoder<MessageComponentInteractionMetadata> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
+            User = get |> Get.required Property.User User.decoder
+            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
+            OriginalResponseMessageId = get |> Get.optional Property.OriginalResponseMessageId Decode.string
+            TriggeringInteractionMetadata = get |> Get.required Property.TriggeringInteractionMetadata MessageInteractionMetadata.decoder
+        }) path v
+
+    let encoder (v: ModalSubmitInteractionMetadata) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.User User.encoder v.User
+            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.AuthorizingIntegrationOwners
+            |> Encode.optional Property.OriginalResponseMessageId Encode.string v.OriginalResponseMessageId
+            |> Encode.required Property.TriggeringInteractionMetadata MessageInteractionMetadata.encoder v.TriggeringInteractionMetadata
+        )
 
 module MessageInteractionMetadata =
-    let decoder: Decoder<MessageInteractionMetadata> = raise (System.NotImplementedException())
-    let encoder: Encoder<MessageInteractionMetadata> = raise (System.NotImplementedException())
+    let decoder =
+        Decode.oneOf [
+            Decode.map MessageInteractionMetadata.APPLICATION_COMMAND ApplicationCommandInteractionMetadata.decoder
+            Decode.map MessageInteractionMetadata.MESSAGE_COMPONENT MessageComponentInteractionMetadata.decoder
+            Decode.map MessageInteractionMetadata.MODAL_SUBMIT ModalSubmitInteractionMetadata.decoder
+        ]
+
+    let encoder (v: MessageInteractionMetadata) =
+        match v with
+        | MessageInteractionMetadata.APPLICATION_COMMAND v -> ApplicationCommandInteractionMetadata.encoder v
+        | MessageInteractionMetadata.MESSAGE_COMPONENT v -> MessageComponentInteractionMetadata.encoder v
+        | MessageInteractionMetadata.MODAL_SUBMIT v -> ModalSubmitInteractionMetadata.encoder v
 
 module MessageCall =
     module Property =
         let [<Literal>] Participants = "participants"
         let [<Literal>] EndedTimestamp = "ended_timestamp"
 
-    let decoder: Decoder<MessageCall> = raise (System.NotImplementedException())
-    let encoder: Encoder<MessageCall> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Participants = get |> Get.required Property.Participants (Decode.list Decode.string)
+            EndedTimestamp = get |> Get.optinull Property.EndedTimestamp Decode.datetimeUtc
+        }) path v
+
+    let encoder (v: MessageCall) =
+        Encode.object ([]
+            |> Encode.required Property.Participants (List.map Encode.string >> Encode.list) v.Participants
+            |> Encode.optinull Property.EndedTimestamp Encode.datetime v.EndedTimestamp
+        )
 
 module MessageReference =
     module Property =
@@ -3489,15 +3570,37 @@ module MessageReference =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] FailIfNotExists = "fail_if_not_exists"
 
-    let decoder: Decoder<MessageReference> = raise (System.NotImplementedException())
-    let encoder: Encoder<MessageReference> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Type = get |> Get.optional Property.Type Decode.Enum.int<MessageReferenceType> |> Option.defaultValue MessageReferenceType.DEFAULT
+            MessageId = get |> Get.optional Property.MessageId Decode.string
+            ChannelId = get |> Get.optional Property.ChannelId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            FailIfNotExists = get |> Get.optional Property.FailIfNotExists Decode.bool
+        }) path v
+
+    let encoder (v: MessageReference) =
+        Encode.object ([]
+            |> Encode.optional Property.Type Encode.Enum.int (Some v.Type)
+            |> Encode.optional Property.MessageId Encode.string v.MessageId
+            |> Encode.optional Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.FailIfNotExists Encode.bool v.FailIfNotExists
+        )
 
 module MessageSnapshot =
     module Property =
         let [<Literal>] Message = "message"
 
-    let decoder: Decoder<MessageSnapshot> = raise (System.NotImplementedException())
-    let encoder: Encoder<MessageSnapshot> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Message = get |> Get.required Property.Message Message.Snapshot.decoder
+        }) path v
+
+    let encoder (v: MessageSnapshot) =
+        Encode.object ([]
+            |> Encode.required Property.Message Message.Snapshot.encoder v.Message
+        )
 
 module Reaction =
     module Property =
@@ -3508,16 +3611,42 @@ module Reaction =
         let [<Literal>] Emoji = "emoji"
         let [<Literal>] BurstColors = "burst_colors"
 
-    let decoder: Decoder<Reaction> = raise (System.NotImplementedException())
-    let encoder: Encoder<Reaction> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Count = get |> Get.required Property.Count Decode.int
+            CountDetails = get |> Get.required Property.CountDetails ReactionCountDetails.decoder
+            Me = get |> Get.required Property.Me Decode.bool
+            MeBurst = get |> Get.required Property.MeBurst Decode.bool
+            Emoji = get |> Get.required Property.Emoji Emoji.Partial.decoder
+            BurstColors = get |> Get.required Property.BurstColors (Decode.list Decode.int)
+        }) path v
+
+    let encoder (v: Reaction) =
+        Encode.object ([]
+            |> Encode.required Property.Count Encode.int v.Count
+            |> Encode.required Property.CountDetails ReactionCountDetails.encoder v.CountDetails
+            |> Encode.required Property.Me Encode.bool v.Me
+            |> Encode.required Property.MeBurst Encode.bool v.MeBurst
+            |> Encode.required Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.required Property.BurstColors (List.map Encode.int >> Encode.list) v.BurstColors
+        )
 
 module ReactionCountDetails =
     module Property =
         let [<Literal>] Burst = "burst"
         let [<Literal>] Normal = "normal"
 
-    let decoder: Decoder<ReactionCountDetails> = raise (System.NotImplementedException())
-    let encoder: Encoder<ReactionCountDetails> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Burst = get |> Get.required Property.Burst Decode.int
+            Normal = get |> Get.required Property.Normal Decode.int
+        }) path v
+
+    let encoder (v: ReactionCountDetails) =
+        Encode.object ([]
+            |> Encode.required Property.Burst Encode.int v.Burst
+            |> Encode.required Property.Normal Encode.int v.Normal
+        )
 
 module Embed =
     module Property =
@@ -3535,8 +3664,39 @@ module Embed =
         let [<Literal>] Author = "author"
         let [<Literal>] Fields = "fields"
 
-    let decoder: Decoder<Embed> = raise (System.NotImplementedException())
-    let encoder: Encoder<Embed> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Title = get |> Get.optional Property.Title Decode.string
+            Type = get |> Get.optional Property.Type EmbedType.decoder
+            Description = get |> Get.optional Property.Description Decode.string
+            Url = get |> Get.optional Property.Url Decode.string
+            Timestamp = get |> Get.optional Property.Timestamp Decode.datetimeUtc
+            Color = get |> Get.optional Property.Color Decode.int
+            Footer = get |> Get.optional Property.Footer EmbedFooter.decoder
+            Image = get |> Get.optional Property.Image EmbedImage.decoder
+            Thumbnail = get |> Get.optional Property.Thumbnail EmbedThumbnail.decoder
+            Video = get |> Get.optional Property.Video EmbedVideo.decoder
+            Provider = get |> Get.optional Property.Provider EmbedProvider.decoder
+            Author = get |> Get.optional Property.Author EmbedAuthor.decoder
+            Fields = get |> Get.optional Property.Fields (Decode.list EmbedField.decoder)
+        }) path v
+
+    let encoder (v: Embed) =
+        Encode.object ([]
+            |> Encode.optional Property.Title Encode.string v.Title
+            |> Encode.optional Property.Type EmbedType.encoder v.Type
+            |> Encode.optional Property.Description Encode.string v.Description
+            |> Encode.optional Property.Url Encode.string v.Url
+            |> Encode.optional Property.Timestamp Encode.datetime v.Timestamp
+            |> Encode.optional Property.Color Encode.int v.Color
+            |> Encode.optional Property.Footer EmbedFooter.encoder v.Footer
+            |> Encode.optional Property.Image EmbedImage.encoder v.Image
+            |> Encode.optional Property.Thumbnail EmbedThumbnail.encoder v.Thumbnail
+            |> Encode.optional Property.Video EmbedVideo.encoder v.Video
+            |> Encode.optional Property.Provider EmbedProvider.encoder v.Provider
+            |> Encode.optional Property.Author EmbedAuthor.encoder v.Author
+            |> Encode.optional Property.Fields (List.map EmbedField.encoder >> Encode.list) v.Fields
+        )
 
 module EmbedThumbnail =
     module Property =
@@ -3545,8 +3705,21 @@ module EmbedThumbnail =
         let [<Literal>] Height = "height"
         let [<Literal>] Width = "width"
 
-    let decoder: Decoder<EmbedThumbnail> = raise (System.NotImplementedException())
-    let encoder: Encoder<EmbedThumbnail> = raise (System.NotImplementedException())
+    let decoder path v: Result<EmbedThumbnail, DecoderError> =
+        Decode.object (fun get -> {
+            Url = get |> Get.required Property.Url Decode.string
+            ProxyUrl = get |> Get.optional Property.ProxyUrl Decode.string
+            Height = get |> Get.optional Property.Height Decode.int
+            Width = get |> Get.optional Property.Width Decode.int
+        }) path v
+
+    let encoder (v: EmbedThumbnail) =
+        Encode.object ([]
+            |> Encode.required Property.Url Encode.string v.Url
+            |> Encode.optional Property.ProxyUrl Encode.string v.ProxyUrl
+            |> Encode.optional Property.Height Encode.int v.Height
+            |> Encode.optional Property.Width Encode.int v.Width
+        )
 
 module EmbedVideo =
     module Property =
@@ -3555,8 +3728,21 @@ module EmbedVideo =
         let [<Literal>] Height = "height"
         let [<Literal>] Width = "width"
 
-    let decoder: Decoder<EmbedVideo> = raise (System.NotImplementedException())
-    let encoder: Encoder<EmbedVideo> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Url = get |> Get.optional Property.Url Decode.string
+            ProxyUrl = get |> Get.optional Property.ProxyUrl Decode.string
+            Height = get |> Get.optional Property.Height Decode.int
+            Width = get |> Get.optional Property.Width Decode.int
+        }) path v
+
+    let encoder (v: EmbedVideo) =
+        Encode.object ([]
+            |> Encode.optional Property.Url Encode.string v.Url
+            |> Encode.optional Property.ProxyUrl Encode.string v.ProxyUrl
+            |> Encode.optional Property.Height Encode.int v.Height
+            |> Encode.optional Property.Width Encode.int v.Width
+        )
 
 module EmbedImage =
     module Property =
@@ -3565,16 +3751,38 @@ module EmbedImage =
         let [<Literal>] Height = "height"
         let [<Literal>] Width = "width"
 
-    let decoder: Decoder<EmbedImage> = raise (System.NotImplementedException())
-    let encoder: Encoder<EmbedImage> = raise (System.NotImplementedException())
+    let decoder path v: Result<EmbedImage, DecoderError> =
+        Decode.object (fun get -> {
+            Url = get |> Get.required Property.Url Decode.string
+            ProxyUrl = get |> Get.optional Property.ProxyUrl Decode.string
+            Height = get |> Get.optional Property.Height Decode.int
+            Width = get |> Get.optional Property.Width Decode.int
+        }) path v
+
+    let encoder (v: EmbedImage) =
+        Encode.object ([]
+            |> Encode.required Property.Url Encode.string v.Url
+            |> Encode.optional Property.ProxyUrl Encode.string v.ProxyUrl
+            |> Encode.optional Property.Height Encode.int v.Height
+            |> Encode.optional Property.Width Encode.int v.Width
+        )
 
 module EmbedProvider =
     module Property =
         let [<Literal>] Name = "name"
         let [<Literal>] Url = "url"
 
-    let decoder: Decoder<EmbedProvider> = raise (System.NotImplementedException())
-    let encoder: Encoder<EmbedProvider> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Name = get |> Get.optional Property.Name Decode.string
+            Url = get |> Get.optional Property.Url Decode.string
+        }) path v
+        
+    let encoder (v: EmbedProvider) =
+        Encode.object ([]
+            |> Encode.optional Property.Name Encode.string v.Name
+            |> Encode.optional Property.Url Encode.string v.Url
+        )
 
 module EmbedAuthor =
     module Property =
@@ -3583,8 +3791,21 @@ module EmbedAuthor =
         let [<Literal>] IconUrl = "icon_url"
         let [<Literal>] ProxyIconUrl = "proxy_icon_url"
 
-    let decoder: Decoder<EmbedAuthor> = raise (System.NotImplementedException())
-    let encoder: Encoder<EmbedAuthor> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Name = get |> Get.required Property.Name Decode.string
+            Url = get |> Get.optional Property.Url Decode.string
+            IconUrl = get |> Get.optional Property.IconUrl Decode.string
+            ProxyIconUrl = get |> Get.optional Property.ProxyIconUrl Decode.string
+        }) path v
+
+    let encoder (v: EmbedAuthor) =
+        Encode.object ([]
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.optional Property.Url Encode.string v.Url
+            |> Encode.optional Property.IconUrl Encode.string v.IconUrl
+            |> Encode.optional Property.ProxyIconUrl Encode.string v.ProxyIconUrl
+        )
 
 module EmbedFooter =
     module Property =
@@ -3592,8 +3813,19 @@ module EmbedFooter =
         let [<Literal>] IconUrl = "icon_url"
         let [<Literal>] ProxyIconUrl = "proxy_icon_url"
 
-    let decoder: Decoder<EmbedFooter> = raise (System.NotImplementedException())
-    let encoder: Encoder<EmbedFooter> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Text = get |> Get.required Property.Text Decode.string
+            IconUrl = get |> Get.optional Property.IconUrl Decode.string
+            ProxyIconUrl = get |> Get.optional Property.ProxyIconUrl Decode.string
+        }) path v
+
+    let encoder (v: EmbedFooter) =
+        Encode.object ([]
+            |> Encode.required Property.Text Encode.string v.Text
+            |> Encode.optional Property.IconUrl Encode.string v.IconUrl
+            |> Encode.optional Property.ProxyIconUrl Encode.string v.ProxyIconUrl
+        )
 
 module EmbedField =
     module Property =
@@ -3601,13 +3833,25 @@ module EmbedField =
         let [<Literal>] Value = "value"
         let [<Literal>] Inline = "inline"
 
-    let decoder: Decoder<EmbedField> = raise (System.NotImplementedException())
-    let encoder: Encoder<EmbedField> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Name = get |> Get.required Property.Name Decode.string
+            Value = get |> Get.required Property.Value Decode.string
+            Inline = get |> Get.optional Property.Inline Decode.bool
+        }) path v
+
+    let encoder (v: EmbedField) =
+        Encode.object ([]
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Value Encode.string v.Value
+            |> Encode.optional Property.Inline Encode.bool v.Inline
+        )
 
 module Attachment =
     module Property =
         let [<Literal>] Id = "id"
         let [<Literal>] Filename = "filename"
+        let [<Literal>] Title = "title"
         let [<Literal>] Description = "description"
         let [<Literal>] ContentType = "content_type"
         let [<Literal>] Size = "size"
@@ -3620,12 +3864,78 @@ module Attachment =
         let [<Literal>] Waveform = "waveform"
         let [<Literal>] Flags = "flags"
 
-    let decoder: Decoder<Attachment> = raise (System.NotImplementedException())
-    let encoder: Encoder<Attachment> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Filename = get |> Get.required Property.Filename Decode.string
+            Title = get |> Get.optional Property.Title Decode.string
+            Description = get |> Get.optional Property.Description Decode.string
+            ContentType = get |> Get.optional Property.ContentType Decode.string
+            Size = get |> Get.required Property.Size Decode.int
+            Url = get |> Get.required Property.Url Decode.string
+            ProxyUrl = get |> Get.required Property.ProxyUrl Decode.string
+            Height = get |> Get.optinull Property.Height Decode.int
+            Width = get |> Get.optinull Property.Width Decode.int
+            Ephemeral = get |> Get.optional Property.Ephemeral Decode.bool
+            DurationSecs = get |> Get.optional Property.DurationSecs Decode.float
+            Waveform = get |> Get.optional Property.Waveform Decode.string
+            Flags = get |> Get.optional Property.Flags Decode.int
+        }) path v
+
+    let encoder (v: Attachment) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Filename Encode.string v.Filename
+            |> Encode.optional Property.Title Encode.string v.Title
+            |> Encode.optional Property.Description Encode.string v.Description
+            |> Encode.optional Property.ContentType Encode.string v.ContentType
+            |> Encode.required Property.Size Encode.int v.Size
+            |> Encode.required Property.Url Encode.string v.Url
+            |> Encode.required Property.ProxyUrl Encode.string v.ProxyUrl
+            |> Encode.optinull Property.Height Encode.int v.Height
+            |> Encode.optinull Property.Width Encode.int v.Width
+            |> Encode.optional Property.Ephemeral Encode.bool v.Ephemeral
+            |> Encode.optional Property.DurationSecs Encode.float v.DurationSecs
+            |> Encode.optional Property.Waveform Encode.string v.Waveform
+            |> Encode.optional Property.Flags Encode.int v.Flags
+        )
 
     module Partial =
-        let decoder: Decoder<PartialAttachment> = raise (System.NotImplementedException())
-        let encoder: Encoder<PartialAttachment> = raise (System.NotImplementedException())
+        let decoder path v =
+            Decode.object (fun get -> {
+                Id = get |> Get.required Property.Id Decode.string
+                Filename = get |> Get.optional Property.Filename Decode.string
+                Title = get |> Get.optional Property.Title Decode.string
+                Description = get |> Get.optional Property.Description Decode.string
+                ContentType = get |> Get.optional Property.ContentType Decode.string
+                Size = get |> Get.optional Property.Size Decode.int
+                Url = get |> Get.optional Property.Url Decode.string
+                ProxyUrl = get |> Get.optional Property.ProxyUrl Decode.string
+                Height = get |> Get.optinull Property.Height Decode.int
+                Width = get |> Get.optinull Property.Width Decode.int
+                Ephemeral = get |> Get.optional Property.Ephemeral Decode.bool
+                DurationSecs = get |> Get.optional Property.DurationSecs Decode.float
+                Waveform = get |> Get.optional Property.Waveform Decode.string
+                Flags = get |> Get.optional Property.Flags Decode.int
+            }) path v
+
+        let encoder (v: PartialAttachment) =
+            Encode.object ([]
+                |> Encode.required Property.Id Encode.string v.Id
+                |> Encode.optional Property.Filename Encode.string v.Filename
+                |> Encode.optional Property.Title Encode.string v.Title
+                |> Encode.optional Property.Description Encode.string v.Description
+                |> Encode.optional Property.ContentType Encode.string v.ContentType
+                |> Encode.optional Property.Size Encode.int v.Size
+                |> Encode.optional Property.Url Encode.string v.Url
+                |> Encode.optional Property.ProxyUrl Encode.string v.ProxyUrl
+                |> Encode.optinull Property.Height Encode.int v.Height
+                |> Encode.optinull Property.Width Encode.int v.Width
+                |> Encode.optional Property.Ephemeral Encode.bool v.Ephemeral
+                |> Encode.optional Property.DurationSecs Encode.float v.DurationSecs
+                |> Encode.optional Property.Waveform Encode.string v.Waveform
+                |> Encode.optional Property.Flags Encode.int v.Flags
+            )
 
 module ChannelMention =
     module Property =
@@ -3634,8 +3944,21 @@ module ChannelMention =
         let [<Literal>] Type = "type"
         let [<Literal>] Name = "name"
 
-    let decoder: Decoder<ChannelMention> = raise (System.NotImplementedException())
-    let encoder: Encoder<ChannelMention> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<ChannelType>
+            Name = get |> Get.required Property.Name Decode.string
+        }) path v
+
+    let encoder (v: ChannelMention) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.Name Encode.string v.Name
+        )
 
 module AllowedMentions =
     module Property =
@@ -3644,8 +3967,21 @@ module AllowedMentions =
         let [<Literal>] Users = "users"
         let [<Literal>] RepliedUser = "replied_user"
 
-    let decoder: Decoder<AllowedMentions> = raise (System.NotImplementedException())
-    let encoder: Encoder<AllowedMentions> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Parse = get |> Get.optional Property.Parse (Decode.list AllowedMentionsParseType.decoder)
+            Roles = get |> Get.optional Property.Roles (Decode.list Decode.string)
+            Users = get |> Get.optional Property.Users (Decode.list Decode.string)
+            RepliedUser = get |> Get.optional Property.RepliedUser Decode.bool
+        }) path v
+
+    let encoder (v: AllowedMentions) =
+        Encode.object ([]
+            |> Encode.optional Property.Parse (List.map AllowedMentionsParseType.encoder >> Encode.list) v.Parse
+            |> Encode.optional Property.Roles (List.map Encode.string >> Encode.list) v.Roles
+            |> Encode.optional Property.Users (List.map Encode.string >> Encode.list) v.Users
+            |> Encode.optional Property.RepliedUser Encode.bool v.RepliedUser
+        )
 
 module RoleSubscriptionData =
     module Property =
@@ -3654,8 +3990,21 @@ module RoleSubscriptionData =
         let [<Literal>] TotalMonthsSubscribed = "total_months_subscribed"
         let [<Literal>] IsRenewal = "is_renewal"
 
-    let decoder: Decoder<RoleSubscriptionData> = raise (System.NotImplementedException())
-    let encoder: Encoder<RoleSubscriptionData> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            RoleSubscriptionListingId = get |> Get.required Property.RoleSubscriptionListingId Decode.string
+            TierName = get |> Get.required Property.TierName Decode.string
+            TotalMonthsSubscribed = get |> Get.required Property.TotalMonthsSubscribed Decode.int
+            IsRenewal = get |> Get.required Property.IsRenewal Decode.bool
+        }) path v
+
+    let encoder (v: RoleSubscriptionData) =
+        Encode.object ([]
+            |> Encode.required Property.RoleSubscriptionListingId Encode.string v.RoleSubscriptionListingId
+            |> Encode.required Property.TierName Encode.string v.TierName
+            |> Encode.required Property.TotalMonthsSubscribed Encode.int v.TotalMonthsSubscribed
+            |> Encode.required Property.IsRenewal Encode.bool v.IsRenewal
+        )
 
 module Poll =
     module Property =
