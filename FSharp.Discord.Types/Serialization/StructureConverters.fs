@@ -877,6 +877,29 @@ module SessionStartLimit =
             |> Encode.required Property.MaxConcurrency Encode.int v.MaxConcurrency
         )
 
+module GatewayEventPayload =
+    module Property =
+        let [<Literal>] Opcode = "op"
+        let [<Literal>] Data = "d"
+        let [<Literal>] Sequence = "s"
+        let [<Literal>] EventName = "t"
+
+    let decoder<'a>: Decoder<GatewayEventPayload<'a>> = raise (System.NotImplementedException())
+    let encoder<'a>: Encoder<GatewayEventPayload<'a>> = raise (System.NotImplementedException())
+
+module IdentifySendEvent =
+    module Property =
+        let [<Literal>] Token = "token"
+        let [<Literal>] Properties = "properties"
+        let [<Literal>] Compress = "compress"
+        let [<Literal>] LargeThreshold = "large_threshold"
+        let [<Literal>] Shard = "shard"
+        let [<Literal>] Presence = "presence"
+        let [<Literal>] Intents = "intents"
+
+    let decoder: Decoder<IdentifySendEvent> = raise (System.NotImplementedException())
+    let encoder: Encoder<IdentifySendEvent> = raise (System.NotImplementedException())
+
 module IdentifyConnectionProperties =
     module Property =
         let [<Literal>] OperatingSystem = "os"
@@ -916,6 +939,64 @@ module ClientStatus =
             |> Encode.optional Property.Mobile ClientDeviceStatus.encoder v.Mobile
             |> Encode.optional Property.Web ClientDeviceStatus.encoder v.Web
         )
+
+module ResumeSendEvent =
+    module Property =
+        let [<Literal>] Token = "token"
+        let [<Literal>] SessionId = "session_id"
+        let [<Literal>] Sequence = "seq"
+
+    let decoder: Decoder<ResumeSendEvent> = raise (System.NotImplementedException())
+    let encoder: Encoder<ResumeSendEvent> = raise (System.NotImplementedException())
+
+module HeartbeatSendEvent =
+    let decoder: Decoder<HeartbeatSendEvent> = Decode.option Decode.int
+    let encoder: Encoder<HeartbeatSendEvent> = Encode.option Encode.int
+
+module RequestGuildMembersSendEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Query = "query"
+        let [<Literal>] Limit = "limit"
+        let [<Literal>] Presences = "presences"
+        let [<Literal>] UserIds = "user_ids"
+        let [<Literal>] Nonce = "nonce"
+
+    let decoder: Decoder<RequestGuildMembersSendEvent> = raise (System.NotImplementedException())
+    let encoder: Encoder<RequestGuildMembersSendEvent> = raise (System.NotImplementedException())
+
+module UpdateVoiceStateSendEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] SelfMute = "self_mute"
+        let [<Literal>] SelfDeaf = "self_deaf"
+
+    let decoder: Decoder<UpdateVoiceStateSendEvent> = raise (System.NotImplementedException())
+    let encoder: Encoder<UpdateVoiceStateSendEvent> = raise (System.NotImplementedException())
+
+module RequestSoundboardSoundsSendEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+
+    let decoder: Decoder<RequestSoundboardSoundsSendEvent> = raise (System.NotImplementedException())
+    let encoder: Encoder<RequestSoundboardSoundsSendEvent> = raise (System.NotImplementedException())
+
+module UpdatePresenceSendEvent =
+    module Property =
+        let [<Literal>] Since = "since"
+        let [<Literal>] Activities = "activities"
+        let [<Literal>] Status = "status"
+        let [<Literal>] Afk = "afk"
+
+    let decoder: Decoder<UpdatePresenceSendEvent> = raise (System.NotImplementedException())
+    let encoder: Encoder<UpdatePresenceSendEvent> = raise (System.NotImplementedException())
+
+    module Partial =
+        let decoder: Decoder<PartialUpdatePresenceSendEvent> = raise (System.NotImplementedException())
+        let encoder: Encoder<PartialUpdatePresenceSendEvent> = raise (System.NotImplementedException())
+
+// TODO: Add gateway receive event serializers here
 
 module Activity =
     module Property =

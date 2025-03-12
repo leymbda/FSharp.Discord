@@ -360,21 +360,21 @@ type SessionStartLimit = {
 
 // https://discord.com/developers/docs/topics/gateway-events#payload-structure
 type GatewayEventPayload<'a> = {
-    [<JsonPropertyName "op">] Opcode: GatewayOpcode
-    [<JsonPropertyName "d">] Data: 'a
-    [<JsonPropertyName "s">] Sequence: int option
-    [<JsonPropertyName "t">] EventName: string option
+    Opcode: GatewayOpcode
+    Data: 'a
+    Sequence: int option
+    EventName: string option
 }
 
 // https://discord.com/developers/docs/topics/gateway-events#identify-identify-structure
 type IdentifySendEvent = {
-    [<JsonPropertyName "token">] Token: string
-    [<JsonPropertyName "properties">] Properties: IdentifyConnectionProperties
-    [<JsonPropertyName "compress">] Compress: bool option
-    [<JsonPropertyName "large_threshold">] LargeThreshold: int option
-    [<JsonPropertyName "shard">] Shard: (int * int) option
-    [<JsonPropertyName "presence">] Presence: UpdatePresenceSendEvent option
-    [<JsonPropertyName "intents">] Intents: int
+    Token: string
+    Properties: IdentifyConnectionProperties
+    Compress: bool option
+    LargeThreshold: int option
+    Shard: (int * int) option
+    Presence: UpdatePresenceSendEvent option
+    Intents: int
 }
 
 // https://discord.com/developers/docs/topics/gateway-events#identify-identify-connection-properties
@@ -397,9 +397,9 @@ type ClientStatus = {
 
 // https://discord.com/developers/docs/topics/gateway-events#resume-resume-structure
 type ResumeSendEvent = {
-    [<JsonPropertyName "token">] Token: string
-    [<JsonPropertyName "session_id">] SessionId: string
-    [<JsonPropertyName "seq">] Sequence: int
+    Token: string
+    SessionId: string
+    Sequence: int
 }
 
 // https://discord.com/developers/docs/topics/gateway-events#heartbeat-example-heartbeat
@@ -407,40 +407,40 @@ type HeartbeatSendEvent = int option
 
 // https://discord.com/developers/docs/topics/gateway-events#request-guild-members-request-guild-members-structure
 type RequestGuildMembersSendEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "query">] Query: string option
-    [<JsonPropertyName "limit">] Limit: int
-    [<JsonPropertyName "presences">] Presences: bool option
-    [<JsonPropertyName "user_ids">] UserIds: string list option
-    [<JsonPropertyName "nonce">] Nonce: string option
+    GuildId: string
+    Query: string option
+    Limit: int
+    Presences: bool option
+    UserIds: string list option
+    Nonce: string option
 }
 
 // https://discord.com/developers/docs/topics/gateway-events#update-voice-state-gateway-voice-state-update-structure
 type UpdateVoiceStateSendEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "self_mute">] SelfMute: bool
-    [<JsonPropertyName "self_deaf">] SelfDeaf: bool
+    GuildId: string
+    ChannelId: string option
+    SelfMute: bool
+    SelfDeaf: bool
 }
 
 // https://discord.com/developers/docs/events/gateway-events#request-soundboard-sounds
 type RequestSoundboardSoundsSendEvent = {
-    [<JsonPropertyName "guild_ids">] GuildIds: string list 
+    GuildIds: string list 
 }
 
 // https://discord.com/developers/docs/topics/gateway-events#update-presence-gateway-presence-update-structure
 type UpdatePresenceSendEvent = {
-    [<JsonPropertyName "since">] Since: int option
-    [<JsonPropertyName "activities">] Activities: Activity list
-    [<JsonPropertyName "status">] Status: Status
-    [<JsonPropertyName "afk">] Afk: bool
+    Since: int option
+    Activities: Activity list
+    Status: Status
+    Afk: bool
 }
 
 type PartialUpdatePresenceSendEvent = {
-    [<JsonPropertyName "since">] Since: int option
-    [<JsonPropertyName "activities">] Activities: Activity list option
-    [<JsonPropertyName "status">] Status: Status option
-    [<JsonPropertyName "afk">] Afk: bool option
+    Since: int option
+    Activities: Activity list option
+    Status: Status option
+    Afk: bool option
 }
 
 // https://discord.com/developers/docs/events/gateway#connection-lifecycle
