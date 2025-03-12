@@ -2341,35 +2341,35 @@ type User = {
     Bot: bool option
     System: bool option
     MfaEnabled: bool option
-    Banner: string option
-    AccentColor: int option
+    Banner: string option option
+    AccentColor: int option option
     Locale: string option
     Verified: bool option
-    Email: string option
+    Email: string option option
     Flags: int option
     PremiumType: UserPremiumTier option
     PublicFlags: int option
-    AvatarDecorationData: AvatarDecorationData option
+    AvatarDecorationData: AvatarDecorationData option option
 }
 
 and PartialUser = {
     Id: string
     Username: string option
     Discriminator: string option
-    GlobalName: string option
-    Avatar: string option
+    GlobalName: string option option
+    Avatar: string option option
     Bot: bool option
     System: bool option
     MfaEnabled: bool option
-    Banner: string option
-    AccentColor: int option
+    Banner: string option option
+    AccentColor: int option option
     Locale: string option
     Verified: bool option
-    Email: string option
+    Email: string option option
     Flags: int option
     PremiumType: UserPremiumTier option
     PublicFlags: int option
-    AvatarDecorationData: AvatarDecorationData option
+    AvatarDecorationData: AvatarDecorationData option option
 }
 
 module User =
@@ -2412,7 +2412,7 @@ type ApplicationRoleConnection = {
 type VoiceState = {
     GuildId: string option
     ChannelId: string option
-    UserId: string option
+    UserId: string
     Member: GuildMember option
     SessionId: string
     Deaf: bool
@@ -2427,7 +2427,7 @@ type VoiceState = {
 
 and PartialVoiceState = {
     GuildId: string option
-    ChannelId: string option
+    ChannelId: string option option
     UserId: string option
     Member: GuildMember option
     SessionId: string option
@@ -2438,7 +2438,7 @@ and PartialVoiceState = {
     SelfStream: bool option
     SelfVideo: bool option
     Suppress: bool option
-    RequestToSpeakTimestamp: DateTime option
+    RequestToSpeakTimestamp: DateTime option option
 }
 
 // https://discord.com/developers/docs/resources/voice#voice-region-object-voice-region-structure
@@ -2455,8 +2455,8 @@ type VoiceRegion = {
 // https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure
 type Webhook = {
     Id: string
-    WebhookType: WebhookType // TODO: Confirm this is actually `webhook_type` not just `type`
-    GuildId: string option
+    Type: WebhookType
+    GuildId: string option option
     ChannelId: string option
     User: User option
     Name: string option
@@ -2530,3 +2530,5 @@ type TeamMember = {
 }
 
 // TODO: Convert all flag bitfields into enum lists
+// TODO: Convert url strings to Uri type (?)
+// TODO: Create single DUs for values with range/size/etc rules

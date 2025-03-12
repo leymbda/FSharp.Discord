@@ -4385,20 +4385,107 @@ module User =
         let [<Literal>] PublicFlags = "public_flags"
         let [<Literal>] AvatarDecorationData = "avatar_decoration_data"
 
-    let decoder: Decoder<User> = raise (System.NotImplementedException())
-    let encoder: Encoder<User> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Username = get |> Get.required Property.Username Decode.string
+            Discriminator = get |> Get.required Property.Discriminator Decode.string
+            GlobalName = get |> Get.nullable Property.GlobalName Decode.string
+            Avatar = get |> Get.nullable Property.Avatar Decode.string
+            Bot = get |> Get.optional Property.Bot Decode.bool
+            System = get |> Get.optional Property.System Decode.bool
+            MfaEnabled = get |> Get.optional Property.MfaEnabled Decode.bool
+            Banner = get |> Get.optinull Property.Banner Decode.string
+            AccentColor = get |> Get.optinull Property.AccentColor Decode.int
+            Locale = get |> Get.optional Property.Locale Decode.string
+            Verified = get |> Get.optional Property.Verified Decode.bool
+            Email = get |> Get.optinull Property.Email Decode.string
+            Flags = get |> Get.optional Property.Flags Decode.int
+            PremiumType = get |> Get.optional Property.PremiumType Decode.Enum.int<UserPremiumTier>
+            PublicFlags = get |> Get.optional Property.PublicFlags Decode.int
+            AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
+        }) path v
+
+    let encoder (v: User) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Username Encode.string v.Username
+            |> Encode.required Property.Discriminator Encode.string v.Discriminator
+            |> Encode.nullable Property.GlobalName Encode.string v.GlobalName
+            |> Encode.nullable Property.Avatar Encode.string v.Avatar
+            |> Encode.optional Property.Bot Encode.bool v.Bot
+            |> Encode.optional Property.System Encode.bool v.System
+            |> Encode.optional Property.MfaEnabled Encode.bool v.MfaEnabled
+            |> Encode.optinull Property.Banner Encode.string v.Banner
+            |> Encode.optinull Property.AccentColor Encode.int v.AccentColor
+            |> Encode.optional Property.Locale Encode.string v.Locale
+            |> Encode.optional Property.Verified Encode.bool v.Verified
+            |> Encode.optinull Property.Email Encode.string v.Email
+            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.PremiumType Encode.Enum.int v.PremiumType
+            |> Encode.optional Property.PublicFlags Encode.int v.PublicFlags
+            |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
+        )
 
     module Partial =
-        let decoder: Decoder<PartialUser> = raise (System.NotImplementedException())
-        let encoder: Encoder<PartialUser> = raise (System.NotImplementedException())
+        let decoder path v =
+            Decode.object (fun get -> {
+                Id = get |> Get.required Property.Id Decode.string
+                Username = get |> Get.optional Property.Username Decode.string
+                Discriminator = get |> Get.optional Property.Discriminator Decode.string
+                GlobalName = get |> Get.optinull Property.GlobalName Decode.string
+                Avatar = get |> Get.optinull Property.Avatar Decode.string
+                Bot = get |> Get.optional Property.Bot Decode.bool
+                System = get |> Get.optional Property.System Decode.bool
+                MfaEnabled = get |> Get.optional Property.MfaEnabled Decode.bool
+                Banner = get |> Get.optinull Property.Banner Decode.string
+                AccentColor = get |> Get.optinull Property.AccentColor Decode.int
+                Locale = get |> Get.optional Property.Locale Decode.string
+                Verified = get |> Get.optional Property.Verified Decode.bool
+                Email = get |> Get.optinull Property.Email Decode.string
+                Flags = get |> Get.optional Property.Flags Decode.int
+                PremiumType = get |> Get.optional Property.PremiumType Decode.Enum.int<UserPremiumTier>
+                PublicFlags = get |> Get.optional Property.PublicFlags Decode.int
+                AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
+            }) path v
+
+        let encoder (v: PartialUser) =
+            Encode.object ([]
+                |> Encode.required Property.Id Encode.string v.Id
+                |> Encode.optional Property.Username Encode.string v.Username
+                |> Encode.optional Property.Discriminator Encode.string v.Discriminator
+                |> Encode.optinull Property.GlobalName Encode.string v.GlobalName
+                |> Encode.optinull Property.Avatar Encode.string v.Avatar
+                |> Encode.optional Property.Bot Encode.bool v.Bot
+                |> Encode.optional Property.System Encode.bool v.System
+                |> Encode.optional Property.MfaEnabled Encode.bool v.MfaEnabled
+                |> Encode.optinull Property.Banner Encode.string v.Banner
+                |> Encode.optinull Property.AccentColor Encode.int v.AccentColor
+                |> Encode.optional Property.Locale Encode.string v.Locale
+                |> Encode.optional Property.Verified Encode.bool v.Verified
+                |> Encode.optinull Property.Email Encode.string v.Email
+                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.PremiumType Encode.Enum.int v.PremiumType
+                |> Encode.optional Property.PublicFlags Encode.int v.PublicFlags
+                |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
+            )
 
 module AvatarDecorationData =
     module Property =
         let [<Literal>] Asset = "asset"
         let [<Literal>] SkuId = "sku_id"
 
-    let decoder: Decoder<AvatarDecorationData> = raise (System.NotImplementedException())
-    let encoder: Encoder<AvatarDecorationData> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Asset = get |> Get.required Property.Asset Decode.string
+            SkuId = get |> Get.required Property.SkuId Decode.string
+        }) path v
+
+    let encoder (v: AvatarDecorationData) =
+        Encode.object ([]
+            |> Encode.required Property.Asset Encode.string v.Asset
+            |> Encode.required Property.SkuId Encode.string v.SkuId
+        )
 
 module Connection =
     module Property =
@@ -4413,8 +4500,33 @@ module Connection =
         let [<Literal>] TwoWayLink = "two_way_link"
         let [<Literal>] Visibility = "visibility"
 
-    let decoder: Decoder<Connection> = raise (System.NotImplementedException())
-    let encoder: Encoder<Connection> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Type = get |> Get.required Property.Type ConnectionServiceType.decoder
+            Revoked = get |> Get.optional Property.Revoked Decode.bool
+            Integrations = get |> Get.optional Property.Integrations (Decode.list Integration.Partial.decoder)
+            Verified = get |> Get.required Property.Verified Decode.bool
+            FriendSync = get |> Get.required Property.FriendSync Decode.bool
+            ShowActivity = get |> Get.required Property.ShowActivity Decode.bool
+            TwoWayLink = get |> Get.required Property.TwoWayLink Decode.bool
+            Visibility = get |> Get.required Property.Visibility Decode.Enum.int<ConnectionVisibility>
+        }) path v
+
+    let encoder (v: Connection) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Type ConnectionServiceType.encoder v.Type
+            |> Encode.optional Property.Revoked Encode.bool v.Revoked
+            |> Encode.optional Property.Integrations (List.map Integration.Partial.encoder >> Encode.list) v.Integrations
+            |> Encode.required Property.Verified Encode.bool v.Verified
+            |> Encode.required Property.FriendSync Encode.bool v.FriendSync
+            |> Encode.required Property.ShowActivity Encode.bool v.ShowActivity
+            |> Encode.required Property.TwoWayLink Encode.bool v.TwoWayLink
+            |> Encode.required Property.Visibility Encode.Enum.int v.Visibility
+        )
 
 module ApplicationRoleConnection =
     module Property =
@@ -4422,8 +4534,19 @@ module ApplicationRoleConnection =
         let [<Literal>] PlatformUsername = "platform_username"
         let [<Literal>] Metadata = "metadata"
 
-    let decoder: Decoder<ApplicationRoleConnection> = raise (System.NotImplementedException())
-    let encoder: Encoder<ApplicationRoleConnection> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            PlatformName = get |> Get.nullable Property.PlatformName Decode.string
+            PlatformUsername = get |> Get.nullable Property.PlatformUsername Decode.string
+            Metadata = get |> Get.required Property.Metadata (Decode.dict Decode.string)
+        }) path v
+
+    let encoder (v: ApplicationRoleConnection) =
+        Encode.object ([]
+            |> Encode.nullable Property.PlatformName Encode.string v.PlatformName
+            |> Encode.nullable Property.PlatformUsername Encode.string v.PlatformUsername
+            |> Encode.required Property.Metadata (Encode.mapv Encode.string) v.Metadata
+        )
 
 module VoiceState =
     module Property =
@@ -4441,8 +4564,74 @@ module VoiceState =
         let [<Literal>] Suppress = "suppress"
         let [<Literal>] RequestToSpeakTimestamp = "request_to_speak_timestamp"
 
-    let decoder: Decoder<VoiceState> = raise (System.NotImplementedException())
-    let encoder: Encoder<VoiceState> = raise (System.NotImplementedException())
+    let decoder path v: Result<VoiceState, DecoderError> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            ChannelId = get |> Get.nullable Property.ChannelId Decode.string
+            UserId = get |> Get.required Property.UserId Decode.string
+            Member = get |> Get.optional Property.Member GuildMember.decoder
+            SessionId = get |> Get.required Property.SessionId Decode.string
+            Deaf = get |> Get.required Property.Deaf Decode.bool
+            Mute = get |> Get.required Property.Mute Decode.bool
+            SelfDeaf = get |> Get.required Property.SelfDeaf Decode.bool
+            SelfMute = get |> Get.required Property.SelfMute Decode.bool
+            SelfStream = get |> Get.optional Property.SelfStream Decode.bool
+            SelfVideo = get |> Get.required Property.SelfVideo Decode.bool
+            Suppress = get |> Get.required Property.Suppress Decode.bool
+            RequestToSpeakTimestamp = get |> Get.nullable Property.RequestToSpeakTimestamp Decode.datetimeUtc
+        }) path v
+
+    let encoder (v: VoiceState) =
+        Encode.object ([]
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.nullable Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.optional Property.Member GuildMember.encoder v.Member
+            |> Encode.required Property.SessionId Encode.string v.SessionId
+            |> Encode.required Property.Deaf Encode.bool v.Deaf
+            |> Encode.required Property.Mute Encode.bool v.Mute
+            |> Encode.required Property.SelfDeaf Encode.bool v.SelfDeaf
+            |> Encode.required Property.SelfMute Encode.bool v.SelfMute
+            |> Encode.optional Property.SelfStream Encode.bool v.SelfStream
+            |> Encode.required Property.SelfVideo Encode.bool v.SelfVideo
+            |> Encode.required Property.Suppress Encode.bool v.Suppress
+            |> Encode.nullable Property.RequestToSpeakTimestamp Encode.datetime v.RequestToSpeakTimestamp
+        )
+
+    module Partial =
+        let decoder path v: Result<PartialVoiceState, DecoderError> =
+            Decode.object (fun get -> {
+                GuildId = get |> Get.optional Property.GuildId Decode.string
+                ChannelId = get |> Get.optinull Property.ChannelId Decode.string
+                UserId = get |> Get.optional Property.UserId Decode.string
+                Member = get |> Get.optional Property.Member GuildMember.decoder
+                SessionId = get |> Get.optional Property.SessionId Decode.string
+                Deaf = get |> Get.optional Property.Deaf Decode.bool
+                Mute = get |> Get.optional Property.Mute Decode.bool
+                SelfDeaf = get |> Get.optional Property.SelfDeaf Decode.bool
+                SelfMute = get |> Get.optional Property.SelfMute Decode.bool
+                SelfStream = get |> Get.optional Property.SelfStream Decode.bool
+                SelfVideo = get |> Get.optional Property.SelfVideo Decode.bool
+                Suppress = get |> Get.optional Property.Suppress Decode.bool
+                RequestToSpeakTimestamp = get |> Get.optinull Property.RequestToSpeakTimestamp Decode.datetimeUtc
+            }) path v
+
+        let encoder (v: PartialVoiceState) =
+            Encode.object ([]
+                |> Encode.optional Property.GuildId Encode.string v.GuildId
+                |> Encode.optinull Property.ChannelId Encode.string v.ChannelId
+                |> Encode.optional Property.UserId Encode.string v.UserId
+                |> Encode.optional Property.Member GuildMember.encoder v.Member
+                |> Encode.optional Property.SessionId Encode.string v.SessionId
+                |> Encode.optional Property.Deaf Encode.bool v.Deaf
+                |> Encode.optional Property.Mute Encode.bool v.Mute
+                |> Encode.optional Property.SelfDeaf Encode.bool v.SelfDeaf
+                |> Encode.optional Property.SelfMute Encode.bool v.SelfMute
+                |> Encode.optional Property.SelfStream Encode.bool v.SelfStream
+                |> Encode.optional Property.SelfVideo Encode.bool v.SelfVideo
+                |> Encode.optional Property.Suppress Encode.bool v.Suppress
+                |> Encode.optinull Property.RequestToSpeakTimestamp Encode.datetime v.RequestToSpeakTimestamp
+            )
 
 module VoiceRegion =
     module Property =
@@ -4452,13 +4641,28 @@ module VoiceRegion =
         let [<Literal>] Deprecated = "deprecated"
         let [<Literal>] Custom = "custom"
 
-    let decoder: Decoder<VoiceRegion> = raise (System.NotImplementedException())
-    let encoder: Encoder<VoiceRegion> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Optimal = get |> Get.required Property.Optimal Decode.bool
+            Deprecated = get |> Get.required Property.Deprecated Decode.bool
+            Custom = get |> Get.required Property.Custom Decode.bool
+        }) path v
+
+    let encoder (v: VoiceRegion) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Optimal Encode.bool v.Optimal
+            |> Encode.required Property.Deprecated Encode.bool v.Deprecated
+            |> Encode.required Property.Custom Encode.bool v.Custom
+        )
 
 module Webhook =
     module Property =
         let [<Literal>] Id = "id"
-        let [<Literal>] WebhookType = "webhook_type"
+        let [<Literal>] Type = "type"
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] ChannelId = "channel_id"
         let [<Literal>] User = "user"
@@ -4470,8 +4674,37 @@ module Webhook =
         let [<Literal>] SourceChannel = "source_channel"
         let [<Literal>] Url = "url"
 
-    let decoder: Decoder<Webhook> = raise (System.NotImplementedException())
-    let encoder: Encoder<Webhook> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<WebhookType>
+            GuildId = get |> Get.optinull Property.GuildId Decode.string
+            ChannelId = get |> Get.nullable Property.ChannelId Decode.string
+            User = get |> Get.optional Property.User User.decoder
+            Name = get |> Get.nullable Property.Name Decode.string
+            Avatar = get |> Get.nullable Property.Avatar Decode.string
+            Token = get |> Get.optional Property.Token Decode.string
+            ApplicationId = get |> Get.nullable Property.ApplicationId Decode.string
+            SourceGuild = get |> Get.optional Property.SourceGuild Guild.Partial.decoder
+            SourceChannel = get |> Get.optional Property.SourceChannel Channel.Partial.decoder
+            Url = get |> Get.optional Property.Url Decode.string
+        }) path v
+
+    let encoder (v: Webhook) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.optinull Property.GuildId Encode.string v.GuildId
+            |> Encode.nullable Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.User User.encoder v.User
+            |> Encode.nullable Property.Name Encode.string v.Name
+            |> Encode.nullable Property.Avatar Encode.string v.Avatar
+            |> Encode.optional Property.Token Encode.string v.Token
+            |> Encode.nullable Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.optional Property.SourceGuild Guild.Partial.encoder v.SourceGuild
+            |> Encode.optional Property.SourceChannel Channel.Partial.encoder v.SourceChannel
+            |> Encode.optional Property.Url Encode.string v.Url
+        )
 
 module Role =
     module Property =
@@ -4535,3 +4768,5 @@ module TeamMember =
 
     let decoder: Decoder<TeamMember> = raise (System.NotImplementedException())
     let encoder: Encoder<TeamMember> = raise (System.NotImplementedException())
+
+// TODO: Count how many instances of encode/decode for optional and nullable and look for mismatches
