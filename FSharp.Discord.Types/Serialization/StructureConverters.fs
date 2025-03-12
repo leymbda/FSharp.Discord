@@ -4141,8 +4141,25 @@ module Sku =
         let [<Literal>] Slug = "slug"
         let [<Literal>] Flags = "flags"
 
-    let decoder: Decoder<Sku> = raise (System.NotImplementedException())
-    let encoder: Encoder<Sku> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<SkuType>
+            ApplicationId = get |> Get.required Property.ApplicationId Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Slug = get |> Get.required Property.Slug Decode.string
+            Flags = get |> Get.required Property.Flags Decode.int
+        }) path v
+
+    let encoder (v: Sku) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Slug Encode.string v.Slug
+            |> Encode.required Property.Flags Encode.int v.Flags
+        )
 
 module SoundboardSound =
     module Property =
@@ -4155,8 +4172,29 @@ module SoundboardSound =
         let [<Literal>] Available = "available"
         let [<Literal>] User = "user"
 
-    let decoder: Decoder<SoundboardSound> = raise (System.NotImplementedException())
-    let encoder: Encoder<SoundboardSound> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Name = get |> Get.required Property.Name Decode.string
+            SoundId = get |> Get.required Property.SoundId Decode.string
+            Volume = get |> Get.required Property.Volume Decode.float
+            EmojiId = get |> Get.nullable Property.EmojiId Decode.string
+            EmojiName = get |> Get.nullable Property.EmojiName Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Available = get |> Get.required Property.Available Decode.bool
+            User = get |> Get.optional Property.User User.decoder
+        }) path v
+
+    let encoder (v: SoundboardSound) =
+        Encode.object ([]
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.SoundId Encode.string v.SoundId
+            |> Encode.required Property.Volume Encode.float v.Volume
+            |> Encode.optional Property.EmojiId Encode.string v.EmojiId
+            |> Encode.optional Property.EmojiName Encode.string v.EmojiName
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Available Encode.bool v.Available
+            |> Encode.optional Property.User User.encoder v.User
+        )
 
 module StageInstance =
     module Property =
@@ -4168,8 +4206,27 @@ module StageInstance =
         let [<Literal>] DiscoverableEnabled = "discoverable_enabled"
         let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
 
-    let decoder: Decoder<StageInstance> = raise (System.NotImplementedException())
-    let encoder: Encoder<StageInstance> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            Topic = get |> Get.required Property.Topic Decode.string
+            PrivacyLevel = get |> Get.required Property.PrivacyLevel Decode.Enum.int<PrivacyLevel>
+            DiscoverableEnabled = get |> Get.required Property.DiscoverableEnabled Decode.bool
+            GuildScheduledEventId = get |> Get.optional Property.GuildScheduledEventId Decode.string
+        }) path v
+
+    let encoder (v: StageInstance) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.Topic Encode.string v.Topic
+            |> Encode.required Property.PrivacyLevel Encode.Enum.int v.PrivacyLevel
+            |> Encode.required Property.DiscoverableEnabled Encode.bool v.DiscoverableEnabled
+            |> Encode.optional Property.GuildScheduledEventId Encode.string v.GuildScheduledEventId
+        )
 
 module Sticker =
     module Property =
@@ -4185,8 +4242,35 @@ module Sticker =
         let [<Literal>] User = "user"
         let [<Literal>] SortValue = "sort_value"
 
-    let decoder: Decoder<Sticker> = raise (System.NotImplementedException())
-    let encoder: Encoder<Sticker> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            PackId = get |> Get.optional Property.PackId Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Description = get |> Get.nullable Property.Description Decode.string
+            Tags = get |> Get.required Property.Tags Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<StickerType>
+            FormatType = get |> Get.required Property.FormatType Decode.Enum.int<StickerFormat>
+            Available = get |> Get.optional Property.Available Decode.bool
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            User = get |> Get.optional Property.User User.decoder
+            SortValue = get |> Get.optional Property.SortValue Decode.int
+        }) path v
+
+    let encoder (v: Sticker) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.optional Property.PackId Encode.string v.PackId
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.optional Property.Description Encode.string v.Description
+            |> Encode.required Property.Tags Encode.string v.Tags
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Encode.required Property.FormatType Encode.Enum.int v.FormatType
+            |> Encode.optional Property.Available Encode.bool v.Available
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.User User.encoder v.User
+            |> Encode.optional Property.SortValue Encode.int v.SortValue
+        )
 
 module StickerItem =
     module Property =
@@ -4194,8 +4278,19 @@ module StickerItem =
         let [<Literal>] Name = "name"
         let [<Literal>] FormatType = "format_type"
 
-    let decoder: Decoder<StickerItem> = raise (System.NotImplementedException())
-    let encoder: Encoder<StickerItem> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            FormatType = get |> Get.required Property.FormatType Decode.Enum.int<StickerFormat>
+        }) path v
+
+    let encoder (v: StickerItem) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.FormatType Encode.Enum.int v.FormatType
+        )
 
 module StickerPack =
     module Property =
@@ -4207,8 +4302,27 @@ module StickerPack =
         let [<Literal>] Description = "description"
         let [<Literal>] BannerAssetId = "banner_asset_id"
 
-    let decoder: Decoder<StickerPack> = raise (System.NotImplementedException())
-    let encoder: Encoder<StickerPack> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Stickers = get |> Get.required Property.Stickers (Decode.list Sticker.decoder)
+            Name = get |> Get.required Property.Name Decode.string
+            SkuId = get |> Get.required Property.SkuId Decode.string
+            CoverStickerId = get |> Get.optional Property.CoverStickerId Decode.string
+            Description = get |> Get.required Property.Description Decode.string
+            BannerAssetId = get |> Get.optional Property.BannerAssetId Decode.string
+        }) path v
+
+    let encoder (v: StickerPack) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Stickers (List.map Sticker.encoder >> Encode.list) v.Stickers
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.SkuId Encode.string v.SkuId
+            |> Encode.optional Property.CoverStickerId Encode.string v.CoverStickerId
+            |> Encode.required Property.Description Encode.string v.Description
+            |> Encode.optional Property.BannerAssetId Encode.string v.BannerAssetId
+        )
 
 module Subscription =
     module Property =
@@ -4220,11 +4334,36 @@ module Subscription =
         let [<Literal>] CurrentPeriodStart = "current_period_start"
         let [<Literal>] CurrentPeriodEnd = "current_period_end"
         let [<Literal>] Status = "status"
-        let [<Literal>] CreatedAt = "created_at"
+        let [<Literal>] CanceledAt = "canceled_at"
         let [<Literal>] Country = "country"
 
-    let decoder: Decoder<Subscription> = raise (System.NotImplementedException())
-    let encoder: Encoder<Subscription> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            UserId = get |> Get.required Property.UserId Decode.string
+            SkuIds = get |> Get.required Property.SkuIds (Decode.list Decode.string)
+            EntitlementIds = get |> Get.required Property.EntitlementIds (Decode.list Decode.string)
+            RenewalSkuIds = get |> Get.nullable Property.RenewalSkuIds (Decode.list Decode.string)
+            CurrentPeriodStart = get |> Get.required Property.CurrentPeriodStart Decode.datetimeUtc
+            CurrentPeriodEnd = get |> Get.required Property.CurrentPeriodEnd Decode.datetimeUtc
+            Status = get |> Get.required Property.Status Decode.Enum.int<SubscriptionStatus>
+            CanceledAt = get |> Get.nullable Property.CanceledAt Decode.datetimeUtc
+            Country = get |> Get.optional Property.Country Decode.string
+        }) path v
+
+    let encoder (v: Subscription) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.required Property.SkuIds (List.map Encode.string >> Encode.list) v.SkuIds
+            |> Encode.required Property.EntitlementIds (List.map Encode.string >> Encode.list) v.EntitlementIds
+            |> Encode.nullable Property.RenewalSkuIds (List.map Encode.string >> Encode.list) v.RenewalSkuIds
+            |> Encode.required Property.CurrentPeriodStart Encode.datetime v.CurrentPeriodStart
+            |> Encode.required Property.CurrentPeriodEnd Encode.datetime v.CurrentPeriodEnd
+            |> Encode.required Property.Status Encode.Enum.int v.Status
+            |> Encode.nullable Property.CanceledAt Encode.datetime v.CanceledAt
+            |> Encode.optional Property.Country Encode.string v.Country
+        )
 
 module User =
     module Property =

@@ -2262,7 +2262,7 @@ type SoundboardSound = {
     EmojiName: string option
     GuildId: string option
     Available: bool
-    User: User
+    User: User option
 }
 
 // ----- Resources: Stage Instance -----
@@ -2286,7 +2286,7 @@ type Sticker = {
     PackId: string option
     Name: string
     Description: string option
-    Tags: string
+    Tags: string // TODO: Convert to list based on comma separated delimitation
     Type: StickerType
     FormatType: StickerFormat
     Available: bool option
@@ -2528,3 +2528,5 @@ type TeamMember = {
     User: PartialUser // avatar, discriminator, id, username
     Role: string
 }
+
+// TODO: Convert all flag bitfields into enum lists

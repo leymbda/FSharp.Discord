@@ -218,6 +218,7 @@ type GuildWidgetStyle =
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-privacy-level
 [<RequireQualifiedAccess>]
 type PrivacyLevel =
+    | PUBLIC  = 1
     | GUILD_ONLY = 2
 
 // https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-status
