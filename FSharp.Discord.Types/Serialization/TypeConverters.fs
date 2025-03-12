@@ -208,6 +208,35 @@ module SelectMenuDefaultValueType =
     let encoder v =
         toString v |> Encode.string
 
+module TeamMemberRoleType =
+    let toString (v: TeamMemberRoleType) =
+        match v with
+        | TeamMemberRoleType.ADMIN -> "admin"
+        | TeamMemberRoleType.DEVELOPER -> "developer"
+        | TeamMemberRoleType.READONLY -> "read-only"
+
+    let fromString (str: string) =
+        match str with
+        | "admin" -> Some TeamMemberRoleType.ADMIN
+        | "developer" -> Some TeamMemberRoleType.DEVELOPER
+        | "read-only" -> Some TeamMemberRoleType.READONLY
+        | _ -> None
+
+    let decoder path v =
+        let res =
+            if Decode.Helpers.isString v then
+                match fromString (unbox<string> v) with
+                | Some value -> Some value
+                | None -> None
+            else
+                None
+        match res with
+        | None -> Error (path, BadPrimitive("a team member role type", v))
+        | Some res -> Ok res
+
+    let encoder v =
+        toString v |> Encode.string
+
 module WebhookEventType =
     let toString (webhookEventType: WebhookEventType) =
         match webhookEventType with

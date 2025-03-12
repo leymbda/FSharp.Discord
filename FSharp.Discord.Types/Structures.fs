@@ -2478,8 +2478,8 @@ type Role = {
     Name: string
     Color: int
     Hoist: bool
-    Icon: string option
-    UnicodeEmoji: string option
+    Icon: string option option
+    UnicodeEmoji: string option option
     Position: int
     Permissions: string
     Managed: bool
@@ -2526,7 +2526,7 @@ type TeamMember = {
     MembershipState: MembershipState
     TeamId: string
     User: PartialUser // avatar, discriminator, id, username
-    Role: string
+    Role: TeamMemberRoleType
 }
 
 // TODO: Convert all flag bitfields into enum lists

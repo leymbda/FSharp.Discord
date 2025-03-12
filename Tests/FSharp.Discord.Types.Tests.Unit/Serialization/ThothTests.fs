@@ -110,6 +110,21 @@ module ParentOpt =
     let encoder (v: ParentOpt) =
         Encode.object (ChildA.encodeProperties v.A @ (v.B |> Option.map ChildB.encodeProperties |> Option.defaultValue []))
 
+type Exists = {
+    Value: bool
+}
+
+module Exists =
+    let decoder path v =
+        Decode.object (fun get -> {
+            Value = get |> Get.exists "value"
+        }) path v
+
+    let encoder (v: Exists) =
+        Encode.object ([]
+            |> Encode.exists "value" Encode.nil v.Value
+        )
+
 [<TestClass>]
 type ThothTests () =
     [<TestMethod>]
@@ -271,8 +286,10 @@ type ThothTests () =
     member _.``Get.extractOpt - Doesn't fail when optional child record is missing`` () =
         // Arrange
         let data = """{ "A": true }"""
+
         // Act
         let res = Decode.fromString ParentOpt.decoder data
+
         // Assert
         match res with
         | Error err -> Assert.Fail err
@@ -280,3 +297,52 @@ type ThothTests () =
             Assert.AreEqual<bool>(true, actual.A.A)
             Assert.AreEqual(None, actual.B)
     
+    [<TestMethod>]
+    member _.``Get.exists - Returns true if property is present`` () =
+        // Arrange
+        let data = """{ "value": null }"""
+
+        // Act
+        let res = Decode.fromString Exists.decoder data
+
+        // Assert
+        match res with
+        | Ok actual -> Assert.AreEqual<bool>(true, actual.Value)
+        | Error err -> Assert.Fail err
+    
+    [<TestMethod>]
+    member _.``Get.exists - Returns false if property is not present`` () =
+        // Arrange
+        let data = "{}"
+
+        // Act
+        let res = Decode.fromString Exists.decoder data
+
+        // Assert
+        match res with
+        | Ok actual -> Assert.AreEqual<bool>(false, actual.Value)
+        | Error err -> Assert.Fail err
+    
+    [<TestMethod>]
+    member _.``Encode.exists - Encodes given value if value is true`` () =
+        // Arrange
+        let exists = { Value = true }
+        let expected = """{"value":null}"""
+
+        // Act
+        let actual = Encode.toString 0 (Exists.encoder exists)
+
+        // Assert
+        Assert.AreEqual<string>(expected, actual)
+    
+    [<TestMethod>]
+    member _.``Encode.exists - Does not encode property if value is false`` () =
+        // Arrange
+        let exists = { Value = false }
+        let expected = """{}"""
+
+        // Act
+        let actual = Encode.toString 0 (Exists.encoder exists)
+
+        // Assert
+        Assert.AreEqual<string>(expected, actual)

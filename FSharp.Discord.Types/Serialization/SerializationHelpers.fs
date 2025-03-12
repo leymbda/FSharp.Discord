@@ -55,6 +55,12 @@ module Encode =
         |> Seq.map (fun (k, v) -> mapper k, encoder v)
         |> Map.ofSeq
         |> Encode.dict
+
+    /// Encode the succeed value to the key if value is true (meaning it exists).
+    let exists (key: string) (succeed: JsonValue) (value: bool) list =
+        match value with
+        | true -> list @ [key, succeed]
+        | false -> list
         
 module Get =
     /// Get a required decoded value.
@@ -80,6 +86,10 @@ module Get =
     /// Extract a child record from the greater json payload that is optional.
     let extractOpt decoder (get: Decode.IGetters) =
         get.Optional.Raw decoder
+
+    /// Get a bool representing whether or not a value is present.
+    let exists key (get: Decode.IGetters) =
+        get.Optional.Raw (Decode.field key (Decode.succeed true)) |> Option.defaultValue false
         
 module UnixTimestamp =
     let decoder path v =
@@ -87,3 +97,5 @@ module UnixTimestamp =
 
     let encoder (v: DateTime) =
         DateTimeOffset v |> _.ToUnixTimeMilliseconds() |> Encode.int64
+
+// TODO: Write proper tests for all helpers here

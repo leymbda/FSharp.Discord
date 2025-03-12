@@ -424,6 +424,15 @@ type SkuType =
 type StickerType = 
     | STANDARD = 1
     | GUILD    = 2
+    
+// https://discord.com/developers/docs/topics/teams#team-member-roles-team-member-role-types
+[<RequireQualifiedAccess>]
+type TeamMemberRoleType =
+    | ADMIN
+    | DEVELOPER
+    | READONLY
+
+// TODO: Owner role type is implied from Team object but not part of the team role serialization, how to handle?
 
 // https://discord.com/developers/docs/events/webhook-events#event-types
 [<RequireQualifiedAccess>]

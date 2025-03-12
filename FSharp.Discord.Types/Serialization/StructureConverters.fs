@@ -4721,8 +4721,37 @@ module Role =
         let [<Literal>] Tags = "tags"
         let [<Literal>] Flags = "flags"
 
-    let decoder: Decoder<Role> = raise (System.NotImplementedException())
-    let encoder: Encoder<Role> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Name = get |> Get.required Property.Name Decode.string
+            Color = get |> Get.required Property.Color Decode.int
+            Hoist = get |> Get.required Property.Hoist Decode.bool
+            Icon = get |> Get.optinull Property.Icon Decode.string
+            UnicodeEmoji = get |> Get.optinull Property.UnicodeEmoji Decode.string
+            Position = get |> Get.required Property.Position Decode.int
+            Permissions = get |> Get.required Property.Permissions Decode.string
+            Managed = get |> Get.required Property.Managed Decode.bool
+            Mentionable = get |> Get.required Property.Mentionable Decode.bool
+            Tags = get |> Get.optional Property.Tags RoleTags.decoder
+            Flags = get |> Get.required Property.Flags Decode.int
+        }) path v
+
+    let encoder (v: Role) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.Color Encode.int v.Color
+            |> Encode.required Property.Hoist Encode.bool v.Hoist
+            |> Encode.optinull Property.Icon Encode.string v.Icon
+            |> Encode.optinull Property.UnicodeEmoji Encode.string v.UnicodeEmoji
+            |> Encode.required Property.Position Encode.int v.Position
+            |> Encode.required Property.Permissions Encode.string v.Permissions
+            |> Encode.required Property.Managed Encode.bool v.Managed
+            |> Encode.required Property.Mentionable Encode.bool v.Mentionable
+            |> Encode.optional Property.Tags RoleTags.encoder v.Tags
+            |> Encode.required Property.Flags Encode.int v.Flags
+        )
 
 module RoleTags =
     module Property =
@@ -4733,10 +4762,25 @@ module RoleTags =
         let [<Literal>] AvailableForPurchase = "available_for_purchase"
         let [<Literal>] GuildConnections = "guild_connections"
 
-    // TODO: These 3 bool properties are the ones that use null or undefined as true or false
+    let decoder path v =
+        Decode.object (fun get -> {
+            BotId = get |> Get.optional Property.BotId Decode.string
+            IntegrationId = get |> Get.optional Property.IntegrationId Decode.string
+            PremiumSubscriber = get |> Get.exists Property.PremiumSubscriber
+            SubscriptionListingId = get |> Get.optional Property.SubscriptionListingId Decode.string
+            AvailableForPurchase = get |> Get.exists Property.AvailableForPurchase
+            GuildConnections = get |> Get.exists Property.GuildConnections
+        }) path v
 
-    let decoder: Decoder<RoleTags> = raise (System.NotImplementedException())
-    let encoder: Encoder<RoleTags> = raise (System.NotImplementedException())
+    let encoder (v: RoleTags) =
+        Encode.object ([]
+            |> Encode.optional Property.BotId Encode.string v.BotId
+            |> Encode.optional Property.IntegrationId Encode.string v.IntegrationId
+            |> Encode.exists Property.PremiumSubscriber Encode.nil v.PremiumSubscriber
+            |> Encode.optional Property.SubscriptionListingId Encode.string v.SubscriptionListingId
+            |> Encode.exists Property.AvailableForPurchase Encode.nil v.AvailableForPurchase
+            |> Encode.exists Property.GuildConnections Encode.nil v.GuildConnections
+        )
 
 module RateLimitResponse =
     module Property =
@@ -4745,8 +4789,21 @@ module RateLimitResponse =
         let [<Literal>] Global = "global"
         let [<Literal>] Code = "code"
 
-    let decoder: Decoder<RateLimitResponse> = raise (System.NotImplementedException())
-    let encoder: Encoder<RateLimitResponse> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Message = get |> Get.required Property.Message Decode.string
+            RetryAfter = get |> Get.required Property.RetryAfter Decode.float
+            Global = get |> Get.required Property.Global Decode.bool
+            Code = get |> Get.optional Property.Code Decode.Enum.int<JsonErrorCode>
+        }) path v
+
+    let encoder (v: RateLimitResponse) =
+        Encode.object ([]
+            |> Encode.required Property.Message Encode.string v.Message
+            |> Encode.required Property.RetryAfter Encode.float v.RetryAfter
+            |> Encode.required Property.Global Encode.bool v.Global
+            |> Encode.optional Property.Code Encode.Enum.int v.Code
+        )
 
 module Team =
     module Property =
@@ -4756,8 +4813,23 @@ module Team =
         let [<Literal>] Name = "name"
         let [<Literal>] OwnerUserId = "owner_user_id"
 
-    let decoder: Decoder<Team> = raise (System.NotImplementedException())
-    let encoder: Encoder<Team> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Icon = get |> Get.nullable Property.Icon Decode.string
+            Id = get |> Get.required Property.Id Decode.string
+            Members = get |> Get.required Property.Members (Decode.list TeamMember.decoder)
+            Name = get |> Get.required Property.Name Decode.string
+            OwnerUserId = get |> Get.required Property.OwnerUserId Decode.string
+        }) path v
+
+    let encoder (v: Team) =
+        Encode.object ([]
+            |> Encode.nullable Property.Icon Encode.string v.Icon
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.Members (List.map TeamMember.encoder >> Encode.list) v.Members
+            |> Encode.required Property.Name Encode.string v.Name
+            |> Encode.required Property.OwnerUserId Encode.string v.OwnerUserId
+        )
 
 module TeamMember =
     module Property =
@@ -4766,7 +4838,20 @@ module TeamMember =
         let [<Literal>] User = "user"
         let [<Literal>] Role = "role"
 
-    let decoder: Decoder<TeamMember> = raise (System.NotImplementedException())
-    let encoder: Encoder<TeamMember> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            MembershipState = get |> Get.required Property.MembershipState Decode.Enum.int<MembershipState>
+            TeamId = get |> Get.required Property.TeamId Decode.string
+            User = get |> Get.required Property.User User.Partial.decoder
+            Role = get |> Get.required Property.Role TeamMemberRoleType.decoder
+        }) path v
+
+    let encoder (v: TeamMember) =
+        Encode.object ([]
+            |> Encode.required Property.MembershipState Encode.Enum.int v.MembershipState
+            |> Encode.required Property.TeamId Encode.string v.TeamId
+            |> Encode.required Property.User User.Partial.encoder v.User
+            |> Encode.required Property.Role TeamMemberRoleType.encoder v.Role
+        )
 
 // TODO: Count how many instances of encode/decode for optional and nullable and look for mismatches
