@@ -16,6 +16,7 @@
 		<Compile Include="Flags.fs" />
 		<Compile Include="Enums.fs" />
 		<Compile Include="Structures.fs" />
+		<Compile Include="Serialization\SerializationHelpers.fs" />
 		<Compile Include="Serialization\TypeConverters.fs" />
 		<Compile Include="Serialization\EnumConverters.fs" />
 		<Compile Include="Serialization\StructureConverters.fs" />

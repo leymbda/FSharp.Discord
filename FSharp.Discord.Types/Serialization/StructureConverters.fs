@@ -4015,32 +4015,102 @@ module Poll =
         let [<Literal>] LayoutType = "layout_type"
         let [<Literal>] Results = "results"
 
-    let decoder: Decoder<Poll> = raise (System.NotImplementedException())
-    let encoder: Encoder<Poll> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Question = get |> Get.required Property.Question PollMedia.decoder
+            Answers = get |> Get.required Property.Answers (Decode.list PollAnswer.decoder)
+            Expiry = get |> Get.nullable Property.Expiry Decode.datetimeUtc
+            AllowMultiselect = get |> Get.required Property.AllowMultiselect Decode.bool
+            LayoutType = get |> Get.required Property.LayoutType Decode.Enum.int<PollLayout>
+            Results = get |> Get.optional Property.Results PollResults.decoder
+        }) path v
+
+    let encoder (v: Poll) =
+        Encode.object ([]
+            |> Encode.required Property.Question PollMedia.encoder v.Question
+            |> Encode.required Property.Answers (List.map PollAnswer.encoder >> Encode.list) v.Answers
+            |> Encode.optional Property.Expiry Encode.datetime v.Expiry
+            |> Encode.required Property.AllowMultiselect Encode.bool v.AllowMultiselect
+            |> Encode.required Property.LayoutType Encode.Enum.int v.LayoutType
+            |> Encode.optional Property.Results PollResults.encoder v.Results
+        )
+
+module PollCreateRequest =
+    module Property =
+        let [<Literal>] Question = "question"
+        let [<Literal>] Answers = "answers"
+        let [<Literal>] Duration = "duration"
+        let [<Literal>] AllowMultiselect = "allow_multiselect"
+        let [<Literal>] LayoutType = "layout_type"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Question = get |> Get.required Property.Question PollMedia.decoder
+            Answers = get |> Get.required Property.Answers (Decode.list PollAnswer.decoder)
+            Duration = get |> Get.optional Property.Duration Decode.int |> Option.defaultValue 24
+            AllowMultiselect = get |> Get.optional Property.AllowMultiselect Decode.bool |> Option.defaultValue false
+            LayoutType = get |> Get.optional Property.LayoutType Decode.Enum.int<PollLayout> |> Option.defaultValue PollLayout.DEFAULT
+        }) path v
+
+    let encoder (v: PollCreateRequest) =
+        Encode.object ([]
+            |> Encode.required Property.Question PollMedia.encoder v.Question
+            |> Encode.required Property.Answers (List.map PollAnswer.encoder >> Encode.list) v.Answers
+            |> Encode.optional Property.Duration Encode.int (Some v.Duration)
+            |> Encode.optional Property.AllowMultiselect Encode.bool (Some v.AllowMultiselect)
+            |> Encode.optional Property.LayoutType Encode.Enum.int (Some v.LayoutType)
+        )
 
 module PollMedia =
     module Property =
         let [<Literal>] Text = "text"
         let [<Literal>] Emoji = "emoji"
 
-    let decoder: Decoder<PollMedia> = raise (System.NotImplementedException())
-    let encoder: Encoder<PollMedia> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Text = get |> Get.optional Property.Text Decode.string
+            Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
+        }) path v
+
+    let encoder (v: PollMedia) =
+        Encode.object ([]
+            |> Encode.optional Property.Text Encode.string v.Text
+            |> Encode.optional Property.Emoji Emoji.Partial.encoder v.Emoji
+        )
 
 module PollAnswer =
     module Property =
         let [<Literal>] AnswerId = "answer_id"
         let [<Literal>] PollMedia = "poll_media"
 
-    let decoder: Decoder<PollAnswer> = raise (System.NotImplementedException())
-    let encoder: Encoder<PollAnswer> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            AnswerId = get |> Get.required Property.AnswerId Decode.int
+            PollMedia = get |> Get.required Property.PollMedia PollMedia.decoder
+        }) path v
+
+    let encoder (v: PollAnswer) =
+        Encode.object ([]
+            |> Encode.required Property.AnswerId Encode.int v.AnswerId
+            |> Encode.required Property.PollMedia PollMedia.encoder v.PollMedia
+        )
 
 module PollResults =
     module Property =
         let [<Literal>] IsFinalized = "is_finalized"
         let [<Literal>] AnswerCounts = "answer_counts"
 
-    let decoder: Decoder<PollResults> = raise (System.NotImplementedException())
-    let encoder: Encoder<PollResults> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            IsFinalized = get |> Get.required Property.IsFinalized Decode.bool
+            AnswerCounts = get |> Get.required Property.AnswerCounts (Decode.list PollAnswerCount.decoder)
+        }) path v
+
+    let encoder (v: PollResults) =
+        Encode.object ([]
+            |> Encode.required Property.IsFinalized Encode.bool v.IsFinalized
+            |> Encode.required Property.AnswerCounts (List.map PollAnswerCount.encoder >> Encode.list) v.AnswerCounts
+        )
 
 module PollAnswerCount =
     module Property =
@@ -4048,8 +4118,19 @@ module PollAnswerCount =
         let [<Literal>] Count = "count"
         let [<Literal>] MeVoted = "me_voted"
 
-    let decoder: Decoder<PollAnswerCount> = raise (System.NotImplementedException())
-    let encoder: Encoder<PollAnswerCount> = raise (System.NotImplementedException())
+    let decoder path v =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.int
+            Count = get |> Get.required Property.Count Decode.int
+            MeVoted = get |> Get.required Property.MeVoted Decode.bool
+        }) path v
+
+    let encoder (v: PollAnswerCount) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.int v.Id
+            |> Encode.required Property.Count Encode.int v.Count
+            |> Encode.required Property.MeVoted Encode.bool v.MeVoted
+        )
 
 module Sku =
     module Property =

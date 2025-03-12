@@ -2205,7 +2205,14 @@ type Poll = {
     Results: PollResults option
 }
 
-// TODO: Is "Poll Create Request Object Structure" needed?
+// https://discord.com/developers/docs/resources/poll#poll-create-request-object-poll-create-request-object-structure
+type PollCreateRequest = {
+    Question: PollMedia
+    Answers: PollAnswer list
+    Duration: int // TODO: up to 32 days
+    AllowMultiselect: bool
+    LayoutType: PollLayout
+}
 
 // https://discord.com/developers/docs/resources/poll#poll-media-object-poll-media-object-structure
 type PollMedia = {
@@ -2215,7 +2222,7 @@ type PollMedia = {
 
 // https://discord.com/developers/docs/resources/poll#poll-answer-object
 type PollAnswer = {
-    AnswerId: int
+    AnswerId: int // TODO: "Only sent as part of responses from Discord's API/Gateway"
     PollMedia: PollMedia
 }
 
@@ -2227,7 +2234,7 @@ type PollResults = {
 
 // https://discord.com/developers/docs/resources/poll#poll-results-object-poll-answer-count-object-structure
 type PollAnswerCount = {
-    Id: string
+    Id: int
     Count: int
     MeVoted: bool
 }
