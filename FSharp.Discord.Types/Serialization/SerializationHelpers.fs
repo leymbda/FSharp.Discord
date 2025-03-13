@@ -98,4 +98,20 @@ module UnixTimestamp =
     let encoder (v: DateTime) =
         DateTimeOffset v |> _.ToUnixTimeMilliseconds() |> Encode.int64
 
+module IntPair =
+    let decoder path v =
+        Decode.list Decode.int
+        |> Decode.andThen (function
+            | [a; b] -> Decode.succeed (a, b)
+            | ints ->
+                let stringified = String.Join(", ", ints)
+                Decode.fail $"Expected a list of two integers but instead got: {stringified}"
+        )
+        |> fun f -> f path v
+
+    let encoder (v: int * int) =
+        v
+        |> fun (a, b) -> [a; b]
+        |> (List.map Encode.int >> Encode.list)
+
 // TODO: Write proper tests for all helpers here

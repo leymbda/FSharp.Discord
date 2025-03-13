@@ -996,7 +996,133 @@ module UpdatePresenceSendEvent =
         let decoder: Decoder<PartialUpdatePresenceSendEvent> = raise (System.NotImplementedException())
         let encoder: Encoder<PartialUpdatePresenceSendEvent> = raise (System.NotImplementedException())
 
-// TODO: Add gateway receive event serializers here
+module HeartbeatReceiveEvent =
+    let decoder = Decode.nil
+    let encoder (_: HeartbeatReceiveEvent) = Encode.nil
+
+module HeartbeatAckReceiveEvent =
+    let decoder = Decode.nil
+    let encoder (_: HeartbeatReceiveEvent) = Encode.nil
+
+module HelloReceiveEvent =
+    module Property =
+        let [<Literal>] HeartbeatInterval = "heartbeat_interval"
+
+    let decoder: Decoder<HelloReceiveEvent> =
+        Decode.object (fun get -> {
+            HeartbeatInterval = get |> Get.required Property.HeartbeatInterval Decode.int
+        })
+
+    let encoder (v: HelloReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.HeartbeatInterval Encode.int v.HeartbeatInterval
+        )
+
+module ReadyReceiveEvent =
+    module Property =
+        let [<Literal>] Version = "v"
+        let [<Literal>] User = "user"
+        let [<Literal>] Guilds = "guilds"
+        let [<Literal>] SessionId = "session_id"
+        let [<Literal>] ResumeGatewayUrl = "resume_gateway_url"
+        let [<Literal>] Shard = "shard"
+        let [<Literal>] Application = "application"
+
+    let decoder: Decoder<ReadyReceiveEvent> =
+        Decode.object (fun get -> {
+            Version = get |> Get.required Property.Version Decode.int
+            User = get |> Get.required Property.User User.decoder
+            Guilds = get |> Get.required Property.Guilds (Decode.list Guild.Unavailable.decoder)
+            SessionId = get |> Get.required Property.SessionId Decode.string
+            ResumeGatewayUrl = get |> Get.required Property.ResumeGatewayUrl Decode.string
+            Shard = get |> Get.optional Property.Shard IntPair.decoder
+            Application = get |> Get.required Property.Application Application.Partial.decoder
+        })
+
+    let encoder (v: ReadyReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Version Encode.int v.Version
+            |> Encode.required Property.User User.encoder v.User
+            |> Encode.required Property.Guilds (List.map Guild.Unavailable.encoder >> Encode.list) v.Guilds
+            |> Encode.required Property.SessionId Encode.string v.SessionId
+            |> Encode.required Property.ResumeGatewayUrl Encode.string v.ResumeGatewayUrl
+            |> Encode.optional Property.Shard IntPair.encoder v.Shard
+            |> Encode.required Property.Application Application.Partial.encoder v.Application
+        )
+
+module ResumedReceiveEvent =
+    let decoder = Decode.nil
+    let encoder (_: HeartbeatReceiveEvent) = Encode.nil
+
+module ReconnectReceiveEvent =
+    let decoder = Decode.nil
+    let encoder (_: HeartbeatReceiveEvent) = Encode.nil
+
+module InvalidSessionReceiveEvent =
+    let decoder: Decoder<InvalidSessionReceiveEvent> = Decode.bool
+    let encoder (v: InvalidSessionReceiveEvent) = Encode.bool v
+
+module ApplicationCommandPermissionsUpdateReceiveEvent =
+    let decoder: Decoder<ApplicationCommandPermissionsUpdateReceiveEvent> = ApplicationCommandPermission.decoder
+    let encoder (v: ApplicationCommandPermissionsUpdateReceiveEvent) = ApplicationCommandPermission.encoder
+
+module AutoModerationRuleCreateReceiveEvent =
+    let decoder: Decoder<AutoModerationRuleCreateReceiveEvent> = AutoModerationRule.decoder
+    let encoder (v: AutoModerationRuleCreateReceiveEvent) = AutoModerationRule.encoder
+
+module AutoModerationRuleUpdateReceiveEvent =
+    let decoder: Decoder<AutoModerationRuleUpdateReceiveEvent> = AutoModerationRule.decoder
+    let encoder (v: AutoModerationRuleUpdateReceiveEvent) = AutoModerationRule.encoder
+
+module AutoModerationRuleDeleteReceiveEvent =
+    let decoder: Decoder<AutoModerationRuleDeleteReceiveEvent> = AutoModerationRule.decoder
+    let encoder (v: AutoModerationRuleDeleteReceiveEvent) = AutoModerationRule.encoder
+
+module AutoModerationActionExecutionReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Action = "action"
+        let [<Literal>] RuleId = "rule_id"
+        let [<Literal>] RuleTriggerType = "rule_trigger_type"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] MessageId = "message_id"
+        let [<Literal>] AlertSystemMessageId = "alert_system_message_id"
+        let [<Literal>] Content = "content"
+        let [<Literal>] MatchedKeyword = "matched_keyword"
+        let [<Literal>] MatchedContent = "matched_content"
+
+    let decoder: Decoder<AutoModerationActionExecutionReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Action = get |> Get.required Property.Action AutoModerationAction.decoder
+            RuleId = get |> Get.required Property.RuleId Decode.string
+            RuleTriggerType = get |> Get.required Property.RuleTriggerType Decode.Enum.int<AutoModerationTriggerType>
+            UserId = get |> Get.required Property.UserId Decode.string
+            ChannelId = get |> Get.optional Property.ChannelId Decode.string
+            MessageId = get |> Get.optional Property.MessageId Decode.string
+            AlertSystemMessageId = get |> Get.optional Property.AlertSystemMessageId Decode.string
+            Content = get |> Get.optional Property.Content Decode.string
+            MatchedKeyword = get |> Get.nullable Property.MatchedKeyword Decode.string
+            MatchedContent = get |> Get.optinull Property.MatchedContent Decode.string
+        })
+
+    let encoder (v: AutoModerationActionExecutionReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Action AutoModerationAction.encoder v.Action
+            |> Encode.required Property.RuleId Encode.string v.RuleId
+            |> Encode.required Property.RuleTriggerType Encode.Enum.int v.RuleTriggerType
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.optional Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.MessageId Encode.string v.MessageId
+            |> Encode.optional Property.AlertSystemMessageId Encode.string v.AlertSystemMessageId
+            |> Encode.optional Property.Content Encode.string v.Content
+            |> Encode.nullable Property.MatchedKeyword Encode.string v.MatchedKeyword
+            |> Encode.optinull Property.MatchedContent Encode.string v.MatchedContent
+        )
+
+// TODO: Continue gateway receive events (ChannelCreateReceiveEvent)
 
 module Activity =
     module Property =
@@ -2278,7 +2404,7 @@ module Guild =
         let [<Literal>] SafetyAlertsChannelId = "safety_alerts_channel_id"
         let [<Literal>] IncidentsData = "incidents_data"
 
-    let decoder path v =
+    let decoder: Decoder<Guild> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
@@ -2323,7 +2449,7 @@ module Guild =
             PremiumProgressBarEnabled = get |> Get.required Property.PremiumProgressBarEnabled Decode.bool
             SafetyAlertsChannelId = get |> Get.nullable Property.SafetyAlertsChannelId Decode.string
             IncidentsData = get |> Get.nullable Property.IncidentsData IncidentsData.decoder
-        }) path v
+        })
 
     let encoder (v: Guild) =
         Encode.object ([]
@@ -2372,7 +2498,7 @@ module Guild =
         )
 
     module Partial =
-        let decoder path v =
+        let decoder: Decoder<PartialGuild> =
             Decode.object (fun get -> {
                 Id = get |> Get.required Property.Id Decode.string
                 Name = get |> Get.optional Property.Name Decode.string
@@ -2417,7 +2543,7 @@ module Guild =
                 PremiumProgressBarEnabled = get |> Get.optional Property.PremiumProgressBarEnabled Decode.bool
                 SafetyAlertsChannelId = get |> Get.optinull Property.SafetyAlertsChannelId Decode.string
                 IncidentsData = get |> Get.optinull Property.IncidentsData IncidentsData.decoder
-            }) path v
+            })
 
         let encoder (v: PartialGuild) =
             Encode.object ([]
@@ -2465,22 +2591,22 @@ module Guild =
             |> Encode.optinull Property.IncidentsData IncidentsData.encoder v.IncidentsData
             )
 
-module UnavailableGuild =
-    module Property =
-        let [<Literal>] Id = "id"
-        let [<Literal>] Unavailable = "unavailable"
+    module Unavailable =
+        module Property =
+            let [<Literal>] Id = "id"
+            let [<Literal>] Unavailable = "unavailable"
 
-    let decoder path v =
-        Decode.object (fun get -> {
-            Id = get |> Get.required Property.Id Decode.string
-            Unavailable = get |> Get.required Property.Unavailable Decode.bool
-        }) path v
+        let decoder: Decoder<UnavailableGuild> =
+            Decode.object (fun get -> {
+                Id = get |> Get.required Property.Id Decode.string
+                Unavailable = get |> Get.required Property.Unavailable Decode.bool
+            })
 
-    let encoder (v: UnavailableGuild) =
-        Encode.object ([]
-            |> Encode.required Property.Id Encode.string v.Id
-            |> Encode.required Property.Unavailable Encode.bool v.Unavailable
-        )
+        let encoder (v: UnavailableGuild) =
+            Encode.object ([]
+                |> Encode.required Property.Id Encode.string v.Id
+                |> Encode.required Property.Unavailable Encode.bool v.Unavailable
+            )
 
 module GuildPreview =
     module Property =

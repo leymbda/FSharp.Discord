@@ -451,18 +451,18 @@ type HeartbeatAckReceiveEvent = unit
 
 // https://discord.com/developers/docs/topics/gateway#hello-event-example-hello-event
 type HelloReceiveEvent = {
-    [<JsonPropertyName "heartbeat_interval">] HeartbeatInterval: int
+    HeartbeatInterval: int
 }
 
 // https://discord.com/developers/docs/topics/gateway-events#ready-ready-event-fields
 type ReadyReceiveEvent = {
-    [<JsonPropertyName "v">] Version: int
-    [<JsonPropertyName "user">] User: User
-    [<JsonPropertyName "guilds">] Guilds: UnavailableGuild list
-    [<JsonPropertyName "session_id">] SessionId: string
-    [<JsonPropertyName "resume_gateway_url">] ResumeGatewayUrl: string
-    [<JsonPropertyName "shard">] Shard: (int * int) option
-    [<JsonPropertyName "application">] Application: PartialApplication
+    Version: int
+    User: User
+    Guilds: UnavailableGuild list
+    SessionId: string
+    ResumeGatewayUrl: string
+    Shard: (int * int) option
+    Application: PartialApplication
 }
 
 // https://discord.com/developers/docs/events/gateway-events#resumed
@@ -488,17 +488,17 @@ type AutoModerationRuleDeleteReceiveEvent = AutoModerationRule
 
 // https://discord.com/developers/docs/events/gateway-events#auto-moderation-action-execution-auto-moderation-action-execution-event-fields
 type AutoModerationActionExecutionReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "action">] Action: AutoModerationAction
-    [<JsonPropertyName "rule_id">] RuleId: string
-    [<JsonPropertyName "rule_trigger_type">] RuleTriggerType: AutoModerationTriggerType
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "channel_id">] ChannelId: string option
-    [<JsonPropertyName "message_id">] MessageId: string option
-    [<JsonPropertyName "alert_system_message_id">] AlertSystemMessageId: string option
-    [<JsonPropertyName "content">] Content: string option
-    [<JsonPropertyName "matched_keyword">] MatchedKeyword: string option
-    [<JsonPropertyName "matched_content">] MatchedContent: string option
+    GuildId: string
+    Action: AutoModerationAction
+    RuleId: string
+    RuleTriggerType: AutoModerationTriggerType
+    UserId: string
+    ChannelId: string option
+    MessageId: string option
+    AlertSystemMessageId: string option
+    Content: string option
+    MatchedKeyword: string option
+    MatchedContent: string option option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#channel-create
