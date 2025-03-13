@@ -884,8 +884,21 @@ module GatewayEventPayload =
         let [<Literal>] Sequence = "s"
         let [<Literal>] EventName = "t"
 
-    let decoder<'a>: Decoder<GatewayEventPayload<'a>> = raise (System.NotImplementedException())
-    let encoder<'a>: Encoder<GatewayEventPayload<'a>> = raise (System.NotImplementedException())
+    let decoder<'a> (payloadDecoder: Decoder<'a>): Decoder<GatewayEventPayload<'a>> =
+        Decode.object (fun get -> {
+            Opcode = get |> Get.required Property.Opcode Decode.Enum.int<GatewayOpcode>
+            Data = get |> Get.required Property.Data payloadDecoder
+            Sequence = get |> Get.nullable Property.Sequence Decode.int
+            EventName = get |> Get.nullable Property.EventName Decode.string
+        })
+
+    let encoder<'a> (payloadEncoder: Encoder<'a>) (v: GatewayEventPayload<'a>) =
+        Encode.object ([]
+            |> Encode.required Property.Opcode Encode.Enum.int v.Opcode
+            |> Encode.required Property.Data payloadEncoder v.Data
+            |> Encode.nullable Property.Sequence Encode.int v.Sequence
+            |> Encode.nullable Property.EventName Encode.string v.EventName
+        )
 
 module IdentifySendEvent =
     module Property =
@@ -897,8 +910,27 @@ module IdentifySendEvent =
         let [<Literal>] Presence = "presence"
         let [<Literal>] Intents = "intents"
 
-    let decoder: Decoder<IdentifySendEvent> = raise (System.NotImplementedException())
-    let encoder: Encoder<IdentifySendEvent> = raise (System.NotImplementedException())
+    let decoder: Decoder<IdentifySendEvent> =
+        Decode.object (fun get -> {
+            Token = get |> Get.required Property.Token Decode.string
+            Properties = get |> Get.required Property.Properties IdentifyConnectionProperties.decoder
+            Compress = get |> Get.optional Property.Compress Decode.bool
+            LargeThreshold = get |> Get.optional Property.LargeThreshold Decode.int
+            Shard = get |> Get.optional Property.Shard IntPair.decoder
+            Presence = get |> Get.optional Property.Presence UpdatePresenceSendEvent.decoder
+            Intents = get |> Get.required Property.Intents Decode.int
+        })
+
+    let encoder (v: IdentifySendEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Token Encode.string v.Token
+            |> Encode.required Property.Properties IdentifyConnectionProperties.encoder v.Properties
+            |> Encode.optional Property.Compress Encode.bool v.Compress
+            |> Encode.optional Property.LargeThreshold Encode.int v.LargeThreshold
+            |> Encode.optional Property.Shard IntPair.encoder v.Shard
+            |> Encode.optional Property.Presence UpdatePresenceSendEvent.encoder v.Presence
+            |> Encode.required Property.Intents Encode.int v.Intents
+        )
 
 module IdentifyConnectionProperties =
     module Property =
@@ -946,8 +978,19 @@ module ResumeSendEvent =
         let [<Literal>] SessionId = "session_id"
         let [<Literal>] Sequence = "seq"
 
-    let decoder: Decoder<ResumeSendEvent> = raise (System.NotImplementedException())
-    let encoder: Encoder<ResumeSendEvent> = raise (System.NotImplementedException())
+    let decoder: Decoder<ResumeSendEvent> =
+        Decode.object (fun get -> {
+            Token = get |> Get.required Property.Token Decode.string
+            SessionId = get |> Get.required Property.SessionId Decode.string
+            Sequence = get |> Get.required Property.Sequence Decode.int
+        })
+
+    let encoder (v: ResumeSendEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Token Encode.string v.Token
+            |> Encode.required Property.SessionId Encode.string v.SessionId
+            |> Encode.required Property.Sequence Encode.int v.Sequence
+        )
 
 module HeartbeatSendEvent =
     let decoder: Decoder<HeartbeatSendEvent> = Decode.option Decode.int
@@ -962,8 +1005,39 @@ module RequestGuildMembersSendEvent =
         let [<Literal>] UserIds = "user_ids"
         let [<Literal>] Nonce = "nonce"
 
-    let decoder: Decoder<RequestGuildMembersSendEvent> = raise (System.NotImplementedException())
-    let encoder: Encoder<RequestGuildMembersSendEvent> = raise (System.NotImplementedException())
+    let decoder: Decoder<RequestGuildMembersSendEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Query = get |> Get.optional Property.Query Decode.string
+            Limit = get |> Get.required Property.Limit Decode.int
+            Presences = get |> Get.optional Property.Presences Decode.bool
+            UserIds = get |> Get.optional Property.UserIds (Decode.list Decode.string)
+            Nonce = get |> Get.optional Property.Nonce Decode.string
+        })
+
+    let encoder (v: RequestGuildMembersSendEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Query Encode.string v.Query
+            |> Encode.required Property.Limit Encode.int v.Limit
+            |> Encode.optional Property.Presences Encode.bool v.Presences
+            |> Encode.optional Property.UserIds (List.map Encode.string >> Encode.list) v.UserIds
+            |> Encode.optional Property.Nonce Encode.string v.Nonce
+        )
+
+module RequestSoundboardSoundsSendEvent =
+    module Property =
+        let [<Literal>] GuildIds = "guild_ids"
+
+    let decoder: Decoder<RequestSoundboardSoundsSendEvent> =
+        Decode.object (fun get -> {
+            GuildIds = get |> Get.required Property.GuildIds (Decode.list Decode.string)
+        })
+
+    let encoder (v: RequestSoundboardSoundsSendEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildIds (List.map Encode.string >> Encode.list) v.GuildIds
+        )
 
 module UpdateVoiceStateSendEvent =
     module Property =
@@ -972,15 +1046,13 @@ module UpdateVoiceStateSendEvent =
         let [<Literal>] SelfMute = "self_mute"
         let [<Literal>] SelfDeaf = "self_deaf"
 
-    let decoder: Decoder<UpdateVoiceStateSendEvent> = raise (System.NotImplementedException())
-    let encoder: Encoder<UpdateVoiceStateSendEvent> = raise (System.NotImplementedException())
-
-module RequestSoundboardSoundsSendEvent =
-    module Property =
-        let [<Literal>] GuildId = "guild_id"
-
-    let decoder: Decoder<RequestSoundboardSoundsSendEvent> = raise (System.NotImplementedException())
-    let encoder: Encoder<RequestSoundboardSoundsSendEvent> = raise (System.NotImplementedException())
+    let decoder: Decoder<UpdateVoiceStateSendEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            ChannelId = get |> Get.nullable Property.ChannelId Decode.string
+            SelfMute = get |> Get.required Property.SelfMute Decode.bool
+            SelfDeaf = get |> Get.required Property.SelfDeaf Decode.bool
+        })
 
 module UpdatePresenceSendEvent =
     module Property =
@@ -989,12 +1061,38 @@ module UpdatePresenceSendEvent =
         let [<Literal>] Status = "status"
         let [<Literal>] Afk = "afk"
 
-    let decoder: Decoder<UpdatePresenceSendEvent> = raise (System.NotImplementedException())
-    let encoder: Encoder<UpdatePresenceSendEvent> = raise (System.NotImplementedException())
+    let decoder: Decoder<UpdatePresenceSendEvent> =
+        Decode.object (fun get -> {
+            Since = get |> Get.nullable Property.Since UnixTimestamp.decoder
+            Activities = get |> Get.required Property.Activities (Decode.list Activity.decoder)
+            Status = get |> Get.required Property.Status Status.decoder
+            Afk = get |> Get.required Property.Afk Decode.bool
+        })
+
+    let encoder (v: UpdatePresenceSendEvent) =
+        Encode.object ([]
+            |> Encode.nullable Property.Since UnixTimestamp.encoder v.Since
+            |> Encode.required Property.Activities (List.map Activity.encoder >> Encode.list) v.Activities
+            |> Encode.required Property.Status Status.encoder v.Status
+            |> Encode.required Property.Afk Encode.bool v.Afk
+        )
 
     module Partial =
-        let decoder: Decoder<PartialUpdatePresenceSendEvent> = raise (System.NotImplementedException())
-        let encoder: Encoder<PartialUpdatePresenceSendEvent> = raise (System.NotImplementedException())
+        let decoder: Decoder<PartialUpdatePresenceSendEvent> =
+            Decode.object (fun get -> {
+                Since = get |> Get.optinull Property.Since UnixTimestamp.decoder
+                Activities = get |> Get.optional Property.Activities (Decode.list Activity.decoder)
+                Status = get |> Get.optional Property.Status Status.decoder
+                Afk = get |> Get.optional Property.Afk Decode.bool
+            })
+
+        let encoder (v: PartialUpdatePresenceSendEvent) =
+            Encode.object ([]
+                |> Encode.optinull Property.Since UnixTimestamp.encoder v.Since
+                |> Encode.optional Property.Activities (List.map Activity.encoder >> Encode.list) v.Activities
+                |> Encode.optional Property.Status Status.encoder v.Status
+                |> Encode.optional Property.Afk Encode.bool v.Afk
+            )
 
 module HeartbeatReceiveEvent =
     let decoder = Decode.nil

@@ -415,6 +415,11 @@ type RequestGuildMembersSendEvent = {
     Nonce: string option
 }
 
+// https://discord.com/developers/docs/events/gateway-events#request-soundboard-sounds
+type RequestSoundboardSoundsSendEvent = {
+    GuildIds: string list 
+}
+
 // https://discord.com/developers/docs/topics/gateway-events#update-voice-state-gateway-voice-state-update-structure
 type UpdateVoiceStateSendEvent = {
     GuildId: string
@@ -423,21 +428,16 @@ type UpdateVoiceStateSendEvent = {
     SelfDeaf: bool
 }
 
-// https://discord.com/developers/docs/events/gateway-events#request-soundboard-sounds
-type RequestSoundboardSoundsSendEvent = {
-    GuildIds: string list 
-}
-
 // https://discord.com/developers/docs/topics/gateway-events#update-presence-gateway-presence-update-structure
 type UpdatePresenceSendEvent = {
-    Since: int option
+    Since: DateTime option
     Activities: Activity list
     Status: Status
     Afk: bool
 }
 
 type PartialUpdatePresenceSendEvent = {
-    Since: int option
+    Since: DateTime option option
     Activities: Activity list option
     Status: Status option
     Afk: bool option
