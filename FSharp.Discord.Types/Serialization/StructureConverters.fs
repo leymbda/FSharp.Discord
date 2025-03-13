@@ -1220,7 +1220,277 @@ module AutoModerationActionExecutionReceiveEvent =
             |> Encode.optinull Property.MatchedContent Encode.string v.MatchedContent
         )
 
-// TODO: Continue gateway receive events (ChannelCreateReceiveEvent)
+// TODO: Add property modules to all unimplemented modules below
+// TODO: Implement encoders and decoders below
+
+module ChannelCreateReceiveEvent =
+    let decoder: Decoder<ChannelCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ChannelCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module ChannelUpdateReceiveEvent =
+    let decoder: Decoder<ChannelUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ChannelUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module ChannelDeleteReceiveEvent =
+    let decoder: Decoder<ChannelDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ChannelDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module ThreadCreateReceiveEvent =
+    let decoder: Decoder<ThreadCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ThreadCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module ThreadCreateReceiveEventExtraFields =
+    let decoder: Decoder<ThreadCreateReceiveEventExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: ThreadCreateReceiveEventExtraFields) = raise (System.NotImplementedException())
+
+module ThreadUpdateReceiveEvent =
+    let decoder: Decoder<ThreadUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ThreadUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module ThreadDeleteReceiveEvent =
+    let decoder: Decoder<ThreadDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ThreadDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module ThreadListSyncReceiveEvent =
+    let decoder: Decoder<ThreadListSyncReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ThreadListSyncReceiveEvent) = raise (System.NotImplementedException())
+
+module ThreadMemberUpdateReceiveEvent =
+    let decoder: Decoder<ThreadMemberUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ThreadMemberUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module ThreadMemberUpdateEventExtraFields =
+    let decoder: Decoder<ThreadMemberUpdateEventExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: ThreadMemberUpdateEventExtraFields) = raise (System.NotImplementedException())
+
+module ThreadMembersUpdateReceiveEvent =
+    let decoder: Decoder<ThreadMembersUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ThreadMembersUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module ChannelPinsUpdateReceiveEvent =
+    let decoder: Decoder<ChannelPinsUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: ChannelPinsUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module EntitlementCreateReceiveEvent =
+    let decoder: Decoder<EntitlementCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: EntitlementCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module EntitlementUpdateReceiveEvent =
+    let decoder: Decoder<EntitlementUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: EntitlementUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module EntitlementDeleteReceiveEvent =
+    let decoder: Decoder<EntitlementDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: EntitlementDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildCreateReceiveEvent =
+    let decoder: Decoder<GuildCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildCreateReceiveEventAvailableGuild =
+    let decoder: Decoder<GuildCreateReceiveEventAvailableGuild> = raise (System.NotImplementedException())
+    let encoder (v: GuildCreateReceiveEventAvailableGuild) = raise (System.NotImplementedException())
+
+module GuildCreateReceiveEventAvailableGuildExtraFields =
+    let decoder: Decoder<GuildCreateReceiveEventAvailableGuildExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: GuildCreateReceiveEventAvailableGuildExtraFields) = raise (System.NotImplementedException())
+
+module GuildUpdateReceiveEvent =
+    let decoder: Decoder<GuildUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildDeleteReceiveEvent =
+    let decoder: Decoder<GuildDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildAuditLogEntryCreateReceiveEvent =
+    let decoder: Decoder<GuildAuditLogEntryCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildAuditLogEntryCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildAuditLogEntryCreateReceiveEventExtraFields =
+    let decoder: Decoder<GuildAuditLogEntryCreateReceiveEventExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: GuildAuditLogEntryCreateReceiveEventExtraFields) = raise (System.NotImplementedException())
+
+module GuildBanAddReceiveEvent =
+    let decoder: Decoder<GuildBanAddReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildBanAddReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildBanRemoveReceiveEvent =
+    let decoder: Decoder<GuildBanRemoveReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildBanRemoveReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildEmojisUpdateReceiveEvent =
+    let decoder: Decoder<GuildEmojisUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildEmojisUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildStickersUpdateReceiveEvent =
+    let decoder: Decoder<GuildStickersUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildStickersUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildIntegrationsUpdateReceiveEvent =
+    let decoder: Decoder<GuildIntegrationsUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildIntegrationsUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildMemberAddReceiveEvent =
+    let decoder: Decoder<GuildMemberAddReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildMemberAddReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildMemberAddReceiveEventExtraFields =
+    let decoder: Decoder<GuildMemberAddReceiveEventExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: GuildMemberAddReceiveEventExtraFields) = raise (System.NotImplementedException())
+
+module GuildMemberRemoveReceiveEvent =
+    let decoder: Decoder<GuildMemberRemoveReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildMemberRemoveReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildMemberUpdateReceiveEvent =
+    let decoder: Decoder<GuildMemberUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildMemberUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildMembersChunkReceiveEvent =
+    let decoder: Decoder<GuildMembersChunkReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildMembersChunkReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildRoleCreateReceiveEvent =
+    let decoder: Decoder<GuildRoleCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildRoleCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildRoleUpdateReceiveEvent =
+    let decoder: Decoder<GuildRoleUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildRoleUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildRoleDeleteReceiveEvent =
+    let decoder: Decoder<GuildRoleDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildRoleDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildScheduledEventCreateReceiveEvent =
+    let decoder: Decoder<GuildScheduledEventCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildScheduledEventCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildScheduledEventUpdateReceiveEvent =
+    let decoder: Decoder<GuildScheduledEventUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildScheduledEventUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildScheduledEventDeleteReceiveEvent =
+    let decoder: Decoder<GuildScheduledEventDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildScheduledEventDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildScheduledEventUserAddReceiveEvent =
+    let decoder: Decoder<GuildScheduledEventUserAddReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildScheduledEventUserAddReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildScheduledEventUserRemoveReceiveEvent =
+    let decoder: Decoder<GuildScheduledEventUserRemoveReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildScheduledEventUserRemoveReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildSoundboardSoundCreateReceiveEvent =
+    let decoder: Decoder<GuildSoundboardSoundCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildSoundboardSoundCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildSoundboardSoundUpdateReceiveEvent =
+    let decoder: Decoder<GuildSoundboardSoundUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildSoundboardSoundUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildSoundboardSoundDeleteReceiveEvent =
+    let decoder: Decoder<GuildSoundboardSoundDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildSoundboardSoundDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildSoundboardSoundsUpdateReceiveEvent =
+    let decoder: Decoder<GuildSoundboardSoundsUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildSoundboardSoundsUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module GuildSoundboardSoundsReceiveEvent =
+    let decoder: Decoder<GuildSoundboardSoundsReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: GuildSoundboardSoundsReceiveEvent) = raise (System.NotImplementedException())
+
+module IntegrationCreateReceiveEvent =
+    let decoder: Decoder<IntegrationCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: IntegrationCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module IntegrationCreateReceiveEventExtraFields =
+    let decoder: Decoder<IntegrationCreateReceiveEventExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: IntegrationCreateReceiveEventExtraFields) = raise (System.NotImplementedException())
+
+module IntegrationUpdateReceiveEvent =
+    let decoder: Decoder<IntegrationUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: IntegrationUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module IntegrationUpdateReceiveEventExtraFields =
+    let decoder: Decoder<IntegrationUpdateReceiveEventExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: IntegrationUpdateReceiveEventExtraFields) = raise (System.NotImplementedException())
+
+module IntegrationDeleteReceiveEvent =
+    let decoder: Decoder<IntegrationDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: IntegrationDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module InviteCreateReceiveEvent =
+    let decoder: Decoder<InviteCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: InviteCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module InviteDeleteReceiveEvent =
+    let decoder: Decoder<InviteDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: InviteDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module MessageCreateReceiveEvent =
+    let decoder: Decoder<MessageCreateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessageCreateReceiveEvent) = raise (System.NotImplementedException())
+
+module MessageCreateReceiveEventExtraFields =
+    let decoder: Decoder<MessageCreateReceiveEventExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: MessageCreateReceiveEventExtraFields) = raise (System.NotImplementedException())
+
+module MessageCreateReceiveEventExtraFieldsMention =
+    let decoder: Decoder<MessageCreateReceiveEventExtraFieldsMention> = raise (System.NotImplementedException())
+    let encoder (v: MessageCreateReceiveEventExtraFieldsMention) = raise (System.NotImplementedException())
+
+module MessageCreateReceiveEventExtraFieldsMentionExtraFields =
+    let decoder: Decoder<MessageCreateReceiveEventExtraFieldsMentionExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: MessageCreateReceiveEventExtraFieldsMentionExtraFields) = raise (System.NotImplementedException())
+
+module MessageUpdateReceiveEvent =
+    let decoder: Decoder<MessageUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessageUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module MessageUpdateReceiveEventExtraFields =
+    let decoder: Decoder<MessageUpdateReceiveEventExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: MessageUpdateReceiveEventExtraFields) = raise (System.NotImplementedException())
+
+module MessageUpdateReceiveEventExtraFieldsMention =
+    let decoder: Decoder<MessageUpdateReceiveEventExtraFieldsMention> = raise (System.NotImplementedException())
+    let encoder (v: MessageUpdateReceiveEventExtraFieldsMention) = raise (System.NotImplementedException())
+
+module MessageUpdateReceiveEventExtraFieldsMentionExtraFields =
+    let decoder: Decoder<MessageUpdateReceiveEventExtraFieldsMentionExtraFields> = raise (System.NotImplementedException())
+    let encoder (v: MessageUpdateReceiveEventExtraFieldsMentionExtraFields) = raise (System.NotImplementedException())
+
+module MessageDeleteReceiveEvent =
+    let decoder: Decoder<MessageDeleteReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessageDeleteReceiveEvent) = raise (System.NotImplementedException())
+
+module MessageDeleteBulkReceiveEvent =
+    let decoder: Decoder<MessageDeleteBulkReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessageDeleteBulkReceiveEvent) = raise (System.NotImplementedException())
+
+module MessageReactionAddReceiveEvent =
+    let decoder: Decoder<MessageReactionAddReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessageReactionAddReceiveEvent) = raise (System.NotImplementedException())
+
+module MessageReactionRemoveReceiveEvent =
+    let decoder: Decoder<MessageReactionRemoveReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessageReactionRemoveReceiveEvent) = raise (System.NotImplementedException())
+
+module MessageReactionRemoveAllReceiveEvent =
+    let decoder: Decoder<MessageReactionRemoveAllReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessageReactionRemoveAllReceiveEvent) = raise (System.NotImplementedException())
+
+module MessageReactionRemoveEmojiReceiveEvent =
+    let decoder: Decoder<MessageReactionRemoveEmojiReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessageReactionRemoveEmojiReceiveEvent) = raise (System.NotImplementedException())
+
+module PresenceUpdateReceiveEvent =
+    let decoder: Decoder<PresenceUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: PresenceUpdateReceiveEvent) = raise (System.NotImplementedException())
+
 
 module Activity =
     module Property =
