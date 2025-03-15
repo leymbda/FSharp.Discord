@@ -513,12 +513,8 @@ type ChannelDeleteReceiveEvent = Channel
 // https://discord.com/developers/docs/events/gateway-events#thread-create
 type ThreadCreateReceiveEvent = {
     Channel: Channel
-    ExtraFields: ThreadCreateReceiveEventExtraFields
-}
-
-type ThreadCreateReceiveEventExtraFields = {
-    [<JsonPropertyName "newly_created">] NewlyCreated: bool option
-    [<JsonPropertyName "thread_member">] ThreadMember: ThreadMember option
+    NewlyCreated: bool option
+    ThreadMember: ThreadMember option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#thread-update
@@ -526,44 +522,40 @@ type ThreadUpdateReceiveEvent = Channel
 
 // https://discord.com/developers/docs/events/gateway-events#thread-delete
 type ThreadDeleteReceiveEvent = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "parent_id">] ParentId: string
-    [<JsonPropertyName "type">] Type: ChannelType
+    Id: string
+    GuildId: string option
+    ParentId: string option option
+    Type: ChannelType
 }
 
 // https://discord.com/developers/docs/events/gateway-events#thread-list-sync-thread-list-sync-event-fields
 type ThreadListSyncReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "channel_ids">] ChannelIds: string list option
-    [<JsonPropertyName "threads">] Threads: Channel list
-    [<JsonPropertyName "members">] Members: ThreadMember list
+    GuildId: string
+    ChannelIds: string list option
+    Threads: Channel list
+    Members: ThreadMember list
 }
 
 // https://discord.com/developers/docs/events/gateway-events#thread-member-update
 type ThreadMemberUpdateReceiveEvent = {
     ThreadMember: ThreadMember
-    ExtraFields: ThreadMemberUpdateEventExtraFields
-}
-
-type ThreadMemberUpdateEventExtraFields = {
-    [<JsonPropertyName "guild_id">] GuildId: string
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#thread-members-update
 type ThreadMembersUpdateReceiveEvent = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "member_count">] MemberCount: int
-    [<JsonPropertyName "added_members">] AddedMembers: ThreadMember list option
-    [<JsonPropertyName "removed_member_ids">] RemovedMemberIds: string list option
+    Id: string
+    GuildId: string
+    MemberCount: int
+    AddedMembers: ThreadMember list option
+    RemovedMemberIds: string list option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#channel-pins-update-channel-pins-update-event-fields
 type ChannelPinsUpdateReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "channel_id">] ChannelIds: string
-    [<JsonPropertyName "last_pin_timestamp">] LastPinTimestamp: DateTime option // unix epoch
+    GuildId: string option
+    ChannelId: string
+    LastPinTimestamp: DateTime option option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#entitlement-create

@@ -1220,68 +1220,163 @@ module AutoModerationActionExecutionReceiveEvent =
             |> Encode.optinull Property.MatchedContent Encode.string v.MatchedContent
         )
 
-// TODO: Add property modules to all unimplemented modules below
-// TODO: Implement encoders and decoders below
-
 module ChannelCreateReceiveEvent =
-    let decoder: Decoder<ChannelCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ChannelCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<ChannelCreateReceiveEvent> = Channel.decoder
+    let encoder (v: ChannelCreateReceiveEvent) = Channel.encoder
 
 module ChannelUpdateReceiveEvent =
-    let decoder: Decoder<ChannelUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ChannelUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<ChannelUpdateReceiveEvent> = Channel.decoder
+    let encoder (v: ChannelUpdateReceiveEvent) = Channel.encoder
 
 module ChannelDeleteReceiveEvent =
-    let decoder: Decoder<ChannelDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ChannelDeleteReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<ChannelDeleteReceiveEvent> = Channel.decoder
+    let encoder (v: ChannelDeleteReceiveEvent) = Channel.encoder
 
 module ThreadCreateReceiveEvent =
-    let decoder: Decoder<ThreadCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ThreadCreateReceiveEvent) = raise (System.NotImplementedException())
+    module Property =
+        let [<Literal>] NewlyCreated = "newly_created"
+        let [<Literal>] ThreadMember = "thread_member"
 
-module ThreadCreateReceiveEventExtraFields =
-    let decoder: Decoder<ThreadCreateReceiveEventExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: ThreadCreateReceiveEventExtraFields) = raise (System.NotImplementedException())
+    let decoder: Decoder<ThreadCreateReceiveEvent> =
+        Decode.object (fun get -> {
+            Channel = get |> Get.extract Channel.decoder
+            NewlyCreated = get |> Get.optional Property.NewlyCreated Decode.bool
+            ThreadMember = get |> Get.optional Property.ThreadMember ThreadMember.decoder
+        })
+
+    let encoder (v: ThreadCreateReceiveEvent) =
+        Encode.object (
+            Channel.encodeProperties v.Channel @ []
+            |> Encode.optional Property.NewlyCreated Encode.bool v.NewlyCreated
+            |> Encode.optional Property.ThreadMember ThreadMember.encoder v.ThreadMember
+        )
 
 module ThreadUpdateReceiveEvent =
-    let decoder: Decoder<ThreadUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ThreadUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<ThreadUpdateReceiveEvent> = Channel.decoder
+    let encoder (v: ThreadUpdateReceiveEvent) = Channel.encoder
 
 module ThreadDeleteReceiveEvent =
-    let decoder: Decoder<ThreadDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ThreadDeleteReceiveEvent) = raise (System.NotImplementedException())
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ParentId = "parent_id"
+        let [<Literal>] Type = "type"
+
+    let decoder: Decoder<ThreadDeleteReceiveEvent> =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            ParentId = get |> Get.optinull Property.ParentId Decode.string
+            Type = get |> Get.required Property.Type Decode.Enum.int<ChannelType>
+        })
+
+    let encoder (v: ThreadDeleteReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optinull Property.ParentId Encode.string v.ParentId
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+        )
 
 module ThreadListSyncReceiveEvent =
-    let decoder: Decoder<ThreadListSyncReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ThreadListSyncReceiveEvent) = raise (System.NotImplementedException())
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ChannelIds = "channel_ids"
+        let [<Literal>] Threads = "threads"
+        let [<Literal>] Members = "members"
+
+    let decoder: Decoder<ThreadListSyncReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            ChannelIds = get |> Get.optional Property.ChannelIds (Decode.list Decode.string)
+            Threads = get |> Get.required Property.Threads (Decode.list Channel.decoder)
+            Members = get |> Get.required Property.Members (Decode.list ThreadMember.decoder)
+        })
+
+    let encoder (v: ThreadListSyncReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.ChannelIds (List.map Encode.string >> Encode.list) v.ChannelIds
+            |> Encode.required Property.Threads (List.map Channel.encoder >> Encode.list) v.Threads
+            |> Encode.required Property.Members (List.map ThreadMember.encoder >> Encode.list) v.Members
+        )
 
 module ThreadMemberUpdateReceiveEvent =
-    let decoder: Decoder<ThreadMemberUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ThreadMemberUpdateReceiveEvent) = raise (System.NotImplementedException())
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
 
-module ThreadMemberUpdateEventExtraFields =
-    let decoder: Decoder<ThreadMemberUpdateEventExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: ThreadMemberUpdateEventExtraFields) = raise (System.NotImplementedException())
+    let decoder: Decoder<ThreadMemberUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            ThreadMember = get |> Get.extract ThreadMember.decoder
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: ThreadMemberUpdateReceiveEvent) =
+        Encode.object (
+            ThreadMember.encodeProperties v.ThreadMember @ []
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module ThreadMembersUpdateReceiveEvent =
-    let decoder: Decoder<ThreadMembersUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ThreadMembersUpdateReceiveEvent) = raise (System.NotImplementedException())
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] MemberCount = "member_count"
+        let [<Literal>] AddedMembers = "added_members"
+        let [<Literal>] RemovedMemberIds = "removed_member_ids"
+
+    let decoder: Decoder<ThreadMembersUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            MemberCount = get |> Get.required Property.MemberCount Decode.int
+            AddedMembers = get |> Get.optional Property.AddedMembers (Decode.list ThreadMember.decoder)
+            RemovedMemberIds = get |> Get.optional Property.RemovedMemberIds (Decode.list Decode.string)
+        })
+
+    let encoder (v: ThreadMembersUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.MemberCount Encode.int v.MemberCount
+            |> Encode.optional Property.AddedMembers (List.map ThreadMember.encoder >> Encode.list) v.AddedMembers
+            |> Encode.optional Property.RemovedMemberIds (List.map Encode.string >> Encode.list) v.RemovedMemberIds
+        )
 
 module ChannelPinsUpdateReceiveEvent =
-    let decoder: Decoder<ChannelPinsUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: ChannelPinsUpdateReceiveEvent) = raise (System.NotImplementedException())
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] LastPinTimestamp = "last_pin_timestamp"
+
+    let decoder: Decoder<ChannelPinsUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            LastPinTimestamp = get |> Get.optinull Property.LastPinTimestamp UnixTimestamp.decoder
+        })
+
+    let encoder (v: ChannelPinsUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optinull Property.LastPinTimestamp UnixTimestamp.encoder v.LastPinTimestamp
+        )
 
 module EntitlementCreateReceiveEvent =
-    let decoder: Decoder<EntitlementCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: EntitlementCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<EntitlementCreateReceiveEvent> = Entitlement.decoder
+    let encoder (v: EntitlementCreateReceiveEvent) = Entitlement.encoder
 
 module EntitlementUpdateReceiveEvent =
-    let decoder: Decoder<EntitlementUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: EntitlementUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<EntitlementUpdateReceiveEvent> = Entitlement.decoder
+    let encoder (v: EntitlementUpdateReceiveEvent) = Entitlement.encoder
 
 module EntitlementDeleteReceiveEvent =
-    let decoder: Decoder<EntitlementDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: EntitlementDeleteReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<EntitlementDeleteReceiveEvent> = Entitlement.decoder
+    let encoder (v: EntitlementDeleteReceiveEvent) = Entitlement.encoder
+
+// TODO: Add property modules to all unimplemented modules below
+// TODO: Implement encoders and decoders below
 
 module GuildCreateReceiveEvent =
     let decoder: Decoder<GuildCreateReceiveEvent> = raise (System.NotImplementedException())
@@ -2352,44 +2447,46 @@ module Channel =
             DefaultForumLayout = get |> Get.optional Property.DefaultForumLayout Decode.Enum.int<ForumLayout>
         }) path v
 
+    let internal encodeProperties (v: Channel) =
+        []
+        |> Encode.required Property.Id Encode.string v.Id
+        |> Encode.required Property.Type Encode.Enum.int v.Type
+        |> Encode.optional Property.GuildId Encode.string v.GuildId
+        |> Encode.optional Property.Position Encode.int v.Position
+        |> Encode.optional Property.PermissionOverwrites (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
+        |> Encode.optinull Property.Name Encode.string v.Name
+        |> Encode.optinull Property.Topic Encode.string v.Topic
+        |> Encode.optional Property.Nsfw Encode.bool v.Nsfw
+        |> Encode.optinull Property.LastMessageId Encode.string v.LastMessageId
+        |> Encode.optional Property.Bitrate Encode.int v.Bitrate
+        |> Encode.optional Property.UserLimit Encode.int v.UserLimit
+        |> Encode.optional Property.RateLimitPerUser Encode.int v.RateLimitPerUser
+        |> Encode.optional Property.Recipients (List.map User.encoder >> Encode.list) v.Recipients
+        |> Encode.optinull Property.Icon Encode.string v.Icon
+        |> Encode.optional Property.OwnerId Encode.string v.OwnerId
+        |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
+        |> Encode.optional Property.Managed Encode.bool v.Managed
+        |> Encode.optinull Property.ParentId Encode.string v.ParentId
+        |> Encode.optinull Property.LastPinTimestamp Encode.datetime v.LastPinTimestamp
+        |> Encode.optinull Property.RtcRegion Encode.string v.RtcRegion
+        |> Encode.optional Property.VideoQualityMode Encode.Enum.int v.VideoQualityMode
+        |> Encode.optional Property.MessageCount Encode.int v.MessageCount
+        |> Encode.optional Property.MemberCount Encode.int v.MemberCount
+        |> Encode.optional Property.ThreadMetadata ThreadMetadata.encoder v.ThreadMetadata
+        |> Encode.optional Property.Member ThreadMember.encoder v.Member
+        |> Encode.optional Property.DefaultAutoArchiveDuration Encode.Enum.int v.DefaultAutoArchiveDuration
+        |> Encode.optional Property.Permissions Encode.string v.Permissions
+        |> Encode.optional Property.Flags Encode.int v.Flags
+        |> Encode.optional Property.TotalMessagesSent Encode.int v.TotalMessagesSent
+        |> Encode.optional Property.AvailableTags (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
+        |> Encode.optional Property.AppliedTags (List.map Encode.string >> Encode.list) v.AppliedTags
+        |> Encode.optinull Property.DefaultReactionEmoji DefaultReaction.encoder v.DefaultReactionEmoji
+        |> Encode.optional Property.DefaultThreadRateLimitPerUser Encode.int v.DefaultThreadRateLimitPerUser
+        |> Encode.optinull Property.DefaultSortOrder Encode.Enum.int v.DefaultSortOrder
+        |> Encode.optional Property.DefaultForumLayout Encode.Enum.int v.DefaultForumLayout
+
     let encoder (v: Channel) =
-        Encode.object ([]
-            |> Encode.required Property.Id Encode.string v.Id
-            |> Encode.required Property.Type Encode.Enum.int v.Type
-            |> Encode.optional Property.GuildId Encode.string v.GuildId
-            |> Encode.optional Property.Position Encode.int v.Position
-            |> Encode.optional Property.PermissionOverwrites (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
-            |> Encode.optinull Property.Name Encode.string v.Name
-            |> Encode.optinull Property.Topic Encode.string v.Topic
-            |> Encode.optional Property.Nsfw Encode.bool v.Nsfw
-            |> Encode.optinull Property.LastMessageId Encode.string v.LastMessageId
-            |> Encode.optional Property.Bitrate Encode.int v.Bitrate
-            |> Encode.optional Property.UserLimit Encode.int v.UserLimit
-            |> Encode.optional Property.RateLimitPerUser Encode.int v.RateLimitPerUser
-            |> Encode.optional Property.Recipients (List.map User.encoder >> Encode.list) v.Recipients
-            |> Encode.optinull Property.Icon Encode.string v.Icon
-            |> Encode.optional Property.OwnerId Encode.string v.OwnerId
-            |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
-            |> Encode.optional Property.Managed Encode.bool v.Managed
-            |> Encode.optinull Property.ParentId Encode.string v.ParentId
-            |> Encode.optinull Property.LastPinTimestamp Encode.datetime v.LastPinTimestamp
-            |> Encode.optinull Property.RtcRegion Encode.string v.RtcRegion
-            |> Encode.optional Property.VideoQualityMode Encode.Enum.int v.VideoQualityMode
-            |> Encode.optional Property.MessageCount Encode.int v.MessageCount
-            |> Encode.optional Property.MemberCount Encode.int v.MemberCount
-            |> Encode.optional Property.ThreadMetadata ThreadMetadata.encoder v.ThreadMetadata
-            |> Encode.optional Property.Member ThreadMember.encoder v.Member
-            |> Encode.optional Property.DefaultAutoArchiveDuration Encode.Enum.int v.DefaultAutoArchiveDuration
-            |> Encode.optional Property.Permissions Encode.string v.Permissions
-            |> Encode.optional Property.Flags Encode.int v.Flags
-            |> Encode.optional Property.TotalMessagesSent Encode.int v.TotalMessagesSent
-            |> Encode.optional Property.AvailableTags (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
-            |> Encode.optional Property.AppliedTags (List.map Encode.string >> Encode.list) v.AppliedTags
-            |> Encode.optinull Property.DefaultReactionEmoji DefaultReaction.encoder v.DefaultReactionEmoji
-            |> Encode.optional Property.DefaultThreadRateLimitPerUser Encode.int v.DefaultThreadRateLimitPerUser
-            |> Encode.optinull Property.DefaultSortOrder Encode.Enum.int v.DefaultSortOrder
-            |> Encode.optional Property.DefaultForumLayout Encode.Enum.int v.DefaultForumLayout
-        )
+        Encode.object (encodeProperties v)
 
     module Partial =
         let decoder path v =
@@ -2573,14 +2670,16 @@ module ThreadMember =
             Member = get |> Get.optional Property.Member GuildMember.decoder
         }) path v
 
+    let internal encodeProperties (v: ThreadMember) =
+        []
+        |> Encode.optional Property.Id Encode.string v.Id
+        |> Encode.optional Property.UserId Encode.string v.UserId
+        |> Encode.required Property.JoinTimestamp Encode.datetime v.JoinTimestamp
+        |> Encode.required Property.Flags Encode.int v.Flags
+        |> Encode.optional Property.Member GuildMember.encoder v.Member
+
     let encoder (v: ThreadMember) =
-        Encode.object ([]
-            |> Encode.optional Property.Id Encode.string v.Id
-            |> Encode.optional Property.UserId Encode.string v.UserId
-            |> Encode.required Property.JoinTimestamp Encode.datetime v.JoinTimestamp
-            |> Encode.required Property.Flags Encode.int v.Flags
-            |> Encode.optional Property.Member GuildMember.encoder v.Member
-        )
+        Encode.object (encodeProperties v)
 
 module DefaultReaction =
     module Property =
