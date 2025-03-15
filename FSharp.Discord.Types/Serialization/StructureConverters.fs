@@ -1375,126 +1375,225 @@ module EntitlementDeleteReceiveEvent =
     let decoder: Decoder<EntitlementDeleteReceiveEvent> = Entitlement.decoder
     let encoder (v: EntitlementDeleteReceiveEvent) = Entitlement.encoder
 
-// TODO: Add property modules to all unimplemented modules below
-// TODO: Implement encoders and decoders below
-
 module GuildCreateReceiveEvent =
-    let decoder: Decoder<GuildCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildCreateReceiveEvent> =
+        Decode.oneOf [
+            Decode.map GuildCreateReceiveEvent.AvailableGuild GuildCreateReceiveEventAvailableGuild.decoder
+            Decode.map GuildCreateReceiveEvent.UnavailableGuild Guild.Unavailable.decoder
+        ]
+
+    let encoder (v: GuildCreateReceiveEvent) =
+        match v with
+        | GuildCreateReceiveEvent.AvailableGuild a -> GuildCreateReceiveEventAvailableGuild.encoder a
+        | GuildCreateReceiveEvent.UnavailableGuild u -> Guild.Unavailable.encoder u
 
 module GuildCreateReceiveEventAvailableGuild =
+    module Property =
+        let [<Literal>] JoinedAt = "joined_at" // TODO: Unix epoch
+        let [<Literal>] Large = "large"
+        let [<Literal>] Unavailable = "unavailable"
+        let [<Literal>] MemberCount = "member_count"
+        let [<Literal>] VoiceStates = "voice_states"
+        let [<Literal>] Members = "members"
+        let [<Literal>] Channels = "channels"
+        let [<Literal>] Threads = "threads"
+        let [<Literal>] Presences = "presences"
+        let [<Literal>] StageInstances = "stage_instances"
+        let [<Literal>] GuildScheduledEvents = "guild_scheduled_events"
+        let [<Literal>] SoundboardSounds = "soundboard_sounds"
+
     let decoder: Decoder<GuildCreateReceiveEventAvailableGuild> = raise (System.NotImplementedException())
     let encoder (v: GuildCreateReceiveEventAvailableGuild) = raise (System.NotImplementedException())
 
-module GuildCreateReceiveEventAvailableGuildExtraFields =
-    let decoder: Decoder<GuildCreateReceiveEventAvailableGuildExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: GuildCreateReceiveEventAvailableGuildExtraFields) = raise (System.NotImplementedException())
-
 module GuildUpdateReceiveEvent =
-    let decoder: Decoder<GuildUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildUpdateReceiveEvent> = Guild.decoder
+    let encoder (v: GuildUpdateReceiveEvent) = Guild.encoder
 
 module GuildDeleteReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Unavailable = "unavailable"
+
     let decoder: Decoder<GuildDeleteReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildDeleteReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildAuditLogEntryCreateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<GuildAuditLogEntryCreateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildAuditLogEntryCreateReceiveEvent) = raise (System.NotImplementedException())
 
-module GuildAuditLogEntryCreateReceiveEventExtraFields =
-    let decoder: Decoder<GuildAuditLogEntryCreateReceiveEventExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: GuildAuditLogEntryCreateReceiveEventExtraFields) = raise (System.NotImplementedException())
-
 module GuildBanAddReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] User = "user"
+
     let decoder: Decoder<GuildBanAddReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildBanAddReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildBanRemoveReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] User = "user"
+
     let decoder: Decoder<GuildBanRemoveReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildBanRemoveReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildEmojisUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Emojis = "emojis"
+
     let decoder: Decoder<GuildEmojisUpdateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildEmojisUpdateReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildStickersUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Stickers = "stickers"
+
     let decoder: Decoder<GuildStickersUpdateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildStickersUpdateReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildIntegrationsUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<GuildIntegrationsUpdateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildIntegrationsUpdateReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildMemberAddReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<GuildMemberAddReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildMemberAddReceiveEvent) = raise (System.NotImplementedException())
 
-module GuildMemberAddReceiveEventExtraFields =
-    let decoder: Decoder<GuildMemberAddReceiveEventExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: GuildMemberAddReceiveEventExtraFields) = raise (System.NotImplementedException())
-
 module GuildMemberRemoveReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] User = "user"
+
     let decoder: Decoder<GuildMemberRemoveReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildMemberRemoveReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildMemberUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Roles = "roles"
+        let [<Literal>] User = "user"
+        let [<Literal>] Nick = "nick"
+        let [<Literal>] Avatar = "avatar"
+        let [<Literal>] Banner = "banner"
+        let [<Literal>] JoinedAt = "joined_at"
+        let [<Literal>] PremiumSince = "premium_since"
+        let [<Literal>] Deaf = "deaf"
+        let [<Literal>] Mute = "mute"
+        let [<Literal>] Pending = "pending"
+        let [<Literal>] CommunicationDisabledUntil = "communication_disabled_until"
+        let [<Literal>] Flags = "flags"
+        let [<Literal>] AvatarDecorationMetadata = "avatar_decoration_metadata"
+
     let decoder: Decoder<GuildMemberUpdateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildMemberUpdateReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildMembersChunkReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Members = "members"
+        let [<Literal>] ChunkIndex = "chunk_index"
+        let [<Literal>] ChunkCount = "chunk_count"
+        let [<Literal>] NotFound = "not_found"
+        let [<Literal>] Presences = "presences"
+        let [<Literal>] Nonce = "nonce"
+
     let decoder: Decoder<GuildMembersChunkReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildMembersChunkReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildRoleCreateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Role = "role"
+
     let decoder: Decoder<GuildRoleCreateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildRoleCreateReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildRoleUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Role = "role"
+
     let decoder: Decoder<GuildRoleUpdateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildRoleUpdateReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildRoleDeleteReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] RoleId = "role_id"
+
     let decoder: Decoder<GuildRoleDeleteReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildRoleDeleteReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildScheduledEventCreateReceiveEvent =
-    let decoder: Decoder<GuildScheduledEventCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildScheduledEventCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildScheduledEventCreateReceiveEvent> = GuildScheduledEvent.decoder
+    let encoder (v: GuildScheduledEventCreateReceiveEvent) = GuildScheduledEvent.encoder
 
 module GuildScheduledEventUpdateReceiveEvent =
-    let decoder: Decoder<GuildScheduledEventUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildScheduledEventUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildScheduledEventUpdateReceiveEvent> = GuildScheduledEvent.decoder
+    let encoder (v: GuildScheduledEventUpdateReceiveEvent) = GuildScheduledEvent.encoder
 
 module GuildScheduledEventDeleteReceiveEvent =
-    let decoder: Decoder<GuildScheduledEventDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildScheduledEventDeleteReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildScheduledEventDeleteReceiveEvent> = GuildScheduledEvent.decoder
+    let encoder (v: GuildScheduledEventDeleteReceiveEvent) = GuildScheduledEvent.encoder
 
 module GuildScheduledEventUserAddReceiveEvent =
+    module Property =
+        let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<GuildScheduledEventUserAddReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildScheduledEventUserAddReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildScheduledEventUserRemoveReceiveEvent =
+    module Property =
+        let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<GuildScheduledEventUserRemoveReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildScheduledEventUserRemoveReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildSoundboardSoundCreateReceiveEvent =
-    let decoder: Decoder<GuildSoundboardSoundCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildSoundboardSoundCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildSoundboardSoundCreateReceiveEvent> = SoundboardSound.decoder
+    let encoder (v: GuildSoundboardSoundCreateReceiveEvent) = SoundboardSound.encoder
 
 module GuildSoundboardSoundUpdateReceiveEvent =
-    let decoder: Decoder<GuildSoundboardSoundUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildSoundboardSoundUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildSoundboardSoundUpdateReceiveEvent> = SoundboardSound.decoder
+    let encoder (v: GuildSoundboardSoundUpdateReceiveEvent) = SoundboardSound.encoder
 
 module GuildSoundboardSoundDeleteReceiveEvent =
+    module Property =
+        let [<Literal>] SoundId = "sound_id"
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<GuildSoundboardSoundDeleteReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildSoundboardSoundDeleteReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildSoundboardSoundsUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] SoundboardSounds = "soundboard_sounds"
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<GuildSoundboardSoundsUpdateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildSoundboardSoundsUpdateReceiveEvent) = raise (System.NotImplementedException())
 
 module GuildSoundboardSoundsReceiveEvent =
+    module Property =
+        let [<Literal>] SoundboardSounds = "soundboard_sounds"
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<GuildSoundboardSoundsReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: GuildSoundboardSoundsReceiveEvent) = raise (System.NotImplementedException())
 

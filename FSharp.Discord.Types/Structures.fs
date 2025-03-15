@@ -574,22 +574,18 @@ type GuildCreateReceiveEvent =
 
 type GuildCreateReceiveEventAvailableGuild = {
     Guild: Guild
-    ExtraFields: GuildCreateReceiveEventAvailableGuildExtraFields
-}
-
-type GuildCreateReceiveEventAvailableGuildExtraFields = {
-    [<JsonPropertyName "joined_at">] JoinedAt: DateTime // unix epoch
-    [<JsonPropertyName "large">] Large: bool
-    [<JsonPropertyName "unavailable">] Unavailable: bool
-    [<JsonPropertyName "member_count">] MemberCount: int
-    [<JsonPropertyName "voice_states">] VoiceStates: PartialVoiceState list
-    [<JsonPropertyName "members">] Members: GuildMember list
-    [<JsonPropertyName "channels">] Channels: Channel list
-    [<JsonPropertyName "threads">] Threads: Channel list
-    [<JsonPropertyName "presences">] Presences: PartialUpdatePresenceSendEvent list
-    [<JsonPropertyName "stage_instances">] StageInstances: StageInstance list
-    [<JsonPropertyName "guild_scheduled_events">] GuildScheduledEvents: GuildScheduledEvent list
-    [<JsonPropertyName "soundboard_sounds">] SoundboardSounds: SoundboardSound list
+    JoinedAt: DateTime
+    Large: bool
+    Unavailable: bool
+    MemberCount: int
+    VoiceStates: PartialVoiceState list
+    Members: GuildMember list
+    Channels: Channel list
+    Threads: Channel list
+    Presences: PartialUpdatePresenceSendEvent list
+    StageInstances: StageInstance list
+    GuildScheduledEvents: GuildScheduledEvent list
+    SoundboardSounds: SoundboardSound list
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-update
@@ -597,110 +593,102 @@ type GuildUpdateReceiveEvent = Guild
 
 // https://discord.com/developers/docs/events/gateway-events#guild-delete
 type GuildDeleteReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "unavailable">] Unavailable: bool option
+    GuildId: string
+    Unavailable: bool option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-audit-log-entry-create
 type GuildAuditLogEntryCreateReceiveEvent = {
     AuditLogEntry: AuditLogEntry
-    ExtraFields: GuildAuditLogEntryCreateReceiveEventExtraFields
-}
-
-type GuildAuditLogEntryCreateReceiveEventExtraFields = {
-    [<JsonPropertyName "guild_id">] GuildId: string
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-ban-add
 type GuildBanAddReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "user">] user: User
+    GuildId: string
+    user: User
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-ban-remove
 type GuildBanRemoveReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "user">] user: User
+    GuildId: string
+    user: User
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-emojis-update
 type GuildEmojisUpdateReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "emojis">] Emojis: Emoji list
+    GuildId: string
+    Emojis: Emoji list
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-stickers-update
 type GuildStickersUpdateReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "stickers">] Stickers: Sticker list
+    GuildId: string
+    Stickers: Sticker list
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-integrations-update
 type GuildIntegrationsUpdateReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-member-add
 type GuildMemberAddReceiveEvent = {
     GuildMember: GuildMember
-    ExtraFields: GuildMemberAddReceiveEventExtraFields
-}
-
-type GuildMemberAddReceiveEventExtraFields = {
-    [<JsonPropertyName "guild_id">] GuildId: string
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-member-remove
 type GuildMemberRemoveReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "user">] User: User
+    GuildId: string
+    User: User
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-member-update
 type GuildMemberUpdateReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "roles">] Roles: string list
-    [<JsonPropertyName "user">] User: User
-    [<JsonPropertyName "nick">] Nick: string option
-    [<JsonPropertyName "avatar">] Avatar: string option
-    [<JsonPropertyName "banner">] Banner: string option
-    [<JsonPropertyName "joined_at">] JoinedAt: DateTime
-    [<JsonPropertyName "premium_since">] PremiumSince: DateTime option
-    [<JsonPropertyName "deaf">] Deaf: bool option
-    [<JsonPropertyName "mute">] Mute: bool option
-    [<JsonPropertyName "pending">] Pending: bool option
-    [<JsonPropertyName "communication_disabled_until">] CommunicationDisabledUntil: DateTime option
-    [<JsonPropertyName "flags">] Flags: int option
-    [<JsonPropertyName "avatar_decoration_data">] AvatarDecorationData: AvatarDecorationData option
+    GuildId: string
+    Roles: string list
+    User: User
+    Nick: string option option
+    Avatar: string option
+    Banner: string option
+    JoinedAt: DateTime
+    PremiumSince: DateTime option
+    Deaf: bool option
+    Mute: bool option
+    Pending: bool option
+    CommunicationDisabledUntil: DateTime option option
+    Flags: int option
+    AvatarDecorationData: AvatarDecorationData option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-members-chunk
 type GuildMembersChunkReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "members">] Members: GuildMember list
-    [<JsonPropertyName "chunk_index">] ChunkIndex: int
-    [<JsonPropertyName "chunk_count">] ChunkCount: int
-    [<JsonPropertyName "not_found">] NotFound: string list option
-    [<JsonPropertyName "presences">] Presences: UpdatePresenceSendEvent list option
-    [<JsonPropertyName "nonce">] Nonce: string option
+    GuildId: string
+    Members: GuildMember list
+    ChunkIndex: int
+    ChunkCount: int
+    NotFound: string list option
+    Presences: UpdatePresenceSendEvent list option
+    Nonce: string option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-role-create
 type GuildRoleCreateReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "role">] Role: Role
+    GuildId: string
+    Role: Role
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-role-update
 type GuildRoleUpdateReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "role">] Role: Role
+    GuildId: string
+    Role: Role
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-role-delete
 type GuildRoleDeleteReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "role_id">] RoleId: string
+    GuildId: string
+    RoleId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-scheduled-event-create
@@ -714,16 +702,16 @@ type GuildScheduledEventDeleteReceiveEvent = GuildScheduledEvent
 
 // https://discord.com/developers/docs/events/gateway-events#guild-scheduled-event-user-add
 type GuildScheduledEventUserAddReceiveEvent = {
-    [<JsonPropertyName "guild_scheduled_event_id">] GuildScheduledEventId: string
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "guild_id">] GuildId: string
+    GuildScheduledEventId: string
+    UserId: string
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-scheduled-event-user-remove
 type GuildScheduledEventUserRemoveReceiveEvent = {
-    [<JsonPropertyName "guild_scheduled_event_id">] GuildScheduledEventId: string
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "guild_id">] GuildId: string
+    GuildScheduledEventId: string
+    UserId: string
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-soundboard-sound-create
@@ -734,20 +722,20 @@ type GuildSoundboardSoundUpdateReceiveEvent = SoundboardSound
 
 // https://discord.com/developers/docs/events/gateway-events#guild-soundboard-sound-delete
 type GuildSoundboardSoundDeleteReceiveEvent = {
-    [<JsonPropertyName "sound_id">] SoundId: string
-    [<JsonPropertyName "guild_id">] GuildId: string
+    SoundId: string
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-soundboard-sounds-update
 type GuildSoundboardSoundsUpdateReceiveEvent = {
-    [<JsonPropertyName "soundboard_sounds">] SoundboardSounds: SoundboardSound list
-    [<JsonPropertyName "guild_id">] GuildId: string
+    SoundboardSounds: SoundboardSound list
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#soundboard-sounds
 type GuildSoundboardSoundsReceiveEvent = {
-    [<JsonPropertyName "soundboard_sounds">] SoundboardSounds: SoundboardSound list
-    [<JsonPropertyName "guild_id">] GuildId: string
+    SoundboardSounds: SoundboardSound list
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#integration-create
@@ -2524,3 +2512,4 @@ type TeamMember = {
 // TODO: Convert all flag bitfields into enum lists
 // TODO: Convert url strings to Uri type (?)
 // TODO: Create single DUs for values with range/size/etc rules
+// TODO: Add comments describing properties as per docs
