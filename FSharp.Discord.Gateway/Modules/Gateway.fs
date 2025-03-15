@@ -63,48 +63,56 @@ type ReconnectableGatewayDisconnect =
 module Gateway =
     /// Send an identify event.
     let identify payload ct ws = task {
-        let event = GatewaySendEvent.IDENTIFY (GatewayEventPayload.create(GatewayOpcode.IDENTIFY, payload))
+        let event = GatewaySendEvent.IDENTIFY ({ Opcode = GatewayOpcode.IDENTIFY; Data = payload; Sequence = None; EventName = None })
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
     /// Send a resume event.
     let resume token sessionId sequenceId ct ws = task {
-        let payload = ResumeSendEvent.create(token, sessionId, sequenceId)
-        let event = GatewaySendEvent.RESUME (GatewayEventPayload.create(GatewayOpcode.RESUME, payload))
+        let payload = { Token = token; SessionId = sessionId; Sequence = sequenceId }
+        let event = GatewaySendEvent.RESUME ({ Opcode = GatewayOpcode.RESUME; Data = payload; Sequence = None; EventName = None })
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
     /// Send a heartbeat event.
     let heartbeat sequenceId ct ws = task {
-        let event = GatewaySendEvent.HEARTBEAT (GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, sequenceId))
+        let event = GatewaySendEvent.HEARTBEAT ({ Opcode = GatewayOpcode.HEARTBEAT; Data = sequenceId; Sequence = None; EventName = None })
         return! Websocket.write (Json.serializeF event) ct ws    
     }
 
     /// Send a request guild members event.
     let requestGuildMembers guildId query limit presences userIds nonce ct ws = task {
-        let payload = RequestGuildMembersSendEvent.create(guildId, limit, ?Presences = presences, ?Query = query, ?UserIds = userIds, ?Nonce = nonce)
-        let event = GatewaySendEvent.REQUEST_GUILD_MEMBERS (GatewayEventPayload.create(GatewayOpcode.REQUEST_GUILD_MEMBERS, payload))
+        let payload = {
+            GuildId = guildId
+            Query = query
+            Limit = limit
+            Presences = presences
+            UserIds = userIds
+            Nonce = nonce
+        }
+
+        let event = GatewaySendEvent.REQUEST_GUILD_MEMBERS ({ Opcode = GatewayOpcode.REQUEST_GUILD_MEMBERS; Data = payload; Sequence = None; EventName = None })
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
     /// Send a request soundboard sounds event.
     let requestSoundboardSounds guildIds ct ws = task {
-        let payload = RequestSoundboardSoundsSendEvent.create(guildIds)
-        let event = GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS (GatewayEventPayload.create(GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, payload))
+        let payload = { GuildIds = guildIds }
+        let event = GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS ({ Opcode = GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS; Data = payload; Sequence = None; EventName = None })
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
     /// Send an update voice state event.
     let updateVoiceState guildId channelId selfMute selfDeaf ct ws = task {
-        let payload = UpdateVoiceStateSendEvent.create(guildId, channelId, selfMute, selfDeaf)
-        let event = GatewaySendEvent.UPDATE_VOICE_STATE (GatewayEventPayload.create(GatewayOpcode.VOICE_STATE_UPDATE, payload))
+        let payload = { GuildId = guildId; ChannelId = channelId; SelfMute = selfMute; SelfDeaf = selfDeaf }
+        let event = GatewaySendEvent.UPDATE_VOICE_STATE ({ Opcode = GatewayOpcode.VOICE_STATE_UPDATE; Data = payload; Sequence = None; EventName = None })
         return! Websocket.write (Json.serializeF event) ct ws
     }
 
     /// Send an update presence event.
     let updatePresence since activities status afk ct ws = task {
-        let payload = UpdatePresenceSendEvent.create(status, ?Activities = activities, ?Afk = afk, ?Since = since)
-        let event = GatewaySendEvent.UPDATE_PRESENCE (GatewayEventPayload.create(GatewayOpcode.PRESENCE_UPDATE, payload))
+        let payload: UpdatePresenceSendEvent = { Status = status; Activities = activities; Afk = afk; Since = since }
+        let event = GatewaySendEvent.UPDATE_PRESENCE ({ Opcode = GatewayOpcode.PRESENCE_UPDATE; Data = payload; Sequence = None; EventName = None })
         return! Websocket.write (Json.serializeF event) ct ws
     }
 

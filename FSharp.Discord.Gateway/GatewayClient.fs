@@ -47,10 +47,10 @@ type IGatewayClient =
 
     /// Send event to update the bot's presence. Result is returned in a new receive event with the given nonce.
     abstract UpdatePresence:
-        since: int option ->
-        activities: Activity list option ->
+        since: DateTime option ->
+        activities: Activity list ->
         status: Status ->
-        afk: bool option ->
+        afk: bool ->
         cancellationToken: CancellationToken ->
         Task<Result<unit, WebsocketError>>
 

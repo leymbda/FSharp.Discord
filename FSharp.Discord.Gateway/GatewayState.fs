@@ -68,11 +68,11 @@ let private receive model (ev: GatewayReceiveEvent) (raw: string) =
         let event =
             match model.SessionId, model.SequenceId with
             | Some sessionId, Some sequenceId ->
-                let payload = ResumeSendEvent.create(model.IdentifyEvent.Token, sessionId, sequenceId)
-                GatewayEventPayload.create(GatewayOpcode.RESUME, payload) |> GatewaySendEvent.RESUME
+                let payload = { Token = model.IdentifyEvent.Token; SessionId = sessionId; Sequence = sequenceId }
+                GatewaySendEvent.RESUME { Opcode = GatewayOpcode.RESUME; Data = payload; Sequence = None; EventName = None }
 
             | _ ->
-                GatewayEventPayload.create(GatewayOpcode.IDENTIFY, model.IdentifyEvent) |> GatewaySendEvent.IDENTIFY
+                GatewaySendEvent.IDENTIFY { Opcode = GatewayOpcode.IDENTIFY; Data = model.IdentifyEvent; Sequence = None; EventName = None }
 
         { model with Interval = Some ev.Data.HeartbeatInterval }, Cmd.ofMsg (Msg.Send event)
 
@@ -100,7 +100,7 @@ let private receive model (ev: GatewayReceiveEvent) (raw: string) =
 
 let ready model =
     let ev =
-        GatewayReceiveEvent.UNKNOWN (GatewayEventPayload.create (CustomGatewayOpcode.cast CustomGatewayOpcode.ACTIVE, ())),
+        GatewayReceiveEvent.UNKNOWN { Opcode = CustomGatewayOpcode.cast CustomGatewayOpcode.ACTIVE; Data = (); Sequence = None; EventName = None },
         $"""{{"op": {CustomGatewayOpcode.toString CustomGatewayOpcode.ACTIVE}}}"""
     
     // TODO: Clean up this (should this even be sending in the same way as a custom event?)
@@ -114,12 +114,12 @@ let connect (env: #ISocketFactory) model forceReconnect =
     let uri, event =
         match forceReconnect, model.ResumeGatewayUrl, model.SessionId, model.SequenceId with
         | false, Some resumeGatewayUrl, Some sessionId, Some sequenceId ->
-            let payload = ResumeSendEvent.create (model.IdentifyEvent.Token, sessionId, sequenceId)
-            let event = GatewaySendEvent.RESUME (GatewayEventPayload.create (GatewayOpcode.RESUME, payload))
+            let payload = { Token = model.IdentifyEvent.Token; SessionId = sessionId; Sequence = sequenceId }
+            let event = GatewaySendEvent.RESUME ({ Opcode = GatewayOpcode.RESUME; Data = payload; Sequence = None; EventName = None })
             Uri resumeGatewayUrl, event
 
         | _ ->
-            let event = GatewaySendEvent.IDENTIFY (GatewayEventPayload.create (GatewayOpcode.IDENTIFY, model.IdentifyEvent))
+            let event = GatewaySendEvent.IDENTIFY ({ Opcode = GatewayOpcode.IDENTIFY; Data = model.IdentifyEvent; Sequence = None; EventName = None })
             Uri model.GatewayUrl, event
 
     let socket = env.CreateSocket()
@@ -129,7 +129,7 @@ let connect (env: #ISocketFactory) model forceReconnect =
     { model with Socket = Some socket }, Cmd.ofMsg (Msg.Send event)
 
 let heartbeat (env: #IGetCurrentTime) model =
-    let event = GatewayEventPayload.create(GatewayOpcode.HEARTBEAT, model.SequenceId) |> GatewaySendEvent.HEARTBEAT
+    let event = GatewaySendEvent.HEARTBEAT ({ Opcode = GatewayOpcode.HEARTBEAT; Data = model.SequenceId; Sequence = None; EventName = None })
 
     { model with
         HeartbeatAcked = false
