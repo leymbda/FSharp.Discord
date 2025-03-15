@@ -1,7 +1,6 @@
 ﻿namespace rec FSharp.Discord.Types
 
 open System
-open System.Text.Json.Serialization
 
 // ----- API Reference -----
 
@@ -386,15 +385,6 @@ type IdentifyConnectionProperties = {
 
 // TODO: Make single DU for ensuring the device matches expected format (?)
 
-// https://discord.com/developers/docs/events/gateway-events#client-status-object
-type ClientStatus = {
-    Desktop: ClientDeviceStatus option
-    Mobile: ClientDeviceStatus option
-    Web: ClientDeviceStatus option
-}
-
-// TODO: Should this just define the invis/offline in the type instead of as option (which discord does)
-
 // https://discord.com/developers/docs/topics/gateway-events#resume-resume-structure
 type ResumeSendEvent = {
     Token: string
@@ -741,157 +731,144 @@ type GuildSoundboardSoundsReceiveEvent = {
 // https://discord.com/developers/docs/events/gateway-events#integration-create
 type IntegrationCreateReceiveEvent = {
     Integration: Integration
-    ExtraFields: IntegrationCreateReceiveEventExtraFields
-}
-
-type IntegrationCreateReceiveEventExtraFields = {
-    [<JsonPropertyName "guild_id">] GuildId: string
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#integration-update
 type IntegrationUpdateReceiveEvent = {
     Integration: Integration
-    ExtraFields: IntegrationUpdateReceiveEventExtraFields
-}
-
-type IntegrationUpdateReceiveEventExtraFields = {
-    [<JsonPropertyName "guild_id">] GuildId: string
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#integration-delete
 type IntegrationDeleteReceiveEvent = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "application_id">] ApplicationId: string
+    Id: string
+    GuildId: string
+    ApplicationId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#invite-create
 type InviteCreateReceiveEvent = {
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "code">] Code: string
-    [<JsonPropertyName "created_at">] CreatedAt: DateTime
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "inviter">] Inviter: User option
-    [<JsonPropertyName "max_age">] MaxAge: int
-    [<JsonPropertyName "max_uses">] MaxUses: int
-    [<JsonPropertyName "target_type">] TargetType: InviteTargetType option
-    [<JsonPropertyName "target_user">] TargetUser: User option
-    [<JsonPropertyName "target_application">] TargetApplication: PartialApplication option
-    [<JsonPropertyName "temporary">] Temporary: bool
-    [<JsonPropertyName "uses">] Uses: int
+    ChannelId: string
+    Code: string
+    CreatedAt: DateTime
+    GuildId: string option
+    Inviter: User option
+    MaxAge: int
+    MaxUses: int
+    TargetType: InviteTargetType option
+    TargetUser: User option
+    TargetApplication: PartialApplication option
+    Temporary: bool
+    Uses: int
 }
 
 // https://discord.com/developers/docs/events/gateway-events#invite-delete
 type InviteDeleteReceiveEvent = {
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "code">] Code: string
+    ChannelId: string
+    GuildId: string option
+    Code: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-create
 type MessageCreateReceiveEvent = {
     Message: Message
-    ExtraFields: MessageCreateReceiveEventExtraFields
+    GuildId: string option
+    Member: PartialGuildMember option
+    Mentions: MessageCreateReceiveEventMention list
 }
 
-type MessageCreateReceiveEventExtraFields = {
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "member">] Member: PartialGuildMember option
-    [<JsonPropertyName "mentions">] Mentions: MessageCreateReceiveEventExtraFieldsMention list
-}
-
-type MessageCreateReceiveEventExtraFieldsMention = {
+type MessageCreateReceiveEventMention = {
     User: User
-    ExtraFields: MessageCreateReceiveEventExtraFieldsMentionExtraFields
-}
-
-type MessageCreateReceiveEventExtraFieldsMentionExtraFields = {
-    [<JsonPropertyName "member">] Member: PartialGuildMember option
+    Member: PartialGuildMember
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-update
 type MessageUpdateReceiveEvent = {
     Message: Message
-    ExtraFields: MessageUpdateReceiveEventExtraFields
+    GuildId: string option
+    Member: PartialGuildMember option
+    Mentions: MessageUpdateReceiveEventMention list
 }
 
-type MessageUpdateReceiveEventExtraFields = {
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "member">] Member: PartialGuildMember option
-    [<JsonPropertyName "mentions">] Mentions: MessageUpdateReceiveEventExtraFieldsMention list
-}
-
-type MessageUpdateReceiveEventExtraFieldsMention = {
+type MessageUpdateReceiveEventMention = {
     User: User
-    ExtraFields: MessageUpdateReceiveEventExtraFieldsMentionExtraFields
-}
-
-type MessageUpdateReceiveEventExtraFieldsMentionExtraFields = {
-    [<JsonPropertyName "member">] Member: PartialGuildMember option
+    Member: PartialGuildMember option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-delete
 type MessageDeleteReceiveEvent = {
-    [<JsonPropertyName "ids">] Ids: string list
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
+    Id: string
+    ChannelId: string
+    GuildId: string option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-delete-bulk
 type MessageDeleteBulkReceiveEvent = {
-    [<JsonPropertyName "id">] Id: string
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
+    Ids: string list
+    ChannelId: string
+    GuildId: string option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-reaction-add
 type MessageReactionAddReceiveEvent = {
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "message_id">] MessageId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "member">] Member: GuildMember option
-    [<JsonPropertyName "emoji">] Emoji: PartialEmoji
-    [<JsonPropertyName "message_author_id">] MessageAuthorId: string option
-    [<JsonPropertyName "burst">] Burst: bool
-    [<JsonPropertyName "burst_colors">] BurstColors: string list
-    [<JsonPropertyName "type">] Type: ReactionType
+    UserId: string
+    ChannelId: string
+    MessageId: string
+    GuildId: string option
+    Member: GuildMember option
+    Emoji: PartialEmoji
+    MessageAuthorId: string option
+    Burst: bool
+    BurstColors: string list option
+    Type: ReactionType
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-reaction-remove
 type MessageReactionRemoveReceiveEvent = {
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "message_id">] MessageId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "emoji">] Emoji: PartialEmoji
-    [<JsonPropertyName "burst">] Burst: bool
-    [<JsonPropertyName "type">] Type: ReactionType
+    UserId: string
+    ChannelId: string
+    MessageId: string
+    GuildId: string option
+    Emoji: PartialEmoji
+    Burst: bool
+    Type: ReactionType
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-reaction-remove-all
 type MessageReactionRemoveAllReceiveEvent = {
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "message_id">] MessageId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
+    ChannelId: string
+    MessageId: string
+    GuildId: string option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-reaction-remove-emoji
 type MessageReactionRemoveEmojiReceiveEvent = {
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "message_id">] MessageId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "emoji">] Emoji: PartialEmoji
+    ChannelId: string
+    GuildId: string option
+    MessageId: string
+    Emoji: PartialEmoji
 }
 
 // https://discord.com/developers/docs/events/gateway-events#presence-update
 type PresenceUpdateReceiveEvent = {
-    [<JsonPropertyName "user">] User: PartialUser
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "status">] Status: Status option
-    [<JsonPropertyName "activities">] Activities: Activity list option
-    [<JsonPropertyName "client_status">] ClientStatus: ClientStatus option
+    User: PartialUser option
+    GuildId: string option
+    Status: Status option
+    Activities: Activity list option
+    ClientStatus: ClientStatus option
 }
+
+// TODO: Unclear requirements from docs for above, need to check in on these. Especially around "types of fields are NOT validated"
+
+// https://discord.com/developers/docs/events/gateway-events#client-status-object
+type ClientStatus = {
+    Desktop: ClientDeviceStatus option
+    Mobile: ClientDeviceStatus option
+    Web: ClientDeviceStatus option
+}
+
+// TODO: Should this just define the invis/offline in the type instead of as option (which discord does)
 
 // https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-structure
 type Activity = {
@@ -961,11 +938,11 @@ type ActivityButton = {
 
 // https://discord.com/developers/docs/topics/gateway-events#typing-start-typing-start-event-fields
 type TypingStartReceiveEvent = {
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "timestamp">] Timestamp: DateTime
-    [<JsonPropertyName "member">] Member: GuildMember
+    ChannelId: string
+    GuildId: string option
+    UserId: string
+    Timestamp: DateTime
+    Member: GuildMember option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#user-update
@@ -973,14 +950,14 @@ type UserUpdateReceiveEvent = User
 
 // https://discord.com/developers/docs/events/gateway-events#voice-channel-effect-send
 type VoiceChannelEffectSendReceiveEvent = {
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "emoji">] Emoji: Emoji option
-    [<JsonPropertyName "animation_type">] AnimationType: AnimationType option
-    [<JsonPropertyName "animation_id">] AnimationId: string option
-    [<JsonPropertyName "sound_id">] SoundId: string option
-    [<JsonPropertyName "sound_volume">] SoundVolume: double option
+    ChannelId: string
+    GuildId: string
+    UserId: string
+    Emoji: Emoji option option
+    AnimationType: AnimationType option option
+    AnimationId: string option
+    SoundId: string option // TODO: This can be a snowflake OR integer, need to test if an int will cast to string for this (if so, message nonce should be changed)
+    SoundVolume: double option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#voice-state-update
@@ -988,15 +965,15 @@ type VoiceStateUpdateReceiveEvent = VoiceState
 
 // https://discord.com/developers/docs/events/gateway-events#voice-server-update
 type VoiceServerUpdateReceiveEvent = {
-    [<JsonPropertyName "token">] Token: string
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "endpoint">] Endpoint: string option
+    Token: string
+    GuildId: string
+    Endpoint: string option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#webhooks-update
 type WebhooksUpdateReceiveEvent = {
-    [<JsonPropertyName "guild_id">] GuildId: string
-    [<JsonPropertyName "channel_id">] ChannelId: string
+    GuildId: string
+    ChannelId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#interaction-create
@@ -1022,20 +999,20 @@ type SubscriptionDeleteReceiveEvent = Subscription
 
 // https://discord.com/developers/docs/events/gateway-events#message-poll-vote-add
 type MessagePollVoteAddReceiveEvent = {
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "message_id">] MessageId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "answer_id">] AnswerId: string
+    UserId: string
+    ChannelId: string
+    MessageId: string
+    GuildId: string option
+    AnswerId: int
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-poll-vote-remove
 type MessagePollVoteRemoveReceiveEvent = {
-    [<JsonPropertyName "user_id">] UserId: string
-    [<JsonPropertyName "channel_id">] ChannelId: string
-    [<JsonPropertyName "message_id">] MessageId: string
-    [<JsonPropertyName "guild_id">] GuildId: string option
-    [<JsonPropertyName "answer_id">] AnswerId: string
+    UserId: string
+    ChannelId: string
+    MessageId: string
+    GuildId: string option
+    AnswerId: int
 }
 
 // ----- Events: Webhook Events -----

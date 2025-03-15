@@ -952,26 +952,6 @@ module IdentifyConnectionProperties =
             |> Encode.required Property.Device Encode.string v.Device
         )
 
-module ClientStatus =
-    module Property =
-        let [<Literal>] Desktop = "desktop"
-        let [<Literal>] Mobile = "mobile"
-        let [<Literal>] Web = "web"
-
-    let decoder path v =
-        Decode.object (fun get -> {
-            Desktop = get |> Get.optional Property.Desktop ClientDeviceStatus.decoder
-            Mobile = get |> Get.optional Property.Mobile ClientDeviceStatus.decoder
-            Web = get |> Get.optional Property.Web ClientDeviceStatus.decoder
-        }) path v
-
-    let encoder (v: ClientStatus) =
-        Encode.object ([]
-            |> Encode.optional Property.Desktop ClientDeviceStatus.encoder v.Desktop
-            |> Encode.optional Property.Mobile ClientDeviceStatus.encoder v.Mobile
-            |> Encode.optional Property.Web ClientDeviceStatus.encoder v.Web
-        )
-
 module ResumeSendEvent =
     module Property =
         let [<Literal>] Token = "token"
@@ -1598,93 +1578,183 @@ module GuildSoundboardSoundsReceiveEvent =
     let encoder (v: GuildSoundboardSoundsReceiveEvent) = raise (System.NotImplementedException())
 
 module IntegrationCreateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<IntegrationCreateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: IntegrationCreateReceiveEvent) = raise (System.NotImplementedException())
 
-module IntegrationCreateReceiveEventExtraFields =
-    let decoder: Decoder<IntegrationCreateReceiveEventExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: IntegrationCreateReceiveEventExtraFields) = raise (System.NotImplementedException())
-
 module IntegrationUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<IntegrationUpdateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: IntegrationUpdateReceiveEvent) = raise (System.NotImplementedException())
 
-module IntegrationUpdateReceiveEventExtraFields =
-    let decoder: Decoder<IntegrationUpdateReceiveEventExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: IntegrationUpdateReceiveEventExtraFields) = raise (System.NotImplementedException())
-
 module IntegrationDeleteReceiveEvent =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ApplicationId = "application_id"
+
     let decoder: Decoder<IntegrationDeleteReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: IntegrationDeleteReceiveEvent) = raise (System.NotImplementedException())
 
 module InviteCreateReceiveEvent =
+    module Property =
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] Code = "code"
+        let [<Literal>] CreatedAt = "created_at" // TODO: NOT unix timestamp, just ISO8601
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Inviter = "inviter"
+        let [<Literal>] MaxAge = "max_age"
+        let [<Literal>] MaxUses = "max_uses"
+        let [<Literal>] TargetType = "target_type"
+        let [<Literal>] TargetUser = "target_user"
+        let [<Literal>] TargetApplication = "target_application"
+        let [<Literal>] Temporary = "temporary"
+        let [<Literal>] Uses = "uses"
+    
     let decoder: Decoder<InviteCreateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: InviteCreateReceiveEvent) = raise (System.NotImplementedException())
 
 module InviteDeleteReceiveEvent =
+    module Property =
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Code = "code"
+
     let decoder: Decoder<InviteDeleteReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: InviteDeleteReceiveEvent) = raise (System.NotImplementedException())
 
 module MessageCreateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Member = "member"
+        let [<Literal>] Mentions = "mentions"
+
     let decoder: Decoder<MessageCreateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: MessageCreateReceiveEvent) = raise (System.NotImplementedException())
 
-module MessageCreateReceiveEventExtraFields =
-    let decoder: Decoder<MessageCreateReceiveEventExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: MessageCreateReceiveEventExtraFields) = raise (System.NotImplementedException())
+module MessageCreateReceiveEventMention =
+    module Property =
+        let [<Literal>] Member = "member"
 
-module MessageCreateReceiveEventExtraFieldsMention =
-    let decoder: Decoder<MessageCreateReceiveEventExtraFieldsMention> = raise (System.NotImplementedException())
-    let encoder (v: MessageCreateReceiveEventExtraFieldsMention) = raise (System.NotImplementedException())
-
-module MessageCreateReceiveEventExtraFieldsMentionExtraFields =
-    let decoder: Decoder<MessageCreateReceiveEventExtraFieldsMentionExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: MessageCreateReceiveEventExtraFieldsMentionExtraFields) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageCreateReceiveEventMention> = raise (System.NotImplementedException())
+    let encoder (v: MessageCreateReceiveEventMention) = raise (System.NotImplementedException())
 
 module MessageUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Member = "member"
+        let [<Literal>] Mentions = "mentions"
+
     let decoder: Decoder<MessageUpdateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: MessageUpdateReceiveEvent) = raise (System.NotImplementedException())
 
-module MessageUpdateReceiveEventExtraFields =
-    let decoder: Decoder<MessageUpdateReceiveEventExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: MessageUpdateReceiveEventExtraFields) = raise (System.NotImplementedException())
+module MessageUpdateReceiveEventMention =
+    module Property =
+        let [<Literal>] Member = "member"
 
-module MessageUpdateReceiveEventExtraFieldsMention =
-    let decoder: Decoder<MessageUpdateReceiveEventExtraFieldsMention> = raise (System.NotImplementedException())
-    let encoder (v: MessageUpdateReceiveEventExtraFieldsMention) = raise (System.NotImplementedException())
-
-module MessageUpdateReceiveEventExtraFieldsMentionExtraFields =
-    let decoder: Decoder<MessageUpdateReceiveEventExtraFieldsMentionExtraFields> = raise (System.NotImplementedException())
-    let encoder (v: MessageUpdateReceiveEventExtraFieldsMentionExtraFields) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageUpdateReceiveEventMention> = raise (System.NotImplementedException())
+    let encoder (v: MessageUpdateReceiveEventMention) = raise (System.NotImplementedException())
 
 module MessageDeleteReceiveEvent =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<MessageDeleteReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: MessageDeleteReceiveEvent) = raise (System.NotImplementedException())
 
 module MessageDeleteBulkReceiveEvent =
+    module Property =
+        let [<Literal>] Ids = "ids"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] GuildId = "guild_id"
+    
     let decoder: Decoder<MessageDeleteBulkReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: MessageDeleteBulkReceiveEvent) = raise (System.NotImplementedException())
 
 module MessageReactionAddReceiveEvent =
+    module Property =
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] MessageId = "message_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Member = "member"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] MessageAuthorId = "message_author_id"
+        let [<Literal>] Burst = "burst"
+        let [<Literal>] BurstColors = "burst_colors"
+        let [<Literal>] Type = "type"
+
     let decoder: Decoder<MessageReactionAddReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: MessageReactionAddReceiveEvent) = raise (System.NotImplementedException())
 
 module MessageReactionRemoveReceiveEvent =
+    module Property =
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] MessageId = "message_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] Burst = "burst"
+        let [<Literal>] Type = "type"
+
     let decoder: Decoder<MessageReactionRemoveReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: MessageReactionRemoveReceiveEvent) = raise (System.NotImplementedException())
 
 module MessageReactionRemoveAllReceiveEvent =
+    module Property =
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] MessageId = "message_id"
+        let [<Literal>] GuildId = "guild_id"
+
     let decoder: Decoder<MessageReactionRemoveAllReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: MessageReactionRemoveAllReceiveEvent) = raise (System.NotImplementedException())
 
 module MessageReactionRemoveEmojiReceiveEvent =
+    module Property =
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] MessageId = "message_id"
+        let [<Literal>] Emoji = "emoji"
+
     let decoder: Decoder<MessageReactionRemoveEmojiReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: MessageReactionRemoveEmojiReceiveEvent) = raise (System.NotImplementedException())
 
 module PresenceUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] User = "user"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Status = "status"
+        let [<Literal>] Activities = "activities"
+        let [<Literal>] ClientStatus = "client_status"
+
     let decoder: Decoder<PresenceUpdateReceiveEvent> = raise (System.NotImplementedException())
     let encoder (v: PresenceUpdateReceiveEvent) = raise (System.NotImplementedException())
 
+module ClientStatus =
+    module Property =
+        let [<Literal>] Desktop = "desktop"
+        let [<Literal>] Mobile = "mobile"
+        let [<Literal>] Web = "web"
+
+    let decoder path v =
+        Decode.object (fun get -> {
+            Desktop = get |> Get.optional Property.Desktop ClientDeviceStatus.decoder
+            Mobile = get |> Get.optional Property.Mobile ClientDeviceStatus.decoder
+            Web = get |> Get.optional Property.Web ClientDeviceStatus.decoder
+        }) path v
+
+    let encoder (v: ClientStatus) =
+        Encode.object ([]
+            |> Encode.optional Property.Desktop ClientDeviceStatus.encoder v.Desktop
+            |> Encode.optional Property.Mobile ClientDeviceStatus.encoder v.Mobile
+            |> Encode.optional Property.Web ClientDeviceStatus.encoder v.Web
+        )
 
 module Activity =
     module Property =
@@ -1865,6 +1935,100 @@ module ActivityButton =
             |> Encode.required Property.Label Encode.string v.Label
             |> Encode.required Property.Url Encode.string v.Url
         )
+
+module TypingStartReceiveEvent =
+    module Property =
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] Timestamp = "timestamp"
+        let [<Literal>] Member = "member"
+
+    let decoder: Decoder<TypingStartReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: TypingStartReceiveEvent) = raise (System.NotImplementedException())
+
+module UserUpdateReceiveEvent =
+    let decoder: Decoder<UserUpdateReceiveEvent> = User.decoder
+    let encoder (v: UserUpdateReceiveEvent) = User.encoder
+
+module VoiceChannelEffectSendReceiveEvent =
+    module Property =
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] AnimationType = "animation_type"
+        let [<Literal>] AnimationId = "animation_id"
+        let [<Literal>] SoundId = "sound_id"
+        let [<Literal>] SoundVolume = "sound_volume"
+
+module VoiceStateUpdateReceiveEvent =
+    let decoder: Decoder<VoiceStateUpdateReceiveEvent> = VoiceState.decoder
+    let encoder (v: VoiceStateUpdateReceiveEvent) = VoiceState.encoder
+
+module VoiceServerUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] Token = "token"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] Endpoint = "endpoint"
+
+    let decoder: Decoder<VoiceServerUpdateReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: VoiceServerUpdateReceiveEvent) = raise (System.NotImplementedException())
+
+module WebhooksUpdateReceiveEvent =
+    module Property =
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] ChannelId = "channel_id"
+
+module InteractionCreateReceiveEvent =
+    let decoder: Decoder<InteractionCreateReceiveEvent> = Interaction.decoder
+    let encoder (v: InteractionCreateReceiveEvent) = Interaction.encoder
+
+module StageInstanceCreateReceiveEvent =
+    let decoder: Decoder<StageInstanceCreateReceiveEvent> = StageInstance.decoder
+    let encoder (v: StageInstanceCreateReceiveEvent) = StageInstance.encoder
+
+module StageInstanceUpdateReceiveEvent =
+    let decoder: Decoder<StageInstanceUpdateReceiveEvent> = StageInstance.decoder
+    let encoder (v: StageInstanceUpdateReceiveEvent) = StageInstance.encoder
+
+module StageInstanceDeleteReceiveEvent =
+    let decoder: Decoder<StageInstanceDeleteReceiveEvent> = StageInstance.decoder
+    let encoder (v: StageInstanceDeleteReceiveEvent) = StageInstance.encoder
+
+module SubscriptionCreateReceiveEvent =
+    let decoder: Decoder<SubscriptionCreateReceiveEvent> = Subscription.decoder
+    let encoder (v: SubscriptionCreateReceiveEvent) = Subscription.encoder
+
+module SubscriptionUpdateReceiveEvent =
+    let decoder: Decoder<SubscriptionUpdateReceiveEvent> = Subscription.decoder
+    let encoder (v: SubscriptionUpdateReceiveEvent) = Subscription.encoder
+
+module SubscriptionDeleteReceiveEvent =
+    let decoder: Decoder<SubscriptionDeleteReceiveEvent> = Subscription.decoder
+    let encoder (v: SubscriptionDeleteReceiveEvent) = Subscription.encoder
+
+module MessagePollVoteAddReceiveEvent =
+    module Property =
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] MessageId = "message_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] AnswerId = "answer_id"
+
+    let decoder: Decoder<MessagePollVoteAddReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessagePollVoteAddReceiveEvent) = raise (System.NotImplementedException())
+
+module MessagePollVoteRemoveReceiveEvent =
+    module Property =
+        let [<Literal>] UserId = "user_id"
+        let [<Literal>] ChannelId = "channel_id"
+        let [<Literal>] MessageId = "message_id"
+        let [<Literal>] GuildId = "guild_id"
+        let [<Literal>] AnswerId = "answer_id"
+
+    let decoder: Decoder<MessagePollVoteRemoveReceiveEvent> = raise (System.NotImplementedException())
+    let encoder (v: MessagePollVoteRemoveReceiveEvent) = raise (System.NotImplementedException())
 
 module WebhookEventPayload =
     module Property =
