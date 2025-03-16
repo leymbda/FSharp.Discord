@@ -12,17 +12,17 @@ type CreateInteractionResponsePayload(response, ?files) =
         member this.ToHttpContent() =
             HttpContent.createJsonWithFiles InteractionResponse.encoder this.Response this.Files
 
-type CreateInteractionResponseRequest(interactionId, interactionToken, withResponse, payload) =
+type CreateInteractionResponseRequest(interactionId, interactionToken, payload) =
     member val InteractionId: string = interactionId
     member val InteractionToken: string = interactionToken
-
-    member val WithResponse: bool = withResponse
 
     member val Payload: CreateInteractionResponsePayload = payload
 
 type GetOriginalInteractionResponseRequest(interactionId, interactionToken) =
     member val InteractionId: string = interactionId
     member val InteractionToken: string = interactionToken
+    
+    // TODO: Does this expect the query params from the equivalent webhook endpoint?
 
 type EditOriginalInteractionResponsePayload(?content, ?embeds, ?allowedMentions, ?components, ?attachments, ?poll, ?files) =
     member val Content: string option option = content
@@ -46,7 +46,8 @@ type EditOriginalInteractionResponsePayload(?content, ?embeds, ?allowedMentions,
     interface IPayload with
         member this.ToHttpContent() =
             HttpContent.createJsonWithFiles EditOriginalInteractionResponsePayload.Encoder this this.Files
-
+            
+    // TODO: Does this expect the query params from the equivalent webhook endpoint?
     // TODO: Functions the same as edit webhook message - should it just use the same payload type too?
 
 type EditOriginalInteractionResponseRequest(interactionId, interactionToken, payload) =
