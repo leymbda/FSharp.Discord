@@ -44,3 +44,33 @@ let deleteOriginalInteractionResponse (req: DeleteOriginalInteractionResponseReq
     |> Uri.toRequest HttpMethod.Delete
     |> client.SendAsync
     |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/interactions/receiving-and-responding#create-followup-message
+let createFollowupMessage (req: CreateFollowupMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.ApplicationId; req.InteractionToken]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
+// https://discord.com/developers/docs/interactions/receiving-and-responding#get-followup-message
+let getFollowupMessage (req: GetFollowupMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.ApplicationId; req.InteractionToken; "messages"; req.MessageId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
+// https://discord.com/developers/docs/interactions/receiving-and-responding#edit-followup-message
+let editFollowupMessage (req: EditFollowupMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.ApplicationId; req.InteractionToken; "messages"; req.MessageId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
+// https://discord.com/developers/docs/resources/webhook#delete-webhook-message
+let deleteFollowupMessage (req: DeleteFollowupMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.ApplicationId; req.InteractionToken; "messages"; req.MessageId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
