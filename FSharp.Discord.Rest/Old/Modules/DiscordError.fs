@@ -1,4 +1,4 @@
-﻿namespace FSharp.Discord.Rest
+﻿namespace FSharp.Discord.Rest.Old
 
 open FSharp.Discord.Types
 open System.Net

@@ -1,4 +1,4 @@
-﻿module FSharp.Discord.Rest.DiscordRequest
+﻿module FSharp.Discord.Rest.Old.DiscordRequest
 
 open System.Net.Http
 open System.Web

@@ -13,20 +13,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="V2\Types.fs" />
-    <Compile Include="V2\Extensions.fs" />
-    <Compile Include="V2\DiscordResponse.fs" />
-    <Compile Include="V2\Contracts.fs" />
-    <Compile Include="V2\Rest.fs" />
-    <Compile Include="Common\Constants.fs" />
-    <Compile Include="Abstractions\IDiscordClientFactory.fs" />
-    <Compile Include="Builders\PayloadBuilder.fs" />
-    <Compile Include="Builders\RequestBuilder.fs" />
-    <Compile Include="Modules\HttpClient.fs" />
-    <Compile Include="Modules\DiscordError.fs" />
-    <Compile Include="Modules\DiscordRequest.fs" />
-    <Compile Include="Modules\DiscordResponse.fs" />
-    <Compile Include="Content.fs" />
+    <Compile Include="Old\Common\Constants.fs" />
+    <Compile Include="Old\Abstractions\IDiscordClientFactory.fs" />
+    <Compile Include="Old\Builders\PayloadBuilder.fs" />
+    <Compile Include="Old\Builders\RequestBuilder.fs" />
+    <Compile Include="Old\Modules\HttpClient.fs" />
+    <Compile Include="Old\Modules\DiscordError.fs" />
+    <Compile Include="Old\Modules\DiscordRequest.fs" />
+    <Compile Include="Old\Modules\DiscordResponse.fs" />
+    <Compile Include="Old\Content.fs" />
+    <Compile Include="Old\Rest.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="Extensions.fs" />
+    <Compile Include="DiscordResponse.fs" />
+    <Compile Include="Contracts.fs" />
     <Compile Include="Rest.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>

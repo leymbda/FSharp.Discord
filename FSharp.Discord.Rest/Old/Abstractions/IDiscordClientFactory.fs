@@ -1,4 +1,4 @@
-﻿namespace FSharp.Discord.Rest
+﻿namespace FSharp.Discord.Rest.Old
 
 open System.Net.Http
 open System.Threading.Tasks

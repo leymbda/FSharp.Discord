@@ -1,5 +1,5 @@
 ﻿[<AutoOpen>]
-module FSharp.Discord.Rest.V2.Extensions
+module FSharp.Discord.Rest.Extensions
 
 open System
 open System.Net.Http

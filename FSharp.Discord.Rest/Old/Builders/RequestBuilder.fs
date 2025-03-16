@@ -1,5 +1,5 @@
 ﻿[<AutoOpen>]
-module FSharp.Discord.Rest.RequestBuilder
+module FSharp.Discord.Rest.Old.RequestBuilder
 
 open System
 open System.Web

@@ -1,4 +1,4 @@
-﻿namespace rec FSharp.Discord.Rest.V2
+﻿namespace rec FSharp.Discord.Rest
 
 open FSharp.Discord.Types
 open FSharp.Discord.Types.Serialization
