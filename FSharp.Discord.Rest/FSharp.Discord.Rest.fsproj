@@ -13,11 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="V2\Constants.fs" />
-    <Compile Include="V2\IHttpClientFactory.fs" />
-    <Compile Include="V2\DiscordRequest.fs" />
+    <Compile Include="V2\Types.fs" />
+    <Compile Include="V2\Extensions.fs" />
     <Compile Include="V2\DiscordResponse.fs" />
-    <Compile Include="V2\RequestBuilder.fs" />
+    <Compile Include="V2\Contracts.fs" />
+    <Compile Include="V2\Rest.fs" />
     <Compile Include="Common\Constants.fs" />
     <Compile Include="Abstractions\IDiscordClientFactory.fs" />
     <Compile Include="Builders\PayloadBuilder.fs" />
