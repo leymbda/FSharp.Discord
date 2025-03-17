@@ -1605,6 +1605,16 @@ let deleteInvite
         |> client.SendAsync
         |> Task.mapT DiscordResponse.asJson<Invite>
 
+// NOTE: Below TODOs are not to be implemented in this file, but are instead placeholders for adding to new rest once reached
+// TODO: https://discord.com/developers/docs/resources/lobby#get-lobby
+// TODO: https://discord.com/developers/docs/resources/lobby#modify-lobby
+// TODO: https://discord.com/developers/docs/resources/lobby#delete-lobby
+// TODO: https://discord.com/developers/docs/resources/lobby#add-a-member-to-a-lobby
+// TODO: https://discord.com/developers/docs/resources/lobby#remove-a-member-from-a-lobby
+// TODO: https://discord.com/developers/docs/resources/lobby#leave-lobby
+// TODO: https://discord.com/developers/docs/resources/lobby#link-channel-to-lobby
+// TODO: https://discord.com/developers/docs/resources/lobby#unlink-channel-from-lobby
+
 // ----- Message -----
 
 let getChannelMessages

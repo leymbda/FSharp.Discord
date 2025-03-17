@@ -1621,6 +1621,8 @@ type GetGatewayBotOkResponse = {
 
 // ----- OAuth2 -----
 
+// TODO: Add content regarding external auth (social sdk) here and wherever else relevant
+
 type GetCurrentAuthorizationInformationOkResponse = {
     [<JsonPropertyName "application">] Application: PartialApplication
     [<JsonPropertyName "scopes">] Scopes: OAuthScope list

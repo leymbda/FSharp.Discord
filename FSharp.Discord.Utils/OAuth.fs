@@ -21,3 +21,7 @@ module OAuth =
         builder.Query <- query.ToString()
 
         builder.Uri.AbsoluteUri
+
+    // TODO: Add implicit flow builder https://discord.com/developers/docs/topics/oauth2#implicit-grant
+    // TODO: Add bot authorization flow builder https://discord.com/developers/docs/topics/oauth2#bot-authorization-flow-bot-auth-parameters
+    // TODO: Add Webhook flow builder https://discord.com/developers/docs/topics/oauth2#webhooks

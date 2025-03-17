@@ -89,6 +89,12 @@ module GuildMemberFlag =
         | GuildMemberFlag.DM_SETTINGS_UPSELL_ACKNOWLEDGED -> false
         | _ -> false
 
+// https://discord.com/developers/docs/resources/lobby#lobby-member-object-lobby-member-flags
+[<RequireQualifiedAccess>]
+type LobbyMemberFlag =
+    /// User can link a text channel to a lobby
+    | CAN_LINK_LOBBY = (1 <<< 0)
+
 // https://discord.com/developers/docs/resources/message#message-object-message-flags
 [<RequireQualifiedAccess>]
 type MessageFlag =

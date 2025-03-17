@@ -1838,6 +1838,24 @@ type InviteWithMetadata = {
     Metadata: InviteMetadata
 }
 
+// ----- Resources: Lobby -----
+
+// https://discord.com/developers/docs/resources/lobby#lobby-object-lobby-structure
+type Lobby = {
+    Id: string
+    ApplicationId: string
+    Metadata: Map<string, string> option
+    Members: LobbyMember list
+    LinkedChannel: Channel option
+}
+
+// https://discord.com/developers/docs/resources/lobby#lobby-member-object-lobby-member-structure
+type LobbyMember = {
+    Id: string
+    Metadata: Map<string, string> option option
+    Flags: int option
+}
+
 // ----- Resources: Message -----
 
 // https://discord.com/developers/docs/resources/message#message-object-message-structure

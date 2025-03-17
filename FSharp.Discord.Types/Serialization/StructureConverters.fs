@@ -4164,6 +4164,52 @@ module InviteWithMetadata =
     let encoder (v: InviteWithMetadata) =
         Encode.object (Invite.encodeProperties v.Invite @ InviteMetadata.encodeProperties v.Metadata)
 
+module Lobby =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] ApplicationId = "application_id"
+        let [<Literal>] Metadata = "metadata"
+        let [<Literal>] Members = "members"
+        let [<Literal>] LinkedChannel = "linked_channel"
+
+    let decoder: Decoder<Lobby> =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            ApplicationId = get |> Get.required Property.ApplicationId Decode.string
+            Metadata = get |> Get.nullable Property.Metadata (Decode.dict Decode.string)
+            Members = get |> Get.required Property.Members (Decode.list LobbyMember.decoder)
+            LinkedChannel = get |> Get.optional Property.LinkedChannel Channel.decoder
+        })
+
+    let encoder (v: Lobby) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
+            |> Encode.nullable Property.Metadata (Encode.mapv Encode.string) v.Metadata
+            |> Encode.required Property.Members (List.map LobbyMember.encoder >> Encode.list) v.Members
+            |> Encode.optional Property.LinkedChannel Channel.encoder v.LinkedChannel
+        )
+
+module LobbyMember =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Metadata = "metadata"
+        let [<Literal>] Flags = "flags"
+
+    let decoder: Decoder<LobbyMember> =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Metadata = get |> Get.optinull Property.Metadata (Decode.dict Decode.string)
+            Flags = get |> Get.optional Property.Flags Decode.int
+        })
+
+    let encoder (v: LobbyMember) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.optinull Property.Metadata (Encode.mapv Encode.string) v.Metadata
+            |> Encode.optional Property.Flags Encode.int v.Flags
+        )
+
 module Message =
     module Property =
         let [<Literal>] Id = "id"
