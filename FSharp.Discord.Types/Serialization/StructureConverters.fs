@@ -1369,7 +1369,7 @@ module GuildCreateReceiveEvent =
 
 module GuildCreateReceiveEventAvailableGuild =
     module Property =
-        let [<Literal>] JoinedAt = "joined_at" // TODO: Unix epoch
+        let [<Literal>] JoinedAt = "joined_at"
         let [<Literal>] Large = "large"
         let [<Literal>] Unavailable = "unavailable"
         let [<Literal>] MemberCount = "member_count"
@@ -1382,8 +1382,38 @@ module GuildCreateReceiveEventAvailableGuild =
         let [<Literal>] GuildScheduledEvents = "guild_scheduled_events"
         let [<Literal>] SoundboardSounds = "soundboard_sounds"
 
-    let decoder: Decoder<GuildCreateReceiveEventAvailableGuild> = raise (System.NotImplementedException())
-    let encoder (v: GuildCreateReceiveEventAvailableGuild) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildCreateReceiveEventAvailableGuild> =
+        Decode.object (fun get -> {
+            Guild = get |> Get.extract Guild.decoder
+            JoinedAt = get |> Get.required Property.JoinedAt UnixTimestamp.decoder
+            Large = get |> Get.required Property.Large Decode.bool
+            Unavailable = get |> Get.optional Property.Unavailable Decode.bool |> Option.defaultValue false
+            MemberCount = get |> Get.required Property.MemberCount Decode.int
+            VoiceStates = get |> Get.required Property.VoiceStates (Decode.list VoiceState.Partial.decoder)
+            Members = get |> Get.required Property.Members (Decode.list GuildMember.decoder)
+            Channels = get |> Get.required Property.Channels (Decode.list Channel.decoder)
+            Threads = get |> Get.required Property.Threads (Decode.list Channel.decoder)
+            Presences = get |> Get.required Property.Presences (Decode.list UpdatePresenceSendEvent.Partial.decoder)
+            StageInstances = get |> Get.required Property.StageInstances (Decode.list StageInstance.decoder)
+            GuildScheduledEvents = get |> Get.required Property.GuildScheduledEvents (Decode.list GuildScheduledEvent.decoder)
+            SoundboardSounds = get |> Get.required Property.SoundboardSounds (Decode.list SoundboardSound.decoder)
+        })
+
+    let encoder (v: GuildCreateReceiveEventAvailableGuild) =
+        Encode.object (Guild.encodeProperties v.Guild
+            |> Encode.required Property.JoinedAt UnixTimestamp.encoder v.JoinedAt
+            |> Encode.required Property.Large Encode.bool v.Large
+            |> Encode.optional Property.Unavailable Encode.bool (v.Unavailable |> function | true -> Some true | false -> None)
+            |> Encode.required Property.MemberCount Encode.int v.MemberCount
+            |> Encode.required Property.VoiceStates (List.map VoiceState.Partial.encoder >> Encode.list) v.VoiceStates
+            |> Encode.required Property.Members (List.map GuildMember.encoder >> Encode.list) v.Members
+            |> Encode.required Property.Channels (List.map Channel.encoder >> Encode.list) v.Channels
+            |> Encode.required Property.Threads (List.map Channel.encoder >> Encode.list) v.Threads
+            |> Encode.required Property.Presences (List.map UpdatePresenceSendEvent.Partial.encoder >> Encode.list) v.Presences
+            |> Encode.required Property.StageInstances (List.map StageInstance.encoder >> Encode.list) v.StageInstances
+            |> Encode.required Property.GuildScheduledEvents (List.map GuildScheduledEvent.encoder >> Encode.list) v.GuildScheduledEvents
+            |> Encode.required Property.SoundboardSounds (List.map SoundboardSound.encoder >> Encode.list) v.SoundboardSounds
+        )
 
 module GuildUpdateReceiveEvent =
     let decoder: Decoder<GuildUpdateReceiveEvent> = Guild.decoder
@@ -1394,8 +1424,17 @@ module GuildDeleteReceiveEvent =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Unavailable = "unavailable"
 
-    let decoder: Decoder<GuildDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildDeleteReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildDeleteReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Unavailable = get |> Get.optional Property.Unavailable Decode.bool
+        })
+
+    let encoder (v: GuildDeleteReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Unavailable Encode.bool v.Unavailable
+        )
 
 module GuildAuditLogEntryCreateReceiveEvent =
     module Property =
@@ -3181,51 +3220,53 @@ module Guild =
             IncidentsData = get |> Get.nullable Property.IncidentsData IncidentsData.decoder
         })
 
+    let internal encodeProperties (v: Guild) =
+        []
+        |> Encode.required Property.Id Encode.string v.Id
+        |> Encode.required Property.Name Encode.string v.Name
+        |> Encode.nullable Property.Icon Encode.string v.Icon
+        |> Encode.optinull Property.IconHash Encode.string v.IconHash
+        |> Encode.nullable Property.Splash Encode.string v.Splash
+        |> Encode.nullable Property.DiscoverySplash Encode.string v.DiscoverySplash
+        |> Encode.optional Property.Owner Encode.bool v.Owner
+        |> Encode.required Property.OwnerId Encode.string v.OwnerId
+        |> Encode.optional Property.Permissions Encode.string v.Permissions
+        |> Encode.nullable Property.AfkChannelId Encode.string v.AfkChannelId
+        |> Encode.required Property.AfkTimeout Encode.int v.AfkTimeout
+        |> Encode.optional Property.WidgetEnabled Encode.bool v.WidgetEnabled
+        |> Encode.optinull Property.WidgetChannelId Encode.string v.WidgetChannelId
+        |> Encode.required Property.VerificationLevel Encode.Enum.int v.VerificationLevel
+        |> Encode.required Property.DefaultMessageNotifications Encode.Enum.int v.DefaultMessageNotifications
+        |> Encode.required Property.ExplicitContentFilter Encode.Enum.int v.ExplicitContentFilter
+        |> Encode.required Property.Roles (List.map Role.encoder >> Encode.list) v.Roles
+        |> Encode.required Property.Emojis (List.map Emoji.encoder >> Encode.list) v.Emojis
+        |> Encode.required Property.Features (List.map GuildFeature.encoder >> Encode.list) v.Features
+        |> Encode.required Property.MfaLevel Encode.Enum.int v.MfaLevel
+        |> Encode.nullable Property.ApplicationId Encode.string v.ApplicationId
+        |> Encode.nullable Property.SystemChannelId Encode.string v.SystemChannelId
+        |> Encode.required Property.SystemChannelFlags Encode.int v.SystemChannelFlags
+        |> Encode.nullable Property.RulesChannelId Encode.string v.RulesChannelId
+        |> Encode.optinull Property.MaxPresences Encode.int v.MaxPresences
+        |> Encode.optional Property.MaxMembers Encode.int v.MaxMembers
+        |> Encode.nullable Property.VanityUrlCode Encode.string v.VanityUrlCode
+        |> Encode.nullable Property.Description Encode.string v.Description
+        |> Encode.required Property.PremiumTier Encode.Enum.int v.PremiumTier
+        |> Encode.optional Property.PremiumSubscriptionCount Encode.int v.PremiumSubscriptionCount
+        |> Encode.required Property.PreferredLocale Encode.string v.PreferredLocale
+        |> Encode.nullable Property.PublicUpdatesChannelId Encode.string v.PublicUpdatesChannelId
+        |> Encode.optional Property.MaxVideoChannelUsers Encode.int v.MaxVideoChannelUsers
+        |> Encode.optional Property.MaxStageVideoChannelUsers Encode.int v.MaxStageVideoChannelUsers
+        |> Encode.optional Property.ApproximateMemberCount Encode.int v.ApproximateMemberCount
+        |> Encode.optional Property.ApproximatePresenceCount Encode.int v.ApproximatePresenceCount
+        |> Encode.optional Property.WelcomeScreen WelcomeScreen.encoder v.WelcomeScreen
+        |> Encode.required Property.NsfwLevel Encode.Enum.int v.NsfwLevel
+        |> Encode.optional Property.Stickers (List.map Sticker.encoder >> Encode.list) v.Stickers
+        |> Encode.required Property.PremiumProgressBarEnabled Encode.bool v.PremiumProgressBarEnabled
+        |> Encode.nullable Property.SafetyAlertsChannelId Encode.string v.SafetyAlertsChannelId
+        |> Encode.nullable Property.IncidentsData IncidentsData.encoder v.IncidentsData
+
     let encoder (v: Guild) =
-        Encode.object ([]
-            |> Encode.required Property.Id Encode.string v.Id
-            |> Encode.required Property.Name Encode.string v.Name
-            |> Encode.nullable Property.Icon Encode.string v.Icon
-            |> Encode.optinull Property.IconHash Encode.string v.IconHash
-            |> Encode.nullable Property.Splash Encode.string v.Splash
-            |> Encode.nullable Property.DiscoverySplash Encode.string v.DiscoverySplash
-            |> Encode.optional Property.Owner Encode.bool v.Owner
-            |> Encode.required Property.OwnerId Encode.string v.OwnerId
-            |> Encode.optional Property.Permissions Encode.string v.Permissions
-            |> Encode.nullable Property.AfkChannelId Encode.string v.AfkChannelId
-            |> Encode.required Property.AfkTimeout Encode.int v.AfkTimeout
-            |> Encode.optional Property.WidgetEnabled Encode.bool v.WidgetEnabled
-            |> Encode.optinull Property.WidgetChannelId Encode.string v.WidgetChannelId
-            |> Encode.required Property.VerificationLevel Encode.Enum.int v.VerificationLevel
-            |> Encode.required Property.DefaultMessageNotifications Encode.Enum.int v.DefaultMessageNotifications
-            |> Encode.required Property.ExplicitContentFilter Encode.Enum.int v.ExplicitContentFilter
-            |> Encode.required Property.Roles (List.map Role.encoder >> Encode.list) v.Roles
-            |> Encode.required Property.Emojis (List.map Emoji.encoder >> Encode.list) v.Emojis
-            |> Encode.required Property.Features (List.map GuildFeature.encoder >> Encode.list) v.Features
-            |> Encode.required Property.MfaLevel Encode.Enum.int v.MfaLevel
-            |> Encode.nullable Property.ApplicationId Encode.string v.ApplicationId
-            |> Encode.nullable Property.SystemChannelId Encode.string v.SystemChannelId
-            |> Encode.required Property.SystemChannelFlags Encode.int v.SystemChannelFlags
-            |> Encode.nullable Property.RulesChannelId Encode.string v.RulesChannelId
-            |> Encode.optinull Property.MaxPresences Encode.int v.MaxPresences
-            |> Encode.optional Property.MaxMembers Encode.int v.MaxMembers
-            |> Encode.nullable Property.VanityUrlCode Encode.string v.VanityUrlCode
-            |> Encode.nullable Property.Description Encode.string v.Description
-            |> Encode.required Property.PremiumTier Encode.Enum.int v.PremiumTier
-            |> Encode.optional Property.PremiumSubscriptionCount Encode.int v.PremiumSubscriptionCount
-            |> Encode.required Property.PreferredLocale Encode.string v.PreferredLocale
-            |> Encode.nullable Property.PublicUpdatesChannelId Encode.string v.PublicUpdatesChannelId
-            |> Encode.optional Property.MaxVideoChannelUsers Encode.int v.MaxVideoChannelUsers
-            |> Encode.optional Property.MaxStageVideoChannelUsers Encode.int v.MaxStageVideoChannelUsers
-            |> Encode.optional Property.ApproximateMemberCount Encode.int v.ApproximateMemberCount
-            |> Encode.optional Property.ApproximatePresenceCount Encode.int v.ApproximatePresenceCount
-            |> Encode.optional Property.WelcomeScreen WelcomeScreen.encoder v.WelcomeScreen
-            |> Encode.required Property.NsfwLevel Encode.Enum.int v.NsfwLevel
-            |> Encode.optional Property.Stickers (List.map Sticker.encoder >> Encode.list) v.Stickers
-            |> Encode.required Property.PremiumProgressBarEnabled Encode.bool v.PremiumProgressBarEnabled
-            |> Encode.nullable Property.SafetyAlertsChannelId Encode.string v.SafetyAlertsChannelId
-            |> Encode.nullable Property.IncidentsData IncidentsData.encoder v.IncidentsData
-        )
+        Encode.object (encodeProperties v)
 
     module Partial =
         let decoder: Decoder<PartialGuild> =
