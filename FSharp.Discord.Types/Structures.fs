@@ -178,8 +178,10 @@ type ApplicationCommand = {
     GuildId: string option
     Name: string // TODO: Enforce 1-32 character name with valid chars
     NameLocalizations: Map<string, string> option option
+    LocalizedName: string option
     Description: string
     DescriptionLocalizations: Map<string, string> option option
+    LocalizedDescription: string option
     Options: ApplicationCommandOption list option
     DefaultMemberPermissions: string option // TODO: Serialize bitfield into permission list
     Nsfw: bool
@@ -189,6 +191,7 @@ type ApplicationCommand = {
     Handler: ApplicationCommandHandlerType option
 }
 
+// TODO: Should localized name and description be handled separately?
 // TODO: Create DU for different application command types? A few values only present on one
 
 // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-structure
@@ -196,8 +199,10 @@ type ApplicationCommandOption = {
     Type: ApplicationCommandOptionType
     Name: string // TODO: Enforce 1-32 character name with valid chars
     NameLocalizations: Map<string, string> option option
+    LocalizedName: string option
     Description: string
     DescriptionLocalizations: Map<string, string> option option
+    LocalizedDescription: string option
     Required: bool
     Choices: ApplicationCommandOptionChoice list option
     Options: ApplicationCommandOption list option
@@ -209,6 +214,7 @@ type ApplicationCommandOption = {
     Autocomplete: bool option
 }
 
+// TODO: Should localized name and description be handled separately?
 // TODO: Create DU for different types of application command option
 
 [<RequireQualifiedAccess>]
