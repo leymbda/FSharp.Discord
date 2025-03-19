@@ -601,14 +601,14 @@ type GuildAuditLogEntryCreateReceiveEvent = {
 
 // https://discord.com/developers/docs/events/gateway-events#guild-ban-add
 type GuildBanAddReceiveEvent = {
+    User: User
     GuildId: string
-    user: User
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-ban-remove
 type GuildBanRemoveReceiveEvent = {
+    User: User
     GuildId: string
-    user: User
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-emojis-update
@@ -636,8 +636,8 @@ type GuildMemberAddReceiveEvent = {
 
 // https://discord.com/developers/docs/events/gateway-events#guild-member-remove
 type GuildMemberRemoveReceiveEvent = {
-    GuildId: string
     User: User
+    GuildId: string
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-member-update
@@ -648,14 +648,14 @@ type GuildMemberUpdateReceiveEvent = {
     Nick: string option option
     Avatar: string option
     Banner: string option
-    JoinedAt: DateTime
-    PremiumSince: DateTime option
+    JoinedAt: DateTime option
+    PremiumSince: DateTime option option
     Deaf: bool option
     Mute: bool option
     Pending: bool option
     CommunicationDisabledUntil: DateTime option option
     Flags: int option
-    AvatarDecorationData: AvatarDecorationData option
+    AvatarDecorationData: AvatarDecorationData option option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-members-chunk

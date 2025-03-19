@@ -465,8 +465,10 @@ module ApplicationCommand =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Name = "name"
         let [<Literal>] NameLocalizations = "name_localizations"
+        let [<Literal>] LocalizedName = "localized_name"
         let [<Literal>] Description = "description"
         let [<Literal>] DescriptionLocalizations = "description_localizations"
+        let [<Literal>] LocalizedDescription = "localized_description"
         let [<Literal>] Options = "options"
         let [<Literal>] DefaultMemberPermissions = "default_member_permissions"
         let [<Literal>] Nsfw = "nsfw"
@@ -483,8 +485,10 @@ module ApplicationCommand =
             GuildId = get |> Get.optional Property.GuildId Decode.string
             Name = get |> Get.required Property.Name Decode.string
             NameLocalizations = get |> Get.optinull Property.NameLocalizations (Decode.dict Decode.string)
+            LocalizedName = get |> Get.optional Property.LocalizedName Decode.string
             Description = get |> Get.required Property.Description Decode.string
             DescriptionLocalizations = get |> Get.optinull Property.DescriptionLocalizations (Decode.dict Decode.string)
+            LocalizedDescription = get |> Get.optional Property.LocalizedDescription Decode.string
             Options = get |> Get.optional Property.Options (Decode.list ApplicationCommandOption.decoder)
             DefaultMemberPermissions = get |> Get.nullable Property.DefaultMemberPermissions Decode.string
             Nsfw = get |> Get.optional Property.Nsfw Decode.bool |> Option.defaultValue false
@@ -502,8 +506,10 @@ module ApplicationCommand =
             |> Encode.optional Property.GuildId Encode.string v.GuildId
             |> Encode.required Property.Name Encode.string v.Name
             |> Encode.optinull Property.NameLocalizations (Encode.mapv Encode.string) v.NameLocalizations
+            |> Encode.optional Property.LocalizedName Encode.string v.LocalizedName
             |> Encode.required Property.Description Encode.string v.Description
             |> Encode.optinull Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
+            |> Encode.optional Property.LocalizedDescription Encode.string v.LocalizedDescription
             |> Encode.optional Property.Options (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
             |> Encode.nullable Property.DefaultMemberPermissions Encode.string v.DefaultMemberPermissions
             |> Encode.optional Property.Nsfw Encode.bool (Some v.Nsfw)
@@ -518,8 +524,10 @@ module ApplicationCommandOption =
         let [<Literal>] Type = "type"
         let [<Literal>] Name = "name"
         let [<Literal>] NameLocalizations = "name_localizations"
+        let [<Literal>] LocalizedName = "localized_name"
         let [<Literal>] Description = "description"
         let [<Literal>] DescriptionLocalizations = "description_localizations"
+        let [<Literal>] LocalizedDescription = "localized_description"
         let [<Literal>] Required = "required"
         let [<Literal>] Choices = "choices"
         let [<Literal>] Options = "options"
@@ -535,8 +543,10 @@ module ApplicationCommandOption =
             Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationCommandOptionType>
             Name = get |> Get.required Property.Name Decode.string
             NameLocalizations = get |> Get.optinull Property.NameLocalizations (Decode.dict Decode.string)
+            LocalizedName = get |> Get.optional Property.LocalizedName Decode.string
             Description = get |> Get.required Property.Description Decode.string
             DescriptionLocalizations = get |> Get.optinull Property.DescriptionLocalizations (Decode.dict Decode.string)
+            LocalizedDescription = get |> Get.optional Property.LocalizedDescription Decode.string
             Required = get |> Get.optional Property.Required Decode.bool |> Option.defaultValue false
             Choices = get |> Get.optional Property.Choices (Decode.list ApplicationCommandOptionChoice.decoder)
             Options = get |> Get.optional Property.Options (Decode.list decoder)
@@ -553,8 +563,10 @@ module ApplicationCommandOption =
             |> Encode.required Property.Type Encode.Enum.int v.Type
             |> Encode.required Property.Name Encode.string v.Name
             |> Encode.optinull Property.NameLocalizations (Encode.mapv Encode.string) v.NameLocalizations
+            |> Encode.optional Property.LocalizedName Encode.string v.LocalizedName
             |> Encode.required Property.Description Encode.string v.Description
             |> Encode.optinull Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
+            |> Encode.optional Property.LocalizedDescription Encode.string v.LocalizedDescription
             |> Encode.optional Property.Required Encode.bool (Some v.Required)
             |> Encode.optional Property.Choices (List.map ApplicationCommandOptionChoice.encoder >> Encode.list) v.Choices
             |> Encode.optional Property.Options (List.map encoder >> Encode.list) v.Options
@@ -1440,62 +1452,132 @@ module GuildAuditLogEntryCreateReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<GuildAuditLogEntryCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildAuditLogEntryCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildAuditLogEntryCreateReceiveEvent> =
+        Decode.object (fun get -> {
+            AuditLogEntry = get |> Get.extract AuditLogEntry.decoder
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: GuildAuditLogEntryCreateReceiveEvent) =
+        Encode.object (
+            AuditLogEntry.encodeProperties v.AuditLogEntry
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module GuildBanAddReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] User = "user"
 
-    let decoder: Decoder<GuildBanAddReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildBanAddReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildBanAddReceiveEvent> =
+        Decode.object (fun get -> {
+            User = get |> Get.extract User.decoder
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: GuildBanAddReceiveEvent) =
+        Encode.object (
+            User.encodeProperties v.User
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module GuildBanRemoveReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] User = "user"
+        
+    let decoder: Decoder<GuildBanRemoveReceiveEvent> =
+        Decode.object (fun get -> {
+            User = get |> Get.extract User.decoder
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
 
-    let decoder: Decoder<GuildBanRemoveReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildBanRemoveReceiveEvent) = raise (System.NotImplementedException())
+    let encoder (v: GuildBanRemoveReceiveEvent) =
+        Encode.object (
+            User.encodeProperties v.User
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module GuildEmojisUpdateReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Emojis = "emojis"
 
-    let decoder: Decoder<GuildEmojisUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildEmojisUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildEmojisUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Emojis = get |> Get.required Property.Emojis (Decode.list Emoji.decoder)
+        })
+
+    let encoder (v: GuildEmojisUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Emojis (List.map Emoji.encoder >> Encode.list) v.Emojis
+        )
 
 module GuildStickersUpdateReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Stickers = "stickers"
 
-    let decoder: Decoder<GuildStickersUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildStickersUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildStickersUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Stickers = get |> Get.required Property.Stickers (Decode.list Sticker.decoder)
+        })
+
+    let encoder (v: GuildStickersUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Stickers (List.map Sticker.encoder >> Encode.list) v.Stickers
+        )
 
 module GuildIntegrationsUpdateReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<GuildIntegrationsUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildIntegrationsUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildIntegrationsUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: GuildIntegrationsUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module GuildMemberAddReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<GuildMemberAddReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildMemberAddReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildMemberAddReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildMember = get |> Get.extract GuildMember.decoder
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: GuildMemberAddReceiveEvent) =
+        Encode.object (
+            GuildMember.encodeProperties v.GuildMember
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module GuildMemberRemoveReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] User = "user"
 
-    let decoder: Decoder<GuildMemberRemoveReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildMemberRemoveReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildMemberRemoveReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            User = get |> Get.required Property.User User.decoder
+        })
+
+    let encoder (v: GuildMemberRemoveReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.User User.encoder v.User
+        )
 
 module GuildMemberUpdateReceiveEvent =
     module Property =
@@ -1512,10 +1594,43 @@ module GuildMemberUpdateReceiveEvent =
         let [<Literal>] Pending = "pending"
         let [<Literal>] CommunicationDisabledUntil = "communication_disabled_until"
         let [<Literal>] Flags = "flags"
-        let [<Literal>] AvatarDecorationMetadata = "avatar_decoration_metadata"
+        let [<Literal>] AvatarDecorationData = "avatar_decoration_data"
 
-    let decoder: Decoder<GuildMemberUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildMemberUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildMemberUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Roles = get |> Get.required Property.Roles (Decode.list Decode.string)
+            User = get |> Get.required Property.User User.decoder
+            Nick = get |> Get.optinull Property.Nick Decode.string
+            Avatar = get |> Get.nullable Property.Avatar Decode.string
+            Banner = get |> Get.nullable Property.Banner Decode.string
+            JoinedAt = get |> Get.nullable Property.JoinedAt Decode.datetimeUtc
+            PremiumSince = get |> Get.optinull Property.PremiumSince Decode.datetimeUtc
+            Deaf = get |> Get.optional Property.Deaf Decode.bool
+            Mute = get |> Get.optional Property.Mute Decode.bool
+            Pending = get |> Get.optional Property.Pending Decode.bool
+            CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
+            Flags = get |> Get.optional Property.Flags Decode.int
+            AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
+        })
+
+    let encoder (v: GuildMemberUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Roles (List.map Encode.string >> Encode.list) v.Roles
+            |> Encode.required Property.User User.encoder v.User
+            |> Encode.optinull Property.Nick Encode.string v.Nick
+            |> Encode.nullable Property.Avatar Encode.string v.Avatar
+            |> Encode.nullable Property.Banner Encode.string v.Banner
+            |> Encode.nullable Property.JoinedAt Encode.datetime v.JoinedAt
+            |> Encode.optinull Property.PremiumSince Encode.datetime v.PremiumSince
+            |> Encode.optional Property.Deaf Encode.bool v.Deaf
+            |> Encode.optional Property.Mute Encode.bool v.Mute
+            |> Encode.optional Property.Pending Encode.bool v.Pending
+            |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
+            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
+        )
 
 module GuildMembersChunkReceiveEvent =
     module Property =
@@ -1527,8 +1642,27 @@ module GuildMembersChunkReceiveEvent =
         let [<Literal>] Presences = "presences"
         let [<Literal>] Nonce = "nonce"
 
-    let decoder: Decoder<GuildMembersChunkReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildMembersChunkReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildMembersChunkReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Members = get |> Get.required Property.Members (Decode.list GuildMember.decoder)
+            ChunkIndex = get |> Get.required Property.ChunkIndex Decode.int
+            ChunkCount = get |> Get.required Property.ChunkCount Decode.int
+            NotFound = get |> Get.optional Property.NotFound (Decode.list Decode.string)
+            Presences = get |> Get.optional Property.Presences (Decode.list UpdatePresenceSendEvent.decoder)
+            Nonce = get |> Get.optional Property.Nonce Decode.string
+        })
+
+    let encoder (v: GuildMembersChunkReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Members (List.map GuildMember.encoder >> Encode.list) v.Members
+            |> Encode.required Property.ChunkIndex Encode.int v.ChunkIndex
+            |> Encode.required Property.ChunkCount Encode.int v.ChunkCount
+            |> Encode.optional Property.NotFound (List.map Encode.string >> Encode.list) v.NotFound
+            |> Encode.optional Property.Presences (List.map UpdatePresenceSendEvent.encoder >> Encode.list) v.Presences
+            |> Encode.optional Property.Nonce Encode.string v.Nonce
+        )
 
 module GuildRoleCreateReceiveEvent =
     module Property =
@@ -2482,16 +2616,18 @@ module AuditLogEntry =
             Reason = get |> Get.optional Property.Reason Decode.string
         }) path v
 
+    let internal encodeProperties (v: AuditLogEntry) =
+        []
+        |> Encode.nullable Property.TargetId Encode.string v.TargetId
+        |> Encode.optional Property.Changes (List.map AuditLogChange.encoder >> Encode.list) v.Changes
+        |> Encode.nullable Property.UserId Encode.string v.UserId
+        |> Encode.required Property.Id Encode.string v.Id
+        |> Encode.required Property.ActionType Encode.Enum.int v.ActionType
+        |> Encode.optional Property.Options AuditLogEntryOptionalInfo.encoder v.Options
+        |> Encode.optional Property.Reason Encode.string v.Reason
+
     let encoder (v: AuditLogEntry) =
-        Encode.object ([]
-            |> Encode.nullable Property.TargetId Encode.string v.TargetId
-            |> Encode.optional Property.Changes (List.map AuditLogChange.encoder >> Encode.list) v.Changes
-            |> Encode.nullable Property.UserId Encode.string v.UserId
-            |> Encode.required Property.Id Encode.string v.Id
-            |> Encode.required Property.ActionType Encode.Enum.int v.ActionType
-            |> Encode.optional Property.Options AuditLogEntryOptionalInfo.encoder v.Options
-            |> Encode.optional Property.Reason Encode.string v.Reason
-        )
+        Encode.object (encodeProperties v)
 
 module AuditLogEntryOptionalInfo =
     module Property =
@@ -3504,23 +3640,25 @@ module GuildMember =
             AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
         }) path v
 
+    let internal encodeProperties (v: GuildMember) =
+        []
+        |> Encode.optional Property.User User.encoder v.User
+        |> Encode.optinull Property.Nick Encode.string v.Nick
+        |> Encode.optinull Property.Avatar Encode.string v.Avatar
+        |> Encode.optinull Property.Banner Encode.string v.Banner
+        |> Encode.required Property.Roles (List.map Encode.string >> Encode.list) v.Roles
+        |> Encode.required Property.JoinedAt Encode.datetime v.JoinedAt
+        |> Encode.optinull Property.PremiumSince Encode.datetime v.PremiumSince
+        |> Encode.required Property.Deaf Encode.bool v.Deaf
+        |> Encode.required Property.Mute Encode.bool v.Mute
+        |> Encode.required Property.Flags Encode.int v.Flags
+        |> Encode.optional Property.Pending Encode.bool v.Pending
+        |> Encode.optional Property.Permissions Encode.string v.Permissions
+        |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
+        |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
+
     let encoder (v: GuildMember) =
-        Encode.object ([]
-            |> Encode.optional Property.User User.encoder v.User
-            |> Encode.optinull Property.Nick Encode.string v.Nick
-            |> Encode.optinull Property.Avatar Encode.string v.Avatar
-            |> Encode.optinull Property.Banner Encode.string v.Banner
-            |> Encode.required Property.Roles (List.map Encode.string >> Encode.list) v.Roles
-            |> Encode.required Property.JoinedAt Encode.datetime v.JoinedAt
-            |> Encode.optinull Property.PremiumSince Encode.datetime v.PremiumSince
-            |> Encode.required Property.Deaf Encode.bool v.Deaf
-            |> Encode.required Property.Mute Encode.bool v.Mute
-            |> Encode.required Property.Flags Encode.int v.Flags
-            |> Encode.optional Property.Pending Encode.bool v.Pending
-            |> Encode.optional Property.Permissions Encode.string v.Permissions
-            |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
-            |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
-        )
+        Encode.object (encodeProperties v)
 
     module Partial =
         let decoder path v =
@@ -5430,26 +5568,28 @@ module User =
             AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
         }) path v
 
+    let internal encodeProperties (v: User) =
+        []
+        |> Encode.required Property.Id Encode.string v.Id
+        |> Encode.required Property.Username Encode.string v.Username
+        |> Encode.required Property.Discriminator Encode.string v.Discriminator
+        |> Encode.nullable Property.GlobalName Encode.string v.GlobalName
+        |> Encode.nullable Property.Avatar Encode.string v.Avatar
+        |> Encode.optional Property.Bot Encode.bool v.Bot
+        |> Encode.optional Property.System Encode.bool v.System
+        |> Encode.optional Property.MfaEnabled Encode.bool v.MfaEnabled
+        |> Encode.optinull Property.Banner Encode.string v.Banner
+        |> Encode.optinull Property.AccentColor Encode.int v.AccentColor
+        |> Encode.optional Property.Locale Encode.string v.Locale
+        |> Encode.optional Property.Verified Encode.bool v.Verified
+        |> Encode.optinull Property.Email Encode.string v.Email
+        |> Encode.optional Property.Flags Encode.int v.Flags
+        |> Encode.optional Property.PremiumType Encode.Enum.int v.PremiumType
+        |> Encode.optional Property.PublicFlags Encode.int v.PublicFlags
+        |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
+
     let encoder (v: User) =
-        Encode.object ([]
-            |> Encode.required Property.Id Encode.string v.Id
-            |> Encode.required Property.Username Encode.string v.Username
-            |> Encode.required Property.Discriminator Encode.string v.Discriminator
-            |> Encode.nullable Property.GlobalName Encode.string v.GlobalName
-            |> Encode.nullable Property.Avatar Encode.string v.Avatar
-            |> Encode.optional Property.Bot Encode.bool v.Bot
-            |> Encode.optional Property.System Encode.bool v.System
-            |> Encode.optional Property.MfaEnabled Encode.bool v.MfaEnabled
-            |> Encode.optinull Property.Banner Encode.string v.Banner
-            |> Encode.optinull Property.AccentColor Encode.int v.AccentColor
-            |> Encode.optional Property.Locale Encode.string v.Locale
-            |> Encode.optional Property.Verified Encode.bool v.Verified
-            |> Encode.optinull Property.Email Encode.string v.Email
-            |> Encode.optional Property.Flags Encode.int v.Flags
-            |> Encode.optional Property.PremiumType Encode.Enum.int v.PremiumType
-            |> Encode.optional Property.PublicFlags Encode.int v.PublicFlags
-            |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
-        )
+        Encode.object (encodeProperties v)
 
     module Partial =
         let decoder path v =
