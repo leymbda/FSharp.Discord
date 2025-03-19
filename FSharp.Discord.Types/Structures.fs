@@ -860,7 +860,7 @@ type MessageReactionRemoveEmojiReceiveEvent = {
 type PresenceUpdateReceiveEvent = {
     User: PartialUser option
     GuildId: string option
-    Status: Status option
+    Status: Status option // TODO: Cannot be invisible
     Activities: Activity list option
     ClientStatus: ClientStatus option
 }

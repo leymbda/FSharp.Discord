@@ -2051,8 +2051,23 @@ module PresenceUpdateReceiveEvent =
         let [<Literal>] Activities = "activities"
         let [<Literal>] ClientStatus = "client_status"
 
-    let decoder: Decoder<PresenceUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: PresenceUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<PresenceUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            User = get |> Get.optional Property.User User.Partial.decoder
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Status = get |> Get.optional Property.Status Status.decoder
+            Activities = get |> Get.optional Property.Activities (Decode.list Activity.decoder)
+            ClientStatus = get |> Get.optional Property.ClientStatus ClientStatus.decoder
+        })
+
+    let encoder (v: PresenceUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.optional Property.User User.Partial.encoder v.User
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Status Status.encoder v.Status
+            |> Encode.optional Property.Activities (List.map Activity.encoder >> Encode.list) v.Activities
+            |> Encode.optional Property.ClientStatus ClientStatus.encoder v.ClientStatus
+        )
 
 module ClientStatus =
     module Property =
@@ -2262,8 +2277,23 @@ module TypingStartReceiveEvent =
         let [<Literal>] Timestamp = "timestamp"
         let [<Literal>] Member = "member"
 
-    let decoder: Decoder<TypingStartReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: TypingStartReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<TypingStartReceiveEvent> =
+        Decode.object (fun get -> {
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            UserId = get |> Get.required Property.UserId Decode.string
+            Timestamp = get |> Get.required Property.Timestamp UnixTimestamp.decoder
+            Member = get |> Get.optional Property.Member GuildMember.decoder
+        })
+
+    let encoder (v: TypingStartReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.required Property.Timestamp UnixTimestamp.encoder v.Timestamp
+            |> Encode.optional Property.Member GuildMember.encoder v.Member
+        )
 
 module UserUpdateReceiveEvent =
     let decoder: Decoder<UserUpdateReceiveEvent> = User.decoder
@@ -2279,6 +2309,30 @@ module VoiceChannelEffectSendReceiveEvent =
         let [<Literal>] AnimationId = "animation_id"
         let [<Literal>] SoundId = "sound_id"
         let [<Literal>] SoundVolume = "sound_volume"
+        
+    let decoder: Decoder<VoiceChannelEffectSendReceiveEvent> =
+        Decode.object (fun get -> {
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            UserId = get |> Get.required Property.UserId Decode.string
+            Emoji = get |> Get.optinull Property.Emoji Emoji.decoder
+            AnimationType = get |> Get.optinull Property.AnimationType Decode.Enum.int<AnimationType>
+            AnimationId = get |> Get.optional Property.AnimationId Decode.string
+            SoundId = get |> Get.optional Property.SoundId Decode.string
+            SoundVolume = get |> Get.optional Property.SoundVolume Decode.float
+        })
+
+    let encoder (v: VoiceChannelEffectSendReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.optinull Property.Emoji Emoji.encoder v.Emoji
+            |> Encode.optinull Property.AnimationType Encode.Enum.int v.AnimationType
+            |> Encode.optional Property.AnimationId Encode.string v.AnimationId
+            |> Encode.optional Property.SoundId Encode.string v.SoundId
+            |> Encode.optional Property.SoundVolume Encode.float v.SoundVolume
+        )
 
 module VoiceStateUpdateReceiveEvent =
     let decoder: Decoder<VoiceStateUpdateReceiveEvent> = VoiceState.decoder
@@ -2290,13 +2344,36 @@ module VoiceServerUpdateReceiveEvent =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Endpoint = "endpoint"
 
-    let decoder: Decoder<VoiceServerUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: VoiceServerUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<VoiceServerUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            Token = get |> Get.required Property.Token Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Endpoint = get |> Get.nullable Property.Endpoint Decode.string
+        })
+
+    let encoder (v: VoiceServerUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Token Encode.string v.Token
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.nullable Property.Endpoint Encode.string v.Endpoint
+        )
 
 module WebhooksUpdateReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] ChannelId = "channel_id"
+
+    let decoder: Decoder<WebhooksUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+        })
+
+    let encoder (v: WebhooksUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+        )
 
 module InteractionCreateReceiveEvent =
     let decoder: Decoder<InteractionCreateReceiveEvent> = Interaction.decoder
@@ -2334,8 +2411,23 @@ module MessagePollVoteAddReceiveEvent =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] AnswerId = "answer_id"
 
-    let decoder: Decoder<MessagePollVoteAddReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessagePollVoteAddReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessagePollVoteAddReceiveEvent> =
+        Decode.object (fun get -> {
+            UserId = get |> Get.required Property.UserId Decode.string
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            MessageId = get |> Get.required Property.MessageId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            AnswerId = get |> Get.required Property.AnswerId Decode.int
+        })
+
+    let encoder (v: MessagePollVoteAddReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.MessageId Encode.string v.MessageId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.AnswerId Encode.int v.AnswerId
+        )
 
 module MessagePollVoteRemoveReceiveEvent =
     module Property =
@@ -2345,8 +2437,23 @@ module MessagePollVoteRemoveReceiveEvent =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] AnswerId = "answer_id"
 
-    let decoder: Decoder<MessagePollVoteRemoveReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessagePollVoteRemoveReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessagePollVoteRemoveReceiveEvent> =
+        Decode.object (fun get -> {
+            UserId = get |> Get.required Property.UserId Decode.string
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            MessageId = get |> Get.required Property.MessageId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            AnswerId = get |> Get.required Property.AnswerId Decode.int
+        })
+
+    let encoder (v: MessagePollVoteRemoveReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.MessageId Encode.string v.MessageId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.AnswerId Encode.int v.AnswerId
+        )
 
 module WebhookEventPayload =
     module Property =
