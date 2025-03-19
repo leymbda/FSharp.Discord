@@ -1669,24 +1669,51 @@ module GuildRoleCreateReceiveEvent =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Role = "role"
 
-    let decoder: Decoder<GuildRoleCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildRoleCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildRoleCreateReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Role = get |> Get.required Property.Role Role.decoder
+        })
+
+    let encoder (v: GuildRoleCreateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Role Role.encoder v.Role
+        )
 
 module GuildRoleUpdateReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Role = "role"
 
-    let decoder: Decoder<GuildRoleUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildRoleUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildRoleUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            Role = get |> Get.required Property.Role Role.decoder
+        })
+
+    let encoder (v: GuildRoleUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Role Role.encoder v.Role
+        )
 
 module GuildRoleDeleteReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] RoleId = "role_id"
 
-    let decoder: Decoder<GuildRoleDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildRoleDeleteReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildRoleDeleteReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            RoleId = get |> Get.required Property.RoleId Decode.string
+        })
+
+    let encoder (v: GuildRoleDeleteReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.RoleId Encode.string v.RoleId
+        )
 
 module GuildScheduledEventCreateReceiveEvent =
     let decoder: Decoder<GuildScheduledEventCreateReceiveEvent> = GuildScheduledEvent.decoder
@@ -1706,8 +1733,19 @@ module GuildScheduledEventUserAddReceiveEvent =
         let [<Literal>] UserId = "user_id"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<GuildScheduledEventUserAddReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildScheduledEventUserAddReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildScheduledEventUserAddReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildScheduledEventId = get |> Get.required Property.GuildScheduledEventId Decode.string
+            UserId = get |> Get.required Property.UserId Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: GuildScheduledEventUserAddReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildScheduledEventId Encode.string v.GuildScheduledEventId
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module GuildScheduledEventUserRemoveReceiveEvent =
     module Property =
@@ -1715,8 +1753,19 @@ module GuildScheduledEventUserRemoveReceiveEvent =
         let [<Literal>] UserId = "user_id"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<GuildScheduledEventUserRemoveReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildScheduledEventUserRemoveReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildScheduledEventUserRemoveReceiveEvent> =
+        Decode.object (fun get -> {
+            GuildScheduledEventId = get |> Get.required Property.GuildScheduledEventId Decode.string
+            UserId = get |> Get.required Property.UserId Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: GuildScheduledEventUserRemoveReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildScheduledEventId Encode.string v.GuildScheduledEventId
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module GuildSoundboardSoundCreateReceiveEvent =
     let decoder: Decoder<GuildSoundboardSoundCreateReceiveEvent> = SoundboardSound.decoder
@@ -1731,24 +1780,51 @@ module GuildSoundboardSoundDeleteReceiveEvent =
         let [<Literal>] SoundId = "sound_id"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<GuildSoundboardSoundDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildSoundboardSoundDeleteReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildSoundboardSoundDeleteReceiveEvent> =
+        Decode.object (fun get -> {
+            SoundId = get |> Get.required Property.SoundId Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: GuildSoundboardSoundDeleteReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.SoundId Encode.string v.SoundId
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module GuildSoundboardSoundsUpdateReceiveEvent =
     module Property =
         let [<Literal>] SoundboardSounds = "soundboard_sounds"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<GuildSoundboardSoundsUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildSoundboardSoundsUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildSoundboardSoundsUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            SoundboardSounds = get |> Get.required Property.SoundboardSounds (Decode.list SoundboardSound.decoder)
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: GuildSoundboardSoundsUpdateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.SoundboardSounds (List.map SoundboardSound.encoder >> Encode.list) v.SoundboardSounds
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module GuildSoundboardSoundsReceiveEvent =
     module Property =
         let [<Literal>] SoundboardSounds = "soundboard_sounds"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<GuildSoundboardSoundsReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: GuildSoundboardSoundsReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<GuildSoundboardSoundsReceiveEvent> =
+        Decode.object (fun get -> {
+            SoundboardSounds = get |> Get.required Property.SoundboardSounds (Decode.list SoundboardSound.decoder)
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: GuildSoundboardSoundsReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.SoundboardSounds (List.map SoundboardSound.encoder >> Encode.list) v.SoundboardSounds
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module IntegrationCreateReceiveEvent =
     module Property =
