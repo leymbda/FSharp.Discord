@@ -3,6 +3,11 @@
 open FSharp.Discord.Types
 open Thoth.Json.Net
 
+// This and other recursive references to the object(s) being defined will be checked for initialization-soundness at
+// runtime through the use of a delayed reference. This is because you are defining one or more recursive objects,
+// rather than recursive functions. This warning may be suppressed by using '#nowarn "40"' or '--nowarn:40'.
+#nowarn "40"
+
 module ErrorResponse =
     module Property =
         let [<Literal>] Code = "code"
@@ -1951,31 +1956,75 @@ module MessageCreateReceiveEvent =
         let [<Literal>] Member = "member"
         let [<Literal>] Mentions = "mentions"
 
-    let decoder: Decoder<MessageCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessageCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageCreateReceiveEvent> =
+        Decode.object (fun get -> {
+            Message = get |> Get.extract Message.decoder
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
+            Mentions = get |> Get.required Property.Mentions (Decode.list MessageCreateReceiveEventMention.decoder)
+        })
+
+    let encoder (v: MessageCreateReceiveEvent) =
+        Encode.object (
+            Message.encodeProperties v.Message
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Member GuildMember.Partial.encoder v.Member
+            |> Encode.required Property.Mentions (List.map MessageCreateReceiveEventMention.encoder >> Encode.list) v.Mentions
+        )
 
 module MessageCreateReceiveEventMention =
     module Property =
         let [<Literal>] Member = "member"
 
-    let decoder: Decoder<MessageCreateReceiveEventMention> = raise (System.NotImplementedException())
-    let encoder (v: MessageCreateReceiveEventMention) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageCreateReceiveEventMention> =
+        Decode.object (fun get -> {
+            User = get |> Get.extract User.decoder
+            Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
+        })
+
+    let encoder (v: MessageCreateReceiveEventMention) =
+        Encode.object (
+            User.encodeProperties v.User
+            |> Encode.optional Property.Member GuildMember.Partial.encoder v.Member
+        )
 
 module MessageUpdateReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Member = "member"
         let [<Literal>] Mentions = "mentions"
+        
+    let decoder: Decoder<MessageUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            Message = get |> Get.extract Message.decoder
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
+            Mentions = get |> Get.required Property.Mentions (Decode.list MessageUpdateReceiveEventMention.decoder)
+        })
 
-    let decoder: Decoder<MessageUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessageUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let encoder (v: MessageUpdateReceiveEvent) =
+        Encode.object (
+            Message.encodeProperties v.Message
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Member GuildMember.Partial.encoder v.Member
+            |> Encode.required Property.Mentions (List.map MessageUpdateReceiveEventMention.encoder >> Encode.list) v.Mentions
+        )
 
 module MessageUpdateReceiveEventMention =
     module Property =
         let [<Literal>] Member = "member"
 
-    let decoder: Decoder<MessageUpdateReceiveEventMention> = raise (System.NotImplementedException())
-    let encoder (v: MessageUpdateReceiveEventMention) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageUpdateReceiveEventMention> =
+        Decode.object (fun get -> {
+            User = get |> Get.extract User.decoder
+            Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
+        })
+
+    let encoder (v: MessageUpdateReceiveEventMention) =
+        Encode.object (
+            User.encodeProperties v.User
+            |> Encode.optional Property.Member GuildMember.Partial.encoder v.Member
+        )
 
 module MessageDeleteReceiveEvent =
     module Property =
@@ -1983,8 +2032,19 @@ module MessageDeleteReceiveEvent =
         let [<Literal>] ChannelId = "channel_id"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<MessageDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessageDeleteReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageDeleteReceiveEvent> =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+        })
+
+    let encoder (v: MessageDeleteReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+        )
 
 module MessageDeleteBulkReceiveEvent =
     module Property =
@@ -1992,8 +2052,19 @@ module MessageDeleteBulkReceiveEvent =
         let [<Literal>] ChannelId = "channel_id"
         let [<Literal>] GuildId = "guild_id"
     
-    let decoder: Decoder<MessageDeleteBulkReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessageDeleteBulkReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageDeleteBulkReceiveEvent> =
+        Decode.object (fun get -> {
+            Ids = get |> Get.required Property.Ids (Decode.list Decode.string)
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string            
+        })
+
+    let encoder (v: MessageDeleteBulkReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Ids (List.map Encode.string >> Encode.list) v.Ids
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+        )
 
 module MessageReactionAddReceiveEvent =
     module Property =
@@ -2008,8 +2079,33 @@ module MessageReactionAddReceiveEvent =
         let [<Literal>] BurstColors = "burst_colors"
         let [<Literal>] Type = "type"
 
-    let decoder: Decoder<MessageReactionAddReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessageReactionAddReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageReactionAddReceiveEvent> =
+        Decode.object (fun get -> {
+            UserId = get |> Get.required Property.UserId Decode.string
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            MessageId = get |> Get.required Property.MessageId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Member = get |> Get.optional Property.Member GuildMember.decoder
+            Emoji = get |> Get.required Property.Emoji Emoji.Partial.decoder
+            MessageAuthorId = get |> Get.optional Property.MessageAuthorId Decode.string
+            Burst = get |> Get.required Property.Burst Decode.bool
+            BurstColors = get |> Get.optional Property.BurstColors (Decode.list Decode.string)
+            Type = get |> Get.required Property.Type Decode.Enum.int<ReactionType>
+        })
+
+    let encoder (v: MessageReactionAddReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.MessageId Encode.string v.MessageId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Member GuildMember.encoder v.Member
+            |> Encode.required Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.optional Property.MessageAuthorId Encode.string v.MessageAuthorId
+            |> Encode.required Property.Burst Encode.bool v.Burst
+            |> Encode.optional Property.BurstColors (List.map Encode.string >> Encode.list) v.BurstColors
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+        )
 
 module MessageReactionRemoveReceiveEvent =
     module Property =
@@ -2021,8 +2117,27 @@ module MessageReactionRemoveReceiveEvent =
         let [<Literal>] Burst = "burst"
         let [<Literal>] Type = "type"
 
-    let decoder: Decoder<MessageReactionRemoveReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessageReactionRemoveReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageReactionRemoveReceiveEvent> =
+        Decode.object (fun get -> {
+            UserId = get |> Get.required Property.UserId Decode.string
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            MessageId = get |> Get.required Property.MessageId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Emoji = get |> Get.required Property.Emoji Emoji.Partial.decoder
+            Burst = get |> Get.required Property.Burst Decode.bool
+            Type = get |> Get.required Property.Type Decode.Enum.int<ReactionType>
+        })
+
+    let encoder (v: MessageReactionRemoveReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.UserId Encode.string v.UserId
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.MessageId Encode.string v.MessageId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.required Property.Burst Encode.bool v.Burst
+            |> Encode.required Property.Type Encode.Enum.int v.Type
+        )
 
 module MessageReactionRemoveAllReceiveEvent =
     module Property =
@@ -2030,8 +2145,19 @@ module MessageReactionRemoveAllReceiveEvent =
         let [<Literal>] MessageId = "message_id"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<MessageReactionRemoveAllReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessageReactionRemoveAllReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageReactionRemoveAllReceiveEvent> =
+        Decode.object (fun get -> {
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            MessageId = get |> Get.required Property.MessageId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+        })
+
+    let encoder (v: MessageReactionRemoveAllReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.MessageId Encode.string v.MessageId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+        )
 
 module MessageReactionRemoveEmojiReceiveEvent =
     module Property =
@@ -2040,8 +2166,21 @@ module MessageReactionRemoveEmojiReceiveEvent =
         let [<Literal>] MessageId = "message_id"
         let [<Literal>] Emoji = "emoji"
 
-    let decoder: Decoder<MessageReactionRemoveEmojiReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: MessageReactionRemoveEmojiReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<MessageReactionRemoveEmojiReceiveEvent> =
+        Decode.object (fun get -> {
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            MessageId = get |> Get.required Property.MessageId Decode.string
+            Emoji = get |> Get.required Property.Emoji Emoji.Partial.decoder
+        })
+
+    let encoder (v: MessageReactionRemoveEmojiReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.MessageId Encode.string v.MessageId
+            |> Encode.required Property.Emoji Emoji.Partial.encoder v.Emoji
+        )
 
 module PresenceUpdateReceiveEvent =
     module Property =
@@ -4679,44 +4818,46 @@ module Message =
             Call = get |> Get.optional Property.Call MessageCall.decoder
         }) path v
 
+    let internal encodeProperties (v: Message) =
+        []
+        |> Encode.required Property.Id Encode.string v.Id
+        |> Encode.required Property.ChannelId Encode.string v.ChannelId
+        |> Encode.required Property.Author User.encoder v.Author
+        |> Encode.nullable Property.Content Encode.string v.Content
+        |> Encode.required Property.Timestamp Encode.datetime v.Timestamp
+        |> Encode.nullable Property.EditedTimestamp Encode.datetime v.EditedTimestamp
+        |> Encode.required Property.Tts Encode.bool v.Tts
+        |> Encode.required Property.MentionEveryone Encode.bool v.MentionEveryone
+        |> Encode.required Property.Mentions (List.map User.encoder >> Encode.list) v.Mentions
+        |> Encode.required Property.MentionRoles (List.map Encode.string >> Encode.list) v.MentionRoles
+        |> Encode.optional Property.MentionChannels (List.map ChannelMention.encoder >> Encode.list) v.MentionChannels
+        |> Encode.required Property.Attachments (List.map Attachment.encoder >> Encode.list) v.Attachments
+        |> Encode.required Property.Embeds (List.map Embed.encoder >> Encode.list) v.Embeds
+        |> Encode.optional Property.Reactions (List.map Reaction.encoder >> Encode.list) v.Reactions
+        |> Encode.optional Property.Nonce MessageNonce.encoder v.Nonce
+        |> Encode.required Property.Pinned Encode.bool v.Pinned
+        |> Encode.optional Property.WebhookId Encode.string v.WebhookId
+        |> Encode.required Property.Type Encode.Enum.int v.Type
+        |> Encode.optional Property.Activity MessageActivity.encoder v.Activity
+        |> Encode.optional Property.Application Application.Partial.encoder v.Application
+        |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
+        |> Encode.optional Property.Flags Encode.int v.Flags
+        |> Encode.optional Property.MessageReference MessageReference.encoder v.MessageReference
+        |> Encode.optional Property.MessageSnapshots (List.map MessageSnapshot.encoder >> Encode.list) v.MessageSnapshots
+        |> Encode.optinull Property.ReferencedMessage encoder v.ReferencedMessage
+        |> Encode.optional Property.InteractionMetadata MessageInteractionMetadata.encoder v.InteractionMetadata
+        |> Encode.optional Property.Interaction MessageInteraction.encoder v.Interaction
+        |> Encode.optional Property.Thread Channel.encoder v.Thread
+        |> Encode.optional Property.Components (List.map Component.encoder >> Encode.list) v.Components
+        |> Encode.optional Property.StickerItems (List.map StickerItem.encoder >> Encode.list) v.StickerItems
+        |> Encode.optional Property.Position Encode.int v.Position
+        |> Encode.optional Property.RoleSubscriptionData RoleSubscriptionData.encoder v.RoleSubscriptionData
+        |> Encode.optional Property.Resolved ResolvedData.encoder v.Resolved
+        |> Encode.optional Property.Poll Poll.encoder v.Poll
+        |> Encode.optional Property.Call MessageCall.encoder v.Call
+
     let encoder (v: Message) =
-        Encode.object ([]
-            |> Encode.required Property.Id Encode.string v.Id
-            |> Encode.required Property.ChannelId Encode.string v.ChannelId
-            |> Encode.required Property.Author User.encoder v.Author
-            |> Encode.nullable Property.Content Encode.string v.Content
-            |> Encode.required Property.Timestamp Encode.datetime v.Timestamp
-            |> Encode.nullable Property.EditedTimestamp Encode.datetime v.EditedTimestamp
-            |> Encode.required Property.Tts Encode.bool v.Tts
-            |> Encode.required Property.MentionEveryone Encode.bool v.MentionEveryone
-            |> Encode.required Property.Mentions (List.map User.encoder >> Encode.list) v.Mentions
-            |> Encode.required Property.MentionRoles (List.map Encode.string >> Encode.list) v.MentionRoles
-            |> Encode.optional Property.MentionChannels (List.map ChannelMention.encoder >> Encode.list) v.MentionChannels
-            |> Encode.required Property.Attachments (List.map Attachment.encoder >> Encode.list) v.Attachments
-            |> Encode.required Property.Embeds (List.map Embed.encoder >> Encode.list) v.Embeds
-            |> Encode.optional Property.Reactions (List.map Reaction.encoder >> Encode.list) v.Reactions
-            |> Encode.optional Property.Nonce MessageNonce.encoder v.Nonce
-            |> Encode.required Property.Pinned Encode.bool v.Pinned
-            |> Encode.optional Property.WebhookId Encode.string v.WebhookId
-            |> Encode.required Property.Type Encode.Enum.int v.Type
-            |> Encode.optional Property.Activity MessageActivity.encoder v.Activity
-            |> Encode.optional Property.Application Application.Partial.encoder v.Application
-            |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
-            |> Encode.optional Property.Flags Encode.int v.Flags
-            |> Encode.optional Property.MessageReference MessageReference.encoder v.MessageReference
-            |> Encode.optional Property.MessageSnapshots (List.map MessageSnapshot.encoder >> Encode.list) v.MessageSnapshots
-            |> Encode.optinull Property.ReferencedMessage encoder v.ReferencedMessage
-            |> Encode.optional Property.InteractionMetadata MessageInteractionMetadata.encoder v.InteractionMetadata
-            |> Encode.optional Property.Interaction MessageInteraction.encoder v.Interaction
-            |> Encode.optional Property.Thread Channel.encoder v.Thread
-            |> Encode.optional Property.Components (List.map Component.encoder >> Encode.list) v.Components
-            |> Encode.optional Property.StickerItems (List.map StickerItem.encoder >> Encode.list) v.StickerItems
-            |> Encode.optional Property.Position Encode.int v.Position
-            |> Encode.optional Property.RoleSubscriptionData RoleSubscriptionData.encoder v.RoleSubscriptionData
-            |> Encode.optional Property.Resolved ResolvedData.encoder v.Resolved
-            |> Encode.optional Property.Poll Poll.encoder v.Poll
-            |> Encode.optional Property.Call MessageCall.encoder v.Call
-        )
+        Encode.object (encodeProperties v)
 
     module Partial =
         let decoder path v =
@@ -6273,3 +6414,6 @@ module TeamMember =
         )
 
 // TODO: Count how many instances of encode/decode for optional and nullable and look for mismatches
+// TODO: Remove all `path v` and instead use explicit type
+// TODO: Make `Encode.list'` helper function to remove `List.map` boilerplate
+// TODO: Write updated tests for encoding and decoding helper functions

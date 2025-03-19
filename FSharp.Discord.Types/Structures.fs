@@ -786,7 +786,7 @@ type MessageCreateReceiveEvent = {
 
 type MessageCreateReceiveEventMention = {
     User: User
-    Member: PartialGuildMember
+    Member: PartialGuildMember option
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-update
@@ -826,7 +826,7 @@ type MessageReactionAddReceiveEvent = {
     Emoji: PartialEmoji
     MessageAuthorId: string option
     Burst: bool
-    BurstColors: string list option
+    BurstColors: string list option // TODO: Convert into some type representing color (hex string send e.g. `#123456`)
     Type: ReactionType
 }
 
