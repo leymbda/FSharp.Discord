@@ -1830,15 +1830,33 @@ module IntegrationCreateReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<IntegrationCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: IntegrationCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<IntegrationCreateReceiveEvent> =
+        Decode.object (fun get -> {
+            Integration = get |> Get.extract Integration.decoder
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: IntegrationCreateReceiveEvent) =
+        Encode.object (
+            Integration.encodeProperties v.Integration
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module IntegrationUpdateReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<IntegrationUpdateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: IntegrationUpdateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<IntegrationUpdateReceiveEvent> =
+        Decode.object (fun get -> {
+            Integration = get |> Get.extract Integration.decoder
+            GuildId = get |> Get.required Property.GuildId Decode.string
+        })
+
+    let encoder (v: IntegrationUpdateReceiveEvent) =
+        Encode.object (
+            Integration.encodeProperties v.Integration
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+        )
 
 module IntegrationDeleteReceiveEvent =
     module Property =
@@ -1846,14 +1864,25 @@ module IntegrationDeleteReceiveEvent =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] ApplicationId = "application_id"
 
-    let decoder: Decoder<IntegrationDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: IntegrationDeleteReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<IntegrationDeleteReceiveEvent> =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            GuildId = get |> Get.required Property.GuildId Decode.string
+            ApplicationId = get |> Get.required Property.ApplicationId Decode.string
+        })
+
+    let encoder (v: IntegrationDeleteReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string v.Id
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
+        )
 
 module InviteCreateReceiveEvent =
     module Property =
         let [<Literal>] ChannelId = "channel_id"
         let [<Literal>] Code = "code"
-        let [<Literal>] CreatedAt = "created_at" // TODO: NOT unix timestamp, just ISO8601
+        let [<Literal>] CreatedAt = "created_at"
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Inviter = "inviter"
         let [<Literal>] MaxAge = "max_age"
@@ -1864,8 +1893,37 @@ module InviteCreateReceiveEvent =
         let [<Literal>] Temporary = "temporary"
         let [<Literal>] Uses = "uses"
     
-    let decoder: Decoder<InviteCreateReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: InviteCreateReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<InviteCreateReceiveEvent> =
+        Decode.object (fun get -> {
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            Code = get |> Get.required Property.Code Decode.string
+            CreatedAt = get |> Get.required Property.CreatedAt UnixTimestamp.decoder
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Inviter = get |> Get.optional Property.Inviter User.decoder
+            MaxAge = get |> Get.required Property.MaxAge Decode.int
+            MaxUses = get |> Get.required Property.MaxUses Decode.int
+            TargetType = get |> Get.optional Property.TargetType Decode.Enum.int<InviteTargetType>
+            TargetUser = get |> Get.optional Property.TargetUser User.decoder
+            TargetApplication = get |> Get.optional Property.TargetApplication Application.Partial.decoder
+            Temporary = get |> Get.required Property.Temporary Decode.bool
+            Uses = get |> Get.required Property.Uses Decode.int
+        })
+
+    let encoder (v: InviteCreateReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.Code Encode.string v.Code
+            |> Encode.required Property.CreatedAt UnixTimestamp.encoder v.CreatedAt
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.optional Property.Inviter User.encoder v.Inviter
+            |> Encode.required Property.MaxAge Encode.int v.MaxAge
+            |> Encode.required Property.MaxUses Encode.int v.MaxUses
+            |> Encode.optional Property.TargetType Encode.Enum.int v.TargetType
+            |> Encode.optional Property.TargetUser User.encoder v.TargetUser
+            |> Encode.optional Property.TargetApplication Application.Partial.encoder v.TargetApplication
+            |> Encode.required Property.Temporary Encode.bool v.Temporary
+            |> Encode.required Property.Uses Encode.int v.Uses
+        )
 
 module InviteDeleteReceiveEvent =
     module Property =
@@ -1873,8 +1931,19 @@ module InviteDeleteReceiveEvent =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Code = "code"
 
-    let decoder: Decoder<InviteDeleteReceiveEvent> = raise (System.NotImplementedException())
-    let encoder (v: InviteDeleteReceiveEvent) = raise (System.NotImplementedException())
+    let decoder: Decoder<InviteDeleteReceiveEvent> =
+        Decode.object (fun get -> {
+            ChannelId = get |> Get.required Property.ChannelId Decode.string
+            GuildId = get |> Get.optional Property.GuildId Decode.string
+            Code = get |> Get.required Property.Code Decode.string
+        })
+
+    let encoder (v: InviteDeleteReceiveEvent) =
+        Encode.object ([]
+            |> Encode.required Property.ChannelId Encode.string v.ChannelId
+            |> Encode.optional Property.GuildId Encode.string v.GuildId
+            |> Encode.required Property.Code Encode.string v.Code
+        )
 
 module MessageCreateReceiveEvent =
     module Property =
@@ -3812,25 +3881,27 @@ module Integration =
             Scopes = get |> Get.optional Property.Scopes (Decode.list OAuthScope.decoder)
         }) path v
 
+    let internal encodeProperties (v: Integration) =
+        []
+        |> Encode.required Property.Id Encode.string v.Id
+        |> Encode.required Property.Name Encode.string v.Name
+        |> Encode.required Property.Type GuildIntegrationType.encoder v.Type
+        |> Encode.required Property.Enabled Encode.bool v.Enabled
+        |> Encode.optional Property.Syncing Encode.bool v.Syncing
+        |> Encode.optional Property.RoleId Encode.string v.RoleId
+        |> Encode.optional Property.EnableEmoticons Encode.bool v.EnableEmoticons
+        |> Encode.optional Property.ExpireBehavior Encode.Enum.int v.ExpireBehavior
+        |> Encode.optional Property.ExpireGracePeriod Encode.int v.ExpireGracePeriod
+        |> Encode.optional Property.User User.encoder v.User
+        |> Encode.required Property.Account IntegrationAccount.encoder v.Account
+        |> Encode.optional Property.SyncedAt Encode.datetime v.SyncedAt
+        |> Encode.optional Property.SubscriberCount Encode.int v.SubscriberCount
+        |> Encode.optional Property.Revoked Encode.bool v.Revoked
+        |> Encode.optional Property.Application IntegrationApplication.encoder v.Application
+        |> Encode.optional Property.Scopes (List.map OAuthScope.encoder >> Encode.list) v.Scopes
+
     let encoder (v: Integration) =
-        Encode.object ([]
-            |> Encode.required Property.Id Encode.string v.Id
-            |> Encode.required Property.Name Encode.string v.Name
-            |> Encode.required Property.Type GuildIntegrationType.encoder v.Type
-            |> Encode.required Property.Enabled Encode.bool v.Enabled
-            |> Encode.optional Property.Syncing Encode.bool v.Syncing
-            |> Encode.optional Property.RoleId Encode.string v.RoleId
-            |> Encode.optional Property.EnableEmoticons Encode.bool v.EnableEmoticons
-            |> Encode.optional Property.ExpireBehavior Encode.Enum.int v.ExpireBehavior
-            |> Encode.optional Property.ExpireGracePeriod Encode.int v.ExpireGracePeriod
-            |> Encode.optional Property.User User.encoder v.User
-            |> Encode.required Property.Account IntegrationAccount.encoder v.Account
-            |> Encode.optional Property.SyncedAt Encode.datetime v.SyncedAt
-            |> Encode.optional Property.SubscriberCount Encode.int v.SubscriberCount
-            |> Encode.optional Property.Revoked Encode.bool v.Revoked
-            |> Encode.optional Property.Application IntegrationApplication.encoder v.Application
-            |> Encode.optional Property.Scopes (List.map OAuthScope.encoder >> Encode.list) v.Scopes
-        )
+        Encode.object (encodeProperties v)
 
     module Partial =
         let decoder path v =
