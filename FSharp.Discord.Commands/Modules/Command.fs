@@ -7,8 +7,8 @@ type ChatInputCommandOption =
     | SubCommand of SubCommand
 
 type ChatInputCommand = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100> option
+    Name: string
+    Description: string option
     Options: ChatInputCommandOption list option
     DefaultMemberPermissions: string option
     IntegrationTypes: ApplicationIntegrationType list option
@@ -18,8 +18,8 @@ type ChatInputCommand = {
 }
 
 type UserCommand = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100> option
+    Name: string
+    Description: string option
     DefaultMemberPermissions: string option
     IntegrationTypes: ApplicationIntegrationType list option
     Contexts: InteractionContextType list option
@@ -28,8 +28,8 @@ type UserCommand = {
 }
 
 type MessageCommand = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100> option
+    Name: string
+    Description: string option
     DefaultMemberPermissions: string option
     IntegrationTypes: ApplicationIntegrationType list option
     Contexts: InteractionContextType list option
@@ -38,8 +38,8 @@ type MessageCommand = {
 }
 
 type EntryPointCommand = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100> option
+    Name: string
+    Description: string option
     DefaultMemberPermissions: string option
     IntegrationTypes: ApplicationIntegrationType list option
     Contexts: InteractionContextType list option
@@ -53,6 +53,9 @@ type Command =
     | User of UserCommand
     | Message of MessageCommand
     | EntryPoint of EntryPointCommand
+
+// TODO: Add localizations
+// TODO: Validate value conditions e.g. string length, regex, etc (?)
 
 //module Command =
 //    let zero name = {

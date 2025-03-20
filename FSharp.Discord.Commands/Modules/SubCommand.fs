@@ -1,7 +1,7 @@
 ﻿namespace FSharp.Discord.Commands
 
 type SubCommand = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100> option
+    Name: string
+    Description: string option
     Options: SubCommandOption list
 }

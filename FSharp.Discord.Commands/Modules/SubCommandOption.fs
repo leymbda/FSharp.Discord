@@ -3,8 +3,8 @@
 open FSharp.Discord.Types
 
 type StringSubCommandOptionChoice = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Value: string
 }
 
@@ -14,16 +14,16 @@ type StringSubCommandOptionAccept =
     | Any
 
 type StringSubCommandOption = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Required: bool
     Length: (Int0to6000 * Int1to6000) option
     Accept: StringSubCommandOptionAccept
 }
 
 type IntegerSubCommandOptionChoice = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Value: int
 }
 
@@ -33,47 +33,47 @@ type IntegerSubCommandOptionAccept =
     | Any
 
 type IntegerSubCommandOption = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Required: bool
     Range: (int * int) option
     Accept: IntegerSubCommandOptionAccept
 }
 
 type BooleanSubCommandOption = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Required: bool
 }
 
 type UserSubCommandOption = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Required: bool
 }
 
 type ChannelSubCommandOption = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Required: bool
     ChannelTypes: ChannelType list option
 }
 
 type RoleSubCommandOption = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Required: bool
 }
 
 type MentionableSubCommandOption = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Required: bool
 }
 
 type NumberSubCommandOptionChoice = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Value: double
 }
 
@@ -83,16 +83,16 @@ type NumberSubCommandOptionAccept =
     | Any
 
 type NumberSubCommandOption = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Required: bool
     Range: (double * double) option
     Accept: NumberSubCommandOptionAccept
 }
 
 type AttachmentSubCommandOption = {
-    Name: Localized<StringCommandName>
-    Description: Localized<String1to100>
+    Name: string
+    Description: string option
     Required: bool
 }
 

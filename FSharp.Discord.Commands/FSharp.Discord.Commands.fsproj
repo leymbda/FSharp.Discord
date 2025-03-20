@@ -9,8 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Types\CommandPrimitives.fs" />
-    <Compile Include="Types\CommandTypes.fs" />
     <Compile Include="Modules\SubCommandOption.fs" />
     <Compile Include="Modules\SubCommand.fs" />
     <Compile Include="Modules\SubCommandGroup.fs" />
