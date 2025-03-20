@@ -9,9 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Types\CommandPrimitives.fs" />
+    <Compile Include="Types\CommandTypes.fs" />
+    <Compile Include="Modules\SubCommandOption.fs" />
+    <Compile Include="Modules\SubCommand.fs" />
+    <Compile Include="Modules\SubCommandGroup.fs" />
+    <Compile Include="Modules\Command.fs" />
     <Compile Include="Patterns\InteractionPattern.fs" />
     <Compile Include="Options.fs" />
-    <Compile Include="Command.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
