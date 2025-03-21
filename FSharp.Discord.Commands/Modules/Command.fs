@@ -1,6 +1,20 @@
 ﻿namespace FSharp.Discord.Commands
 
+open FSharp.Discord.Rest
 open FSharp.Discord.Types
+
+type GlobalCommandContext = {
+    IntegrationTypes: ApplicationIntegrationType list option
+    Contexts: InteractionContextType list option    
+}
+
+type CommandContext =
+    | Global of GlobalCommandContext
+    | Guild of guildId: string
+
+type CommandPayload =
+    | Global of payload: CreateGlobalApplicationCommandPayload
+    | Guild of guildId: string * payload: CreateGuildApplicationCommandPayload
 
 type ChatInputCommandOption =
     | SubCommandGroup of SubCommandGroup
@@ -8,45 +22,123 @@ type ChatInputCommandOption =
 
 type ChatInputCommand = {
     Name: string
-    Description: string option
+    Description: string
     Options: ChatInputCommandOption list option
     DefaultMemberPermissions: string option
-    IntegrationTypes: ApplicationIntegrationType list option
-    Contexts: InteractionContextType list option
     Nsfw: bool
-    GuildId: string option
+    Context: CommandContext
 }
+
+module ChatInputCommand =
+    let toPayload (command: ChatInputCommand) =
+        match command.Context with
+        | CommandContext.Global ctx ->
+            CommandPayload.Global (new CreateGlobalApplicationCommandPayload(
+                name = command.Name,
+                description = command.Description,
+                // TODO: options,
+                defaultMemberPermissions = command.DefaultMemberPermissions,
+                ?integrationTypes = ctx.IntegrationTypes,
+                ?contexts = ctx.Contexts,
+                type' = ApplicationCommandType.CHAT_INPUT,
+                nsfw = command.Nsfw));
+
+        | CommandContext.Guild guildId ->
+            CommandPayload.Guild(guildId, new CreateGuildApplicationCommandPayload(
+                name = command.Name,
+                description = command.Description,
+                // TODO: options,
+                defaultMemberPermissions = command.DefaultMemberPermissions,
+                type' = ApplicationCommandType.CHAT_INPUT,
+                nsfw = command.Nsfw));
 
 type UserCommand = {
     Name: string
-    Description: string option
+    Description: string
     DefaultMemberPermissions: string option
-    IntegrationTypes: ApplicationIntegrationType list option
-    Contexts: InteractionContextType list option
     Nsfw: bool
-    GuildId: string option
+    Context: CommandContext
 }
+
+module UserCommand =
+    let toPayload (command: UserCommand) =
+        match command.Context with
+        | CommandContext.Global ctx ->
+            CommandPayload.Global (new CreateGlobalApplicationCommandPayload(
+                name = command.Name,
+                description = command.Description,
+                defaultMemberPermissions = command.DefaultMemberPermissions,
+                ?integrationTypes = ctx.IntegrationTypes,
+                ?contexts = ctx.Contexts,
+                type' = ApplicationCommandType.USER,
+                nsfw = command.Nsfw));
+
+        | CommandContext.Guild guildId ->
+            CommandPayload.Guild(guildId, new CreateGuildApplicationCommandPayload(
+                name = command.Name,
+                description = command.Description,
+                defaultMemberPermissions = command.DefaultMemberPermissions,
+                type' = ApplicationCommandType.USER,
+                nsfw = command.Nsfw));
 
 type MessageCommand = {
     Name: string
-    Description: string option
+    Description: string
     DefaultMemberPermissions: string option
-    IntegrationTypes: ApplicationIntegrationType list option
-    Contexts: InteractionContextType list option
     Nsfw: bool
-    GuildId: string option
+    Context: CommandContext
 }
+
+module MessageCommand =
+    let toPayload (command: MessageCommand) =
+        match command.Context with
+        | CommandContext.Global ctx ->
+            CommandPayload.Global (new CreateGlobalApplicationCommandPayload(
+                name = command.Name,
+                description = command.Description,
+                defaultMemberPermissions = command.DefaultMemberPermissions,
+                ?integrationTypes = ctx.IntegrationTypes,
+                ?contexts = ctx.Contexts,
+                type' = ApplicationCommandType.MESSAGE,
+                nsfw = command.Nsfw));
+
+        | CommandContext.Guild guildId ->
+            CommandPayload.Guild(guildId, new CreateGuildApplicationCommandPayload(
+                name = command.Name,
+                description = command.Description,
+                defaultMemberPermissions = command.DefaultMemberPermissions,
+                type' = ApplicationCommandType.MESSAGE,
+                nsfw = command.Nsfw));
 
 type EntryPointCommand = {
     Name: string
-    Description: string option
+    Description: string
     DefaultMemberPermissions: string option
-    IntegrationTypes: ApplicationIntegrationType list option
-    Contexts: InteractionContextType list option
     Nsfw: bool
     Handler: ApplicationCommandHandlerType
-    GuildId: string option
+    Context: CommandContext
 }
+
+module EntryPointCommand =
+    let toPayload (command: EntryPointCommand) =
+        match command.Context with
+        | CommandContext.Global ctx ->
+            CommandPayload.Global (new CreateGlobalApplicationCommandPayload(
+                name = command.Name,
+                description = command.Description,
+                defaultMemberPermissions = command.DefaultMemberPermissions,
+                ?integrationTypes = ctx.IntegrationTypes,
+                ?contexts = ctx.Contexts,
+                type' = ApplicationCommandType.PRIMARY_ENTRY_POINT,
+                nsfw = command.Nsfw));
+
+        | CommandContext.Guild guildId ->
+            CommandPayload.Guild(guildId, new CreateGuildApplicationCommandPayload(
+                name = command.Name,
+                description = command.Description,
+                defaultMemberPermissions = command.DefaultMemberPermissions,
+                type' = ApplicationCommandType.PRIMARY_ENTRY_POINT,
+                nsfw = command.Nsfw));
 
 type Command =
     | ChatInput of ChatInputCommand
@@ -54,69 +146,13 @@ type Command =
     | Message of MessageCommand
     | EntryPoint of EntryPointCommand
 
+module Command =
+    let toPayload (command: Command) =
+        match command with
+        | Command.ChatInput c -> ChatInputCommand.toPayload c
+        | Command.User c -> UserCommand.toPayload c
+        | Command.Message c -> MessageCommand.toPayload c
+        | Command.EntryPoint c -> EntryPointCommand.toPayload c
+
 // TODO: Add localizations
 // TODO: Validate value conditions e.g. string length, regex, etc (?)
-
-//module Command =
-//    let zero name = {
-//        Name = name
-//        NameLocalizations = None
-//        Description = None
-//        DescriptionLocalizations = None
-//        Options = None
-//        DefaultMemberPermissions = None
-//        IntegrationTypes = None
-//        Contexts = None
-//        Type = ApplicationCommandType.CHAT_INPUT
-//        Nsfw = false
-//    }
-
-//    let setName name (command: Command) =
-//        { command with Name = name }
-
-//    let setDescription description (command: Command) =
-//        { command with Description = Some description }
-        
-//    let addLocalization locale name description command =
-//        let nameLocalizations =
-//            command.NameLocalizations
-//            |> Option.defaultValue Map.empty
-//            |> Map.add locale name
-
-//        let descriptionLocalizations =
-//            command.DescriptionLocalizations
-//            |> Option.defaultValue Map.empty
-//            |> Map.add locale description
-
-//        { command with
-//            NameLocalizations = Some nameLocalizations
-//            DescriptionLocalizations = Some descriptionLocalizations }
-
-//    let setDefaultMemberPermissions defaultMemberPermissions (command: Command) =
-//        { command with DefaultMemberPermissions = Some defaultMemberPermissions }
-
-//        // TODO: Change to permission list from bitfield, then write new functions for this
-
-//    let addIntegrationType integrationType command =
-//        let updatedIntegrationTypes =
-//            command.IntegrationTypes
-//            |> Option.defaultValue []
-//            |> List.append [integrationType]
-//            |> List.distinct
-
-//        { command with IntegrationTypes = Some updatedIntegrationTypes }
-
-//    let addContext context command =
-//        let updatedContexts =
-//            command.Contexts
-//            |> Option.defaultValue []
-//            |> List.append [context]
-//            |> List.distinct
-
-//        { command with Contexts = Some updatedContexts }
-
-//    let setType type' (command: Command) =
-//        { command with Type = type' }
-
-//    let setNsfw nsfw (command: Command) =
-//        { command with Nsfw = nsfw }

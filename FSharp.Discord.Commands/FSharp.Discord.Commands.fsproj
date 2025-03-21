@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FSharp.Discord.Types\FSharp.Discord.Types.fsproj" />
+    <ProjectReference Include="..\FSharp.Discord.Rest\FSharp.Discord.Rest.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

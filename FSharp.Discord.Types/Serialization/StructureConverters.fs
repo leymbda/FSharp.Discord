@@ -552,7 +552,7 @@ module ApplicationCommandOption =
             Description = get |> Get.required Property.Description Decode.string
             DescriptionLocalizations = get |> Get.optinull Property.DescriptionLocalizations (Decode.dict Decode.string)
             LocalizedDescription = get |> Get.optional Property.LocalizedDescription Decode.string
-            Required = get |> Get.optional Property.Required Decode.bool |> Option.defaultValue false
+            Required = get |> Get.optional Property.Required Decode.bool
             Choices = get |> Get.optional Property.Choices (Decode.list ApplicationCommandOptionChoice.decoder)
             Options = get |> Get.optional Property.Options (Decode.list decoder)
             ChannelTypes = get |> Get.optional Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
@@ -572,7 +572,7 @@ module ApplicationCommandOption =
             |> Encode.required Property.Description Encode.string v.Description
             |> Encode.optinull Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
             |> Encode.optional Property.LocalizedDescription Encode.string v.LocalizedDescription
-            |> Encode.optional Property.Required Encode.bool (Some v.Required)
+            |> Encode.optional Property.Required Encode.bool v.Required
             |> Encode.optional Property.Choices (List.map ApplicationCommandOptionChoice.encoder >> Encode.list) v.Choices
             |> Encode.optional Property.Options (List.map encoder >> Encode.list) v.Options
             |> Encode.optional Property.ChannelTypes (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes

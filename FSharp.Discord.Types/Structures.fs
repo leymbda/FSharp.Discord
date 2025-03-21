@@ -203,7 +203,7 @@ type ApplicationCommandOption = {
     Description: string
     DescriptionLocalizations: Map<string, string> option option
     LocalizedDescription: string option
-    Required: bool
+    Required: bool option
     Choices: ApplicationCommandOptionChoice list option
     Options: ApplicationCommandOption list option
     ChannelTypes: ChannelType list option
