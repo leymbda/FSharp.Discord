@@ -15,6 +15,7 @@
     <Compile Include="Modules\Command.fs" />
     <Compile Include="Patterns\InteractionPattern.fs" />
     <Compile Include="Options.fs" />
+    <Compile Include="Expressions.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 

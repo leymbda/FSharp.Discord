@@ -78,9 +78,6 @@ module ChatInputCommand =
     let setDefaultMemberPermissions permissions (v: ChatInputCommand) =
         { v with DefaultMemberPermissions = Some permissions }
 
-    let removeDefaultMemberPermissions (v: ChatInputCommand) =
-        { v with DefaultMemberPermissions = None }
-
     let setNsfw nsfw (v: ChatInputCommand) =
         { v with Nsfw = nsfw }
 
@@ -144,11 +141,20 @@ type UserCommand = {
 }
 
 module UserCommand =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            DefaultMemberPermissions = None
+            Nsfw = false
+            Context = CommandContext.Global {
+                IntegrationTypes = None
+                Contexts = None
+            }
+        }
+
     let setDefaultMemberPermissions permissions (v: UserCommand) =
         { v with DefaultMemberPermissions = Some permissions }
-
-    let removeDefaultMemberPermissions (v: UserCommand) =
-        { v with DefaultMemberPermissions = None }
 
     let setNsfw nsfw (v: UserCommand) =
         { v with Nsfw = nsfw }
@@ -201,11 +207,20 @@ type MessageCommand = {
 }
 
 module MessageCommand =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            DefaultMemberPermissions = None
+            Nsfw = false
+            Context = CommandContext.Global {
+                IntegrationTypes = None
+                Contexts = None
+            }
+        }
+
     let setDefaultMemberPermissions permissions (v: MessageCommand) =
         { v with DefaultMemberPermissions = Some permissions }
-
-    let removeDefaultMemberPermissions (v: MessageCommand) =
-        { v with DefaultMemberPermissions = None }
 
     let setNsfw nsfw (v: MessageCommand) =
         { v with Nsfw = nsfw }
@@ -259,11 +274,21 @@ type EntryPointCommand = {
 }
 
 module EntryPointCommand =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            DefaultMemberPermissions = None
+            Nsfw = false
+            Handler = ApplicationCommandHandlerType.APP_HANDER
+            Context = CommandContext.Global {
+                IntegrationTypes = None
+                Contexts = None
+            }
+        }
+
     let setDefaultMemberPermissions permissions (v: EntryPointCommand) =
         { v with DefaultMemberPermissions = Some permissions }
-
-    let removeDefaultMemberPermissions (v: EntryPointCommand) =
-        { v with DefaultMemberPermissions = None }
 
     let setNsfw nsfw (v: EntryPointCommand) =
         { v with Nsfw = nsfw }
@@ -323,3 +348,4 @@ module Command =
 
 // TODO: Add localizations
 // TODO: Validate value conditions e.g. string length, regex, etc (?)
+// TODO: A single `Command` type may be able to contain a DU with type-specific content to allow for a single definition of shared properties and functions
