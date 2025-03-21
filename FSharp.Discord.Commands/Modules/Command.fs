@@ -47,7 +47,33 @@ module ChatInputCommand =
             }
         }
 
-    // TODO: Options functions
+    let addSubCommandGroup subCommandGroup (v: ChatInputCommand) =
+        let option = NestedChatInputCommandOption.SubCommandGroup subCommandGroup
+
+        let options =
+            match v.Options with
+            | ChatInputCommandOptions.Nesting options ->  options @ [option]
+            | ChatInputCommandOptions.SubCommand _ -> [option]
+
+        { v with Options = ChatInputCommandOptions.Nesting options }
+
+    let addSubCommand subCommand (v: ChatInputCommand) =
+        let option = NestedChatInputCommandOption.SubCommand subCommand
+
+        let options =
+            match v.Options with
+            | ChatInputCommandOptions.Nesting options ->  options @ [option]
+            | ChatInputCommandOptions.SubCommand _ -> [option]
+
+        { v with Options = ChatInputCommandOptions.Nesting options }
+
+    let addOption option (v: ChatInputCommand) =
+        let options =
+            match v.Options with
+            | ChatInputCommandOptions.Nesting options -> [option]
+            | ChatInputCommandOptions.SubCommand options -> options @ [option]
+
+        { v with Options = ChatInputCommandOptions.SubCommand options }
 
     let setDefaultMemberPermissions permissions (v: ChatInputCommand) =
         { v with DefaultMemberPermissions = Some permissions }
@@ -58,7 +84,24 @@ module ChatInputCommand =
     let setNsfw nsfw (v: ChatInputCommand) =
         { v with Nsfw = nsfw }
 
-    // TODO: Context modifier functions
+    let setGuild guildId (v: ChatInputCommand) =
+        { v with Context = CommandContext.Guild guildId }
+
+    let setIntegrations types (v: ChatInputCommand) =
+        let ctx =
+            match v.Context with
+            | CommandContext.Guild _ -> { IntegrationTypes = Some types; Contexts = None }
+            | CommandContext.Global ctx -> { ctx with IntegrationTypes = Some types }
+
+        { v with Context = CommandContext.Global ctx }
+
+    let setContexts contexts (v: ChatInputCommand) =
+        let ctx =
+            match v.Context with
+            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = contexts }
+            | CommandContext.Global ctx -> { ctx with Contexts = contexts }
+
+        { v with Context = CommandContext.Global ctx }
 
     let toPayload (command: ChatInputCommand) =
         match command.Context with
@@ -66,7 +109,17 @@ module ChatInputCommand =
             CommandPayload.Global (new CreateGlobalApplicationCommandPayload(
                 name = command.Name,
                 description = command.Description,
-                // TODO: options,
+                options = (
+                    match command.Options with
+                    | ChatInputCommandOptions.Nesting options ->
+                        options |> List.map (function
+                            | NestedChatInputCommandOption.SubCommand o -> SubCommand.toCommandOption o
+                            | NestedChatInputCommandOption.SubCommandGroup o -> SubCommandGroup.toCommandOption o
+                        )
+
+                    | ChatInputCommandOptions.SubCommand options ->
+                        options |> List.map SubCommandOption.toCommandOption
+                ),        
                 defaultMemberPermissions = command.DefaultMemberPermissions,
                 ?integrationTypes = ctx.IntegrationTypes,
                 ?contexts = ctx.Contexts,
@@ -91,7 +144,33 @@ type UserCommand = {
 }
 
 module UserCommand =
-    // TODO: User command functions
+    let setDefaultMemberPermissions permissions (v: UserCommand) =
+        { v with DefaultMemberPermissions = Some permissions }
+
+    let removeDefaultMemberPermissions (v: UserCommand) =
+        { v with DefaultMemberPermissions = None }
+
+    let setNsfw nsfw (v: UserCommand) =
+        { v with Nsfw = nsfw }
+
+    let setGuild guildId (v: UserCommand) =
+        { v with Context = CommandContext.Guild guildId }
+
+    let setIntegrations types (v: UserCommand) =
+        let ctx =
+            match v.Context with
+            | CommandContext.Guild _ -> { IntegrationTypes = Some types; Contexts = None }
+            | CommandContext.Global ctx -> { ctx with IntegrationTypes = Some types }
+
+        { v with Context = CommandContext.Global ctx }
+
+    let setContexts contexts (v: UserCommand) =
+        let ctx =
+            match v.Context with
+            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = contexts }
+            | CommandContext.Global ctx -> { ctx with Contexts = contexts }
+
+        { v with Context = CommandContext.Global ctx }
 
     let toPayload (command: UserCommand) =
         match command.Context with
@@ -122,7 +201,33 @@ type MessageCommand = {
 }
 
 module MessageCommand =
-    // TODO: Message command functions
+    let setDefaultMemberPermissions permissions (v: MessageCommand) =
+        { v with DefaultMemberPermissions = Some permissions }
+
+    let removeDefaultMemberPermissions (v: MessageCommand) =
+        { v with DefaultMemberPermissions = None }
+
+    let setNsfw nsfw (v: MessageCommand) =
+        { v with Nsfw = nsfw }
+
+    let setGuild guildId (v: MessageCommand) =
+        { v with Context = CommandContext.Guild guildId }
+
+    let setIntegrations types (v: MessageCommand) =
+        let ctx =
+            match v.Context with
+            | CommandContext.Guild _ -> { IntegrationTypes = Some types; Contexts = None }
+            | CommandContext.Global ctx -> { ctx with IntegrationTypes = Some types }
+
+        { v with Context = CommandContext.Global ctx }
+
+    let setContexts contexts (v: MessageCommand) =
+        let ctx =
+            match v.Context with
+            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = contexts }
+            | CommandContext.Global ctx -> { ctx with Contexts = contexts }
+
+        { v with Context = CommandContext.Global ctx }
 
     let toPayload (command: MessageCommand) =
         match command.Context with
@@ -154,7 +259,33 @@ type EntryPointCommand = {
 }
 
 module EntryPointCommand =
-    // TODO: Entry point command functions
+    let setDefaultMemberPermissions permissions (v: EntryPointCommand) =
+        { v with DefaultMemberPermissions = Some permissions }
+
+    let removeDefaultMemberPermissions (v: EntryPointCommand) =
+        { v with DefaultMemberPermissions = None }
+
+    let setNsfw nsfw (v: EntryPointCommand) =
+        { v with Nsfw = nsfw }
+
+    let setGuild guildId (v: EntryPointCommand) =
+        { v with Context = CommandContext.Guild guildId }
+
+    let setIntegrations types (v: EntryPointCommand) =
+        let ctx =
+            match v.Context with
+            | CommandContext.Guild _ -> { IntegrationTypes = Some types; Contexts = None }
+            | CommandContext.Global ctx -> { ctx with IntegrationTypes = Some types }
+
+        { v with Context = CommandContext.Global ctx }
+
+    let setContexts contexts (v: EntryPointCommand) =
+        let ctx =
+            match v.Context with
+            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = contexts }
+            | CommandContext.Global ctx -> { ctx with Contexts = contexts }
+
+        { v with Context = CommandContext.Global ctx }
 
     let toPayload (command: EntryPointCommand) =
         match command.Context with
