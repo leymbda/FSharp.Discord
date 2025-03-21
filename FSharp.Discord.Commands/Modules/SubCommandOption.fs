@@ -8,6 +8,12 @@ type StringSubCommandOptionChoice = {
 }
 
 module StringSubCommandOptionChoice =
+    let create name value =
+        {
+            Name = name
+            Value = value
+        }
+
     let toChoice (v: StringSubCommandOptionChoice) =
         {
             Name = v.Name
@@ -15,29 +21,59 @@ module StringSubCommandOptionChoice =
             Value = ApplicationCommandOptionChoiceValue.STRING v.Value
         }
 
-type StringSubCommandOptionAccept =
+type StringSubCommandOptionInput =
     | Choices of StringSubCommandOptionChoice list
     | Autocomplete
     | Any
 
-module StringSubCommandOptionAccept =
-    let toValues (v: StringSubCommandOptionAccept) =
+module StringSubCommandOptionInput =
+    let toValues (v: StringSubCommandOptionInput) =
         match v with
-        | StringSubCommandOptionAccept.Choices c -> Some (List.map StringSubCommandOptionChoice.toChoice c), false
-        | StringSubCommandOptionAccept.Autocomplete -> None, true
-        | StringSubCommandOptionAccept.Any -> None, false
+        | StringSubCommandOptionInput.Choices c -> Some (List.map StringSubCommandOptionChoice.toChoice c), false
+        | StringSubCommandOptionInput.Autocomplete -> None, true
+        | StringSubCommandOptionInput.Any -> None, false
 
 type StringSubCommandOption = {
     Name: string
     Description: string
     Required: bool
     Length: (int * int) option
-    Accept: StringSubCommandOptionAccept
+    Input: StringSubCommandOptionInput
 }
 
 module StringSubCommandOption =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Required = false
+            Length = None
+            Input = StringSubCommandOptionInput.Any
+        }
+
+    let setRequired (v: StringSubCommandOption) =
+        { v with Required = true }
+
+    let setOptional (v: StringSubCommandOption) =
+        { v with Required = false }
+
+    let setLength min max (v: StringSubCommandOption) =
+        { v with Length = Some (min, max) }
+
+    let removeLengthRequirements (v: StringSubCommandOption) =
+        { v with Length = None }
+
+    let setChoices choices (v: StringSubCommandOption) =
+        { v with Input = StringSubCommandOptionInput.Choices choices }
+
+    let setAutocomplete (v: StringSubCommandOption) =
+        { v with Input = StringSubCommandOptionInput.Autocomplete }
+
+    let removeInputRequirements (v: StringSubCommandOption) =
+        { v with Input = StringSubCommandOptionInput.Any }
+
     let toCommandOption (v: StringSubCommandOption) =
-        let choices, autocomplete = StringSubCommandOptionAccept.toValues v.Accept
+        let choices, autocomplete = StringSubCommandOptionInput.toValues v.Input
 
         {
             Type = ApplicationCommandOptionType.STRING
@@ -64,6 +100,12 @@ type IntegerSubCommandOptionChoice = {
 }
 
 module IntegerSubCommandOptionChoice =
+    let create name value =
+        {
+            Name = name
+            Value = value
+        }
+        
     let toChoice (v: IntegerSubCommandOptionChoice) =
         {
             Name = v.Name
@@ -71,29 +113,59 @@ module IntegerSubCommandOptionChoice =
             Value = ApplicationCommandOptionChoiceValue.INT v.Value
         }
 
-type IntegerSubCommandOptionAccept =
+type IntegerSubCommandOptionInput =
     | Choices of IntegerSubCommandOptionChoice list
     | Autocomplete
     | Any
 
-module IntegerSubCommandOptionAccept =
-    let toValues (v: IntegerSubCommandOptionAccept) =
+module IntegerSubCommandOptionInput =
+    let toValues (v: IntegerSubCommandOptionInput) =
         match v with
-        | IntegerSubCommandOptionAccept.Choices c -> Some (List.map IntegerSubCommandOptionChoice.toChoice c), false
-        | IntegerSubCommandOptionAccept.Autocomplete -> None, true
-        | IntegerSubCommandOptionAccept.Any -> None, false
+        | IntegerSubCommandOptionInput.Choices c -> Some (List.map IntegerSubCommandOptionChoice.toChoice c), false
+        | IntegerSubCommandOptionInput.Autocomplete -> None, true
+        | IntegerSubCommandOptionInput.Any -> None, false
 
 type IntegerSubCommandOption = {
     Name: string
     Description: string
     Required: bool
     Range: (int * int) option
-    Accept: IntegerSubCommandOptionAccept
+    Input: IntegerSubCommandOptionInput
 }
 
 module IntegerSubCommandOption =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Required = false
+            Range = None
+            Input = IntegerSubCommandOptionInput.Any
+        }
+
+    let setRequired (v: IntegerSubCommandOption) =
+        { v with Required = true }
+
+    let setOptional (v: IntegerSubCommandOption) =
+        { v with Required = false }
+
+    let setRange min max (v: IntegerSubCommandOption) =
+        { v with Range = Some (min, max) }
+
+    let removeRangeRequirements (v: IntegerSubCommandOption) =
+        { v with Range = None }
+
+    let setChoices choices (v: IntegerSubCommandOption) =
+        { v with Input = IntegerSubCommandOptionInput.Choices choices }
+
+    let setAutocomplete (v: IntegerSubCommandOption) =
+        { v with Input = IntegerSubCommandOptionInput.Autocomplete }
+
+    let removeInputRequirements (v: IntegerSubCommandOption) =
+        { v with Input = IntegerSubCommandOptionInput.Any }
+
     let toCommandOption (v: IntegerSubCommandOption) =
-        let choices, autocomplete = IntegerSubCommandOptionAccept.toValues v.Accept
+        let choices, autocomplete = IntegerSubCommandOptionInput.toValues v.Input
 
         {
             Type = ApplicationCommandOptionType.INTEGER
@@ -121,6 +193,19 @@ type BooleanSubCommandOption = {
 }
 
 module BooleanSubCommandOption =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Required = false
+        }
+
+    let setRequired (v: BooleanSubCommandOption) =
+        { v with Required = true }
+
+    let setOptional (v: BooleanSubCommandOption) =
+        { v with Required = false }
+
     let toCommandOption (v: BooleanSubCommandOption) =
         {
             Type = ApplicationCommandOptionType.BOOLEAN
@@ -148,6 +233,19 @@ type UserSubCommandOption = {
 }
 
 module UserSubCommandOption =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Required = false
+        }
+
+    let setRequired (v: UserSubCommandOption) =
+        { v with Required = true }
+
+    let setOptional (v: UserSubCommandOption) =
+        { v with Required = false }
+
     let toCommandOption (v: UserSubCommandOption) =
         {
             Type = ApplicationCommandOptionType.USER
@@ -176,6 +274,26 @@ type ChannelSubCommandOption = {
 }
 
 module ChannelSubCommandOption =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Required = false
+            ChannelTypes = None
+        }
+
+    let setRequired (v: ChannelSubCommandOption) =
+        { v with Required = true }
+
+    let setOptional (v: ChannelSubCommandOption) =
+        { v with Required = false }
+
+    let setChannelTypes types (v: ChannelSubCommandOption) =
+        { v with ChannelTypes = Some types }
+
+    let removeChannelTypesRequirement (v: ChannelSubCommandOption) =
+        { v with ChannelTypes = None }
+
     let toCommandOption (v: ChannelSubCommandOption) =
         {
             Type = ApplicationCommandOptionType.CHANNEL
@@ -203,6 +321,19 @@ type RoleSubCommandOption = {
 }
 
 module RoleSubCommandOption =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Required = false
+        }
+
+    let setRequired (v: RoleSubCommandOption) =
+        { v with Required = true }
+
+    let setOptional (v: RoleSubCommandOption) =
+        { v with Required = false }
+
     let toCommandOption (v: RoleSubCommandOption) =
         {
             Type = ApplicationCommandOptionType.ROLE
@@ -230,6 +361,19 @@ type MentionableSubCommandOption = {
 }
 
 module MentionableSubCommandOption =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Required = false
+        }
+
+    let setRequired (v: MentionableSubCommandOption) =
+        { v with Required = true }
+
+    let setOptional (v: MentionableSubCommandOption) =
+        { v with Required = false }
+
     let toCommandOption (v: MentionableSubCommandOption) =
         {
             Type = ApplicationCommandOptionType.MENTIONABLE
@@ -256,6 +400,12 @@ type NumberSubCommandOptionChoice = {
 }
 
 module NumberSubCommandOptionChoice =
+    let create name value =
+        {
+            Name = name
+            Value = value
+        }
+
     let toChoice (v: NumberSubCommandOptionChoice) =
         {
             Name = v.Name
@@ -263,29 +413,59 @@ module NumberSubCommandOptionChoice =
             Value = ApplicationCommandOptionChoiceValue.DOUBLE v.Value
         }
 
-type NumberSubCommandOptionAccept =
+type NumberSubCommandOptionInput =
     | Choices of NumberSubCommandOptionChoice list
     | Autocomplete
     | Any
 
-module NumberSubCommandOptionAccept =
-    let toValues (v: NumberSubCommandOptionAccept) =
+module NumberSubCommandOptionInput =
+    let toValues (v: NumberSubCommandOptionInput) =
         match v with
-        | NumberSubCommandOptionAccept.Choices c -> Some (List.map NumberSubCommandOptionChoice.toChoice c), false
-        | NumberSubCommandOptionAccept.Autocomplete -> None, true
-        | NumberSubCommandOptionAccept.Any -> None, false
+        | NumberSubCommandOptionInput.Choices c -> Some (List.map NumberSubCommandOptionChoice.toChoice c), false
+        | NumberSubCommandOptionInput.Autocomplete -> None, true
+        | NumberSubCommandOptionInput.Any -> None, false
 
 type NumberSubCommandOption = {
     Name: string
     Description: string
     Required: bool
     Range: (double * double) option
-    Accept: NumberSubCommandOptionAccept
+    Input: NumberSubCommandOptionInput
 }
 
 module NumberSubCommandOption =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Required = false
+            Range = None
+            Input = NumberSubCommandOptionInput.Any
+        }
+
+    let setRequired (v: NumberSubCommandOption) =
+        { v with Required = true }
+
+    let setOptional (v: NumberSubCommandOption) =
+        { v with Required = false }
+
+    let setRange min max (v: NumberSubCommandOption) =
+        { v with Range = Some (min, max) }
+
+    let removeRangeRequirements (v: NumberSubCommandOption) =
+        { v with Range = None }
+
+    let setChoices choices (v: NumberSubCommandOption) =
+        { v with Input = NumberSubCommandOptionInput.Choices choices }
+
+    let setAutocomplete (v: NumberSubCommandOption) =
+        { v with Input = NumberSubCommandOptionInput.Autocomplete }
+
+    let removeInputRequirements (v: NumberSubCommandOption) =
+        { v with Input = NumberSubCommandOptionInput.Any }
+
     let toCommandOption (v: NumberSubCommandOption) =
-        let choices, autocomplete = NumberSubCommandOptionAccept.toValues v.Accept
+        let choices, autocomplete = NumberSubCommandOptionInput.toValues v.Input
 
         {
             Type = ApplicationCommandOptionType.NUMBER
@@ -313,6 +493,19 @@ type AttachmentSubCommandOption = {
 }
 
 module AttachmentSubCommandOption =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Required = false
+        }
+
+    let setRequired (v: AttachmentSubCommandOption) =
+        { v with Required = true }
+
+    let setOptional (v: AttachmentSubCommandOption) =
+        { v with Required = false }
+
     let toCommandOption (v: AttachmentSubCommandOption) =
         {
             Type = ApplicationCommandOptionType.ATTACHMENT
@@ -345,6 +538,18 @@ type SubCommandOption =
     | Attachment of AttachmentSubCommandOption
 
 module SubCommandOption =
+    let internal getName (v: SubCommandOption) =
+        match v with
+        | SubCommandOption.String o -> o.Name
+        | SubCommandOption.Integer o -> o.Name
+        | SubCommandOption.Boolean o -> o.Name
+        | SubCommandOption.User o -> o.Name
+        | SubCommandOption.Channel o -> o.Name
+        | SubCommandOption.Role o -> o.Name
+        | SubCommandOption.Mentionable o -> o.Name
+        | SubCommandOption.Number o -> o.Name
+        | SubCommandOption.Attachment o -> o.Name
+
     let toCommandOption (v: SubCommandOption) =
         match v with
         | SubCommandOption.String o -> StringSubCommandOption.toCommandOption o

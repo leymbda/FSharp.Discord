@@ -16,20 +16,50 @@ type CommandPayload =
     | Global of payload: CreateGlobalApplicationCommandPayload
     | Guild of guildId: string * payload: CreateGuildApplicationCommandPayload
 
-type ChatInputCommandOption =
+type NestedChatInputCommandOption =
     | SubCommandGroup of SubCommandGroup
     | SubCommand of SubCommand
+
+type ChatInputCommandOptions =
+    | Nesting of NestedChatInputCommandOption list
+    | SubCommand of SubCommandOption list
 
 type ChatInputCommand = {
     Name: string
     Description: string
-    Options: ChatInputCommandOption list option
+    Options: ChatInputCommandOptions
     DefaultMemberPermissions: string option
     Nsfw: bool
     Context: CommandContext
 }
 
 module ChatInputCommand =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Options = ChatInputCommandOptions.SubCommand []
+            DefaultMemberPermissions = None
+            Nsfw = false
+            Context = CommandContext.Global {
+                IntegrationTypes = None
+                Contexts = None
+            }
+        }
+
+    // TODO: Options functions
+
+    let setDefaultMemberPermissions permissions (v: ChatInputCommand) =
+        { v with DefaultMemberPermissions = Some permissions }
+
+    let removeDefaultMemberPermissions (v: ChatInputCommand) =
+        { v with DefaultMemberPermissions = None }
+
+    let setNsfw nsfw (v: ChatInputCommand) =
+        { v with Nsfw = nsfw }
+
+    // TODO: Context modifier functions
+
     let toPayload (command: ChatInputCommand) =
         match command.Context with
         | CommandContext.Global ctx ->
@@ -61,6 +91,8 @@ type UserCommand = {
 }
 
 module UserCommand =
+    // TODO: User command functions
+
     let toPayload (command: UserCommand) =
         match command.Context with
         | CommandContext.Global ctx ->
@@ -90,6 +122,8 @@ type MessageCommand = {
 }
 
 module MessageCommand =
+    // TODO: Message command functions
+
     let toPayload (command: MessageCommand) =
         match command.Context with
         | CommandContext.Global ctx ->
@@ -120,6 +154,8 @@ type EntryPointCommand = {
 }
 
 module EntryPointCommand =
+    // TODO: Entry point command functions
+
     let toPayload (command: EntryPointCommand) =
         match command.Context with
         | CommandContext.Global ctx ->

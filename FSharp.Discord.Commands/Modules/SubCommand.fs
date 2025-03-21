@@ -9,6 +9,19 @@ type SubCommand = {
 }
 
 module SubCommand =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Options = []
+        }
+
+    let addOption option (v: SubCommand) =
+        { v with Options = v.Options @ [option] }
+
+    let removeOption name (v: SubCommand) =
+        { v with Options = v.Options |> List.filter (fun o -> SubCommandOption.getName o <> name )}
+
     let toCommandOption (v: SubCommand) =
         {
             Type = ApplicationCommandOptionType.SUB_COMMAND
@@ -19,7 +32,10 @@ module SubCommand =
             DescriptionLocalizations = None
             LocalizedDescription = None
             Required = None
-            Options = Some <| List.map SubCommandOption.toCommandOption v.Options
+            Options =
+                List.map SubCommandOption.toCommandOption v.Options
+                |> List.sortBy (_.Required >> Option.defaultValue false >> not)
+                |> Some
             ChannelTypes = None
             MinValue = None
             MaxValue = None

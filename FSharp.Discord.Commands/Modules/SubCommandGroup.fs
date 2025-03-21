@@ -9,9 +9,22 @@ type SubCommandGroup = {
 }
 
 module SubCommandGroup =
+    let create name description =
+        {
+            Name = name
+            Description = description
+            Options = []
+        }
+
+    let addSubCommand subcommand (v: SubCommandGroup) =
+        { v with Options = v.Options @ [subcommand] }
+
+    let removeSubCommand name (v: SubCommandGroup) =
+        { v with Options = v.Options |> List.filter (fun c -> c.Name <> name )}
+
     let toCommandOption (v: SubCommandGroup) =
         {
-            Type = ApplicationCommandOptionType.SUB_COMMAND
+            Type = ApplicationCommandOptionType.SUB_COMMAND_GROUP
             Name = v.Name
             NameLocalizations = None
             LocalizedName = None
