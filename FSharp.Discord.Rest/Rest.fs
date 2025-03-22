@@ -215,3 +215,49 @@ let getGatewayBot (req: GetGatewayBotRequest) (client: IBotClient) =
     |> Uri.toRequest HttpMethod.Get
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode GetGatewayBotResponse.decoder)
+
+// ----- Resources: Application -----
+
+// ----- Resources: Application Role Connection Metadata -----
+
+// ----- Resources: Audit Log -----
+
+// ----- Resources: Auto Moderation -----
+
+// ----- Resources: Channel -----
+
+// ----- Resources: Emoji -----
+
+// ----- Resources: Entitlement -----
+
+// ----- Resources: Guild -----
+
+// ----- Resources: Guild Scheduled Event -----
+
+// ----- Resources: Guild Template -----
+
+// ----- Resources: Invite -----
+
+// ----- Resources: Lobby -----
+
+// ----- Resources: Message -----
+
+// ----- Resources: Poll -----
+
+// ----- Resources: SKU -----
+
+// ----- Resources: Soundboard -----
+
+// ----- Resources: Stage Instance -----
+
+// ----- Resources: Sticker -----
+
+// ----- Resources: Subscription -----
+
+// ----- Resources: User -----
+
+// ----- Resources: Voice -----
+
+// ----- Resources: Webhook -----
+
+// ----- Topics: OAuth2 -----
