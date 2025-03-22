@@ -347,4 +347,30 @@ type BulkOverwriteGuildApplicationCommandsRequest(applicationId, guildId, payloa
 
     member val Payload: BulkOverwriteGuildApplicationCommandsPayload = payload
 
-// TODO: Guild command permissions
+type GetGuildApplicationCommandPermissionsRequest(applicationId, guildId) =
+    member val ApplicationId: string = applicationId
+    member val GuildId: string = guildId
+
+type GetApplicationCommandPermissionsRequest(applicationId, guildId, commandId) =
+    member val ApplicationId: string = applicationId
+    member val GuildId: string = guildId
+    member val CommandId: string = commandId
+
+type EditApplicationCommandPermissionsPayload(permissions) =
+    member val Permissions: ApplicationCommandPermission list = permissions
+    
+    static member Encoder(v: EditApplicationCommandPermissionsPayload) =
+        Encode.object ([]
+            |> Encode.required "permissions" (List.map ApplicationCommandPermission.encoder >> Encode.list) v.Permissions
+        )
+    
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson EditApplicationCommandPermissionsPayload.Encoder this
+
+type EditApplicationCommandPermissionsRequest(applicationId, guildId, commandId, payload) =
+    member val ApplicationId: string = applicationId
+    member val GuildId: string = guildId
+    member val CommandId: string = commandId
+
+    member val Payload: EditApplicationCommandPermissionsPayload = payload

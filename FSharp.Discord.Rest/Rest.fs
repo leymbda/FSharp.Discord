@@ -172,4 +172,24 @@ let bulkOverwriteGuildApplicationCommands (req: BulkOverwriteGuildApplicationCom
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode (Decode.list ApplicationCommand.decoder))
 
-// TODO: Guild command permissions
+// https://discord.com/developers/docs/interactions/application-commands#get-guild-application-command-permissions
+let getGuildApplicationCommandPermissions (req: GetGuildApplicationCommandPermissionsRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "guilds"; req.GuildId; "commands"; "permissions"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list GuildApplicationCommandPermissions.decoder))
+
+// https://discord.com/developers/docs/interactions/application-commands#get-application-command-permissions
+let getApplicationCommandPermissions (req: GetApplicationCommandPermissionsRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "guilds"; req.GuildId; "commands"; req.CommandId; "permissions"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildApplicationCommandPermissions.decoder)
+
+// https://discord.com/developers/docs/interactions/application-commands#edit-application-command-permissions
+let editApplicationCommandPermissions (req: EditApplicationCommandPermissionsRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "guilds"; req.GuildId; "commands"; req.CommandId; "permissions"]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
