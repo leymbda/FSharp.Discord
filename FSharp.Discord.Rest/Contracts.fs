@@ -198,7 +198,6 @@ type EditGlobalApplicationCommandPayload(
     member val DefaultMemberPermissions: bool option option = defaultMemberPermissions
     member val IntegrationTypes: ApplicationIntegrationType list option = integrationTypes
     member val Contexts: InteractionContextType list option = contexts
-    member val Type: ApplicationCommandType option = type'
     member val Nsfw: bool option = nsfw
     
     static member Encoder(v: EditGlobalApplicationCommandPayload) =
@@ -211,7 +210,6 @@ type EditGlobalApplicationCommandPayload(
             |> Encode.optinull "default_member_permissions" Encode.bool v.DefaultMemberPermissions
             |> Encode.optional "integration_types" (List.map Encode.Enum.int<ApplicationIntegrationType> >> Encode.list) v.IntegrationTypes
             |> Encode.optional "contexts" (List.map Encode.Enum.int<InteractionContextType> >> Encode.list) v.Contexts
-            |> Encode.optional "type" Encode.Enum.int<ApplicationCommandType> v.Type
             |> Encode.optional "nsfw" Encode.bool v.Nsfw
         )
     
@@ -239,7 +237,7 @@ type BulkOverwriteGlobalApplicationCommandsPayload(commands) =
         member this.ToHttpContent() =
             StringContent.createJson BulkOverwriteGlobalApplicationCommandsPayload.Encoder this
 
-    // TODO: Does this actually take create payloads? Docs say "list of application commands" but this seems more likely
+    // TODO: Docs appear incorrect currently, likely also contains `id` like bulk guild commands, which also looks partially incorrectly documented
 
 type BulkOverwriteGlobalApplicationCommandsRequest(applicationId, payload) =
     member val ApplicationId: string = applicationId
@@ -287,5 +285,66 @@ type CreateGuildApplicationCommandRequest(applicationId, guildId, payload) =
 
     member val Payload: CreateGuildApplicationCommandPayload = payload
     
-// TODO: Guild commands
+type GetGuildApplicationCommandRequest(applicationId, guildId, commandId) =
+    member val ApplicationId: string = applicationId
+    member val GuildId: string = guildId
+    member val CommandId: string = commandId
+    
+type EditGuildApplicationCommandPayload(
+    ?name, ?nameLocalizations, ?description, ?descriptionLocalizations, ?options, ?defaultMemberPermissions, ?nsfw
+) =
+    member val Name: string option = name
+    member val NameLocalizations: Map<string, string> option option = nameLocalizations
+    member val Description: string option = description
+    member val DescriptionLocalizations: Map<string, string> option option = descriptionLocalizations
+    member val Options: ApplicationCommandOption list option = options
+    member val DefaultMemberPermissions: bool option option = defaultMemberPermissions
+    member val Nsfw: bool option = nsfw
+    
+    static member Encoder(v: EditGuildApplicationCommandPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optinull "name_localizations" (Encode.mapv Encode.string) v.NameLocalizations
+            |> Encode.optional "description" Encode.string v.Description
+            |> Encode.optinull "description_localizations" (Encode.mapv Encode.string) v.DescriptionLocalizations
+            |> Encode.optional "options" (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
+            |> Encode.optinull "default_member_permissions" Encode.bool v.DefaultMemberPermissions
+            |> Encode.optional "nsfw" Encode.bool v.Nsfw
+        )
+    
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson EditGuildApplicationCommandPayload.Encoder this
+            
+type EditGuildApplicationCommandRequest(applicationId, guildId, commandId, payload) =
+    member val ApplicationId: string = applicationId
+    member val GuildId: string = guildId
+    member val CommandId: string = commandId
+
+    member val Payload: EditGuildApplicationCommandPayload = payload
+    
+type DeleteGuildApplicationCommandRequest(applicationId, guildId, commandId) =
+    member val ApplicationId: string = applicationId
+    member val GuildId: string = guildId
+    member val CommandId: string = commandId
+
+type BulkOverwriteGuildApplicationCommandsPayload(commands) =
+    member val Commands: CreateGuildApplicationCommandPayload list = commands
+    
+    static member Encoder(v: BulkOverwriteGuildApplicationCommandsPayload) =
+        (List.map CreateGuildApplicationCommandPayload.Encoder >> Encode.list) v.Commands
+    
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson BulkOverwriteGuildApplicationCommandsPayload.Encoder this
+
+    // TODO: Also contains optional `id` property "ID of the command, if known"
+    // TODO: Docs include `integration_types` and `contexts` but these should be global only afaik
+
+type BulkOverwriteGuildApplicationCommandsRequest(applicationId, guildId, payload) =
+    member val ApplicationId: string = applicationId
+    member val GuildId: string = guildId
+
+    member val Payload: BulkOverwriteGuildApplicationCommandsPayload = payload
+
 // TODO: Guild command permissions

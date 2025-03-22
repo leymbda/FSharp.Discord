@@ -117,7 +117,7 @@ let deleteGlobalApplicationCommand (req: DeleteGlobalApplicationCommandRequest) 
     |> Uri.toRequest HttpMethod.Delete
     |> client.SendAsync
     |> Task.bind DiscordResponse.unit
-
+    
 // https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
 let bulkOverwriteGlobalApplicationCommands (req: BulkOverwriteGlobalApplicationCommandsRequest) (client: IBotClient) =
     Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "commands"]
@@ -126,5 +126,50 @@ let bulkOverwriteGlobalApplicationCommands (req: BulkOverwriteGlobalApplicationC
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode (Decode.list ApplicationCommand.decoder))
 
-// TODO: Guild commands
+// https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands
+let getGuildApplicationCommands (req: GetGuildApplicationCommandsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "guilds"; req.GuildId; "commands"]
+    |> Uri.withOptionalQuery "with_localizations" (Option.map string req.withLocalizations)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list ApplicationCommand.decoder))
+
+// https://discord.com/developers/docs/interactions/application-commands#create-guild-application-command
+let createGuildApplicationCommand (req: CreateGuildApplicationCommandRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "guilds"; req.GuildId; "commands"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ApplicationCommand.decoder)
+
+// https://discord.com/developers/docs/interactions/application-commands#get-global-application-command
+let getGuildApplicationCommand (req: GetGuildApplicationCommandRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "guilds"; req.GuildId; "commands"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list ApplicationCommand.decoder))
+
+// https://discord.com/developers/docs/interactions/application-commands#edit-guild-application-command
+let editGuildApplicationCommand (req: EditGuildApplicationCommandRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "guilds"; req.GuildId; "commands"; req.CommandId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ApplicationCommand.decoder)
+
+// https://discord.com/developers/docs/interactions/application-commands#create-guild-application-command
+let deleteGuildApplicationCommand (req: DeleteGuildApplicationCommandRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "guilds"; req.GuildId; "commands"; req.CommandId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-guild-application-commands
+let bulkOverwriteGuildApplicationCommands (req: BulkOverwriteGuildApplicationCommandsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "guilds"; req.GuildId; "commands"]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list ApplicationCommand.decoder))
+
 // TODO: Guild command permissions
