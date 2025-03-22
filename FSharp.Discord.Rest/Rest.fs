@@ -193,3 +193,25 @@ let editApplicationCommandPermissions (req: EditApplicationCommandPermissionsReq
     |> HttpRequestMessage.withPayload req.Payload
     |> client.SendAsync
     |> Task.bind DiscordResponse.unit
+    
+// ----- Events: Using Gateway -----
+
+// https://discord.com/developers/docs/events/gateway#get-gateway
+let getGateway (req: GetGatewayRequest) (client: HttpClient) = // TODO: This should probably use an interface rather than the concrete HttpClient
+    Uri.create [API_BASE_URL; "gateway"]
+    |> Uri.withRequiredQuery "v" req.Version
+    |> Uri.withRequiredQuery "encoding" (GatewayEncoding.toString req.Encoding)
+    |> Uri.withOptionalQuery "compress" (Option.map GatewayCompression.toString req.Compression)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GetGatewayResponse.decoder)
+
+// https://discord.com/developers/docs/events/gateway#get-gateway-bot
+let getGatewayBot (req: GetGatewayBotRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "gateway"; "bot"]
+    |> Uri.withRequiredQuery "v" req.Version
+    |> Uri.withRequiredQuery "encoding" (GatewayEncoding.toString req.Encoding)
+    |> Uri.withOptionalQuery "compress" (Option.map GatewayCompression.toString req.Compression)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GetGatewayBotResponse.decoder)

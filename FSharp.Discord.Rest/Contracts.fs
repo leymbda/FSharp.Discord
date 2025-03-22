@@ -374,3 +374,39 @@ type EditApplicationCommandPermissionsRequest(applicationId, guildId, commandId,
     member val CommandId: string = commandId
 
     member val Payload: EditApplicationCommandPermissionsPayload = payload
+
+// ----- Events: Using Gateway -----
+
+type GetGatewayRequest(version, encoding, compression) =
+    member val Version: string = version
+    member val Encoding: GatewayEncoding = encoding
+    member val Compression: GatewayCompression option = compression
+
+type GetGatewayResponse = {
+    Url: string
+}
+
+module GetGatewayResponse =
+    let decoder: Decoder<GetGatewayResponse> =
+        Decode.object (fun get -> {
+            Url = get |> Get.required "url" Decode.string
+        })
+        
+type GetGatewayBotRequest(version, encoding, compression) =
+    member val Version: string = version
+    member val Encoding: GatewayEncoding = encoding
+    member val Compression: GatewayCompression option = compression
+
+type GetGatewayBotResponse = {
+    Url: string
+    Shards: int
+    SessionStartLimit: SessionStartLimit
+}
+
+module GetGatewayBotResponse =
+    let decoder: Decoder<GetGatewayBotResponse> =
+        Decode.object (fun get -> {
+            Url = get |> Get.required "url" Decode.string
+            Shards = get |> Get.required "shards" Decode.int
+            SessionStartLimit = get |> Get.required "session_start_limit" SessionStartLimit.decoder
+        })
