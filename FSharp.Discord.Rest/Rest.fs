@@ -218,6 +218,28 @@ let getGatewayBot (req: GetGatewayBotRequest) (client: IBotClient) =
 
 // ----- Resources: Application -----
 
+// https://discord.com/developers/docs/resources/application#get-current-application
+let getCurrentApplication (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; "@me"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Application.decoder)
+
+// https://discord.com/developers/docs/resources/application#edit-current-application
+let editCurrentApplication (req: EditCurrentApplicationRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; "@me"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Application.decoder)
+
+// https://discord.com/developers/docs/resources/application#get-application-activity-instance
+let getApplicationActivityInstance (req: GetApplicationActivityInstanceRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "activity-instances"; req.InstanceId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ActivityInstance.decoder)
+
 // ----- Resources: Application Role Connection Metadata -----
 
 // ----- Resources: Audit Log -----

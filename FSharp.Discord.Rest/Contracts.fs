@@ -413,6 +413,52 @@ module GetGatewayBotResponse =
         
 // ----- Resources: Application -----
 
+type EditCurrentApplicationPayload(
+    customInstallUrl, description, roleConnectionsVerificationUrl, installParams, integrationTypesConfig, flags, icon,
+    coverImage, interactionsEndpointUrl, tags, eventWebhooksUrl, eventWebhooksStatus, eventWebhooksTypes
+) =
+    member val CustomInstallUrl: string option = customInstallUrl
+    member val Description: string option = description
+    member val RoleConnectionsVerificationUrl: string option = roleConnectionsVerificationUrl
+    member val InstallParams: InstallParams option = installParams
+    member val IntegrationTypesConfig: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration> option = integrationTypesConfig
+    member val Flags: int option = flags
+    member val Icon: string option option = icon
+    member val CoverImage: string option option = coverImage
+    member val InteractionsEndpointUrl: string option = interactionsEndpointUrl
+    member val Tags: string list option = tags
+    member val EventWebhooksUrl: string option = eventWebhooksUrl
+    member val EventWebhooksStatus: WebhookEventStatus option = eventWebhooksStatus
+    member val EventWebhooksTypes: WebhookEventType list option = eventWebhooksTypes
+
+    static member Encoder (v: EditCurrentApplicationPayload) =
+        Encode.object ([]
+            |> Encode.optional "custom_install_url" Encode.string v.CustomInstallUrl
+            |> Encode.optional "description" Encode.string v.Description
+            |> Encode.optional "role_connections_verification_url" Encode.string v.RoleConnectionsVerificationUrl
+            |> Encode.optional "install_params" InstallParams.encoder v.InstallParams
+            |> Encode.optional "integration_types_config" (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.IntegrationTypesConfig
+            |> Encode.optional "flags" Encode.int v.Flags
+            |> Encode.optinull "icon" Encode.string v.Icon
+            |> Encode.optinull "cover_image" Encode.string v.CoverImage
+            |> Encode.optional "interactions_endpoint_url" Encode.string v.InteractionsEndpointUrl
+            |> Encode.optional "tags" (List.map Encode.string >> Encode.list) v.Tags
+            |> Encode.optional "event_webhooks_url" Encode.string v.EventWebhooksUrl
+            |> Encode.optional "event_webhooks_status" Encode.Enum.int v.EventWebhooksStatus
+            |> Encode.optional "event_webhooks_types" (List.map WebhookEventType.encoder >> Encode.list) v.EventWebhooksTypes
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson EditCurrentApplicationPayload.Encoder this
+
+type EditCurrentApplicationRequest(payload) =
+    member val Payload: EditCurrentApplicationPayload = payload
+
+type GetApplicationActivityInstanceRequest(applicationId, instanceId) =
+    member val ApplicationId: string = applicationId
+    member val InstanceId: string = instanceId
+
 // ----- Resources: Application Role Connection Metadata -----
 
 // ----- Resources: Audit Log -----
