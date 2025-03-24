@@ -26,6 +26,7 @@
     <Compile Include="Types.fs" />
     <Compile Include="Extensions.fs" />
     <Compile Include="DiscordResponse.fs" />
+    <Compile Include="Payloads.fs" />
     <Compile Include="Contracts.fs" />
     <Compile Include="Rest.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
