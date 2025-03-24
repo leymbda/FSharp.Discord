@@ -20,27 +20,27 @@ module Decode =
                     | Some k -> Ok (acc |> Seq.append (seq { k, snd cur }))
                 ))
                 (Ok [])
-            |> Result.map (Map.ofSeq)
+            |> Result.map Map.ofSeq
 
 module Encode =
     /// Append an encoding that is required.
-    let required key decoder v list =
-        list @ [key, decoder v]
+    let required key encoder v list =
+        list @ [key, encoder v]
 
     /// Append an encoding that is optional.
-    let optional key decoder v list =
+    let optional key encoder v list =
         match v with
-        | Some s -> list @ [key, decoder s]
+        | Some s -> list @ [key, encoder s]
         | None -> list
 
     /// Append an encoding that is nullable.
-    let nullable key decoder v list =
-        list @ [key, Encode.option decoder v]
+    let nullable key encoder v list =
+        list @ [key, Encode.option encoder v]
 
     /// Append an encoding that is optional and nullable.
-    let optinull key decoder v list =
+    let optinull key encoder v list =
         match v with
-        | Some s -> list @ [key, Encode.option decoder s]
+        | Some s -> list @ [key, Encode.option encoder s]
         | None -> list
 
     /// Encode a map to an object with a value encoder.
@@ -87,7 +87,7 @@ module Get =
     let extractOpt decoder (get: Decode.IGetters) =
         get.Optional.Raw decoder
 
-    /// Get a bool representing whether or not a value is present.
+    /// Get a bool representing whether a value is present.
     let exists key (get: Decode.IGetters) =
         get.Optional.Raw (Decode.field key (Decode.succeed true)) |> Option.defaultValue false
         

@@ -14,12 +14,12 @@ module ErrorResponse =
         let [<Literal>] Message = "message"
         let [<Literal>] Errors = "errors"
 
-    let decoder path v =
+    let decoder: Decoder<ErrorResponse> =
         Decode.object (fun get -> {
             Code = get |> Get.required Property.Code Decode.Enum.int<JsonErrorCode>
             Message = get |> Get.required Property.Message Decode.string
             Errors = get |> Get.required Property.Errors (Decode.dict Decode.string)
-        }) path v
+        })
 
     let encoder (v: ErrorResponse) =
         Encode.object ([]
@@ -50,7 +50,7 @@ module Interaction =
         let [<Literal>] AuthorizingIntegrationOwners = "authorizing_integration_owners"
         let [<Literal>] Context = "context"
 
-    let decoder path v =
+    let decoder: Decoder<Interaction> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             ApplicationId = get |> Get.required Property.ApplicationId Decode.string
@@ -71,7 +71,7 @@ module Interaction =
             Entitlements = get |> Get.required Property.Entitlements (Decode.list Entitlement.decoder)
             AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
             Context = get |> Get.optional Property.Context Decode.Enum.int<InteractionContextType>
-        }) path v
+        })
 
     let encoder (v: Interaction) =
         Encode.object ([]
@@ -106,7 +106,7 @@ module ApplicationCommandData =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] TargetId = "target_id"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommandData> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
@@ -115,7 +115,7 @@ module ApplicationCommandData =
             Options = get |> Get.optional Property.Options (Decode.list ApplicationCommandInteractionDataOption.decoder)
             GuildId = get |> Get.optional Property.GuildId Decode.string
             TargetId = get |> Get.optional Property.TargetId Decode.string
-        }) path v
+        })
 
     let encoder (v: ApplicationCommandData) =
         Encode.object ([]
@@ -135,13 +135,13 @@ module MessageComponentData =
         let [<Literal>] Values = "values"
         let [<Literal>] Resolved = "resolved"
 
-    let decoder path v =
+    let decoder: Decoder<MessageComponentData> =
         Decode.object (fun get -> {
             CustomId = get |> Get.required Property.CustomId Decode.string
             ComponentType = get |> Get.required Property.ComponentType Decode.Enum.int<ComponentType>
             Values = get |> Get.optional Property.Values (Decode.list SelectMenuOption.decoder)
             Resolved = get |> Get.optional Property.Resolved ResolvedData.decoder
-        }) path v
+        })
 
     let encoder (v: MessageComponentData) =
         Encode.object ([]
@@ -156,11 +156,11 @@ module ModalSubmitData =
         let [<Literal>] CustomId = "custom_id"
         let [<Literal>] Components = "components"
 
-    let decoder path v =
+    let decoder: Decoder<ModalSubmitData> =
         Decode.object (fun get -> {
             CustomId = get |> Get.required Property.CustomId Decode.string
             Components = get |> Get.required Property.Components (Decode.list Component.decoder)
-        }) path v
+        })
 
     let encoder (v: ModalSubmitData) =
         Encode.object ([]
@@ -169,12 +169,12 @@ module ModalSubmitData =
         )
 
 module InteractionData =
-    let decoder path v =
+    let decoder: Decoder<InteractionData> =
         Decode.oneOf [
             Decode.map InteractionData.APPLICATION_COMMAND ApplicationCommandData.decoder
             Decode.map InteractionData.MESSAGE_COMPONENT MessageComponentData.decoder
             Decode.map InteractionData.MODAL_SUBMIT ModalSubmitData.decoder
-        ] path v
+        ]
 
     let encoder (v: InteractionData) =
         match v with
@@ -191,7 +191,7 @@ module ResolvedData =
         let [<Literal>] Messages = "messages"
         let [<Literal>] Attachments = "attachments"
 
-    let decoder path v =
+    let decoder: Decoder<ResolvedData> =
         Decode.object (fun get -> {
             Users = get |> Get.optional Property.Users (Decode.dict User.decoder)
             Members = get |> Get.optional Property.Members (Decode.dict GuildMember.Partial.decoder)
@@ -199,7 +199,7 @@ module ResolvedData =
             Channels = get |> Get.optional Property.Channels (Decode.dict Channel.Partial.decoder)
             Messages = get |> Get.optional Property.Messages (Decode.dict Message.Partial.decoder)
             Attachments = get |> Get.optional Property.Attachments (Decode.dict Attachment.decoder)
-        }) path v
+        })
 
     let encoder (v: ResolvedData) =
         Encode.object ([]
@@ -219,14 +219,14 @@ module ApplicationCommandInteractionDataOption =
         let [<Literal>] Options = "options"
         let [<Literal>] Focused = "focused"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommandInteractionDataOption> =
         Decode.object (fun get -> {
             Name = get |> Get.required Property.Name Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationCommandOptionType>
             Value = get |> Get.optional Property.Value ApplicationCommandInteractionDataOptionValue.decoder
             Options = get |> Get.optional Property.Options (Decode.list decoder)
             Focused = get |> Get.optional Property.Focused Decode.bool
-        }) path v
+        })
 
     let encoder (v: ApplicationCommandInteractionDataOption) =
         Encode.object ([]
@@ -238,13 +238,13 @@ module ApplicationCommandInteractionDataOption =
         )
 
 module ApplicationCommandInteractionDataOptionValue =
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommandInteractionDataOptionValue> =
         Decode.oneOf [
             Decode.map ApplicationCommandInteractionDataOptionValue.STRING Decode.string
             Decode.map ApplicationCommandInteractionDataOptionValue.INT Decode.int
             Decode.map ApplicationCommandInteractionDataOptionValue.DOUBLE Decode.float
             Decode.map ApplicationCommandInteractionDataOptionValue.BOOL Decode.bool
-        ] path v
+        ]
 
         // TODO: Test if int will fail decoding if a float is provided
         // TODO: Test to ensure that Decode.oneOf works down the list
@@ -264,14 +264,14 @@ module MessageInteraction =
         let [<Literal>] User = "user"
         let [<Literal>] Member = "member"
 
-    let decoder path v =
+    let decoder: Decoder<MessageInteraction> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
             Name = get |> Get.required Property.Name Decode.string
             User = get |> Get.required Property.User User.decoder
             Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
-        }) path v
+        })
 
     let encoder (v: MessageInteraction) =
         Encode.object ([]
@@ -287,11 +287,11 @@ module InteractionResponse =
         let [<Literal>] Type = "type"
         let [<Literal>] Data = "data"
 
-    let decoder path v =
+    let decoder: Decoder<InteractionResponse> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionCallbackType>
             Data = get |> Get.optional Property.Data InteractionCallbackData.decoder
-        }) path v
+        })
 
     let encoder (v: InteractionResponse) =
         Encode.object ([]
@@ -310,7 +310,7 @@ module MessageInteractionCallbackData =
         let [<Literal>] Attachments = "attachments"
         let [<Literal>] Poll = "poll"
 
-    let decoder path v =
+    let decoder: Decoder<MessageInteractionCallbackData> =
         Decode.object (fun get -> {
             Tts = get |> Get.optional Property.Tts Decode.bool
             Content = get |> Get.optional Property.Content Decode.string
@@ -320,7 +320,7 @@ module MessageInteractionCallbackData =
             Components = get |> Get.optional Property.Components (Decode.list Component.decoder)
             Attachments = get |> Get.optional Property.Attachments (Decode.list Attachment.Partial.decoder)
             Poll = get |> Get.optional Property.Poll Poll.decoder
-        }) path v
+        })
 
     let encoder (v: MessageInteractionCallbackData) =
         Encode.object ([]
@@ -338,10 +338,10 @@ module AutocompleteInteractionCallbackData =
     module Property =
         let [<Literal>] Choices = "choices"
 
-    let decoder path v =
+    let decoder: Decoder<AutocompleteInteractionCallbackData> =
         Decode.object (fun get -> {
             Choices = get |> Get.required Property.Choices (Decode.list ApplicationCommandOptionChoice.decoder)
-        }) path v
+        })
 
     let encoder (v: AutocompleteInteractionCallbackData) =
         Encode.object ([]
@@ -354,12 +354,12 @@ module ModalInteractionCallbackData =
         let [<Literal>] Title = "title"
         let [<Literal>] Components = "components"
 
-    let decoder path v =
+    let decoder: Decoder<ModalInteractionCallbackData> =
         Decode.object (fun get -> {
             CustomId = get |> Get.required Property.CustomId Decode.string
             Title = get |> Get.required Property.Title Decode.string
             Components = get |> Get.required Property.Components (Decode.list Component.decoder)
-        }) path v
+        })
 
     let encoder (v: ModalInteractionCallbackData) =
         Encode.object ([]
@@ -369,12 +369,12 @@ module ModalInteractionCallbackData =
         )
 
 module InteractionCallbackData =
-    let decoder path v =
+    let decoder: Decoder<InteractionCallbackData> =
         Decode.oneOf [
             Decode.map InteractionCallbackData.MESSAGE MessageInteractionCallbackData.decoder
             Decode.map InteractionCallbackData.AUTOCOMPLETE AutocompleteInteractionCallbackData.decoder
             Decode.map InteractionCallbackData.MODAL ModalInteractionCallbackData.decoder
-        ] path v
+        ]
 
     let encoder (v: InteractionCallbackData) =
         match v with
@@ -387,11 +387,11 @@ module InteractionCallbackResponse =
         let [<Literal>] Interaction = "interaction"
         let [<Literal>] Resource = "resource"
 
-    let decoder path v =
+    let decoder: Decoder<InteractionCallbackResponse> =
         Decode.object (fun get -> {
             Interaction = get |> Get.required Property.Interaction InteractionCallback.decoder
             Resource = get |> Get.optional Property.Resource InteractionCallbackResource.decoder
-        }) path v
+        })
 
     let encoder (v: InteractionCallbackResponse) =
         Encode.object ([]
@@ -408,7 +408,7 @@ module InteractionCallback =
         let [<Literal>] ResponseMessageLoading = "response_message_loading"
         let [<Literal>] ResponseMessageEphemeral = "response_message_ephemeral"
 
-    let decoder path v =
+    let decoder: Decoder<InteractionCallback> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
@@ -416,7 +416,7 @@ module InteractionCallback =
             ResponseMessageId = get |> Get.optional Property.ResponseMessageId Decode.string
             ResponseMessageLoading = get |> Get.optional Property.ResponseMessageLoading Decode.bool
             ResponseMessageEphemeral = get |> Get.optional Property.ResponseMessageEphemeral Decode.bool
-        }) path v
+        })
 
     let encoder (v: InteractionCallback) =
         Encode.object ([]
@@ -434,12 +434,12 @@ module InteractionCallbackResource =
         let [<Literal>] ActivityInstance = "activity_instance"
         let [<Literal>] Message = "message"
 
-    let decoder path v =
+    let decoder: Decoder<InteractionCallbackResource> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionCallbackType>
             ActivityInstance = get |> Get.optional Property.ActivityInstance InteractionCallbackActivityInstance.decoder
             Message = get |> Get.optional Property.Message Message.decoder
-        }) path v
+        })
 
     let encoder (v: InteractionCallbackResource) =
         Encode.object ([]
@@ -452,10 +452,10 @@ module InteractionCallbackActivityInstance =
     module Property =
         let [<Literal>] Id = "id"
 
-    let decoder path v =
+    let decoder: Decoder<InteractionCallbackActivityInstance> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
-        }) path v
+        })
 
     let encoder (v: InteractionCallbackActivityInstance) =
         Encode.object ([]
@@ -482,7 +482,7 @@ module ApplicationCommand =
         let [<Literal>] Version = "version"
         let [<Literal>] Handler = "handler"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommand> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.optional Property.Type Decode.Enum.int<ApplicationCommandType> |> Option.defaultValue ApplicationCommandType.CHAT_INPUT
@@ -501,7 +501,7 @@ module ApplicationCommand =
             Contexts = get |> Get.optional Property.Contexts (Decode.list Decode.Enum.int<InteractionContextType>)
             Version = get |> Get.required Property.Version Decode.string
             Handler = get |> Get.optional Property.Handler Decode.Enum.int<ApplicationCommandHandlerType>
-        }) path v
+        })
 
     let encoder (v: ApplicationCommand) =
         Encode.object ([]
@@ -543,7 +543,7 @@ module ApplicationCommandOption =
         let [<Literal>] MaxLength = "max_length"
         let [<Literal>] Autocomplete = "autocomplete"
 
-    let decoder path v: Result<ApplicationCommandOption, DecoderError> =
+    let decoder: Decoder<ApplicationCommandOption> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationCommandOptionType>
             Name = get |> Get.required Property.Name Decode.string
@@ -561,7 +561,7 @@ module ApplicationCommandOption =
             MinLength = get |> Get.optional Property.MinLength Decode.int
             MaxLength = get |> Get.optional Property.MaxLength Decode.int
             Autocomplete = get |> Get.optional Property.Autocomplete Decode.bool
-        }) path v
+        })
 
     let encoder (v: ApplicationCommandOption) =
         Encode.object ([]
@@ -584,11 +584,11 @@ module ApplicationCommandOption =
         )
 
 module ApplicationCommandOptionMinValue =
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommandOptionMinValue> =
         Decode.oneOf [
             Decode.map ApplicationCommandOptionMinValue.INT Decode.int
             Decode.map ApplicationCommandOptionMinValue.DOUBLE Decode.float
-        ] path v
+        ]
 
     let encoder (v: ApplicationCommandOptionMinValue) =
         match v with
@@ -596,11 +596,11 @@ module ApplicationCommandOptionMinValue =
         | ApplicationCommandOptionMinValue.DOUBLE data -> Encode.float data
 
 module ApplicationCommandOptionMaxValue =
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommandOptionMaxValue> =
         Decode.oneOf [
             Decode.map ApplicationCommandOptionMaxValue.INT Decode.int
             Decode.map ApplicationCommandOptionMaxValue.DOUBLE Decode.float
-        ] path v
+        ]
 
     let encoder (v: ApplicationCommandOptionMaxValue) =
         match v with
@@ -613,12 +613,12 @@ module ApplicationCommandOptionChoice =
         let [<Literal>] NameLocalizations = "name_localizations"
         let [<Literal>] Value = "value"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommandOptionChoice> =
         Decode.object (fun get -> {
             Name = get |> Get.required Property.Name Decode.string
             NameLocalizations = get |> Get.optinull Property.NameLocalizations (Decode.dict Decode.string)
             Value = get |> Get.required Property.Value ApplicationCommandOptionChoiceValue.decoder
-        }) path v
+        })
 
     let encoder (v: ApplicationCommandOptionChoice) =
         Encode.object ([]
@@ -628,12 +628,12 @@ module ApplicationCommandOptionChoice =
         )
 
 module ApplicationCommandOptionChoiceValue =
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommandOptionChoiceValue>  =
         Decode.oneOf [
             Decode.map ApplicationCommandOptionChoiceValue.STRING Decode.string
             Decode.map ApplicationCommandOptionChoiceValue.INT Decode.int
             Decode.map ApplicationCommandOptionChoiceValue.DOUBLE Decode.float
-        ] path v
+        ]
 
     let encoder (v: ApplicationCommandOptionChoiceValue) =
         match v with
@@ -648,13 +648,13 @@ module GuildApplicationCommandPermissions =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Permissions = "permissions"
 
-    let decoder path v =
+    let decoder: Decoder<GuildApplicationCommandPermissions> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             ApplicationId = get |> Get.required Property.ApplicationId Decode.string
             GuildId = get |> Get.required Property.GuildId Decode.string
             Permissions = get |> Get.required Property.Permissions (Decode.list ApplicationCommandPermission.decoder)
-        }) path v
+        })
 
     let encoder (v: GuildApplicationCommandPermissions) =
         Encode.object ([]
@@ -670,12 +670,12 @@ module ApplicationCommandPermission =
         let [<Literal>] Type = "type"
         let [<Literal>] Permission = "permission"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommandPermission> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationCommandPermissionType>
             Permission = get |> Get.required Property.Permission Decode.bool
-        }) path v
+        })
 
     let encoder (v: ApplicationCommandPermission) =
         Encode.object ([]
@@ -689,11 +689,11 @@ module ActionRow =
         let [<Literal>] Type = "type"
         let [<Literal>] Components = "components"
 
-    let decoder path v =
+    let decoder: Decoder<ActionRow> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
             Components = get |> Get.required Property.Components (Decode.list Component.decoder)
-        }) path v
+        })
 
     let encoder (v: ActionRow) =
         Encode.object ([]
@@ -712,7 +712,7 @@ module Button =
         let [<Literal>] Url = "url"
         let [<Literal>] Disabled = "disabled"
 
-    let decoder path v =
+    let decoder: Decoder<Button> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
             Style = get |> Get.required Property.Style Decode.Enum.int<ButtonStyle>
@@ -722,7 +722,7 @@ module Button =
             SkuId = get |> Get.optional Property.SkuId Decode.string
             Url = get |> Get.optional Property.Url Decode.string
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
-        }) path v
+        })
 
     let encoder (v: Button) =
         Encode.object ([]
@@ -748,7 +748,7 @@ module SelectMenu =
         let [<Literal>] MaxValues = "max_values"
         let [<Literal>] Disabled = "disabled"
 
-    let decoder path v =
+    let decoder: Decoder<SelectMenu> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
             CustomId = get |> Get.required Property.CustomId Decode.string
@@ -759,7 +759,7 @@ module SelectMenu =
             MinValues = get |> Get.optional Property.MinValues Decode.int |> Option.defaultValue 1
             MaxValues = get |> Get.optional Property.MaxValues Decode.int |> Option.defaultValue 1
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
-        }) path v
+        })
 
     let encoder (v: SelectMenu) =
         Encode.object ([]
@@ -782,14 +782,14 @@ module SelectMenuOption =
         let [<Literal>] Emoji = "emoji"
         let [<Literal>] Default = "default"
 
-    let decoder path v =
+    let decoder: Decoder<SelectMenuOption> =
         Decode.object (fun get -> {
             Label = get |> Get.required Property.Label Decode.string
             Value = get |> Get.required Property.Value Decode.string
             Description = get |> Get.optional Property.Description Decode.string
             Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
             Default = get |> Get.optional Property.Default Decode.bool
-        }) path v
+        })
 
     let encoder (v: SelectMenuOption) =
         Encode.object ([]
@@ -805,11 +805,11 @@ module SelectMenuDefaultValue =
         let [<Literal>] Id = "id"
         let [<Literal>] Type = "type"
 
-    let decoder path v =
+    let decoder: Decoder<SelectMenuDefaultValue> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type SelectMenuDefaultValueType.decoder
-        }) path v
+        })
 
     let encoder (v: SelectMenuDefaultValue) =
         Encode.object ([]
@@ -829,7 +829,7 @@ module TextInput =
         let [<Literal>] Value = "value"
         let [<Literal>] Placeholder = "placeholder"
 
-    let decoder path v =
+    let decoder: Decoder<TextInput> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
             CustomId = get |> Get.required Property.CustomId Decode.string
@@ -840,7 +840,7 @@ module TextInput =
             Required = get |> Get.optional Property.Required Decode.bool |> Option.defaultValue true
             Value = get |> Get.optional Property.Value Decode.string
             Placeholder = get |> Get.optional Property.Placeholder Decode.string
-        }) path v
+        })
 
     let encoder (v: TextInput) =
         Encode.object ([]
@@ -856,13 +856,13 @@ module TextInput =
         )
 
 module Component =
-    let decoder path v =
+    let decoder: Decoder<Component> =
         Decode.oneOf [
             Decode.map Component.ACTION_ROW ActionRow.decoder
             Decode.map Component.BUTTON Button.decoder
             Decode.map Component.SELECT_MENU SelectMenu.decoder
             Decode.map Component.TEXT_INPUT TextInput.decoder
-        ] path v
+        ]
 
     let encoder (v: Component) =
         match v with
@@ -878,13 +878,13 @@ module SessionStartLimit =
         let [<Literal>] ResetAfter = "reset_after"
         let [<Literal>] MaxConcurrency = "max_concurrency"
 
-    let decoder path v =
+    let decoder: Decoder<SessionStartLimit> =
         Decode.object (fun get -> {
             Total = get |> Get.required Property.Total Decode.int
             Remaining = get |> Get.required Property.Remaining Decode.int
             ResetAfter = get |> Get.required Property.ResetAfter Decode.int
             MaxConcurrency = get |> Get.required Property.MaxConcurrency Decode.int
-        }) path v
+        })
 
     let encoder (v: SessionStartLimit) =
         Encode.object ([]
@@ -901,7 +901,7 @@ module GatewayEventPayload =
         let [<Literal>] Sequence = "s"
         let [<Literal>] EventName = "t"
 
-    let decoder<'a> (payloadDecoder: Decoder<'a>): Decoder<GatewayEventPayload<'a>> =
+    let decoder (payloadDecoder: Decoder<'T>): Decoder<GatewayEventPayload<'T>> =
         Decode.object (fun get -> {
             Opcode = get |> Get.required Property.Opcode Decode.Enum.int<GatewayOpcode>
             Data = get |> Get.required Property.Data payloadDecoder
@@ -909,7 +909,7 @@ module GatewayEventPayload =
             EventName = get |> Get.nullable Property.EventName Decode.string
         })
 
-    let encoder<'a> (payloadEncoder: Encoder<'a>) (v: GatewayEventPayload<'a>) =
+    let encoder (payloadEncoder: Encoder<'T>) (v: GatewayEventPayload<'T>) =
         Encode.object ([]
             |> Encode.required Property.Opcode Encode.Enum.int v.Opcode
             |> Encode.required Property.Data payloadEncoder v.Data
@@ -955,12 +955,12 @@ module IdentifyConnectionProperties =
         let [<Literal>] Browser = "browser"
         let [<Literal>] Device = "device"
 
-    let decoder path v =
+    let decoder: Decoder<IdentifyConnectionProperties> =
         Decode.object (fun get -> {
             OperatingSystem = get |> Get.required Property.OperatingSystem Decode.string
             Browser = get |> Get.required Property.Browser Decode.string
             Device = get |> Get.required Property.Device Decode.string
-        }) path v
+        })
 
     let encoder (v: IdentifyConnectionProperties) =
         Encode.object ([]
@@ -1159,19 +1159,19 @@ module InvalidSessionReceiveEvent =
 
 module ApplicationCommandPermissionsUpdateReceiveEvent =
     let decoder: Decoder<ApplicationCommandPermissionsUpdateReceiveEvent> = ApplicationCommandPermission.decoder
-    let encoder (v: ApplicationCommandPermissionsUpdateReceiveEvent) = ApplicationCommandPermission.encoder
+    let encoder (v: ApplicationCommandPermissionsUpdateReceiveEvent) = ApplicationCommandPermission.encoder v
 
 module AutoModerationRuleCreateReceiveEvent =
     let decoder: Decoder<AutoModerationRuleCreateReceiveEvent> = AutoModerationRule.decoder
-    let encoder (v: AutoModerationRuleCreateReceiveEvent) = AutoModerationRule.encoder
+    let encoder (v: AutoModerationRuleCreateReceiveEvent) = AutoModerationRule.encoder v
 
 module AutoModerationRuleUpdateReceiveEvent =
     let decoder: Decoder<AutoModerationRuleUpdateReceiveEvent> = AutoModerationRule.decoder
-    let encoder (v: AutoModerationRuleUpdateReceiveEvent) = AutoModerationRule.encoder
+    let encoder (v: AutoModerationRuleUpdateReceiveEvent) = AutoModerationRule.encoder v
 
 module AutoModerationRuleDeleteReceiveEvent =
     let decoder: Decoder<AutoModerationRuleDeleteReceiveEvent> = AutoModerationRule.decoder
-    let encoder (v: AutoModerationRuleDeleteReceiveEvent) = AutoModerationRule.encoder
+    let encoder (v: AutoModerationRuleDeleteReceiveEvent) = AutoModerationRule.encoder v
 
 module AutoModerationActionExecutionReceiveEvent =
     module Property =
@@ -1219,15 +1219,15 @@ module AutoModerationActionExecutionReceiveEvent =
 
 module ChannelCreateReceiveEvent =
     let decoder: Decoder<ChannelCreateReceiveEvent> = Channel.decoder
-    let encoder (v: ChannelCreateReceiveEvent) = Channel.encoder
+    let encoder (v: ChannelCreateReceiveEvent) = Channel.encoder v
 
 module ChannelUpdateReceiveEvent =
     let decoder: Decoder<ChannelUpdateReceiveEvent> = Channel.decoder
-    let encoder (v: ChannelUpdateReceiveEvent) = Channel.encoder
+    let encoder (v: ChannelUpdateReceiveEvent) = Channel.encoder v
 
 module ChannelDeleteReceiveEvent =
     let decoder: Decoder<ChannelDeleteReceiveEvent> = Channel.decoder
-    let encoder (v: ChannelDeleteReceiveEvent) = Channel.encoder
+    let encoder (v: ChannelDeleteReceiveEvent) = Channel.encoder v
 
 module ThreadCreateReceiveEvent =
     module Property =
@@ -1250,7 +1250,7 @@ module ThreadCreateReceiveEvent =
 
 module ThreadUpdateReceiveEvent =
     let decoder: Decoder<ThreadUpdateReceiveEvent> = Channel.decoder
-    let encoder (v: ThreadUpdateReceiveEvent) = Channel.encoder
+    let encoder (v: ThreadUpdateReceiveEvent) = Channel.encoder v
 
 module ThreadDeleteReceiveEvent =
     module Property =
@@ -1362,15 +1362,15 @@ module ChannelPinsUpdateReceiveEvent =
 
 module EntitlementCreateReceiveEvent =
     let decoder: Decoder<EntitlementCreateReceiveEvent> = Entitlement.decoder
-    let encoder (v: EntitlementCreateReceiveEvent) = Entitlement.encoder
+    let encoder (v: EntitlementCreateReceiveEvent) = Entitlement.encoder v
 
 module EntitlementUpdateReceiveEvent =
     let decoder: Decoder<EntitlementUpdateReceiveEvent> = Entitlement.decoder
-    let encoder (v: EntitlementUpdateReceiveEvent) = Entitlement.encoder
+    let encoder (v: EntitlementUpdateReceiveEvent) = Entitlement.encoder v
 
 module EntitlementDeleteReceiveEvent =
     let decoder: Decoder<EntitlementDeleteReceiveEvent> = Entitlement.decoder
-    let encoder (v: EntitlementDeleteReceiveEvent) = Entitlement.encoder
+    let encoder (v: EntitlementDeleteReceiveEvent) = Entitlement.encoder v
 
 module GuildCreateReceiveEvent =
     let decoder: Decoder<GuildCreateReceiveEvent> =
@@ -1434,7 +1434,7 @@ module GuildCreateReceiveEventAvailableGuild =
 
 module GuildUpdateReceiveEvent =
     let decoder: Decoder<GuildUpdateReceiveEvent> = Guild.decoder
-    let encoder (v: GuildUpdateReceiveEvent) = Guild.encoder
+    let encoder (v: GuildUpdateReceiveEvent) = Guild.encoder v
 
 module GuildDeleteReceiveEvent =
     module Property =
@@ -1722,15 +1722,15 @@ module GuildRoleDeleteReceiveEvent =
 
 module GuildScheduledEventCreateReceiveEvent =
     let decoder: Decoder<GuildScheduledEventCreateReceiveEvent> = GuildScheduledEvent.decoder
-    let encoder (v: GuildScheduledEventCreateReceiveEvent) = GuildScheduledEvent.encoder
+    let encoder (v: GuildScheduledEventCreateReceiveEvent) = GuildScheduledEvent.encoder v
 
 module GuildScheduledEventUpdateReceiveEvent =
     let decoder: Decoder<GuildScheduledEventUpdateReceiveEvent> = GuildScheduledEvent.decoder
-    let encoder (v: GuildScheduledEventUpdateReceiveEvent) = GuildScheduledEvent.encoder
+    let encoder (v: GuildScheduledEventUpdateReceiveEvent) = GuildScheduledEvent.encoder v
 
 module GuildScheduledEventDeleteReceiveEvent =
     let decoder: Decoder<GuildScheduledEventDeleteReceiveEvent> = GuildScheduledEvent.decoder
-    let encoder (v: GuildScheduledEventDeleteReceiveEvent) = GuildScheduledEvent.encoder
+    let encoder (v: GuildScheduledEventDeleteReceiveEvent) = GuildScheduledEvent.encoder v
 
 module GuildScheduledEventUserAddReceiveEvent =
     module Property =
@@ -1774,11 +1774,11 @@ module GuildScheduledEventUserRemoveReceiveEvent =
 
 module GuildSoundboardSoundCreateReceiveEvent =
     let decoder: Decoder<GuildSoundboardSoundCreateReceiveEvent> = SoundboardSound.decoder
-    let encoder (v: GuildSoundboardSoundCreateReceiveEvent) = SoundboardSound.encoder
+    let encoder (v: GuildSoundboardSoundCreateReceiveEvent) = SoundboardSound.encoder v
 
 module GuildSoundboardSoundUpdateReceiveEvent =
     let decoder: Decoder<GuildSoundboardSoundUpdateReceiveEvent> = SoundboardSound.decoder
-    let encoder (v: GuildSoundboardSoundUpdateReceiveEvent) = SoundboardSound.encoder
+    let encoder (v: GuildSoundboardSoundUpdateReceiveEvent) = SoundboardSound.encoder v
 
 module GuildSoundboardSoundDeleteReceiveEvent =
     module Property =
@@ -2214,12 +2214,12 @@ module ClientStatus =
         let [<Literal>] Mobile = "mobile"
         let [<Literal>] Web = "web"
 
-    let decoder path v =
+    let decoder: Decoder<ClientStatus> =
         Decode.object (fun get -> {
             Desktop = get |> Get.optional Property.Desktop ClientDeviceStatus.decoder
             Mobile = get |> Get.optional Property.Mobile ClientDeviceStatus.decoder
             Web = get |> Get.optional Property.Web ClientDeviceStatus.decoder
-        }) path v
+        })
 
     let encoder (v: ClientStatus) =
         Encode.object ([]
@@ -2246,7 +2246,7 @@ module Activity =
         let [<Literal>] Flags = "flags"
         let [<Literal>] Buttons = "buttons"
 
-    let decoder path v =
+    let decoder: Decoder<Activity> =
         Decode.object (fun get -> {
             Name = get |> Get.required Property.Name Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<ActivityType>
@@ -2263,7 +2263,7 @@ module Activity =
             Instance = get |> Get.optional Property.Instance Decode.bool
             Flags = get |> Get.optional Property.Flags Decode.int
             Buttons = get |> Get.optional Property.Buttons (Decode.list ActivityButton.decoder)
-        }) path v
+        })
 
     let encoder (v: Activity) =
         Encode.object ([]
@@ -2289,11 +2289,11 @@ module ActivityTimestamps =
         let [<Literal>] Start = "start"
         let [<Literal>] End = "end"
 
-    let decoder path v =
+    let decoder: Decoder<ActivityTimestamps> =
         Decode.object (fun get -> {
             Start = get |> Get.optional Property.Start UnixTimestamp.decoder
             End = get |> Get.optional Property.End UnixTimestamp.decoder
-        }) path v
+        })
 
     let encoder (v: ActivityTimestamps) =
         Encode.object ([]
@@ -2307,12 +2307,12 @@ module ActivityEmoji =
         let [<Literal>] Id = "id"
         let [<Literal>] Animated = "animated"
 
-    let decoder path v =
+    let decoder: Decoder<ActivityEmoji> =
         Decode.object (fun get -> {
             Name = get |> Get.required Property.Name Decode.string
             Id = get |> Get.optional Property.Id Decode.string
             Animated = get |> Get.optional Property.Animated Decode.bool
-        }) path v
+        })
 
     let encoder (v: ActivityEmoji) =
         Encode.object ([]
@@ -2326,11 +2326,11 @@ module ActivityParty =
         let [<Literal>] Id = "id"
         let [<Literal>] Size = "size"
 
-    let decoder path v =
+    let decoder: Decoder<ActivityParty> =
         Decode.object (fun get -> {
             Id = get |> Get.optional Property.Id Decode.string
             Size = get |> Get.optional Property.Size ActivityPartySize.decoder
-        }) path v
+        })
 
     let encoder (v: ActivityParty) =
         Encode.object ([]
@@ -2355,13 +2355,13 @@ module ActivityAssets =
         let [<Literal>] SmallImage = "small_image"
         let [<Literal>] SmallText = "small_text"
 
-    let decoder path v =
+    let decoder: Decoder<ActivityAssets> =
         Decode.object (fun get -> {
             LargeImage = get |> Get.optional Property.LargeImage Decode.string
             LargeText = get |> Get.optional Property.LargeText Decode.string
             SmallImage = get |> Get.optional Property.SmallImage Decode.string
             SmallText = get |> Get.optional Property.SmallText Decode.string
-        }) path v
+        })
 
     let encoder (v: ActivityAssets) =
         Encode.object ([]
@@ -2377,12 +2377,12 @@ module ActivitySecrets =
         let [<Literal>] Spectate = "spectate"
         let [<Literal>] Match = "match"
 
-    let decoder path v =
+    let decoder: Decoder<ActivitySecrets> =
         Decode.object (fun get -> {
             Join = get |> Get.optional Property.Join Decode.string
             Spectate = get |> Get.optional Property.Spectate Decode.string
             Match = get |> Get.optional Property.Match Decode.string
-        }) path v
+        })
 
     let encoder (v: ActivitySecrets) =
         Encode.object ([]
@@ -2396,11 +2396,11 @@ module ActivityButton =
         let [<Literal>] Label = "label"
         let [<Literal>] Url = "url"
 
-    let decoder path v =
+    let decoder: Decoder<ActivityButton> =
         Decode.object (fun get -> {
             Label = get |> Get.required Property.Label Decode.string
             Url = get |> Get.required Property.Url Decode.string
-        }) path v
+        })
 
     let encoder (v: ActivityButton) =
         Encode.object ([]
@@ -2436,7 +2436,7 @@ module TypingStartReceiveEvent =
 
 module UserUpdateReceiveEvent =
     let decoder: Decoder<UserUpdateReceiveEvent> = User.decoder
-    let encoder (v: UserUpdateReceiveEvent) = User.encoder
+    let encoder (v: UserUpdateReceiveEvent) = User.encoder v
 
 module VoiceChannelEffectSendReceiveEvent =
     module Property =
@@ -2475,7 +2475,7 @@ module VoiceChannelEffectSendReceiveEvent =
 
 module VoiceStateUpdateReceiveEvent =
     let decoder: Decoder<VoiceStateUpdateReceiveEvent> = VoiceState.decoder
-    let encoder (v: VoiceStateUpdateReceiveEvent) = VoiceState.encoder
+    let encoder (v: VoiceStateUpdateReceiveEvent) = VoiceState.encoder v
 
 module VoiceServerUpdateReceiveEvent =
     module Property =
@@ -2516,31 +2516,31 @@ module WebhooksUpdateReceiveEvent =
 
 module InteractionCreateReceiveEvent =
     let decoder: Decoder<InteractionCreateReceiveEvent> = Interaction.decoder
-    let encoder (v: InteractionCreateReceiveEvent) = Interaction.encoder
+    let encoder (v: InteractionCreateReceiveEvent) = Interaction.encoder v
 
 module StageInstanceCreateReceiveEvent =
     let decoder: Decoder<StageInstanceCreateReceiveEvent> = StageInstance.decoder
-    let encoder (v: StageInstanceCreateReceiveEvent) = StageInstance.encoder
+    let encoder (v: StageInstanceCreateReceiveEvent) = StageInstance.encoder v
 
 module StageInstanceUpdateReceiveEvent =
     let decoder: Decoder<StageInstanceUpdateReceiveEvent> = StageInstance.decoder
-    let encoder (v: StageInstanceUpdateReceiveEvent) = StageInstance.encoder
+    let encoder (v: StageInstanceUpdateReceiveEvent) = StageInstance.encoder v
 
 module StageInstanceDeleteReceiveEvent =
     let decoder: Decoder<StageInstanceDeleteReceiveEvent> = StageInstance.decoder
-    let encoder (v: StageInstanceDeleteReceiveEvent) = StageInstance.encoder
+    let encoder (v: StageInstanceDeleteReceiveEvent) = StageInstance.encoder v
 
 module SubscriptionCreateReceiveEvent =
     let decoder: Decoder<SubscriptionCreateReceiveEvent> = Subscription.decoder
-    let encoder (v: SubscriptionCreateReceiveEvent) = Subscription.encoder
+    let encoder (v: SubscriptionCreateReceiveEvent) = Subscription.encoder v
 
 module SubscriptionUpdateReceiveEvent =
     let decoder: Decoder<SubscriptionUpdateReceiveEvent> = Subscription.decoder
-    let encoder (v: SubscriptionUpdateReceiveEvent) = Subscription.encoder
+    let encoder (v: SubscriptionUpdateReceiveEvent) = Subscription.encoder v
 
 module SubscriptionDeleteReceiveEvent =
     let decoder: Decoder<SubscriptionDeleteReceiveEvent> = Subscription.decoder
-    let encoder (v: SubscriptionDeleteReceiveEvent) = Subscription.encoder
+    let encoder (v: SubscriptionDeleteReceiveEvent) = Subscription.encoder v
 
 module MessagePollVoteAddReceiveEvent =
     module Property =
@@ -2601,15 +2601,15 @@ module WebhookEventPayload =
         let [<Literal>] Type = "type"
         let [<Literal>] Event = "event"
 
-    let decoder eventDataDecoder path v =
+    let decoder (eventDataDecoder: Decoder<'T>): Decoder<WebhookEventPayload<'T>> =
         Decode.object (fun get -> {
             Version = get |> Get.required Property.Version Decode.int
             ApplicationId = get |> Get.required Property.ApplicationId Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<WebhookPayloadType>
             Event = get |> Get.optional Property.Event (WebhookEventBody.decoder eventDataDecoder)
-        }) path v
+        })
 
-    let encoder eventDataEncoder (v: WebhookEventPayload<'a>) =
+    let encoder (eventDataEncoder: Encoder<'T>) (v: WebhookEventPayload<'T>) =
         Encode.object ([]
             |> Encode.required Property.Version Encode.int v.Version
             |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
@@ -2623,14 +2623,14 @@ module WebhookEventBody =
         let [<Literal>] Timestamp = "timestamp"
         let [<Literal>] Data = "data"
 
-    let decoder dataDecoder path v =
+    let decoder (dataDecoder: Decoder<'T>): Decoder<WebhookEventBody<'T>> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type WebhookEventType.decoder
             Timestamp = get |> Get.required Property.Timestamp Decode.datetimeUtc
             Data = get |> Get.optional Property.Data dataDecoder
-        }) path v
+        })
 
-    let encoder dataEncoder (v: WebhookEventBody<'a>) =
+    let encoder (dataEncoder: Encoder<'T>) (v: WebhookEventBody<'T>) =
         Encode.object ([]
             |> Encode.required Property.Type WebhookEventType.encoder v.Type
             |> Encode.required Property.Timestamp Encode.datetime v.Timestamp
@@ -2644,13 +2644,13 @@ module ApplicationAuthorizedEvent =
         let [<Literal>] Scopes = "scopes"
         let [<Literal>] Guild = "guild"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationAuthorizedEvent> =
         Decode.object (fun get -> {
             IntegrationType = get |> Get.optional Property.IntegrationType Decode.Enum.int<ApplicationIntegrationType>
             User = get |> Get.required Property.User User.decoder
             Scopes = get |> Get.required Property.Scopes (Decode.list OAuthScope.decoder)
             Guild = get |> Get.optional Property.Guild Guild.decoder
-        }) path v
+        })
 
     let encoder (v: ApplicationAuthorizedEvent) =
         Encode.object ([]
@@ -2661,11 +2661,8 @@ module ApplicationAuthorizedEvent =
         )
 
 module EntitlementCreateEvent =
-    let decoder path v: Result<EntitlementCreateEvent, DecoderError> =
-        Entitlement.decoder path v
-
-    let encoder (v: EntitlementCreateEvent): JsonValue =
-        Entitlement.encoder v
+    let decoder: Decoder<EntitlementCreateEvent> = Entitlement.decoder
+    let encoder (v: EntitlementCreateEvent) = Entitlement.encoder v
 
 module Application =
     module Property =
@@ -2701,7 +2698,7 @@ module Application =
         let [<Literal>] IntegrationTypesConfig = "integration_types_config"
         let [<Literal>] CustomInstallUrl = "custom_install_url"
 
-    let decoder path v: Result<Application, DecoderError> =
+    let decoder: Decoder<Application> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
@@ -2734,7 +2731,7 @@ module Application =
             InstallParams = get |> Get.optional Property.InstallParams InstallParams.decoder
             IntegrationTypesConfig = get |> Get.optional Property.IntegrationTypesConfig (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
             CustomInstallUrl  = get |> Get.optional Property.CustomInstallUrl Decode.string
-        }) path v
+        })
 
     let encoder (v: Application) =
         Encode.object ([]
@@ -2772,7 +2769,7 @@ module Application =
         )
 
     module Partial =
-        let decoder path v: Result<PartialApplication, DecoderError> =
+        let decoder: Decoder<PartialApplication> =
             Decode.object (fun get -> {
                 Id = get |> Get.required Property.Id Decode.string
                 Name = get |> Get.optional Property.Name Decode.string
@@ -2805,7 +2802,7 @@ module Application =
                 InstallParams = get |> Get.optional Property.InstallParams InstallParams.decoder
                 IntegrationTypesConfig = get |> Get.optional Property.IntegrationTypesConfig (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
                 CustomInstallUrl  = get |> Get.optional Property.CustomInstallUrl Decode.string
-            }) path v
+            })
 
         let encoder (v: PartialApplication) =
             Encode.object ([]
@@ -2846,10 +2843,10 @@ module ApplicationIntegrationTypeConfiguration =
     module Property =
         let [<Literal>] OAuth2InstallParams = "oauth2_install_params"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationIntegrationTypeConfiguration> =
         Decode.object (fun get -> {
             OAuth2InstallParams = get |> Get.optional Property.OAuth2InstallParams InstallParams.decoder
-        }) path v
+        })
 
     let encoder (v: ApplicationIntegrationTypeConfiguration) =
         Encode.object ([]
@@ -2861,11 +2858,11 @@ module InstallParams =
         let [<Literal>] Scopes = "scopes"
         let [<Literal>] Permissions = "permissions"
 
-    let decoder path v =
+    let decoder: Decoder<InstallParams> =
         Decode.object (fun get -> {
             Scopes = get |> Get.required Property.Scopes (Decode.list OAuthScope.decoder)
             Permissions = get |> Get.required Property.Permissions Decode.string
-        }) path v
+        })
 
     let encoder (v: InstallParams) =
         Encode.object ([]
@@ -2881,14 +2878,14 @@ module ActivityInstance =
         let [<Literal>] Location = "location"
         let [<Literal>] Users = "users"
 
-    let decoder path v =
+    let decoder: Decoder<ActivityInstance> =
         Decode.object (fun get -> {
             ApplicationId = get |> Get.required Property.ApplicationId Decode.string
             InstanceId = get |> Get.required Property.InstanceId Decode.string
             LaunchId = get |> Get.required Property.LaunchId Decode.string
             Location = get |> Get.required Property.Location ActivityLocation.decoder
             Users = get |> Get.required Property.Users (Decode.list Decode.string)
-        }) path v
+        })
 
     let encoder (v: ActivityInstance) =
         Encode.object ([]
@@ -2906,13 +2903,13 @@ module ActivityLocation =
         let [<Literal>] ChannelId = "channel_id"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder path v =
+    let decoder: Decoder<ActivityLocation> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Kind = get |> Get.required Property.Kind ActivityLocationKind.decoder
             ChannelId = get |> Get.required Property.ChannelId Decode.string
             GuildId = get |> Get.optinull Property.GuildId Decode.string
-        }) path v
+        })
 
     let encoder (v: ActivityLocation) =
         Encode.object ([]
@@ -2931,7 +2928,7 @@ module ApplicationRoleConnectionMetadata =
         let [<Literal>] Description = "description"
         let [<Literal>] DescriptionLocalizations = "description_localizations"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationRoleConnectionMetadata> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<ApplicationRoleConnectionMetadataType>
             Key = get |> Get.required Property.Key Decode.string
@@ -2939,7 +2936,7 @@ module ApplicationRoleConnectionMetadata =
             NameLocalizations = get |> Get.optional Property.NameLocalizations (Decode.dict Decode.string)
             Description = get |> Get.required Property.Description Decode.string
             DescriptionLocalizations = get |> Get.optional Property.DescriptionLocalizations (Decode.dict Decode.string)
-        }) path v
+        })
 
     let encoder (v: ApplicationRoleConnectionMetadata) =
         Encode.object ([]
@@ -2962,7 +2959,7 @@ module AuditLog =
         let [<Literal>] Users = "users"
         let [<Literal>] Webhooks = "webhooks"
 
-    let decoder path v =
+    let decoder: Decoder<AuditLog> =
         Decode.object (fun get -> {
             ApplicationCommands = get |> Get.required Property.ApplicationCommands (Decode.list ApplicationCommand.decoder)
             AuditLogEntries = get |> Get.required Property.AuditLogEntries (Decode.list AuditLogEntry.decoder)
@@ -2972,7 +2969,7 @@ module AuditLog =
             Threads = get |> Get.required Property.Threads (Decode.list Channel.decoder)
             Users = get |> Get.required Property.Users (Decode.list User.decoder)
             Webhooks = get |> Get.required Property.Webhooks (Decode.list Webhook.decoder)
-        }) path v
+        })
 
     let encoder (v: AuditLog) =
         Encode.object ([]
@@ -2996,7 +2993,7 @@ module AuditLogEntry =
         let [<Literal>] Options = "options"
         let [<Literal>] Reason = "reason"
 
-    let decoder path v =
+    let decoder: Decoder<AuditLogEntry> =
         Decode.object (fun get -> {
             TargetId = get |> Get.nullable Property.TargetId Decode.string
             Changes = get |> Get.optional Property.Changes (Decode.list AuditLogChange.decoder)
@@ -3005,7 +3002,7 @@ module AuditLogEntry =
             ActionType = get |> Get.required Property.ActionType Decode.Enum.int<AuditLogEventType>
             Options = get |> Get.optional Property.Options AuditLogEntryOptionalInfo.decoder
             Reason = get |> Get.optional Property.Reason Decode.string
-        }) path v
+        })
 
     let internal encodeProperties (v: AuditLogEntry) =
         []
@@ -3035,7 +3032,7 @@ module AuditLogEntryOptionalInfo =
         let [<Literal>] Type = "type"
         let [<Literal>] IntegrationType = "integration_type"
 
-    let decoder path v =
+    let decoder: Decoder<AuditLogEntryOptionalInfo> =
         Decode.object (fun get -> {
             ApplicationId = get |> Get.optional Property.ApplicationId Decode.string
             AutoModerationRuleName = get |> Get.optional Property.AutoModerationRuleName Decode.string
@@ -3049,7 +3046,7 @@ module AuditLogEntryOptionalInfo =
             RoleName = get |> Get.optional Property.RoleName Decode.string
             Type = get |> Get.optional Property.Type Decode.string
             IntegrationType = get |> Get.optional Property.IntegrationType Decode.string
-        }) path v
+        })
 
     let encoder (v: AuditLogEntryOptionalInfo) =
         Encode.object ([]
@@ -3073,12 +3070,12 @@ module AuditLogChange =
         let [<Literal>] OldValue = "old_value"
         let [<Literal>] Key = "key"
 
-    let decoder path v =
+    let decoder: Decoder<AuditLogChange> =
         Decode.object (fun get -> {
             NewValue = None
             OldValue = None
             Key = get |> Get.required Property.Key Decode.string
-        }) path v
+        })
 
     let encoder (v: AuditLogChange) =
         Encode.object ([]
@@ -3103,7 +3100,7 @@ module AutoModerationRule =
         let [<Literal>] ExemptRoles = "exempt_roles"
         let [<Literal>] ExemptChannels = "exempt_channels"
 
-    let decoder path v =
+    let decoder: Decoder<AutoModerationRule> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             GuildId = get |> Get.required Property.GuildId Decode.string
@@ -3116,7 +3113,7 @@ module AutoModerationRule =
             Enabled = get |> Get.required Property.Enabled Decode.bool
             ExemptRoles = get |> Get.required Property.ExemptRoles (Decode.list Decode.string)
             ExemptChannels = get |> Get.required Property.ExemptChannels (Decode.list Decode.string)
-        }) path v
+        })
 
     let encoder (v: AutoModerationRule) =
         Encode.object ([]
@@ -3142,7 +3139,7 @@ module AutoModerationTriggerMetadata =
         let [<Literal>] MentionTotalLimit = "mention_total_limit"
         let [<Literal>] MentionRaidProtectionEnabled = "mention_raid_protection_enabled"
 
-    let decoder path v =
+    let decoder: Decoder<AutoModerationTriggerMetadata> =
         Decode.object (fun get -> {
             KeywordFilter = get |> Get.optional Property.KeywordFilter (Decode.list Decode.string)
             RegexPatterns = get |> Get.optional Property.RegexPatterns (Decode.list Decode.string)
@@ -3150,7 +3147,7 @@ module AutoModerationTriggerMetadata =
             AllowList = get |> Get.optional Property.AllowList (Decode.list Decode.string)
             MentionTotalLimit = get |> Get.optional Property.MentionTotalLimit Decode.int
             MentionRaidProtectionEnabled = get |> Get.optional Property.MentionRaidProtectionEnabled Decode.bool
-        }) path v
+        })
 
     let encoder (v: AutoModerationTriggerMetadata) =
         Encode.object ([]
@@ -3167,11 +3164,11 @@ module AutoModerationAction =
         let [<Literal>] Type = "type"
         let [<Literal>] Metadata = "metadata"
 
-    let decoder path v =
+    let decoder: Decoder<AutoModerationAction> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<AutoModerationActionType>
             Metadata = get |> Get.optional Property.Metadata AutoModerationActionMetadata.decoder
-        }) path v
+        })
 
     let encoder (v: AutoModerationAction) =
         Encode.object ([]
@@ -3185,12 +3182,12 @@ module AutoModerationActionMetadata =
         let [<Literal>] DurationSeconds = "duration_seconds"
         let [<Literal>] CustomMessage = "custom_message"
 
-    let decoder path v =
+    let decoder: Decoder<AutoModerationActionMetadata> =
         Decode.object (fun get -> {
             ChannelId = get |> Get.optional Property.ChannelId Decode.string
             DurationSeconds = get |> Get.optional Property.DurationSeconds Decode.int
             CustomMessage = get |> Get.optional Property.CustomMessage Decode.string
-        }) path v
+        })
 
     let encoder (v: AutoModerationActionMetadata) =
         Encode.object ([]
@@ -3237,7 +3234,7 @@ module Channel =
         let [<Literal>] DefaultSortOrder = "default_sort_order"
         let [<Literal>] DefaultForumLayout = "default_forum_layout"
 
-    let decoder path v =
+    let decoder: Decoder<Channel> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<ChannelType>
@@ -3274,7 +3271,7 @@ module Channel =
             DefaultThreadRateLimitPerUser = get |> Get.optional Property.DefaultThreadRateLimitPerUser Decode.int
             DefaultSortOrder = get |> Get.optinull Property.DefaultSortOrder Decode.Enum.int<ChannelSortOrder>
             DefaultForumLayout = get |> Get.optional Property.DefaultForumLayout Decode.Enum.int<ForumLayout>
-        }) path v
+        })
 
     let internal encodeProperties (v: Channel) =
         []
@@ -3318,7 +3315,7 @@ module Channel =
         Encode.object (encodeProperties v)
 
     module Partial =
-        let decoder path v =
+        let decoder: Decoder<PartialChannel> =
             Decode.object (fun get -> {
                 Id = get |> Get.required Property.Id Decode.string
                 Type = get |> Get.optional Property.Type Decode.Enum.int<ChannelType>
@@ -3355,7 +3352,7 @@ module Channel =
                 DefaultThreadRateLimitPerUser = get |> Get.optional Property.DefaultThreadRateLimitPerUser Decode.int
                 DefaultSortOrder = get |> Get.optinull Property.DefaultSortOrder Decode.Enum.int<ChannelSortOrder>
                 DefaultForumLayout = get |> Get.optional Property.DefaultForumLayout Decode.Enum.int<ForumLayout>
-            }) path v
+            })
 
         let encoder (v: PartialChannel) =
             Encode.object ([]
@@ -3401,11 +3398,11 @@ module FollowedChannel =
         let [<Literal>] ChannelId = "channel_id"
         let [<Literal>] WebhookId = "webhook_id"
 
-    let decoder path v =
+    let decoder: Decoder<FollowedChannel> =
         Decode.object (fun get -> {
             ChannelId = get |> Get.required Property.ChannelId Decode.string
             WebhookId = get |> Get.required Property.WebhookId Decode.string
-        }) path v
+        })
 
     let encoder (v: FollowedChannel) =
         Encode.object ([]
@@ -3420,13 +3417,13 @@ module PermissionOverwrite =
         let [<Literal>] Allow = "allow"
         let [<Literal>] Deny = "deny"
 
-    let decoder path v =
+    let decoder: Decoder<PermissionOverwrite> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<PermissionOverwriteType>
             Allow = get |> Get.required Property.Allow Decode.string
             Deny = get |> Get.required Property.Deny Decode.string
-        }) path v
+        })
 
     let encoder (v: PermissionOverwrite) =
         Encode.object ([]
@@ -3437,13 +3434,13 @@ module PermissionOverwrite =
         )
 
     module Partial =
-        let decoder path v =
+        let decoder: Decoder<PartialPermissionOverwrite> =
             Decode.object (fun get -> {
                 Id = get |> Get.required Property.Id Decode.string
                 Type = get |> Get.optional Property.Type Decode.Enum.int<PermissionOverwriteType>
                 Allow = get |> Get.optional Property.Allow Decode.string
                 Deny = get |> Get.optional Property.Deny Decode.string
-            }) path v
+            })
 
         let encoder (v: PartialPermissionOverwrite) =
             Encode.object ([]
@@ -3462,7 +3459,7 @@ module ThreadMetadata =
         let [<Literal>] Invitable = "invitable"
         let [<Literal>] CreateTimestamp = "create_timestamp"
 
-    let decoder path v =
+    let decoder: Decoder<ThreadMetadata> =
         Decode.object (fun get -> {
             Archived = get |> Get.required Property.Archived Decode.bool
             AutoArchiveDuration = get |> Get.required Property.AutoArchiveDuration Decode.Enum.int<AutoArchiveDuration>
@@ -3470,7 +3467,7 @@ module ThreadMetadata =
             Locked = get |> Get.required Property.Locked Decode.bool
             Invitable = get |> Get.optional Property.Invitable Decode.bool
             CreateTimestamp = get |> Get.optinull Property.CreateTimestamp Decode.datetimeUtc
-        }) path v
+        })
 
     let encoder (v: ThreadMetadata) =
         Encode.object ([]
@@ -3490,14 +3487,14 @@ module ThreadMember =
         let [<Literal>] Flags = "flags"
         let [<Literal>] Member = "member"
 
-    let decoder path v =
+    let decoder: Decoder<ThreadMember> =
         Decode.object (fun get -> {
             Id = get |> Get.optional Property.Id Decode.string
             UserId = get |> Get.optional Property.UserId Decode.string
             JoinTimestamp = get |> Get.required Property.JoinTimestamp Decode.datetimeUtc
             Flags = get |> Get.required Property.Flags Decode.int
             Member = get |> Get.optional Property.Member GuildMember.decoder
-        }) path v
+        })
 
     let internal encodeProperties (v: ThreadMember) =
         []
@@ -3515,11 +3512,11 @@ module DefaultReaction =
         let [<Literal>] EmojiId = "emoji_id"
         let [<Literal>] EmojiName = "emoji_name"
 
-    let decoder path v =
+    let decoder: Decoder<DefaultReaction> =
         Decode.object (fun get -> {
             EmojiId = get |> Get.nullable Property.EmojiId Decode.string
             EmojiName = get |> Get.nullable Property.EmojiName Decode.string
-        }) path v
+        })
 
     let encoder (v: DefaultReaction) =
         Encode.object ([]
@@ -3535,14 +3532,14 @@ module ForumTag =
         let [<Literal>] EmojiId = "emoji_id"
         let [<Literal>] EmojiName = "emoji_name"
 
-    let decoder path v =
+    let decoder: Decoder<ForumTag> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
             Moderated = get |> Get.required Property.Moderated Decode.bool
             EmojiId = get |> Get.nullable Property.EmojiId Decode.string
             EmojiName = get |> Get.nullable Property.EmojiName Decode.string
-        }) path v
+        })
 
     let encoder (v: ForumTag) =
         Encode.object ([]
@@ -3564,7 +3561,7 @@ module Emoji =
         let [<Literal>] Animated = "animated"
         let [<Literal>] Available = "available"
 
-    let decoder path v =
+    let decoder: Decoder<Emoji> =
         Decode.object (fun get -> {
             Id = get |> Get.nullable Property.Id Decode.string
             Name = get |> Get.nullable Property.Name Decode.string
@@ -3574,7 +3571,7 @@ module Emoji =
             Managed = get |> Get.optional Property.Managed Decode.bool
             Animated = get |> Get.optional Property.Animated Decode.bool
             Available = get |> Get.optional Property.Available Decode.bool
-        }) path v
+        })
 
     let encoder (v: Emoji) =
         Encode.object ([]
@@ -3589,7 +3586,7 @@ module Emoji =
         )
 
     module Partial =
-        let decoder path v: Result<PartialEmoji, DecoderError> =
+        let decoder: Decoder<PartialEmoji> =
             Decode.object (fun get -> {
                 Id = get |> Get.nullable Property.Id Decode.string
                 Name = get |> Get.nullable Property.Name Decode.string
@@ -3599,7 +3596,7 @@ module Emoji =
                 Managed = get |> Get.optional Property.Managed Decode.bool
                 Animated = get |> Get.optional Property.Animated Decode.bool
                 Available = get |> Get.optional Property.Available Decode.bool
-            }) path v
+            })
 
         let encoder (v: PartialEmoji) =
             Encode.object ([]
@@ -3626,7 +3623,7 @@ module Entitlement =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Consumed = "consumed"
 
-    let decoder path v =
+    let decoder: Decoder<Entitlement> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             SkuId = get |> Get.required Property.SkuId Decode.string
@@ -3638,7 +3635,7 @@ module Entitlement =
             EndsAt = get |> Get.nullable Property.EndsAt Decode.datetimeUtc
             GuildId = get |> Get.optional Property.GuildId Decode.string
             Consumed = get |> Get.optional Property.Consumed Decode.bool
-        }) path v
+        })
 
     let encoder (v: Entitlement) =
         Encode.object ([]
@@ -3920,7 +3917,7 @@ module GuildPreview =
         let [<Literal>] Description = "description"
         let [<Literal>] Stickers = "stickers"
 
-    let decoder path v =
+    let decoder: Decoder<GuildPreview> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
@@ -3933,7 +3930,7 @@ module GuildPreview =
             ApproximatePresenceCount = get |> Get.required Property.ApproximatePresenceCount Decode.int
             Description = get |> Get.nullable Property.Description Decode.string
             Stickers = get |> Get.required Property.Stickers (Decode.list Sticker.decoder)
-        }) path v
+        })
 
     let encoder (v: GuildPreview) =
         Encode.object ([]
@@ -3955,11 +3952,11 @@ module GuildWidgetSettings =
         let [<Literal>] Enabled = "enabled"
         let [<Literal>] ChannelId = "channel_id"
 
-    let decoder path v =
+    let decoder: Decoder<GuildWidgetSettings> =
         Decode.object (fun get -> {
             Enabled = get |> Get.required Property.Enabled Decode.bool
             ChannelId = get |> Get.nullable Property.ChannelId Decode.string
-        }) path v
+        })
 
     let encoder (v: GuildWidgetSettings) =
         Encode.object ([]
@@ -3976,7 +3973,7 @@ module GuildWidget =
         let [<Literal>] Members = "members"
         let [<Literal>] PresenceCount = "presence_count"
 
-    let decoder path v =
+    let decoder: Decoder<GuildWidget> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
@@ -3984,7 +3981,7 @@ module GuildWidget =
             Channels = get |> Get.required Property.Channels (Decode.list Channel.Partial.decoder)
             Members = get |> Get.required Property.Members (Decode.list User.Partial.decoder)
             PresenceCount = get |> Get.required Property.PresenceCount Decode.int
-        }) path v
+        })
 
     let encoder (v: GuildWidget) =
         Encode.object ([]
@@ -4013,7 +4010,7 @@ module GuildMember =
         let [<Literal>] CommunicationDisabledUntil = "communication_disabled_until"
         let [<Literal>] AvatarDecorationData = "avatar_decoration_data"
 
-    let decoder path v =
+    let decoder: Decoder<GuildMember> =
         Decode.object (fun get -> {
             User = get |> Get.optional Property.User User.decoder
             Nick = get |> Get.optinull Property.Nick Decode.string
@@ -4029,7 +4026,7 @@ module GuildMember =
             Permissions = get |> Get.optional Property.Permissions Decode.string
             CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
             AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
-        }) path v
+        })
 
     let internal encodeProperties (v: GuildMember) =
         []
@@ -4052,7 +4049,7 @@ module GuildMember =
         Encode.object (encodeProperties v)
 
     module Partial =
-        let decoder path v =
+        let decoder: Decoder<PartialGuildMember> =
             Decode.object (fun get -> {
                 User = get |> Get.optional Property.User User.decoder
                 Nick = get |> Get.optinull Property.Nick Decode.string
@@ -4068,7 +4065,7 @@ module GuildMember =
                 Permissions = get |> Get.optional Property.Permissions Decode.string
                 CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
                 AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
-            }) path v
+            })
 
         let encoder (v: PartialGuildMember) =
             Encode.object ([]
@@ -4107,7 +4104,7 @@ module Integration =
         let [<Literal>] Application = "application"
         let [<Literal>] Scopes = "scopes"
 
-    let decoder path v =
+    let decoder: Decoder<Integration> =
         Decode.object (fun get -> {
             Integration.Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
@@ -4125,7 +4122,7 @@ module Integration =
             Revoked = get |> Get.optional Property.Revoked Decode.bool
             Application = get |> Get.optional Property.Application IntegrationApplication.decoder
             Scopes = get |> Get.optional Property.Scopes (Decode.list OAuthScope.decoder)
-        }) path v
+        })
 
     let internal encodeProperties (v: Integration) =
         []
@@ -4150,7 +4147,7 @@ module Integration =
         Encode.object (encodeProperties v)
 
     module Partial =
-        let decoder path v =
+        let decoder: Decoder<PartialIntegration> =
             Decode.object (fun get -> {
                 Id = get |> Get.required Property.Id Decode.string
                 Name = get |> Get.optional Property.Name Decode.string
@@ -4168,7 +4165,7 @@ module Integration =
                 Revoked = get |> Get.optional Property.Revoked Decode.bool
                 Application = get |> Get.optional Property.Application IntegrationApplication.decoder
                 Scopes = get |> Get.optional Property.Scopes (Decode.list OAuthScope.decoder)
-            }) path v
+            })
 
         let encoder (v: PartialIntegration) =
             Encode.object ([]
@@ -4195,11 +4192,11 @@ module IntegrationAccount =
         let [<Literal>] Id = "id"
         let [<Literal>] Name = "name"
 
-    let decoder path v =
+    let decoder: Decoder<IntegrationAccount> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
-        }) path v
+        })
 
     let encoder (v: IntegrationAccount) =
         Encode.object ([]
@@ -4216,14 +4213,14 @@ module IntegrationApplication =
         let [<Literal>] Summary = "summary"
         let [<Literal>] Bot = "bot"
 
-    let decoder path v =
+    let decoder: Decoder<IntegrationApplication> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
             Icon = get |> Get.nullable Property.Icon Decode.string
             Description = get |> Get.required Property.Description Decode.string
             Bot = get |> Get.optional Property.Bot User.decoder
-        }) path v
+        })
 
     let encoder (v: IntegrationApplication) =
         Encode.object ([]
@@ -4239,11 +4236,12 @@ module Ban =
         let [<Literal>] Reason = "reason"
         let [<Literal>] User = "user"
 
-    let decoder path v =
+    let decoder: Decoder<Ban> =
         Decode.object (fun get -> {
             Reason = get |> Get.nullable Property.Reason Decode.string
             User = get |> Get.required Property.User User.decoder
-        }) path v
+        })
+        
     let encoder (v: Ban) =
         Encode.object ([]
             |> Encode.nullable Property.Reason Encode.string v.Reason
@@ -4255,11 +4253,11 @@ module WelcomeScreen =
         let [<Literal>] Description = "description"
         let [<Literal>] WelcomeChannels = "welcome_channels"
 
-    let decoder path v =
+    let decoder: Decoder<WelcomeScreen> =
         Decode.object (fun get -> {
             Description = get |> Get.nullable Property.Description Decode.string
             WelcomeChannels = get |> Get.required Property.WelcomeChannels (Decode.list WelcomeScreenChannel.decoder)
-        }) path v
+        })
 
     let encoder (v: WelcomeScreen) =
         Encode.object ([]
@@ -4274,13 +4272,13 @@ module WelcomeScreenChannel =
         let [<Literal>] EmojiId = "emoji_id"
         let [<Literal>] EmojiName = "emoji_name"
 
-    let decoder path v =
+    let decoder: Decoder<WelcomeScreenChannel> =
         Decode.object (fun get -> {
             ChannelId = get |> Get.required Property.ChannelId Decode.string
             Description = get |> Get.required Property.Description Decode.string
             EmojiId = get |> Get.nullable Property.EmojiId Decode.string
             EmojiName = get |> Get.nullable Property.EmojiName Decode.string
-        }) path v
+        })
 
     let encoder (v: WelcomeScreenChannel) =
         Encode.object ([]
@@ -4298,14 +4296,14 @@ module GuildOnboarding =
         let [<Literal>] Enabled = "enabled"
         let [<Literal>] Mode = "mode"
 
-    let decoder path v =
+    let decoder: Decoder<GuildOnboarding> =
         Decode.object (fun get -> {
             GuildId = get |> Get.required Property.GuildId Decode.string
             Prompts = get |> Get.required Property.Prompts (Decode.list GuildOnboardingPrompt.decoder)
             DefaultChannelIds = get |> Get.required Property.DefaultChannelIds (Decode.list Decode.string)
             Enabled = get |> Get.required Property.Enabled Decode.bool
             Mode = get |> Get.required Property.Mode Decode.Enum.int<OnboardingMode>
-        }) path v
+        })
 
     let encoder (v: GuildOnboarding) =
         Encode.object ([]
@@ -4326,7 +4324,7 @@ module GuildOnboardingPrompt =
         let [<Literal>] Required = "required"
         let [<Literal>] InOnboarding = "in_onboarding"
 
-    let decoder path v =
+    let decoder: Decoder<GuildOnboardingPrompt> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<OnboardingPromptType>
@@ -4335,7 +4333,7 @@ module GuildOnboardingPrompt =
             SingleSelect = get |> Get.required Property.SingleSelect Decode.bool
             Required = get |> Get.required Property.Required Decode.bool
             InOnboarding = get |> Get.required Property.InOnboarding Decode.bool
-        }) path v
+        })
 
     let encoder (v: GuildOnboardingPrompt) =
         Encode.object ([]
@@ -4360,7 +4358,7 @@ module GuildOnboardingPromptOption =
         let [<Literal>] Title = "title"
         let [<Literal>] Description = "description"
 
-    let decoder path v =
+    let decoder: Decoder<GuildOnboardingPromptOption> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             ChannelIds = get |> Get.required Property.ChannelIds (Decode.list Decode.string)
@@ -4371,7 +4369,7 @@ module GuildOnboardingPromptOption =
             EmojiAnimated = get |> Get.optional Property.EmojiAnimated Decode.bool
             Title = get |> Get.required Property.Title Decode.string
             Description = get |> Get.nullable Property.Description Decode.string
-        }) path v
+        })
 
     let encoder (v: GuildOnboardingPromptOption) =
         Encode.object ([]
@@ -4393,13 +4391,13 @@ module IncidentsData =
         let [<Literal>] DmSpamDetectedAt = "dm_spam_detected_at"
         let [<Literal>] RaidDetectedAt = "raid_detected_at"
 
-    let decoder path v =
+    let decoder: Decoder<IncidentsData> =
         Decode.object (fun get -> {
             InvitesDisabledUntil = get |> Get.nullable Property.InvitesDisabledUntil Decode.datetimeUtc
             DmsDisabledUntil = get |> Get.nullable Property.DmsDisabledUntil Decode.datetimeUtc
             DmSpamDetectedAt = get |> Get.optinull Property.DmSpamDetectedAt Decode.datetimeUtc
             RaidDetectedAt = get |> Get.optinull Property.RaidDetectedAt Decode.datetimeUtc
-        }) path v
+        })
 
     let encoder (v: IncidentsData) =
         Encode.object ([]
@@ -4429,7 +4427,7 @@ module GuildScheduledEvent =
         let [<Literal>] Image = "image"
         let [<Literal>] RecurrenceRule = "recurrence_rule"
 
-    let decoder path v =
+    let decoder: Decoder<GuildScheduledEvent> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             GuildId = get |> Get.required Property.GuildId Decode.string
@@ -4448,7 +4446,7 @@ module GuildScheduledEvent =
             UserCount = get |> Get.optional Property.UserCount Decode.int
             Image = get |> Get.optinull Property.Image Decode.string
             RecurrenceRule = get |> Get.nullable Property.RecurrenceRule RecurrenceRule.decoder
-        }) path v
+        })
 
     let encoder (v: GuildScheduledEvent) =
         Encode.object ([]
@@ -4475,10 +4473,10 @@ module EntityMetadata =
     module Property =
         let [<Literal>] Location = "location"
 
-    let decoder path v =
+    let decoder: Decoder<EntityMetadata> =
         Decode.object (fun get -> {
             Location = get |> Get.optional Property.Location Decode.string
-        }) path v
+        })
 
     let encoder (v: EntityMetadata) =
         Encode.object ([]
@@ -4491,12 +4489,12 @@ module GuildScheduledEventUser =
         let [<Literal>] User = "user"
         let [<Literal>] Member = "member"
 
-    let decoder path v =
+    let decoder: Decoder<GuildScheduledEventUser> =
         Decode.object (fun get -> {
             GuildScheduledEventId = get |> Get.required Property.GuildScheduledEventId Decode.string
             User = get |> Get.required Property.User User.decoder
             Member = get |> Get.optional Property.Member GuildMember.decoder
-        }) path v
+        })
 
     let encoder (v: GuildScheduledEventUser) =
         Encode.object ([]
@@ -4518,7 +4516,7 @@ module RecurrenceRule =
         let [<Literal>] ByYearDay = "by_year_day"
         let [<Literal>] Count = "count"
 
-    let decoder path v =
+    let decoder: Decoder<RecurrenceRule> =
         Decode.object (fun get -> {
             Start = get |> Get.required Property.Start Decode.datetimeUtc
             End = get |> Get.nullable Property.End Decode.datetimeUtc
@@ -4530,7 +4528,7 @@ module RecurrenceRule =
             ByMonthDay = get |> Get.nullable Property.ByMonthDay (Decode.list Decode.int)
             ByYearDay = get |> Get.nullable Property.ByYearDay (Decode.list Decode.int)
             Count = get |> Get.nullable Property.Count Decode.int
-        }) path v
+        })
 
     let encoder (v: RecurrenceRule) =
         Encode.object ([]
@@ -4551,11 +4549,11 @@ module RecurrenceRuleNWeekday =
         let [<Literal>] N = "n"
         let [<Literal>] Day = "day"
 
-    let decoder path v =
+    let decoder: Decoder<RecurrenceRuleNWeekday> =
         Decode.object (fun get -> {
             N = get |> Get.required Property.N Decode.int
             Day = get |> Get.required Property.Day Decode.Enum.int<RecurrenceRuleWeekday>
-        }) path v
+        })
 
     let encoder (v: RecurrenceRuleNWeekday) =
         Encode.object ([]
@@ -4577,7 +4575,7 @@ module GuildTemplate =
         let [<Literal>] SerializedSourceGuild = "serialized_source_guild"
         let [<Literal>] IsDirty = "is_dirty"
 
-    let decoder path v =
+    let decoder: Decoder<GuildTemplate> =
         Decode.object (fun get -> {
             Code = get |> Get.required Property.Code Decode.string
             Name = get |> Get.required Property.Name Decode.string
@@ -4590,7 +4588,7 @@ module GuildTemplate =
             SourceGuildId = get |> Get.required Property.SourceGuildId Decode.string
             SerializedSourceGuild = get |> Get.required Property.SerializedSourceGuild Guild.Partial.decoder
             IsDirty = get |> Get.nullable Property.IsDirty Decode.bool
-        }) path v
+        })
 
     let encoder (v: GuildTemplate) =
         Encode.object ([]
@@ -4623,7 +4621,7 @@ module Invite =
         let [<Literal>] StageInstance = "stage_instance"
         let [<Literal>] GuildScheduledEvent = "guild_scheduled_event"
 
-    let decoder path v =
+    let decoder: Decoder<Invite> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<InviteType>
             Code = get |> Get.required Property.Code Decode.string
@@ -4637,7 +4635,7 @@ module Invite =
             ApproximateMemberCount = get |> Get.optional Property.ApproximateMemberCount Decode.int
             ExpiresAt = get |> Get.optinull Property.ExpiresAt Decode.datetimeUtc
             GuildScheduledEvent = get |> Get.optional Property.GuildScheduledEvent GuildScheduledEvent.decoder
-        }) path v
+        })
 
     let internal encodeProperties (v: Invite) =
         []
@@ -4665,14 +4663,14 @@ module InviteMetadata =
         let [<Literal>] Temporary = "temporary"
         let [<Literal>] CreatedAt = "created_at"
 
-    let decoder path v =
+    let decoder: Decoder<InviteMetadata> =
         Decode.object (fun get -> {
             Uses = get |> Get.required Property.Uses Decode.int
             MaxUses = get |> Get.required Property.MaxUses Decode.int
             MaxAge = get |> Get.required Property.MaxAge Decode.int
             Temporary = get |> Get.required Property.Temporary Decode.bool
             CreatedAt = get |> Get.required Property.CreatedAt Decode.datetimeUtc
-        }) path v
+        })
 
     let internal encodeProperties (v: InviteMetadata) =
         []
@@ -4686,14 +4684,16 @@ module InviteMetadata =
         Encode.object (encodeProperties v)
 
 module InviteWithMetadata =
-    let decoder path v =
+    let decoder: Decoder<InviteWithMetadata> =
         Decode.object (fun get -> {
             Invite = get |> Get.extract Invite.decoder
             Metadata = get |> Get.extract InviteMetadata.decoder
-        }) path v
+        })
 
     let encoder (v: InviteWithMetadata) =
         Encode.object (Invite.encodeProperties v.Invite @ InviteMetadata.encodeProperties v.Metadata)
+
+    // TODO: Should invite metadata be separated, or should this be treated like old ExtraFields types?
 
 module Lobby =
     module Property =
@@ -4779,7 +4779,7 @@ module Message =
         let [<Literal>] Poll = "poll"
         let [<Literal>] Call = "call"
 
-    let decoder path v =
+    let decoder: Decoder<Message> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             ChannelId = get |> Get.required Property.ChannelId Decode.string
@@ -4816,7 +4816,7 @@ module Message =
             Resolved = get |> Get.optional Property.Resolved ResolvedData.decoder
             Poll = get |> Get.optional Property.Poll Poll.decoder
             Call = get |> Get.optional Property.Call MessageCall.decoder
-        }) path v
+        })
 
     let internal encodeProperties (v: Message) =
         []
@@ -4860,7 +4860,7 @@ module Message =
         Encode.object (encodeProperties v)
 
     module Partial =
-        let decoder path v =
+        let decoder: Decoder<PartialMessage> =
             Decode.object (fun get -> {
                 Id = get |> Get.required Property.Id Decode.string
                 ChannelId = get |> Get.optional Property.ChannelId Decode.string
@@ -4897,7 +4897,7 @@ module Message =
                 Resolved = get |> Get.optional Property.Resolved ResolvedData.decoder
                 Poll = get |> Get.optional Property.Poll Poll.decoder
                 Call = get |> Get.optional Property.Call MessageCall.decoder
-            }) path v
+            })
         
         let encoder (v: PartialMessage) =
             Encode.object ([]
@@ -4939,7 +4939,7 @@ module Message =
             )
 
     module Snapshot =
-        let decoder path v =
+        let decoder: Decoder<SnapshotPartialMessage> =
             Decode.object (fun get -> {
                 Content = get |> Get.nullable Property.Content Decode.string
                 Timestamp = get |> Get.required Property.Timestamp Decode.datetimeUtc
@@ -4952,7 +4952,7 @@ module Message =
                 Flags = get |> Get.optional Property.Flags Decode.int
                 Components = get |> Get.optional Property.Components (Decode.list Component.decoder)
                 StickerItems = get |> Get.optional Property.StickerItems (Decode.list StickerItem.decoder)
-            }) path v
+            })
         
         let encoder (v: SnapshotPartialMessage) =
             Encode.object ([]
@@ -4970,7 +4970,7 @@ module Message =
             )
 
 module MessageNonce =
-    let decoder =
+    let decoder: Decoder<MessageNonce> =
         Decode.oneOf [
             Decode.map MessageNonce.INT Decode.int
             Decode.map MessageNonce.STRING Decode.string
@@ -4986,11 +4986,11 @@ module MessageActivity =
         let [<Literal>] Type = "type"
         let [<Literal>] PartyId = "party_id"
 
-    let decoder path v =
+    let decoder: Decoder<MessageActivity> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type Decode.Enum.int<MessageActivityType>
             PartyId = get |> Get.optional Property.PartyId Decode.string
-        }) path v
+        })
     
     let encoder (v: MessageActivity) =
         Encode.object ([]
@@ -5008,7 +5008,7 @@ module ApplicationCommandInteractionMetadata =
         let [<Literal>] TargetUser = "target_user"
         let [<Literal>] TargetMessageId = "target_message_id"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationCommandInteractionMetadata> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
@@ -5017,7 +5017,7 @@ module ApplicationCommandInteractionMetadata =
             OriginalResponseMessageId = get |> Get.optional Property.OriginalResponseMessageId Decode.string
             TargetUser = get |> Get.optional Property.TargetUser User.decoder
             TargetMessageId = get |> Get.optional Property.TargetMessageId Decode.string
-        }) path v
+        })
 
     let encoder (v: ApplicationCommandInteractionMetadata) =
         Encode.object ([]
@@ -5039,7 +5039,7 @@ module MessageComponentInteractionMetadata =
         let [<Literal>] OriginalResponseMessageId = "original_response_message_id"
         let [<Literal>] InteractedMessageId = "interacted_message_id"
 
-    let decoder path v =
+    let decoder: Decoder<MessageComponentInteractionMetadata> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
@@ -5047,7 +5047,7 @@ module MessageComponentInteractionMetadata =
             AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
             OriginalResponseMessageId = get |> Get.optional Property.OriginalResponseMessageId Decode.string
             InteractedMessageId = get |> Get.required Property.InteractedMessageId Decode.string
-        }) path v
+        })
 
     let encoder (v: MessageComponentInteractionMetadata) =
         Encode.object ([]
@@ -5068,7 +5068,7 @@ module ModalSubmitInteractionMetadata =
         let [<Literal>] OriginalResponseMessageId = "original_response_message_id"
         let [<Literal>] TriggeringInteractionMetadata = "triggering_interaction_metadata"
 
-    let decoder path v =
+    let decoder: Decoder<ModalSubmitInteractionMetadata> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
@@ -5076,7 +5076,7 @@ module ModalSubmitInteractionMetadata =
             AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
             OriginalResponseMessageId = get |> Get.optional Property.OriginalResponseMessageId Decode.string
             TriggeringInteractionMetadata = get |> Get.required Property.TriggeringInteractionMetadata MessageInteractionMetadata.decoder
-        }) path v
+        })
 
     let encoder (v: ModalSubmitInteractionMetadata) =
         Encode.object ([]
@@ -5089,7 +5089,7 @@ module ModalSubmitInteractionMetadata =
         )
 
 module MessageInteractionMetadata =
-    let decoder =
+    let decoder: Decoder<MessageInteractionMetadata> =
         Decode.oneOf [
             Decode.map MessageInteractionMetadata.APPLICATION_COMMAND ApplicationCommandInteractionMetadata.decoder
             Decode.map MessageInteractionMetadata.MESSAGE_COMPONENT MessageComponentInteractionMetadata.decoder
@@ -5107,11 +5107,11 @@ module MessageCall =
         let [<Literal>] Participants = "participants"
         let [<Literal>] EndedTimestamp = "ended_timestamp"
 
-    let decoder path v =
+    let decoder: Decoder<MessageCall> =
         Decode.object (fun get -> {
             Participants = get |> Get.required Property.Participants (Decode.list Decode.string)
             EndedTimestamp = get |> Get.optinull Property.EndedTimestamp Decode.datetimeUtc
-        }) path v
+        })
 
     let encoder (v: MessageCall) =
         Encode.object ([]
@@ -5127,14 +5127,14 @@ module MessageReference =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] FailIfNotExists = "fail_if_not_exists"
 
-    let decoder path v =
+    let decoder: Decoder<MessageReference> =
         Decode.object (fun get -> {
             Type = get |> Get.optional Property.Type Decode.Enum.int<MessageReferenceType> |> Option.defaultValue MessageReferenceType.DEFAULT
             MessageId = get |> Get.optional Property.MessageId Decode.string
             ChannelId = get |> Get.optional Property.ChannelId Decode.string
             GuildId = get |> Get.optional Property.GuildId Decode.string
             FailIfNotExists = get |> Get.optional Property.FailIfNotExists Decode.bool
-        }) path v
+        })
 
     let encoder (v: MessageReference) =
         Encode.object ([]
@@ -5149,10 +5149,10 @@ module MessageSnapshot =
     module Property =
         let [<Literal>] Message = "message"
 
-    let decoder path v =
+    let decoder: Decoder<MessageSnapshot> =
         Decode.object (fun get -> {
             Message = get |> Get.required Property.Message Message.Snapshot.decoder
-        }) path v
+        })
 
     let encoder (v: MessageSnapshot) =
         Encode.object ([]
@@ -5168,7 +5168,7 @@ module Reaction =
         let [<Literal>] Emoji = "emoji"
         let [<Literal>] BurstColors = "burst_colors"
 
-    let decoder path v =
+    let decoder: Decoder<Reaction> =
         Decode.object (fun get -> {
             Count = get |> Get.required Property.Count Decode.int
             CountDetails = get |> Get.required Property.CountDetails ReactionCountDetails.decoder
@@ -5176,7 +5176,7 @@ module Reaction =
             MeBurst = get |> Get.required Property.MeBurst Decode.bool
             Emoji = get |> Get.required Property.Emoji Emoji.Partial.decoder
             BurstColors = get |> Get.required Property.BurstColors (Decode.list Decode.int)
-        }) path v
+        })
 
     let encoder (v: Reaction) =
         Encode.object ([]
@@ -5193,11 +5193,11 @@ module ReactionCountDetails =
         let [<Literal>] Burst = "burst"
         let [<Literal>] Normal = "normal"
 
-    let decoder path v =
+    let decoder: Decoder<ReactionCountDetails> =
         Decode.object (fun get -> {
             Burst = get |> Get.required Property.Burst Decode.int
             Normal = get |> Get.required Property.Normal Decode.int
-        }) path v
+        })
 
     let encoder (v: ReactionCountDetails) =
         Encode.object ([]
@@ -5221,7 +5221,7 @@ module Embed =
         let [<Literal>] Author = "author"
         let [<Literal>] Fields = "fields"
 
-    let decoder path v =
+    let decoder: Decoder<Embed> =
         Decode.object (fun get -> {
             Title = get |> Get.optional Property.Title Decode.string
             Type = get |> Get.optional Property.Type EmbedType.decoder
@@ -5236,7 +5236,7 @@ module Embed =
             Provider = get |> Get.optional Property.Provider EmbedProvider.decoder
             Author = get |> Get.optional Property.Author EmbedAuthor.decoder
             Fields = get |> Get.optional Property.Fields (Decode.list EmbedField.decoder)
-        }) path v
+        })
 
     let encoder (v: Embed) =
         Encode.object ([]
@@ -5262,13 +5262,13 @@ module EmbedThumbnail =
         let [<Literal>] Height = "height"
         let [<Literal>] Width = "width"
 
-    let decoder path v: Result<EmbedThumbnail, DecoderError> =
+    let decoder: Decoder<EmbedThumbnail> =
         Decode.object (fun get -> {
             Url = get |> Get.required Property.Url Decode.string
             ProxyUrl = get |> Get.optional Property.ProxyUrl Decode.string
             Height = get |> Get.optional Property.Height Decode.int
             Width = get |> Get.optional Property.Width Decode.int
-        }) path v
+        })
 
     let encoder (v: EmbedThumbnail) =
         Encode.object ([]
@@ -5285,13 +5285,13 @@ module EmbedVideo =
         let [<Literal>] Height = "height"
         let [<Literal>] Width = "width"
 
-    let decoder path v =
+    let decoder: Decoder<EmbedVideo> =
         Decode.object (fun get -> {
             Url = get |> Get.optional Property.Url Decode.string
             ProxyUrl = get |> Get.optional Property.ProxyUrl Decode.string
             Height = get |> Get.optional Property.Height Decode.int
             Width = get |> Get.optional Property.Width Decode.int
-        }) path v
+        })
 
     let encoder (v: EmbedVideo) =
         Encode.object ([]
@@ -5308,13 +5308,13 @@ module EmbedImage =
         let [<Literal>] Height = "height"
         let [<Literal>] Width = "width"
 
-    let decoder path v: Result<EmbedImage, DecoderError> =
+    let decoder: Decoder<EmbedImage> =
         Decode.object (fun get -> {
             Url = get |> Get.required Property.Url Decode.string
             ProxyUrl = get |> Get.optional Property.ProxyUrl Decode.string
             Height = get |> Get.optional Property.Height Decode.int
             Width = get |> Get.optional Property.Width Decode.int
-        }) path v
+        })
 
     let encoder (v: EmbedImage) =
         Encode.object ([]
@@ -5329,11 +5329,11 @@ module EmbedProvider =
         let [<Literal>] Name = "name"
         let [<Literal>] Url = "url"
 
-    let decoder path v =
+    let decoder: Decoder<EmbedProvider> =
         Decode.object (fun get -> {
             Name = get |> Get.optional Property.Name Decode.string
             Url = get |> Get.optional Property.Url Decode.string
-        }) path v
+        })
         
     let encoder (v: EmbedProvider) =
         Encode.object ([]
@@ -5348,13 +5348,13 @@ module EmbedAuthor =
         let [<Literal>] IconUrl = "icon_url"
         let [<Literal>] ProxyIconUrl = "proxy_icon_url"
 
-    let decoder path v =
+    let decoder: Decoder<EmbedAuthor> =
         Decode.object (fun get -> {
             Name = get |> Get.required Property.Name Decode.string
             Url = get |> Get.optional Property.Url Decode.string
             IconUrl = get |> Get.optional Property.IconUrl Decode.string
             ProxyIconUrl = get |> Get.optional Property.ProxyIconUrl Decode.string
-        }) path v
+        })
 
     let encoder (v: EmbedAuthor) =
         Encode.object ([]
@@ -5370,12 +5370,12 @@ module EmbedFooter =
         let [<Literal>] IconUrl = "icon_url"
         let [<Literal>] ProxyIconUrl = "proxy_icon_url"
 
-    let decoder path v =
+    let decoder: Decoder<EmbedFooter> =
         Decode.object (fun get -> {
             Text = get |> Get.required Property.Text Decode.string
             IconUrl = get |> Get.optional Property.IconUrl Decode.string
             ProxyIconUrl = get |> Get.optional Property.ProxyIconUrl Decode.string
-        }) path v
+        })
 
     let encoder (v: EmbedFooter) =
         Encode.object ([]
@@ -5390,12 +5390,12 @@ module EmbedField =
         let [<Literal>] Value = "value"
         let [<Literal>] Inline = "inline"
 
-    let decoder path v =
+    let decoder: Decoder<EmbedField> =
         Decode.object (fun get -> {
             Name = get |> Get.required Property.Name Decode.string
             Value = get |> Get.required Property.Value Decode.string
             Inline = get |> Get.optional Property.Inline Decode.bool
-        }) path v
+        })
 
     let encoder (v: EmbedField) =
         Encode.object ([]
@@ -5421,7 +5421,7 @@ module Attachment =
         let [<Literal>] Waveform = "waveform"
         let [<Literal>] Flags = "flags"
 
-    let decoder path v =
+    let decoder: Decoder<Attachment> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Filename = get |> Get.required Property.Filename Decode.string
@@ -5437,7 +5437,7 @@ module Attachment =
             DurationSecs = get |> Get.optional Property.DurationSecs Decode.float
             Waveform = get |> Get.optional Property.Waveform Decode.string
             Flags = get |> Get.optional Property.Flags Decode.int
-        }) path v
+        })
 
     let encoder (v: Attachment) =
         Encode.object ([]
@@ -5458,7 +5458,7 @@ module Attachment =
         )
 
     module Partial =
-        let decoder path v =
+        let decoder: Decoder<PartialAttachment> =
             Decode.object (fun get -> {
                 Id = get |> Get.required Property.Id Decode.string
                 Filename = get |> Get.optional Property.Filename Decode.string
@@ -5474,7 +5474,7 @@ module Attachment =
                 DurationSecs = get |> Get.optional Property.DurationSecs Decode.float
                 Waveform = get |> Get.optional Property.Waveform Decode.string
                 Flags = get |> Get.optional Property.Flags Decode.int
-            }) path v
+            })
 
         let encoder (v: PartialAttachment) =
             Encode.object ([]
@@ -5501,13 +5501,13 @@ module ChannelMention =
         let [<Literal>] Type = "type"
         let [<Literal>] Name = "name"
 
-    let decoder path v =
+    let decoder: Decoder<ChannelMention> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             GuildId = get |> Get.required Property.GuildId Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<ChannelType>
             Name = get |> Get.required Property.Name Decode.string
-        }) path v
+        })
 
     let encoder (v: ChannelMention) =
         Encode.object ([]
@@ -5524,13 +5524,13 @@ module AllowedMentions =
         let [<Literal>] Users = "users"
         let [<Literal>] RepliedUser = "replied_user"
 
-    let decoder path v =
+    let decoder: Decoder<AllowedMentions> =
         Decode.object (fun get -> {
             Parse = get |> Get.optional Property.Parse (Decode.list AllowedMentionsParseType.decoder)
             Roles = get |> Get.optional Property.Roles (Decode.list Decode.string)
             Users = get |> Get.optional Property.Users (Decode.list Decode.string)
             RepliedUser = get |> Get.optional Property.RepliedUser Decode.bool
-        }) path v
+        })
 
     let encoder (v: AllowedMentions) =
         Encode.object ([]
@@ -5547,13 +5547,13 @@ module RoleSubscriptionData =
         let [<Literal>] TotalMonthsSubscribed = "total_months_subscribed"
         let [<Literal>] IsRenewal = "is_renewal"
 
-    let decoder path v =
+    let decoder: Decoder<RoleSubscriptionData> =
         Decode.object (fun get -> {
             RoleSubscriptionListingId = get |> Get.required Property.RoleSubscriptionListingId Decode.string
             TierName = get |> Get.required Property.TierName Decode.string
             TotalMonthsSubscribed = get |> Get.required Property.TotalMonthsSubscribed Decode.int
             IsRenewal = get |> Get.required Property.IsRenewal Decode.bool
-        }) path v
+        })
 
     let encoder (v: RoleSubscriptionData) =
         Encode.object ([]
@@ -5572,7 +5572,7 @@ module Poll =
         let [<Literal>] LayoutType = "layout_type"
         let [<Literal>] Results = "results"
 
-    let decoder path v =
+    let decoder: Decoder<Poll> =
         Decode.object (fun get -> {
             Question = get |> Get.required Property.Question PollMedia.decoder
             Answers = get |> Get.required Property.Answers (Decode.list PollAnswer.decoder)
@@ -5580,7 +5580,7 @@ module Poll =
             AllowMultiselect = get |> Get.required Property.AllowMultiselect Decode.bool
             LayoutType = get |> Get.required Property.LayoutType Decode.Enum.int<PollLayout>
             Results = get |> Get.optional Property.Results PollResults.decoder
-        }) path v
+        })
 
     let encoder (v: Poll) =
         Encode.object ([]
@@ -5600,14 +5600,14 @@ module PollCreateRequest =
         let [<Literal>] AllowMultiselect = "allow_multiselect"
         let [<Literal>] LayoutType = "layout_type"
 
-    let decoder path v =
+    let decoder: Decoder<PollCreateRequest> =
         Decode.object (fun get -> {
             Question = get |> Get.required Property.Question PollMedia.decoder
             Answers = get |> Get.required Property.Answers (Decode.list PollAnswer.decoder)
             Duration = get |> Get.optional Property.Duration Decode.int |> Option.defaultValue 24
             AllowMultiselect = get |> Get.optional Property.AllowMultiselect Decode.bool |> Option.defaultValue false
             LayoutType = get |> Get.optional Property.LayoutType Decode.Enum.int<PollLayout> |> Option.defaultValue PollLayout.DEFAULT
-        }) path v
+        })
 
     let encoder (v: PollCreateRequest) =
         Encode.object ([]
@@ -5623,11 +5623,11 @@ module PollMedia =
         let [<Literal>] Text = "text"
         let [<Literal>] Emoji = "emoji"
 
-    let decoder path v =
+    let decoder: Decoder<PollMedia> =
         Decode.object (fun get -> {
             Text = get |> Get.optional Property.Text Decode.string
             Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
-        }) path v
+        })
 
     let encoder (v: PollMedia) =
         Encode.object ([]
@@ -5640,11 +5640,11 @@ module PollAnswer =
         let [<Literal>] AnswerId = "answer_id"
         let [<Literal>] PollMedia = "poll_media"
 
-    let decoder path v =
+    let decoder: Decoder<PollAnswer> =
         Decode.object (fun get -> {
             AnswerId = get |> Get.required Property.AnswerId Decode.int
             PollMedia = get |> Get.required Property.PollMedia PollMedia.decoder
-        }) path v
+        })
 
     let encoder (v: PollAnswer) =
         Encode.object ([]
@@ -5657,11 +5657,11 @@ module PollResults =
         let [<Literal>] IsFinalized = "is_finalized"
         let [<Literal>] AnswerCounts = "answer_counts"
 
-    let decoder path v =
+    let decoder: Decoder<PollResults> =
         Decode.object (fun get -> {
             IsFinalized = get |> Get.required Property.IsFinalized Decode.bool
             AnswerCounts = get |> Get.required Property.AnswerCounts (Decode.list PollAnswerCount.decoder)
-        }) path v
+        })
 
     let encoder (v: PollResults) =
         Encode.object ([]
@@ -5675,12 +5675,12 @@ module PollAnswerCount =
         let [<Literal>] Count = "count"
         let [<Literal>] MeVoted = "me_voted"
 
-    let decoder path v =
+    let decoder: Decoder<PollAnswerCount> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.int
             Count = get |> Get.required Property.Count Decode.int
             MeVoted = get |> Get.required Property.MeVoted Decode.bool
-        }) path v
+        })
 
     let encoder (v: PollAnswerCount) =
         Encode.object ([]
@@ -5698,7 +5698,7 @@ module Sku =
         let [<Literal>] Slug = "slug"
         let [<Literal>] Flags = "flags"
 
-    let decoder path v =
+    let decoder: Decoder<Sku> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<SkuType>
@@ -5706,7 +5706,7 @@ module Sku =
             Name = get |> Get.required Property.Name Decode.string
             Slug = get |> Get.required Property.Slug Decode.string
             Flags = get |> Get.required Property.Flags Decode.int
-        }) path v
+        })
 
     let encoder (v: Sku) =
         Encode.object ([]
@@ -5729,7 +5729,7 @@ module SoundboardSound =
         let [<Literal>] Available = "available"
         let [<Literal>] User = "user"
 
-    let decoder path v =
+    let decoder: Decoder<SoundboardSound> =
         Decode.object (fun get -> {
             Name = get |> Get.required Property.Name Decode.string
             SoundId = get |> Get.required Property.SoundId Decode.string
@@ -5739,7 +5739,7 @@ module SoundboardSound =
             GuildId = get |> Get.optional Property.GuildId Decode.string
             Available = get |> Get.required Property.Available Decode.bool
             User = get |> Get.optional Property.User User.decoder
-        }) path v
+        })
 
     let encoder (v: SoundboardSound) =
         Encode.object ([]
@@ -5763,7 +5763,7 @@ module StageInstance =
         let [<Literal>] DiscoverableEnabled = "discoverable_enabled"
         let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
 
-    let decoder path v =
+    let decoder: Decoder<StageInstance> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             GuildId = get |> Get.required Property.GuildId Decode.string
@@ -5772,7 +5772,7 @@ module StageInstance =
             PrivacyLevel = get |> Get.required Property.PrivacyLevel Decode.Enum.int<PrivacyLevel>
             DiscoverableEnabled = get |> Get.required Property.DiscoverableEnabled Decode.bool
             GuildScheduledEventId = get |> Get.optional Property.GuildScheduledEventId Decode.string
-        }) path v
+        })
 
     let encoder (v: StageInstance) =
         Encode.object ([]
@@ -5799,7 +5799,7 @@ module Sticker =
         let [<Literal>] User = "user"
         let [<Literal>] SortValue = "sort_value"
 
-    let decoder path v =
+    let decoder: Decoder<Sticker> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             PackId = get |> Get.optional Property.PackId Decode.string
@@ -5812,7 +5812,7 @@ module Sticker =
             GuildId = get |> Get.optional Property.GuildId Decode.string
             User = get |> Get.optional Property.User User.decoder
             SortValue = get |> Get.optional Property.SortValue Decode.int
-        }) path v
+        })
 
     let encoder (v: Sticker) =
         Encode.object ([]
@@ -5835,12 +5835,12 @@ module StickerItem =
         let [<Literal>] Name = "name"
         let [<Literal>] FormatType = "format_type"
 
-    let decoder path v =
+    let decoder: Decoder<StickerItem> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
             FormatType = get |> Get.required Property.FormatType Decode.Enum.int<StickerFormat>
-        }) path v
+        })
 
     let encoder (v: StickerItem) =
         Encode.object ([]
@@ -5859,7 +5859,7 @@ module StickerPack =
         let [<Literal>] Description = "description"
         let [<Literal>] BannerAssetId = "banner_asset_id"
 
-    let decoder path v =
+    let decoder: Decoder<StickerPack> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Stickers = get |> Get.required Property.Stickers (Decode.list Sticker.decoder)
@@ -5868,7 +5868,7 @@ module StickerPack =
             CoverStickerId = get |> Get.optional Property.CoverStickerId Decode.string
             Description = get |> Get.required Property.Description Decode.string
             BannerAssetId = get |> Get.optional Property.BannerAssetId Decode.string
-        }) path v
+        })
 
     let encoder (v: StickerPack) =
         Encode.object ([]
@@ -5894,7 +5894,7 @@ module Subscription =
         let [<Literal>] CanceledAt = "canceled_at"
         let [<Literal>] Country = "country"
 
-    let decoder path v =
+    let decoder: Decoder<Subscription> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             UserId = get |> Get.required Property.UserId Decode.string
@@ -5906,7 +5906,7 @@ module Subscription =
             Status = get |> Get.required Property.Status Decode.Enum.int<SubscriptionStatus>
             CanceledAt = get |> Get.nullable Property.CanceledAt Decode.datetimeUtc
             Country = get |> Get.optional Property.Country Decode.string
-        }) path v
+        })
 
     let encoder (v: Subscription) =
         Encode.object ([]
@@ -5942,7 +5942,7 @@ module User =
         let [<Literal>] PublicFlags = "public_flags"
         let [<Literal>] AvatarDecorationData = "avatar_decoration_data"
 
-    let decoder path v =
+    let decoder: Decoder<User> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Username = get |> Get.required Property.Username Decode.string
@@ -5961,7 +5961,7 @@ module User =
             PremiumType = get |> Get.optional Property.PremiumType Decode.Enum.int<UserPremiumTier>
             PublicFlags = get |> Get.optional Property.PublicFlags Decode.int
             AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
-        }) path v
+        })
 
     let internal encodeProperties (v: User) =
         []
@@ -5987,7 +5987,7 @@ module User =
         Encode.object (encodeProperties v)
 
     module Partial =
-        let decoder path v =
+        let decoder: Decoder<PartialUser> =
             Decode.object (fun get -> {
                 Id = get |> Get.required Property.Id Decode.string
                 Username = get |> Get.optional Property.Username Decode.string
@@ -6006,7 +6006,7 @@ module User =
                 PremiumType = get |> Get.optional Property.PremiumType Decode.Enum.int<UserPremiumTier>
                 PublicFlags = get |> Get.optional Property.PublicFlags Decode.int
                 AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
-            }) path v
+            })
 
         let encoder (v: PartialUser) =
             Encode.object ([]
@@ -6034,11 +6034,11 @@ module AvatarDecorationData =
         let [<Literal>] Asset = "asset"
         let [<Literal>] SkuId = "sku_id"
 
-    let decoder path v =
+    let decoder: Decoder<AvatarDecorationData> =
         Decode.object (fun get -> {
             Asset = get |> Get.required Property.Asset Decode.string
             SkuId = get |> Get.required Property.SkuId Decode.string
-        }) path v
+        })
 
     let encoder (v: AvatarDecorationData) =
         Encode.object ([]
@@ -6059,7 +6059,7 @@ module Connection =
         let [<Literal>] TwoWayLink = "two_way_link"
         let [<Literal>] Visibility = "visibility"
 
-    let decoder path v =
+    let decoder: Decoder<Connection> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
@@ -6071,7 +6071,7 @@ module Connection =
             ShowActivity = get |> Get.required Property.ShowActivity Decode.bool
             TwoWayLink = get |> Get.required Property.TwoWayLink Decode.bool
             Visibility = get |> Get.required Property.Visibility Decode.Enum.int<ConnectionVisibility>
-        }) path v
+        })
 
     let encoder (v: Connection) =
         Encode.object ([]
@@ -6093,12 +6093,12 @@ module ApplicationRoleConnection =
         let [<Literal>] PlatformUsername = "platform_username"
         let [<Literal>] Metadata = "metadata"
 
-    let decoder path v =
+    let decoder: Decoder<ApplicationRoleConnection> =
         Decode.object (fun get -> {
             PlatformName = get |> Get.nullable Property.PlatformName Decode.string
             PlatformUsername = get |> Get.nullable Property.PlatformUsername Decode.string
             Metadata = get |> Get.required Property.Metadata (Decode.dict Decode.string)
-        }) path v
+        })
 
     let encoder (v: ApplicationRoleConnection) =
         Encode.object ([]
@@ -6123,7 +6123,7 @@ module VoiceState =
         let [<Literal>] Suppress = "suppress"
         let [<Literal>] RequestToSpeakTimestamp = "request_to_speak_timestamp"
 
-    let decoder path v: Result<VoiceState, DecoderError> =
+    let decoder: Decoder<VoiceState> =
         Decode.object (fun get -> {
             GuildId = get |> Get.optional Property.GuildId Decode.string
             ChannelId = get |> Get.nullable Property.ChannelId Decode.string
@@ -6138,7 +6138,7 @@ module VoiceState =
             SelfVideo = get |> Get.required Property.SelfVideo Decode.bool
             Suppress = get |> Get.required Property.Suppress Decode.bool
             RequestToSpeakTimestamp = get |> Get.nullable Property.RequestToSpeakTimestamp Decode.datetimeUtc
-        }) path v
+        })
 
     let encoder (v: VoiceState) =
         Encode.object ([]
@@ -6158,7 +6158,7 @@ module VoiceState =
         )
 
     module Partial =
-        let decoder path v: Result<PartialVoiceState, DecoderError> =
+        let decoder: Decoder<PartialVoiceState> =
             Decode.object (fun get -> {
                 GuildId = get |> Get.optional Property.GuildId Decode.string
                 ChannelId = get |> Get.optinull Property.ChannelId Decode.string
@@ -6173,7 +6173,7 @@ module VoiceState =
                 SelfVideo = get |> Get.optional Property.SelfVideo Decode.bool
                 Suppress = get |> Get.optional Property.Suppress Decode.bool
                 RequestToSpeakTimestamp = get |> Get.optinull Property.RequestToSpeakTimestamp Decode.datetimeUtc
-            }) path v
+            })
 
         let encoder (v: PartialVoiceState) =
             Encode.object ([]
@@ -6200,14 +6200,14 @@ module VoiceRegion =
         let [<Literal>] Deprecated = "deprecated"
         let [<Literal>] Custom = "custom"
 
-    let decoder path v =
+    let decoder: Decoder<VoiceRegion> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
             Optimal = get |> Get.required Property.Optimal Decode.bool
             Deprecated = get |> Get.required Property.Deprecated Decode.bool
             Custom = get |> Get.required Property.Custom Decode.bool
-        }) path v
+        })
 
     let encoder (v: VoiceRegion) =
         Encode.object ([]
@@ -6233,7 +6233,7 @@ module Webhook =
         let [<Literal>] SourceChannel = "source_channel"
         let [<Literal>] Url = "url"
 
-    let decoder path v =
+    let decoder: Decoder<Webhook> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<WebhookType>
@@ -6247,7 +6247,7 @@ module Webhook =
             SourceGuild = get |> Get.optional Property.SourceGuild Guild.Partial.decoder
             SourceChannel = get |> Get.optional Property.SourceChannel Channel.Partial.decoder
             Url = get |> Get.optional Property.Url Decode.string
-        }) path v
+        })
 
     let encoder (v: Webhook) =
         Encode.object ([]
@@ -6280,7 +6280,7 @@ module Role =
         let [<Literal>] Tags = "tags"
         let [<Literal>] Flags = "flags"
 
-    let decoder path v =
+    let decoder: Decoder<Role> =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Name = get |> Get.required Property.Name Decode.string
@@ -6294,7 +6294,7 @@ module Role =
             Mentionable = get |> Get.required Property.Mentionable Decode.bool
             Tags = get |> Get.optional Property.Tags RoleTags.decoder
             Flags = get |> Get.required Property.Flags Decode.int
-        }) path v
+        })
 
     let encoder (v: Role) =
         Encode.object ([]
@@ -6321,7 +6321,7 @@ module RoleTags =
         let [<Literal>] AvailableForPurchase = "available_for_purchase"
         let [<Literal>] GuildConnections = "guild_connections"
 
-    let decoder path v =
+    let decoder: Decoder<RoleTags> =
         Decode.object (fun get -> {
             BotId = get |> Get.optional Property.BotId Decode.string
             IntegrationId = get |> Get.optional Property.IntegrationId Decode.string
@@ -6329,7 +6329,7 @@ module RoleTags =
             SubscriptionListingId = get |> Get.optional Property.SubscriptionListingId Decode.string
             AvailableForPurchase = get |> Get.exists Property.AvailableForPurchase
             GuildConnections = get |> Get.exists Property.GuildConnections
-        }) path v
+        })
 
     let encoder (v: RoleTags) =
         Encode.object ([]
@@ -6348,13 +6348,13 @@ module RateLimitResponse =
         let [<Literal>] Global = "global"
         let [<Literal>] Code = "code"
 
-    let decoder path v =
+    let decoder: Decoder<RateLimitResponse> =
         Decode.object (fun get -> {
             Message = get |> Get.required Property.Message Decode.string
             RetryAfter = get |> Get.required Property.RetryAfter Decode.float
             Global = get |> Get.required Property.Global Decode.bool
             Code = get |> Get.optional Property.Code Decode.Enum.int<JsonErrorCode>
-        }) path v
+        })
 
     let encoder (v: RateLimitResponse) =
         Encode.object ([]
@@ -6372,14 +6372,14 @@ module Team =
         let [<Literal>] Name = "name"
         let [<Literal>] OwnerUserId = "owner_user_id"
 
-    let decoder path v =
+    let decoder: Decoder<Team> =
         Decode.object (fun get -> {
             Icon = get |> Get.nullable Property.Icon Decode.string
             Id = get |> Get.required Property.Id Decode.string
             Members = get |> Get.required Property.Members (Decode.list TeamMember.decoder)
             Name = get |> Get.required Property.Name Decode.string
             OwnerUserId = get |> Get.required Property.OwnerUserId Decode.string
-        }) path v
+        })
 
     let encoder (v: Team) =
         Encode.object ([]
@@ -6397,13 +6397,13 @@ module TeamMember =
         let [<Literal>] User = "user"
         let [<Literal>] Role = "role"
 
-    let decoder path v =
+    let decoder: Decoder<TeamMember> =
         Decode.object (fun get -> {
             MembershipState = get |> Get.required Property.MembershipState Decode.Enum.int<MembershipState>
             TeamId = get |> Get.required Property.TeamId Decode.string
             User = get |> Get.required Property.User User.Partial.decoder
             Role = get |> Get.required Property.Role TeamMemberRoleType.decoder
-        }) path v
+        })
 
     let encoder (v: TeamMember) =
         Encode.object ([]
@@ -6414,6 +6414,6 @@ module TeamMember =
         )
 
 // TODO: Count how many instances of encode/decode for optional and nullable and look for mismatches
-// TODO: Remove all `path v` and instead use explicit type
 // TODO: Make `Encode.list'` helper function to remove `List.map` boilerplate
 // TODO: Write updated tests for encoding and decoding helper functions
+// TODO: Rewrite `Decode.oneOf` usages to property check type (probably fair bit more efficient)
