@@ -259,6 +259,18 @@ let updateApplicationRoleConnectionMetadataRecords (req: UpdateApplicationRoleCo
 
 // ----- Resources: Audit Log -----
 
+// https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
+let getGuildAuditLog (req: GetGuildAuditLogRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "audit-logs"]
+    |> Uri.withOptionalQuery "user_id" req.UserId
+    |> Uri.withOptionalQuery "action_type" (Option.map string req.ActionType)
+    |> Uri.withOptionalQuery "before" req.Before
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode AuditLog.decoder)
+
 // ----- Resources: Auto Moderation -----
 
 // ----- Resources: Channel -----

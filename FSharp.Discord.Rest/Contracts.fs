@@ -188,6 +188,15 @@ type UpdateApplicationRoleConnectionMetadataRecordsRequest(applicationId, payloa
 
 // ----- Resources: Audit Log -----
 
+type GetGuildAuditLogRequest(guildId, ?userId, ?actionType, ?before, ?after, ?limit) =
+    member val GuildId: string = guildId
+
+    member val UserId: string option = userId
+    member val ActionType: AuditLogEventType option = actionType
+    member val Before: string option = before
+    member val After: string option = after
+    member val Limit: int option = limit
+
 // ----- Resources: Auto Moderation -----
 
 // ----- Resources: Channel -----
