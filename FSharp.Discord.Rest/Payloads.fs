@@ -48,7 +48,7 @@ type CreateFollowUpMessagePayload(
     member val AllowedMentions: AllowedMentions option = allowedMentions
     member val Components: Component list option = components
     member val Attachments: Attachment list option = attachments
-    member val Flags: int option = flags
+    member val Flags: MessageFlag list option = flags
     member val Poll: Poll option = poll
     member val Files: Media list = defaultArg files []
 
@@ -60,7 +60,7 @@ type CreateFollowUpMessagePayload(
             |> Encode.optional "allowed_mentions" AllowedMentions.encoder v.AllowedMentions
             |> Encode.optional "components" (List.map Component.encoder >> Encode.list) v.Components
             |> Encode.optional "attachments" (List.map Attachment.encoder >> Encode.list) v.Attachments
-            |> Encode.optional "flags" Encode.int v.Flags
+            |> Encode.optional "flags" Encode.bitfield v.Flags
             |> Encode.optional "poll" Poll.encoder v.Poll
         )
     
@@ -68,7 +68,6 @@ type CreateFollowUpMessagePayload(
         member this.ToHttpContent() =
             HttpContent.createJsonWithFiles CreateFollowUpMessagePayload.Encoder this this.Files
 
-    // TODO: Change flags to list of message flags
     // TODO: Should this support thread_name and applied_tags? Not explicitly refused in docs but wouldn't make sense
     
 type EditFollowupMessagePayload(?content, ?embeds, ?allowedMentions, ?components, ?attachments, ?poll, ?files) =
@@ -265,7 +264,7 @@ type EditCurrentApplicationPayload(
     member val RoleConnectionsVerificationUrl: string option = roleConnectionsVerificationUrl
     member val InstallParams: InstallParams option = installParams
     member val IntegrationTypesConfig: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration> option = integrationTypesConfig
-    member val Flags: int option = flags
+    member val Flags: ApplicationFlag list option = flags
     member val Icon: string option option = icon
     member val CoverImage: string option option = coverImage
     member val InteractionsEndpointUrl: string option = interactionsEndpointUrl
@@ -281,7 +280,7 @@ type EditCurrentApplicationPayload(
             |> Encode.optional "role_connections_verification_url" Encode.string v.RoleConnectionsVerificationUrl
             |> Encode.optional "install_params" InstallParams.encoder v.InstallParams
             |> Encode.optional "integration_types_config" (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.IntegrationTypesConfig
-            |> Encode.optional "flags" Encode.int v.Flags
+            |> Encode.optional "flags" Encode.bitfield v.Flags
             |> Encode.optinull "icon" Encode.string v.Icon
             |> Encode.optinull "cover_image" Encode.string v.CoverImage
             |> Encode.optional "interactions_endpoint_url" Encode.string v.InteractionsEndpointUrl
@@ -397,7 +396,7 @@ type ModifyGuildTextChannelPayload(
     member val RateLimitPerUser: int option option = rateLimitPerUser
     member val PermissionOverwrites: PermissionOverwrite list option option = permissionOverwrites
     member val ParentId: string option option = parentId
-    member val DefaultAutoArchiveDuration: int option = defaultAutoArchiveDuration
+    member val DefaultAutoArchiveDuration: AutoArchiveDuration option = defaultAutoArchiveDuration
     member val DefaultThreadRateLimitPerUser: int option = defaultThreadRateLimitPerUser
 
     static member Encoder(v: ModifyGuildTextChannelPayload) =
@@ -410,7 +409,7 @@ type ModifyGuildTextChannelPayload(
             |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
             |> Encode.optinull "permission_overwrites" (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
             |> Encode.optinull "parent_id" Encode.string v.ParentId
-            |> Encode.optional "default_auto_archive_duration" Encode.int v.DefaultAutoArchiveDuration
+            |> Encode.optional "default_auto_archive_duration" Encode.Enum.int v.DefaultAutoArchiveDuration
             |> Encode.optional "default_thread_rate_limit_per_user" Encode.int v.DefaultThreadRateLimitPerUser
         )
         
@@ -429,7 +428,7 @@ type ModifyGuildForumChannelPayload(
     member val RateLimitPerUser: int option option = rateLimitPerUser
     member val PermissionOverwrites: PermissionOverwrite list option option = permissionOverwrites
     member val ParentId: string option option = parentId
-    member val DefaultAutoArchiveDuration: int option = defaultAutoArchiveDuration
+    member val DefaultAutoArchiveDuration: AutoArchiveDuration option = defaultAutoArchiveDuration
     member val Flags: ChannelFlag list option = flags
     member val AvailableTags: ForumTag list option = availableTags
     member val DefaultReactionEmoji: DefaultReaction option option = defaultReaction
@@ -446,8 +445,8 @@ type ModifyGuildForumChannelPayload(
             |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
             |> Encode.optinull "permission_overwrites" (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
             |> Encode.optinull "parent_id" Encode.string v.ParentId
-            |> Encode.optional "default_auto_archive_duration" Encode.int v.DefaultAutoArchiveDuration
-            |> Encode.optional "flags" (List.map Encode.Enum.int<ChannelFlag> >> Encode.list) v.Flags
+            |> Encode.optional "default_auto_archive_duration" Encode.Enum.int v.DefaultAutoArchiveDuration
+            |> Encode.optional "flags" Encode.bitfield v.Flags
             |> Encode.optional "available_tags" (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
             |> Encode.optinull "default_reaction_emoji" DefaultReaction.encoder v.DefaultReactionEmoji
             |> Encode.optional "default_thread_rate_limit_per_user" Encode.int v.DefaultThreadRateLimitPerUser
@@ -470,7 +469,7 @@ type ModifyGuildMediaChannelPayload(
     member val RateLimitPerUser: int option option = rateLimitPerUser
     member val PermissionOverwrites: PermissionOverwrite list option option = permissionOverwrites
     member val ParentId: string option option = parentId
-    member val DefaultAutoArchiveDuration: int option = defaultAutoArchiveDuration
+    member val DefaultAutoArchiveDuration: AutoArchiveDuration option = defaultAutoArchiveDuration
     member val Flags: ChannelFlag list option = flags
     member val AvailableTags: ForumTag list option = availableTags
     member val DefaultReactionEmoji: DefaultReaction option option = defaultReaction
@@ -486,8 +485,8 @@ type ModifyGuildMediaChannelPayload(
             |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
             |> Encode.optinull "permission_overwrites" (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
             |> Encode.optinull "parent_id" Encode.string v.ParentId
-            |> Encode.optional "default_auto_archive_duration" Encode.int v.DefaultAutoArchiveDuration
-            |> Encode.optional "flags" (List.map Encode.Enum.int<ChannelFlag> >> Encode.list) v.Flags
+            |> Encode.optional "default_auto_archive_duration" Encode.Enum.int v.DefaultAutoArchiveDuration
+            |> Encode.optional "flags" Encode.bitfield v.Flags
             |> Encode.optional "available_tags" (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
             |> Encode.optinull "default_reaction_emoji" DefaultReaction.encoder v.DefaultReactionEmoji
             |> Encode.optional "default_thread_rate_limit_per_user" Encode.int v.DefaultThreadRateLimitPerUser
@@ -531,7 +530,7 @@ type ModifyThreadChannelPayload(
 ) =
     member val Name: string option = name
     member val Archived: bool option = archived
-    member val AutoArchiveDuration: int option = autoArchiveDuration
+    member val AutoArchiveDuration: AutoArchiveDuration option = autoArchiveDuration
     member val Locked: bool option = locked
     member val Invitable: bool option = invitable
     member val RateLimitPerUser: int option option = rateLimitPerUser
@@ -542,11 +541,11 @@ type ModifyThreadChannelPayload(
         Encode.object ([]
             |> Encode.optional "name" Encode.string v.Name
             |> Encode.optional "archived" Encode.bool v.Archived
-            |> Encode.optional "auto_archive_duration" Encode.int v.AutoArchiveDuration
+            |> Encode.optional "auto_archive_duration" Encode.Enum.int v.AutoArchiveDuration
             |> Encode.optional "locked" Encode.bool v.Locked
             |> Encode.optional "invitable" Encode.bool v.Invitable
             |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
-            |> Encode.optional "flags" (List.map Encode.Enum.int<ChannelFlag> >> Encode.list) v.Flags
+            |> Encode.optional "flags" Encode.bitfield v.Flags
             |> Encode.optional "applied_tags" (List.map Encode.string >> Encode.list) v.AppliedTags
         )
         
@@ -643,6 +642,99 @@ type FollowAnnouncementChannelPayload(webhookChannelId) =
         member this.ToHttpContent() =
             StringContent.createJson FollowAnnouncementChannelPayload.Encoder this
 
+type GroupDmAddRecipientPayload(accessToken, nick) =
+    member val AccessToken: string = accessToken
+    member val Nick: string option = nick // TODO: Confirm this can be option (isn't in docs)
+
+    static member Encoder(v: GroupDmAddRecipientPayload) =
+        Encode.object ([]
+            |> Encode.required "access_token" Encode.string v.AccessToken
+            |> Encode.optional "nick" Encode.string v.Nick
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson GroupDmAddRecipientPayload.Encoder this
+
+type StartThreadFromMessagePayload(name, ?autoArchiveDuration, ?rateLimitPerUser) =
+    member val Name: string = name
+    member val AutoArchiveDuration: AutoArchiveDuration option option = autoArchiveDuration
+    member val RateLimitPerUser: int option = rateLimitPerUser
+
+    static member Encoder(v: StartThreadFromMessagePayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.optinull "auto_archive_duration" Encode.Enum.int v.AutoArchiveDuration
+            |> Encode.optional "rate_limit_per_user" Encode.int v.RateLimitPerUser
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson StartThreadFromMessagePayload.Encoder this
+
+type StartThreadWithoutMessagePayload(name, type', ?autoArchiveDuration, ?invitable, ?rateLimitPerUser) =
+    member val Name: string = name
+    member val AutoArchiveDuration: AutoArchiveDuration option = autoArchiveDuration
+    member val Type: ChannelType = type'
+    member val Invitable: bool option = invitable
+    member val RateLimitPerUser: int option option = rateLimitPerUser
+
+    static member Encoder(v: StartThreadWithoutMessagePayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.optional "auto_archive_duration" Encode.Enum.int v.AutoArchiveDuration
+            |> Encode.required "type" Encode.Enum.int v.Type
+            |> Encode.optional "invitable" Encode.bool v.Invitable
+            |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson StartThreadWithoutMessagePayload.Encoder this
+
+type ForumAndMediaThreadMessageParams = {
+    Content: string option
+    Embeds: Embed list option
+    AllowedMentions: AllowedMentions option
+    Components: Component list option
+    StickerIds: string list option
+    Attachments: PartialAttachment list option
+    Flags: MessageFlag list option
+}
+
+module ForumAndMediaThreadMessageParams =
+    let encoder (v: ForumAndMediaThreadMessageParams) =
+        Encode.object ([]
+            |> Encode.optional "content" Encode.string v.Content
+            |> Encode.optional "embeds" (List.map Embed.encoder >> Encode.list) v.Embeds
+            |> Encode.optional "allowed_mentions" AllowedMentions.encoder v.AllowedMentions
+            |> Encode.optional "components" (List.map Component.encoder >> Encode.list) v.Components
+            |> Encode.optional "sticker_ids" (List.map Encode.string >> Encode.list) v.StickerIds
+            |> Encode.optional "attachments" (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
+            |> Encode.optional "flags" Encode.bitfield v.Flags
+        )
+
+type StartThreadInForumOrMediaChannelPayload(name, message, ?autoArchiveDuration, ?rateLimitPerUser, ?appliedTags, ?files) =
+    member val Name: string = name
+    member val AutoArchiveDuration: AutoArchiveDuration option = autoArchiveDuration
+    member val RateLimitPerUser: int option option = rateLimitPerUser
+    member val Message: ForumAndMediaThreadMessageParams = message
+    member val AppliedTags: string list option = appliedTags
+    member val Files: Media list = defaultArg files []
+
+    static member Encoder(v: StartThreadInForumOrMediaChannelPayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.optional "auto_archive_duration" Encode.Enum.int v.AutoArchiveDuration
+            |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
+            |> Encode.required "message" ForumAndMediaThreadMessageParams.encoder v.Message
+            |> Encode.optional "applied_tags" (List.map Encode.string >> Encode.list) v.AppliedTags
+        )
+    
+    interface IPayload with
+        member this.ToHttpContent() =
+            HttpContent.createJsonWithFiles StartThreadInForumOrMediaChannelPayload.Encoder this this.Files
+            
 // ----- Resources: Emoji -----
 
 // ----- Resources: Entitlement -----

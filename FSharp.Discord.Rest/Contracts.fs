@@ -293,6 +293,38 @@ type UnpinMessageRequest(channelId, messageId, ?auditLogReason) =
 
     member val AuditLogReason: string option = auditLogReason
 
+type GroupDmAddRecipientRequest(channelId, userId, payload) =
+    member val ChannelId: string = channelId
+    member val UserId: string = userId
+    
+    member val Payload: GroupDmAddRecipientPayload = payload
+
+type GroupDmRemoveRecipientRequest(channelId, userId) =
+    member val ChannelId: string = channelId
+    member val UserId: string = userId
+
+type StartThreadFromMessageRequest(channelId, messageId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+    
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: StartThreadFromMessagePayload = payload
+
+type StartThreadWithoutMessageRequest(channelId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: StartThreadWithoutMessagePayload = payload
+
+type StartThreadInForumOrMediaChannelRequest(channelId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: StartThreadInForumOrMediaChannelPayload = payload
+
 // ----- Resources: Emoji -----
 
 // ----- Resources: Entitlement -----

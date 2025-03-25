@@ -411,7 +411,52 @@ let unpinMessage (req: UnpinMessageRequest) (client: IBotClient) =
     |> client.SendAsync
     |> Task.bind DiscordResponse.unit
 
-// TODO: Continue from https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
+// https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
+let groupDmAddRecipient (req: GroupDmAddRecipientRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "recipients"; req.UserId]
+    |> Uri.toRequest HttpMethod.Put
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+    
+    // TODO: Test this response type to confirm (not documented)
+
+// https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient
+let groupDmRemoveRecipient (req: GroupDmRemoveRecipientRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "recipients"; req.UserId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+    
+    // TODO: Test this response type to confirm (not documented)
+
+// https://discord.com/developers/docs/resources/channel#start-thread-from-message
+let startThreadFromMessage (req: StartThreadFromMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId; "threads"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// https://discord.com/developers/docs/resources/channel#start-thread-without-message
+let startThreadWithoutMessage (req: StartThreadWithoutMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "threads"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
+let startThreadInForumOrMediaChannel (req: StartThreadInForumOrMediaChannelRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "threads"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// TODO: Implement remaining thread endpoints from https://discord.com/developers/docs/resources/channel#join-thread
 
 // ----- Resources: Emoji -----
 
