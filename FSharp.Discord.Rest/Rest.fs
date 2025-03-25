@@ -242,6 +242,21 @@ let getApplicationActivityInstance (req: GetApplicationActivityInstanceRequest) 
 
 // ----- Resources: Application Role Connection Metadata -----
 
+// https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records
+let getApplicationRoleConnectionMetadataRecords (req: GetApplicationRoleConnectionMetadataRecordsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "role-connections"; "metadata"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list ApplicationRoleConnectionMetadata.decoder))
+
+// https://discord.com/developers/docs/resources/application-role-connection-metadata#update-application-role-connection-metadata-records
+let updateApplicationRoleConnectionMetadataRecords (req: UpdateApplicationRoleConnectionMetadataRecordsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "role-connections"; "metadata"]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list ApplicationRoleConnectionMetadata.decoder))
+
 // ----- Resources: Audit Log -----
 
 // ----- Resources: Auto Moderation -----

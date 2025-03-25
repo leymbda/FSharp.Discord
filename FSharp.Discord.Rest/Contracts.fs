@@ -178,6 +178,14 @@ type GetApplicationActivityInstanceRequest(applicationId, instanceId) =
 
 // ----- Resources: Application Role Connection Metadata -----
 
+type GetApplicationRoleConnectionMetadataRecordsRequest(applicationId) =
+    member val ApplicationId: string = applicationId
+
+type UpdateApplicationRoleConnectionMetadataRecordsRequest(applicationId, payload) =
+    member val ApplicationId: string = applicationId
+
+    member val Payload: UpdateApplicationRoleConnectionMetadataRecordsPayload = payload
+
 // ----- Resources: Audit Log -----
 
 // ----- Resources: Auto Moderation -----

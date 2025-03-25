@@ -297,6 +297,18 @@ type EditCurrentApplicationPayload(
             
 // ----- Resources: Application Role Connection Metadata -----
 
+type UpdateApplicationRoleConnectionMetadataRecordsPayload(records) =
+    member val Records: ApplicationRoleConnectionMetadata list = records
+    
+    static member Encoder(v: UpdateApplicationRoleConnectionMetadataRecordsPayload) =
+        Encode.object ([]
+            |> Encode.required "records" (List.map ApplicationRoleConnectionMetadata.encoder >> Encode.list) v.Records
+        )
+    
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson UpdateApplicationRoleConnectionMetadataRecordsPayload.Encoder this
+
 // ----- Resources: Audit Log -----
 
 // ----- Resources: Auto Moderation -----
