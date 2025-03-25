@@ -316,7 +316,7 @@ module MessageInteractionCallbackData =
             Content = get |> Get.optional Property.Content Decode.string
             Embeds = get |> Get.optional Property.Embeds (Decode.list Embed.decoder)
             AllowedMentions = get |> Get.optional Property.AllowedMentions AllowedMentions.decoder
-            Flags = get |> Get.optional Property.Flags Decode.int
+            Flags = get |> Get.optional Property.Flags Decode.bitfield
             Components = get |> Get.optional Property.Components (Decode.list Component.decoder)
             Attachments = get |> Get.optional Property.Attachments (Decode.list Attachment.Partial.decoder)
             Poll = get |> Get.optional Property.Poll Poll.decoder
@@ -328,7 +328,7 @@ module MessageInteractionCallbackData =
             |> Encode.optional Property.Content Encode.string v.Content
             |> Encode.optional Property.Embeds (List.map Embed.encoder >> Encode.list) v.Embeds
             |> Encode.optional Property.AllowedMentions AllowedMentions.encoder v.AllowedMentions
-            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Flags Encode.bitfield v.Flags
             |> Encode.optional Property.Components (List.map Component.encoder >> Encode.list) v.Components
             |> Encode.optional Property.Attachments (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
             |> Encode.optional Property.Poll Poll.encoder v.Poll
@@ -1615,7 +1615,7 @@ module GuildMemberUpdateReceiveEvent =
             Mute = get |> Get.optional Property.Mute Decode.bool
             Pending = get |> Get.optional Property.Pending Decode.bool
             CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
-            Flags = get |> Get.optional Property.Flags Decode.int
+            Flags = get |> Get.optional Property.Flags Decode.bitfield
             AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
         })
 
@@ -1633,7 +1633,7 @@ module GuildMemberUpdateReceiveEvent =
             |> Encode.optional Property.Mute Encode.bool v.Mute
             |> Encode.optional Property.Pending Encode.bool v.Pending
             |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
-            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Flags Encode.bitfield v.Flags
             |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
         )
 
@@ -2261,7 +2261,7 @@ module Activity =
             Assets = get |> Get.optional Property.Assets ActivityAssets.decoder
             Secrets = get |> Get.optional Property.Secrets ActivitySecrets.decoder
             Instance = get |> Get.optional Property.Instance Decode.bool
-            Flags = get |> Get.optional Property.Flags Decode.int
+            Flags = get |> Get.optional Property.Flags Decode.bitfield
             Buttons = get |> Get.optional Property.Buttons (Decode.list ActivityButton.decoder)
         })
 
@@ -2280,7 +2280,7 @@ module Activity =
             |> Encode.optional Property.Assets ActivityAssets.encoder v.Assets
             |> Encode.optional Property.Secrets ActivitySecrets.encoder v.Secrets
             |> Encode.optional Property.Instance Encode.bool v.Instance
-            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Flags Encode.bitfield v.Flags
             |> Encode.optional Property.Buttons (List.map ActivityButton.encoder >> Encode.list) v.Buttons
         )
 
@@ -2718,7 +2718,7 @@ module Application =
             PrimarySkuId = get |> Get.optional Property.PrimarySkuId Decode.string
             Slug = get |> Get.optional Property.Slug Decode.string
             CoverImage = get |> Get.optional Property.CoverImage Decode.string
-            Flags = get |> Get.optional Property.Flags Decode.int
+            Flags = get |> Get.optional Property.Flags Decode.bitfield
             ApproximateGuildCount = get |> Get.optional Property.ApproximateGuildCount Decode.int
             ApproximateUserInstallCount = get |> Get.optional Property.ApproximateUserInstallCount Decode.int
             RedirectUris = get |> Get.optional Property.RedirectUris (Decode.list Decode.string)
@@ -2753,7 +2753,7 @@ module Application =
             |> Encode.optional Property.PrimarySkuId Encode.string v.PrimarySkuId
             |> Encode.optional Property.Slug Encode.string v.Slug
             |> Encode.optional Property.CoverImage Encode.string v.CoverImage
-            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Flags Encode.bitfield v.Flags
             |> Encode.optional Property.ApproximateGuildCount Encode.int v.ApproximateGuildCount
             |> Encode.optional Property.ApproximateUserInstallCount Encode.int v.ApproximateUserInstallCount
             |> Encode.optional Property.RedirectUris (List.map Encode.string >> Encode.list) v.RedirectUris
@@ -2789,7 +2789,7 @@ module Application =
                 PrimarySkuId = get |> Get.optional Property.PrimarySkuId Decode.string
                 Slug = get |> Get.optional Property.Slug Decode.string
                 CoverImage = get |> Get.optional Property.CoverImage Decode.string
-                Flags = get |> Get.optional Property.Flags Decode.int
+                Flags = get |> Get.optional Property.Flags Decode.bitfield
                 ApproximateGuildCount = get |> Get.optional Property.ApproximateGuildCount Decode.int
                 ApproximateUserInstallCount = get |> Get.optional Property.ApproximateUserInstallCount Decode.int
                 RedirectUris = get |> Get.optional Property.RedirectUris (Decode.list Decode.string)
@@ -2824,7 +2824,7 @@ module Application =
                 |> Encode.optional Property.PrimarySkuId Encode.string v.PrimarySkuId
                 |> Encode.optional Property.Slug Encode.string v.Slug
                 |> Encode.optional Property.CoverImage Encode.string v.CoverImage
-                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.Flags Encode.bitfield v.Flags
                 |> Encode.optional Property.ApproximateGuildCount Encode.int v.ApproximateGuildCount
                 |> Encode.optional Property.ApproximateUserInstallCount Encode.int v.ApproximateUserInstallCount
                 |> Encode.optional Property.RedirectUris (List.map Encode.string >> Encode.list) v.RedirectUris
@@ -3263,7 +3263,7 @@ module Channel =
             Member = get |> Get.optional Property.Member ThreadMember.decoder
             DefaultAutoArchiveDuration = get |> Get.optional Property.DefaultAutoArchiveDuration Decode.Enum.int<AutoArchiveDuration>
             Permissions = get |> Get.optional Property.Permissions Decode.string
-            Flags = get |> Get.optional Property.Flags Decode.int
+            Flags = get |> Get.optional Property.Flags Decode.bitfield
             TotalMessagesSent = get |> Get.optional Property.TotalMessagesSent Decode.int
             AvailableTags = get |> Get.optional Property.AvailableTags (Decode.list ForumTag.decoder)
             AppliedTags = get |> Get.optional Property.AppliedTags (Decode.list Decode.string)
@@ -3302,7 +3302,7 @@ module Channel =
         |> Encode.optional Property.Member ThreadMember.encoder v.Member
         |> Encode.optional Property.DefaultAutoArchiveDuration Encode.Enum.int v.DefaultAutoArchiveDuration
         |> Encode.optional Property.Permissions Encode.string v.Permissions
-        |> Encode.optional Property.Flags Encode.int v.Flags
+        |> Encode.optional Property.Flags Encode.bitfield v.Flags
         |> Encode.optional Property.TotalMessagesSent Encode.int v.TotalMessagesSent
         |> Encode.optional Property.AvailableTags (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
         |> Encode.optional Property.AppliedTags (List.map Encode.string >> Encode.list) v.AppliedTags
@@ -3344,7 +3344,7 @@ module Channel =
                 Member = get |> Get.optional Property.Member ThreadMember.decoder
                 DefaultAutoArchiveDuration = get |> Get.optional Property.DefaultAutoArchiveDuration Decode.Enum.int<AutoArchiveDuration>
                 Permissions = get |> Get.optional Property.Permissions Decode.string
-                Flags = get |> Get.optional Property.Flags Decode.int
+                Flags = get |> Get.optional Property.Flags Decode.bitfield
                 TotalMessagesSent = get |> Get.optional Property.TotalMessagesSent Decode.int
                 AvailableTags = get |> Get.optional Property.AvailableTags (Decode.list ForumTag.decoder)
                 AppliedTags = get |> Get.optional Property.AppliedTags (Decode.list Decode.string)
@@ -3383,7 +3383,7 @@ module Channel =
                 |> Encode.optional Property.Member ThreadMember.encoder v.Member
                 |> Encode.optional Property.DefaultAutoArchiveDuration Encode.Enum.int v.DefaultAutoArchiveDuration
                 |> Encode.optional Property.Permissions Encode.string v.Permissions
-                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.Flags Encode.bitfield v.Flags
                 |> Encode.optional Property.TotalMessagesSent Encode.int v.TotalMessagesSent
                 |> Encode.optional Property.AvailableTags (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
                 |> Encode.optional Property.AppliedTags (List.map Encode.string >> Encode.list) v.AppliedTags
@@ -3721,7 +3721,7 @@ module Guild =
             MfaLevel = get |> Get.required Property.MfaLevel Decode.Enum.int<MfaLevel>
             ApplicationId = get |> Get.nullable Property.ApplicationId Decode.string
             SystemChannelId = get |> Get.nullable Property.SystemChannelId Decode.string
-            SystemChannelFlags = get |> Get.required Property.SystemChannelFlags Decode.int
+            SystemChannelFlags = get |> Get.required Property.SystemChannelFlags Decode.bitfield
             RulesChannelId = get |> Get.nullable Property.RulesChannelId Decode.string
             MaxPresences = get |> Get.optinull Property.MaxPresences Decode.int
             MaxMembers = get |> Get.optional Property.MaxMembers Decode.int
@@ -3768,7 +3768,7 @@ module Guild =
         |> Encode.required Property.MfaLevel Encode.Enum.int v.MfaLevel
         |> Encode.nullable Property.ApplicationId Encode.string v.ApplicationId
         |> Encode.nullable Property.SystemChannelId Encode.string v.SystemChannelId
-        |> Encode.required Property.SystemChannelFlags Encode.int v.SystemChannelFlags
+        |> Encode.required Property.SystemChannelFlags Encode.bitfield v.SystemChannelFlags
         |> Encode.nullable Property.RulesChannelId Encode.string v.RulesChannelId
         |> Encode.optinull Property.MaxPresences Encode.int v.MaxPresences
         |> Encode.optional Property.MaxMembers Encode.int v.MaxMembers
@@ -3817,7 +3817,7 @@ module Guild =
                 MfaLevel = get |> Get.optional Property.MfaLevel Decode.Enum.int<MfaLevel>
                 ApplicationId = get |> Get.optinull Property.ApplicationId Decode.string
                 SystemChannelId = get |> Get.optinull Property.SystemChannelId Decode.string
-                SystemChannelFlags = get |> Get.optional Property.SystemChannelFlags Decode.int
+                SystemChannelFlags = get |> Get.optional Property.SystemChannelFlags Decode.bitfield
                 RulesChannelId = get |> Get.optinull Property.RulesChannelId Decode.string
                 MaxPresences = get |> Get.optinull Property.MaxPresences Decode.int
                 MaxMembers = get |> Get.optional Property.MaxMembers Decode.int
@@ -3864,7 +3864,7 @@ module Guild =
             |> Encode.optional Property.MfaLevel Encode.Enum.int v.MfaLevel
             |> Encode.optinull Property.ApplicationId Encode.string v.ApplicationId
             |> Encode.optinull Property.SystemChannelId Encode.string v.SystemChannelId
-            |> Encode.optional Property.SystemChannelFlags Encode.int v.SystemChannelFlags
+            |> Encode.optional Property.SystemChannelFlags Encode.bitfield v.SystemChannelFlags
             |> Encode.optinull Property.RulesChannelId Encode.string v.RulesChannelId
             |> Encode.optinull Property.MaxPresences Encode.int v.MaxPresences
             |> Encode.optional Property.MaxMembers Encode.int v.MaxMembers
@@ -4021,7 +4021,7 @@ module GuildMember =
             PremiumSince = get |> Get.optinull Property.PremiumSince Decode.datetimeUtc
             Deaf = get |> Get.required Property.Deaf Decode.bool
             Mute = get |> Get.required Property.Mute Decode.bool
-            Flags = get |> Get.required Property.Flags Decode.int
+            Flags = get |> Get.required Property.Flags Decode.bitfield
             Pending = get |> Get.optional Property.Pending Decode.bool
             Permissions = get |> Get.optional Property.Permissions Decode.string
             CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
@@ -4039,7 +4039,7 @@ module GuildMember =
         |> Encode.optinull Property.PremiumSince Encode.datetime v.PremiumSince
         |> Encode.required Property.Deaf Encode.bool v.Deaf
         |> Encode.required Property.Mute Encode.bool v.Mute
-        |> Encode.required Property.Flags Encode.int v.Flags
+        |> Encode.required Property.Flags Encode.bitfield v.Flags
         |> Encode.optional Property.Pending Encode.bool v.Pending
         |> Encode.optional Property.Permissions Encode.string v.Permissions
         |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
@@ -4060,7 +4060,7 @@ module GuildMember =
                 PremiumSince = get |> Get.optinull Property.PremiumSince Decode.datetimeUtc
                 Deaf = get |> Get.optional Property.Deaf Decode.bool
                 Mute = get |> Get.optional Property.Mute Decode.bool
-                Flags = get |> Get.optional Property.Flags Decode.int
+                Flags = get |> Get.optional Property.Flags Decode.bitfield
                 Pending = get |> Get.optional Property.Pending Decode.bool
                 Permissions = get |> Get.optional Property.Permissions Decode.string
                 CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
@@ -4078,7 +4078,7 @@ module GuildMember =
                 |> Encode.optinull Property.PremiumSince Encode.datetime v.PremiumSince
                 |> Encode.optional Property.Deaf Encode.bool v.Deaf
                 |> Encode.optional Property.Mute Encode.bool v.Mute
-                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.Flags Encode.bitfield v.Flags
                 |> Encode.optional Property.Pending Encode.bool v.Pending
                 |> Encode.optional Property.Permissions Encode.string v.Permissions
                 |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
@@ -4731,14 +4731,14 @@ module LobbyMember =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Metadata = get |> Get.optinull Property.Metadata (Decode.dict Decode.string)
-            Flags = get |> Get.optional Property.Flags Decode.int
+            Flags = get |> Get.optional Property.Flags Decode.bitfield
         })
 
     let encoder (v: LobbyMember) =
         Encode.object ([]
             |> Encode.required Property.Id Encode.string v.Id
             |> Encode.optinull Property.Metadata (Encode.mapv Encode.string) v.Metadata
-            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Flags Encode.bitfield v.Flags
         )
 
 module Message =
@@ -4802,7 +4802,7 @@ module Message =
             Activity = get |> Get.optional Property.Activity MessageActivity.decoder
             Application = get |> Get.optional Property.Application Application.Partial.decoder
             ApplicationId = get |> Get.optional Property.ApplicationId Decode.string
-            Flags = get |> Get.optional Property.Flags Decode.int
+            Flags = get |> Get.optional Property.Flags Decode.bitfield
             MessageReference = get |> Get.optional Property.MessageReference MessageReference.decoder
             MessageSnapshots = get |> Get.optional Property.MessageSnapshots (Decode.list MessageSnapshot.decoder)
             ReferencedMessage = get |> Get.optinull Property.ReferencedMessage decoder
@@ -4841,7 +4841,7 @@ module Message =
         |> Encode.optional Property.Activity MessageActivity.encoder v.Activity
         |> Encode.optional Property.Application Application.Partial.encoder v.Application
         |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
-        |> Encode.optional Property.Flags Encode.int v.Flags
+        |> Encode.optional Property.Flags Encode.bitfield v.Flags
         |> Encode.optional Property.MessageReference MessageReference.encoder v.MessageReference
         |> Encode.optional Property.MessageSnapshots (List.map MessageSnapshot.encoder >> Encode.list) v.MessageSnapshots
         |> Encode.optinull Property.ReferencedMessage encoder v.ReferencedMessage
@@ -4883,7 +4883,7 @@ module Message =
                 Activity = get |> Get.optional Property.Activity MessageActivity.decoder
                 Application = get |> Get.optional Property.Application Application.Partial.decoder
                 ApplicationId = get |> Get.optional Property.ApplicationId Decode.string
-                Flags = get |> Get.optional Property.Flags Decode.int
+                Flags = get |> Get.optional Property.Flags Decode.bitfield
                 MessageReference = get |> Get.optional Property.MessageReference MessageReference.decoder
                 MessageSnapshots = get |> Get.optional Property.MessageSnapshots (Decode.list MessageSnapshot.decoder)
                 ReferencedMessage = get |> Get.optinull Property.ReferencedMessage Message.decoder
@@ -4922,7 +4922,7 @@ module Message =
                 |> Encode.optional Property.Activity MessageActivity.encoder v.Activity
                 |> Encode.optional Property.Application Application.Partial.encoder v.Application
                 |> Encode.optional Property.ApplicationId Encode.string v.ApplicationId
-                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.Flags Encode.bitfield v.Flags
                 |> Encode.optional Property.MessageReference MessageReference.encoder v.MessageReference
                 |> Encode.optional Property.MessageSnapshots (List.map MessageSnapshot.encoder >> Encode.list) v.MessageSnapshots
                 |> Encode.optinull Property.ReferencedMessage Message.encoder v.ReferencedMessage
@@ -4949,7 +4949,7 @@ module Message =
                 Attachments = get |> Get.required Property.Attachments (Decode.list Attachment.decoder)
                 Embeds = get |> Get.required Property.Embeds (Decode.list Embed.decoder)
                 Type = get |> Get.required Property.Type Decode.Enum.int<MessageType>
-                Flags = get |> Get.optional Property.Flags Decode.int
+                Flags = get |> Get.optional Property.Flags Decode.bitfield
                 Components = get |> Get.optional Property.Components (Decode.list Component.decoder)
                 StickerItems = get |> Get.optional Property.StickerItems (Decode.list StickerItem.decoder)
             })
@@ -4964,7 +4964,7 @@ module Message =
                 |> Encode.required Property.Attachments (List.map Attachment.encoder >> Encode.list) v.Attachments
                 |> Encode.required Property.Embeds (List.map Embed.encoder >> Encode.list) v.Embeds
                 |> Encode.required Property.Type Encode.Enum.int v.Type
-                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.Flags Encode.bitfield v.Flags
                 |> Encode.optional Property.Components (List.map Component.encoder >> Encode.list) v.Components
                 |> Encode.optional Property.StickerItems (List.map StickerItem.encoder >> Encode.list) v.StickerItems
             )
@@ -5436,7 +5436,7 @@ module Attachment =
             Ephemeral = get |> Get.optional Property.Ephemeral Decode.bool
             DurationSecs = get |> Get.optional Property.DurationSecs Decode.float
             Waveform = get |> Get.optional Property.Waveform Decode.string
-            Flags = get |> Get.optional Property.Flags Decode.int
+            Flags = get |> Get.optional Property.Flags Decode.bitfield
         })
 
     let encoder (v: Attachment) =
@@ -5454,7 +5454,7 @@ module Attachment =
             |> Encode.optional Property.Ephemeral Encode.bool v.Ephemeral
             |> Encode.optional Property.DurationSecs Encode.float v.DurationSecs
             |> Encode.optional Property.Waveform Encode.string v.Waveform
-            |> Encode.optional Property.Flags Encode.int v.Flags
+            |> Encode.optional Property.Flags Encode.bitfield v.Flags
         )
 
     module Partial =
@@ -5473,7 +5473,7 @@ module Attachment =
                 Ephemeral = get |> Get.optional Property.Ephemeral Decode.bool
                 DurationSecs = get |> Get.optional Property.DurationSecs Decode.float
                 Waveform = get |> Get.optional Property.Waveform Decode.string
-                Flags = get |> Get.optional Property.Flags Decode.int
+                Flags = get |> Get.optional Property.Flags Decode.bitfield
             })
 
         let encoder (v: PartialAttachment) =
@@ -5491,7 +5491,7 @@ module Attachment =
                 |> Encode.optional Property.Ephemeral Encode.bool v.Ephemeral
                 |> Encode.optional Property.DurationSecs Encode.float v.DurationSecs
                 |> Encode.optional Property.Waveform Encode.string v.Waveform
-                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.Flags Encode.bitfield v.Flags
             )
 
 module ChannelMention =
@@ -5705,7 +5705,7 @@ module Sku =
             ApplicationId = get |> Get.required Property.ApplicationId Decode.string
             Name = get |> Get.required Property.Name Decode.string
             Slug = get |> Get.required Property.Slug Decode.string
-            Flags = get |> Get.required Property.Flags Decode.int
+            Flags = get |> Get.required Property.Flags Decode.bitfield
         })
 
     let encoder (v: Sku) =
@@ -5715,7 +5715,7 @@ module Sku =
             |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
             |> Encode.required Property.Name Encode.string v.Name
             |> Encode.required Property.Slug Encode.string v.Slug
-            |> Encode.required Property.Flags Encode.int v.Flags
+            |> Encode.required Property.Flags Encode.bitfield v.Flags
         )
 
 module SoundboardSound =
@@ -5957,9 +5957,9 @@ module User =
             Locale = get |> Get.optional Property.Locale Decode.string
             Verified = get |> Get.optional Property.Verified Decode.bool
             Email = get |> Get.optinull Property.Email Decode.string
-            Flags = get |> Get.optional Property.Flags Decode.int
+            Flags = get |> Get.optional Property.Flags Decode.bitfield
             PremiumType = get |> Get.optional Property.PremiumType Decode.Enum.int<UserPremiumTier>
-            PublicFlags = get |> Get.optional Property.PublicFlags Decode.int
+            PublicFlags = get |> Get.optional Property.PublicFlags Decode.bitfield
             AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
         })
 
@@ -5978,9 +5978,9 @@ module User =
         |> Encode.optional Property.Locale Encode.string v.Locale
         |> Encode.optional Property.Verified Encode.bool v.Verified
         |> Encode.optinull Property.Email Encode.string v.Email
-        |> Encode.optional Property.Flags Encode.int v.Flags
+        |> Encode.optional Property.Flags Encode.bitfield v.Flags
         |> Encode.optional Property.PremiumType Encode.Enum.int v.PremiumType
-        |> Encode.optional Property.PublicFlags Encode.int v.PublicFlags
+        |> Encode.optional Property.PublicFlags Encode.bitfield v.PublicFlags
         |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
 
     let encoder (v: User) =
@@ -6002,9 +6002,9 @@ module User =
                 Locale = get |> Get.optional Property.Locale Decode.string
                 Verified = get |> Get.optional Property.Verified Decode.bool
                 Email = get |> Get.optinull Property.Email Decode.string
-                Flags = get |> Get.optional Property.Flags Decode.int
+                Flags = get |> Get.optional Property.Flags Decode.bitfield
                 PremiumType = get |> Get.optional Property.PremiumType Decode.Enum.int<UserPremiumTier>
-                PublicFlags = get |> Get.optional Property.PublicFlags Decode.int
+                PublicFlags = get |> Get.optional Property.PublicFlags Decode.bitfield
                 AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
             })
 
@@ -6023,9 +6023,9 @@ module User =
                 |> Encode.optional Property.Locale Encode.string v.Locale
                 |> Encode.optional Property.Verified Encode.bool v.Verified
                 |> Encode.optinull Property.Email Encode.string v.Email
-                |> Encode.optional Property.Flags Encode.int v.Flags
+                |> Encode.optional Property.Flags Encode.bitfield v.Flags
                 |> Encode.optional Property.PremiumType Encode.Enum.int v.PremiumType
-                |> Encode.optional Property.PublicFlags Encode.int v.PublicFlags
+                |> Encode.optional Property.PublicFlags Encode.bitfield v.PublicFlags
                 |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
             )
 
@@ -6293,7 +6293,7 @@ module Role =
             Managed = get |> Get.required Property.Managed Decode.bool
             Mentionable = get |> Get.required Property.Mentionable Decode.bool
             Tags = get |> Get.optional Property.Tags RoleTags.decoder
-            Flags = get |> Get.required Property.Flags Decode.int
+            Flags = get |> Get.required Property.Flags Decode.bitfield
         })
 
     let encoder (v: Role) =
@@ -6309,7 +6309,7 @@ module Role =
             |> Encode.required Property.Managed Encode.bool v.Managed
             |> Encode.required Property.Mentionable Encode.bool v.Mentionable
             |> Encode.optional Property.Tags RoleTags.encoder v.Tags
-            |> Encode.required Property.Flags Encode.int v.Flags
+            |> Encode.required Property.Flags Encode.bitfield v.Flags
         )
 
 module RoleTags =
@@ -6417,3 +6417,4 @@ module TeamMember =
 // TODO: Make `Encode.list'` helper function to remove `List.map` boilerplate
 // TODO: Write updated tests for encoding and decoding helper functions
 // TODO: Rewrite `Decode.oneOf` usages to property check type (probably fair bit more efficient)
+// TODO: Replace all permissions strings with bitfields of permissions

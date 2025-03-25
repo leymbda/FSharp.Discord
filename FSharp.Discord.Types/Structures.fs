@@ -115,7 +115,7 @@ type MessageInteractionCallbackData = {
     Content: string option
     Embeds: Embed list option
     AllowedMentions: AllowedMentions option
-    Flags: int option // TODO: Convert to list of flag enums (and check for other instances of `Flag: int` for same change)
+    Flags: MessageFlag list option
     Components: Component list option
     Attachments: PartialAttachment list option
     Poll: Poll option // TODO: Poll REQUEST object, not poll itself
@@ -654,7 +654,7 @@ type GuildMemberUpdateReceiveEvent = {
     Mute: bool option
     Pending: bool option
     CommunicationDisabledUntil: DateTime option option
-    Flags: int option
+    Flags: GuildMemberFlag list option
     AvatarDecorationData: AvatarDecorationData option option
 }
 
@@ -891,7 +891,7 @@ type Activity = {
     Assets: ActivityAssets option
     Secrets: ActivitySecrets option
     Instance: bool option
-    Flags: int option
+    Flags: ActivityFlag list option
     Buttons: ActivityButton list option
 }
 
@@ -1071,7 +1071,7 @@ type Application = {
     PrimarySkuId: string option
     Slug: string option
     CoverImage: string option
-    Flags: int option
+    Flags: ApplicationFlag list option
     ApproximateGuildCount: int option
     ApproximateUserInstallCount: int option
     RedirectUris: string list option
@@ -1105,7 +1105,7 @@ and PartialApplication = {
     PrimarySkuId: string option
     Slug: string option
     CoverImage: string option
-    Flags: int option
+    Flags: ApplicationFlag list option
     ApproximateGuildCount: int option
     ApproximateUserInstallCount: int option
     RedirectUris: string list option
@@ -1288,7 +1288,7 @@ type Channel = {
     Member: ThreadMember option // only in certain endpoints (likely should be an ExtraField)
     DefaultAutoArchiveDuration: AutoArchiveDuration option
     Permissions: string option // TODO: Convert bitfield into permission list
-    Flags: int option
+    Flags: ChannelFlag list option
     TotalMessagesSent: int option
     AvailableTags: ForumTag list option
     AppliedTags: string list option
@@ -1326,7 +1326,7 @@ and PartialChannel = {
     Member: ThreadMember option // only in certain endpoints (likely should be an ExtraField)
     DefaultAutoArchiveDuration: AutoArchiveDuration option
     Permissions: string option // TODO: Convert bitfield into permission list
-    Flags: int option
+    Flags: ChannelFlag list option
     TotalMessagesSent: int option
     AvailableTags: ForumTag list option
     AppliedTags: string list option
@@ -1401,7 +1401,7 @@ type ThreadMember = {
     Id: string option
     UserId: string option
     JoinTimestamp: DateTime
-    Flags: int
+    Flags: int // TODO: What kind of values are here? "any user-thread setting, currently only used for notifications"
     Member: GuildMember option
 }
 
@@ -1480,7 +1480,7 @@ type Guild = {
     MfaLevel: MfaLevel
     ApplicationId: string option
     SystemChannelId: string option
-    SystemChannelFlags: int
+    SystemChannelFlags: SystemChannelFlag list
     RulesChannelId: string option
     MaxPresences: int option option
     MaxMembers: int option
@@ -1526,7 +1526,7 @@ and PartialGuild = {
     MfaLevel: MfaLevel option
     ApplicationId: string option option
     SystemChannelId: string option option
-    SystemChannelFlags: int option
+    SystemChannelFlags: SystemChannelFlag list option
     RulesChannelId: string option option
     MaxPresences: int option option
     MaxMembers: int option
@@ -1597,7 +1597,7 @@ type GuildMember = {
     PremiumSince: DateTime option option
     Deaf: bool
     Mute: bool
-    Flags: int
+    Flags: GuildMemberFlag list
     Pending: bool option // TODO: Only in GUILD_ events (should it be in ExtraFields?)
     Permissions: string option
     CommunicationDisabledUntil: DateTime option option
@@ -1614,7 +1614,7 @@ and PartialGuildMember = {
     PremiumSince: DateTime option option
     Deaf: bool option
     Mute: bool option
-    Flags: int option
+    Flags: GuildMemberFlag list option
     Pending: bool option // TODO: Only in GUILD_ events (should it be in ExtraFields?)
     Permissions: string option
     CommunicationDisabledUntil: DateTime option option
@@ -1859,7 +1859,7 @@ type Lobby = {
 type LobbyMember = {
     Id: string
     Metadata: Map<string, string> option option
-    Flags: int option
+    Flags: LobbyMemberFlag list option
 }
 
 // ----- Resources: Message -----
@@ -1887,7 +1887,7 @@ type Message = {
     Activity: MessageActivity option
     Application: PartialApplication option
     ApplicationId: string option
-    Flags: int option
+    Flags: MessageFlag list option
     MessageReference: MessageReference option
     MessageSnapshots: MessageSnapshot list option
     ReferencedMessage: Message option option
@@ -1925,7 +1925,7 @@ and PartialMessage = {
     Activity: MessageActivity option
     Application: PartialApplication option
     ApplicationId: string option
-    Flags: int option
+    Flags: MessageFlag list option
     MessageReference: MessageReference option
     MessageSnapshots: MessageSnapshot list option
     ReferencedMessage: Message option option
@@ -1951,7 +1951,7 @@ and SnapshotPartialMessage = {
     Attachments: Attachment list
     Embeds: Embed list
     Type: MessageType
-    Flags: int option
+    Flags: MessageFlag list option
     Components: Component list option
     StickerItems: StickerItem list option
 }
@@ -2130,7 +2130,7 @@ type Attachment = {
     Ephemeral: bool option
     DurationSecs: float option
     Waveform: string option
-    Flags: int option
+    Flags: AttachmentFlag list option
 }
 
 and PartialAttachment = {
@@ -2147,7 +2147,7 @@ and PartialAttachment = {
     Ephemeral: bool option
     DurationSecs: float option
     Waveform: string option
-    Flags: int option
+    Flags: AttachmentFlag list option
 }
 
 // https://discord.com/developers/docs/resources/message#channel-mention-object-channel-mention-structure
@@ -2229,7 +2229,7 @@ type Sku = {
     ApplicationId: string
     Name: string
     Slug: string
-    Flags: int
+    Flags: SkuFlag list
 }
 
 // ----- Resources: Soundboard -----
@@ -2327,9 +2327,9 @@ type User = {
     Locale: string option
     Verified: bool option
     Email: string option option
-    Flags: int option
+    Flags: UserFlag list option
     PremiumType: UserPremiumTier option
-    PublicFlags: int option
+    PublicFlags: UserFlag list option
     AvatarDecorationData: AvatarDecorationData option option
 }
 
@@ -2347,9 +2347,9 @@ and PartialUser = {
     Locale: string option
     Verified: bool option
     Email: string option option
-    Flags: int option
+    Flags: UserFlag list option
     PremiumType: UserPremiumTier option
-    PublicFlags: int option
+    PublicFlags: UserFlag list option
     AvatarDecorationData: AvatarDecorationData option option
 }
 
@@ -2466,7 +2466,7 @@ type Role = {
     Managed: bool
     Mentionable: bool
     Tags: RoleTags option
-    Flags: int
+    Flags: RoleFlag list
 }
 
 // https://discord.com/developers/docs/topics/permissions#role-object-role-tags-structure
@@ -2510,7 +2510,6 @@ type TeamMember = {
     Role: TeamMemberRoleType
 }
 
-// TODO: Convert all flag bitfields into enum lists
 // TODO: Convert url strings to Uri type (?)
 // TODO: Create single DUs for values with range/size/etc rules
 // TODO: Add comments describing properties as per docs

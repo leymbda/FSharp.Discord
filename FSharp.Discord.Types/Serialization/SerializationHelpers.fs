@@ -1,5 +1,6 @@
 ﻿namespace rec FSharp.Discord.Types.Serialization
 
+open Microsoft.FSharp.Core.LanguagePrimitives
 open System
 open Thoth.Json.Net
 
@@ -21,6 +22,19 @@ module Decode =
                 ))
                 (Ok [])
             |> Result.map Map.ofSeq
+
+    // Decode an long value representing a bitfield into a list of enum values.
+    let bitfield<'T when 'T: enum<int>> path v =
+        match Decode.int64 path v with
+        | Error e -> Error e
+        | Ok bitfield ->
+            Convert.ToString(bitfield, 2).ToCharArray()
+            |> Array.toList
+            |> List.map ((=) '1')
+            |> List.rev
+            |> List.mapi (fun i b -> if b then Some (enum<'T> (int <| Math.Pow(i, 2))) else None)
+            |> List.collect (function | Some v -> [v] | None -> [])
+            |> Ok
 
 module Encode =
     /// Append an encoding that is required.
@@ -61,6 +75,13 @@ module Encode =
         match value with
         | true -> list @ [key, succeed]
         | false -> list
+
+    /// Encode a list of enum values to a bitfield.
+    let bitfield<'T when 'T: enum<int>> (value: 'T list) =
+        value
+        |> List.map EnumToValue
+        |> List.fold (fun acc cur -> acc + cur) 0
+        |> Encode.int
         
 module Get =
     /// Get a required decoded value.
