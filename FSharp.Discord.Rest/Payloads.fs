@@ -734,6 +734,20 @@ type StartThreadInForumOrMediaChannelPayload(name, message, ?autoArchiveDuration
     interface IPayload with
         member this.ToHttpContent() =
             HttpContent.createJsonWithFiles StartThreadInForumOrMediaChannelPayload.Encoder this this.Files
+
+type StartThreadInForumOrMediaChannelResponse = {
+    Channel: Channel
+    Message: Message
+}
+
+module StartThreadInForumOrMediaChannelResponse =
+    let decoder: Decoder<StartThreadInForumOrMediaChannelResponse> =
+        Decode.object (fun get -> {
+            Channel = get |> Get.extract Channel.decoder
+            Message = get |> Get.required "message" Message.decoder
+        })
+
+// TODO: Double check this response structure, old rest has message as option but doesn't appear to be in docs
             
 // ----- Resources: Emoji -----
 

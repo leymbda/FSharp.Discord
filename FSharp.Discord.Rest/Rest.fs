@@ -454,7 +454,7 @@ let startThreadInForumOrMediaChannel (req: StartThreadInForumOrMediaChannelReque
     |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
     |> HttpRequestMessage.withPayload req.Payload
     |> client.SendAsync
-    |> Task.bind (DiscordResponse.decode Channel.decoder)
+    |> Task.bind (DiscordResponse.decode StartThreadInForumOrMediaChannelResponse.decoder)
 
 // TODO: Implement remaining thread endpoints from https://discord.com/developers/docs/resources/channel#join-thread
 
