@@ -273,6 +273,46 @@ let getGuildAuditLog (req: GetGuildAuditLogRequest) (client: IBotClient) =
 
 // ----- Resources: Auto Moderation -----
 
+// https://discord.com/developers/docs/resources/auto-moderation#list-auto-moderation-rules-for-guild
+let listAutoModerationRulesForGuild (req: ListAutoModerationRulesForGuildRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "auto-moderation"; "rules"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list AutoModerationRule.decoder))
+
+// https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule
+let getAutoModerationRule (req: GetAutoModerationRuleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "auto-moderation"; "rules"; req.RuleId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode AutoModerationRule.decoder)
+
+// https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule
+let createAutoModerationRule (req: CreateAutoModerationRuleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "auto-moderation"; "rules"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode AutoModerationRule.decoder)
+
+// https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule
+let modifyAutoModerationRule (req: ModifyAutoModerationRuleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "auto-moderation"; "rules"; req.RuleId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode AutoModerationRule.decoder)
+
+// https://discord.com/developers/docs/resources/auto-moderation#delete-auto-moderation-rule
+let deleteAutoModerationRule (req: DeleteAutoModerationRuleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "auto-moderation"; "rules"; req.RuleId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
 // ----- Resources: Channel -----
 
 // ----- Resources: Emoji -----

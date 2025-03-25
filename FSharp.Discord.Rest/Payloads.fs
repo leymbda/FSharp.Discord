@@ -313,6 +313,62 @@ type UpdateApplicationRoleConnectionMetadataRecordsPayload(records) =
 
 // ----- Resources: Auto Moderation -----
 
+type CreateAutoModerationRulePayload(
+    name, eventType, triggerType, actions, ?triggerMetadata, ?enabled, ?exemptRoles, ?exemptChannels
+) =
+    member val Name: string = name
+    member val EventType: AutoModerationEventType = eventType
+    member val TriggerType: AutoModerationTriggerType = triggerType
+    member val TriggerMetadata: AutoModerationTriggerMetadata option = triggerMetadata
+    member val Actions: AutoModerationAction list = actions
+    member val Enabled: bool option = enabled
+    member val ExemptRoles: string list option = exemptRoles
+    member val ExemptChannels: string list option = exemptChannels
+
+    static member Encoder(v: CreateAutoModerationRulePayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.required "event_type" Encode.Enum.int v.EventType
+            |> Encode.required "trigger_type" Encode.Enum.int v.TriggerType
+            |> Encode.optional "trigger_metadata" AutoModerationTriggerMetadata.encoder v.TriggerMetadata
+            |> Encode.required "actions" (List.map AutoModerationAction.encoder >> Encode.list) v.Actions
+            |> Encode.optional "enabled" Encode.bool v.Enabled
+            |> Encode.optional "exempt_roles" (List.map Encode.string >> Encode.list) v.ExemptRoles
+            |> Encode.optional "exempt_channels" (List.map Encode.string >> Encode.list) v.ExemptChannels
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateAutoModerationRulePayload.Encoder this
+            
+type ModifyAutoModerationRulePayload(
+    ?name, ?eventType, ?triggerType, ?actions, ?triggerMetadata, ?enabled, ?exemptRoles, ?exemptChannels
+) =
+    member val Name: string option = name
+    member val EventType: AutoModerationEventType option = eventType
+    member val TriggerType: AutoModerationTriggerType option = triggerType
+    member val TriggerMetadata: AutoModerationTriggerMetadata option = triggerMetadata
+    member val Actions: AutoModerationAction list option = actions
+    member val Enabled: bool option = enabled
+    member val ExemptRoles: string list option = exemptRoles
+    member val ExemptChannels: string list option = exemptChannels
+
+    static member Encoder(v: ModifyAutoModerationRulePayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optional "event_type" Encode.Enum.int v.EventType
+            |> Encode.optional "trigger_type" Encode.Enum.int v.TriggerType
+            |> Encode.optional "trigger_metadata" AutoModerationTriggerMetadata.encoder v.TriggerMetadata
+            |> Encode.optional "actions" (List.map AutoModerationAction.encoder >> Encode.list) v.Actions
+            |> Encode.optional "enabled" Encode.bool v.Enabled
+            |> Encode.optional "exempt_roles" (List.map Encode.string >> Encode.list) v.ExemptRoles
+            |> Encode.optional "exempt_channels" (List.map Encode.string >> Encode.list) v.ExemptChannels
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyAutoModerationRulePayload.Encoder this
+
 // ----- Resources: Channel -----
 
 // ----- Resources: Emoji -----

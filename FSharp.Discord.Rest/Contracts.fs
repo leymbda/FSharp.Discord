@@ -199,6 +199,34 @@ type GetGuildAuditLogRequest(guildId, ?userId, ?actionType, ?before, ?after, ?li
 
 // ----- Resources: Auto Moderation -----
 
+type ListAutoModerationRulesForGuildRequest(guildId) =
+    member val GuildId: string = guildId
+    
+type GetAutoModerationRuleRequest(guildId, ruleId) =
+    member val GuildId: string = guildId
+    member val RuleId: string = ruleId
+
+type CreateAutoModerationRuleRequest(guildId, auditLogReason, payload) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateAutoModerationRulePayload = payload
+
+type ModifyAutoModerationRuleRequest(guildId, ruleId, auditLogReason, payload) =
+    member val GuildId: string = guildId
+    member val RuleId: string = ruleId
+
+    member val AuditLogReason: string option = auditLogReason
+    
+    member val Payload: ModifyAutoModerationRulePayload = payload
+
+type DeleteAutoModerationRuleRequest(guildId, ruleId, auditLogReason) =
+    member val GuildId: string = guildId
+    member val RuleId: string = ruleId
+
+    member val AuditLogReason: string option = auditLogReason
+
 // ----- Resources: Channel -----
 
 // ----- Resources: Emoji -----
