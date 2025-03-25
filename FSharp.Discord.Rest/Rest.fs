@@ -315,6 +315,104 @@ let deleteAutoModerationRule (req: DeleteAutoModerationRuleRequest) (client: IBo
 
 // ----- Resources: Channel -----
 
+// https://discord.com/developers/docs/resources/channel#get-channel
+let getChannel (req: GetChannelRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// https://discord.com/developers/docs/resources/channel#modify-channel
+let modifyChannel (req: ModifyChannelRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// https://discord.com/developers/docs/resources/channel#deleteclose-channel
+let deleteChannel (req: DeleteChannelRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// https://discord.com/developers/docs/resources/channel#edit-channel-permissions
+let editChannelPermissions (req: EditChannelPermissionsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "permissions"; req.OverwriteId]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/channel#get-channel-invites
+let getChannelInvites (req: GetChannelInvitesRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "invites"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list InviteWithMetadata.decoder))
+
+// https://discord.com/developers/docs/resources/channel#create-channel-invite
+let createChannelInvite (req: CreateChannelInviteRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "invites"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode InviteWithMetadata.decoder)
+
+// https://discord.com/developers/docs/resources/channel#delete-channel-permission
+let deleteChannelPermission (req: DeleteChannelPermissionRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "permissions"; req.OverwriteId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/channel#follow-announcement-channel
+let followAnnouncementChannel (req: FollowAnnouncementChannelRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "followers"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode FollowedChannel.decoder)
+
+// https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
+let triggerTypingIndicator (req: TriggerTypingIndicatorRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "typing"]
+    |> Uri.toRequest HttpMethod.Post
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/channel#get-pinned-messages
+let getPinnedMessages (req: GetPinnedMessagesRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "pins"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Message.decoder))
+
+// https://discord.com/developers/docs/resources/channel#pin-message
+let pinMessage (req: PinMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "pins"; req.MessageId]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/channel#unpin-message
+let unpinMessage (req: UnpinMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "pins"; req.MessageId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// TODO: Continue from https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
+
 // ----- Resources: Emoji -----
 
 // ----- Resources: Entitlement -----

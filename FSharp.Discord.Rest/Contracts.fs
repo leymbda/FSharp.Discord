@@ -206,14 +206,14 @@ type GetAutoModerationRuleRequest(guildId, ruleId) =
     member val GuildId: string = guildId
     member val RuleId: string = ruleId
 
-type CreateAutoModerationRuleRequest(guildId, auditLogReason, payload) =
+type CreateAutoModerationRuleRequest(guildId, payload, ?auditLogReason) =
     member val GuildId: string = guildId
 
     member val AuditLogReason: string option = auditLogReason
 
     member val Payload: CreateAutoModerationRulePayload = payload
 
-type ModifyAutoModerationRuleRequest(guildId, ruleId, auditLogReason, payload) =
+type ModifyAutoModerationRuleRequest(guildId, ruleId, payload, ?auditLogReason) =
     member val GuildId: string = guildId
     member val RuleId: string = ruleId
 
@@ -221,13 +221,77 @@ type ModifyAutoModerationRuleRequest(guildId, ruleId, auditLogReason, payload) =
     
     member val Payload: ModifyAutoModerationRulePayload = payload
 
-type DeleteAutoModerationRuleRequest(guildId, ruleId, auditLogReason) =
+type DeleteAutoModerationRuleRequest(guildId, ruleId, ?auditLogReason) =
     member val GuildId: string = guildId
     member val RuleId: string = ruleId
 
     member val AuditLogReason: string option = auditLogReason
 
 // ----- Resources: Channel -----
+
+type GetChannelRequest(channelId) =
+    member val ChannelId: string = channelId
+
+type ModifyChannelRequest(channelId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload = payload |> ModifyChannelPayload.toPayload
+
+type DeleteChannelRequest(channelId, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type EditChannelPermissionsRequest(channelId, overwriteId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+    member val OverwriteId: string = overwriteId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: EditChannelPermissionsPayload = payload
+
+type GetChannelInvitesRequest(channelId) =
+    member val ChannelId: string = channelId
+
+type CreateChannelInviteRequest(channelId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateChannelInvitePayload = payload
+
+type DeleteChannelPermissionRequest(channelId, overwriteId, ?auditLogReason) =
+    member val ChannelId: string = channelId
+    member val OverwriteId: string = overwriteId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type FollowAnnouncementChannelRequest(channelId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: FollowAnnouncementChannelPayload = payload
+
+type TriggerTypingIndicatorRequest(channelId) =
+    member val ChannelId: string = channelId
+
+type GetPinnedMessagesRequest(channelId) =
+    member val ChannelId: string = channelId
+
+type PinMessageRequest(channelId, messageId, ?auditLogReason) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type UnpinMessageRequest(channelId, messageId, ?auditLogReason) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+
+    member val AuditLogReason: string option = auditLogReason
 
 // ----- Resources: Emoji -----
 

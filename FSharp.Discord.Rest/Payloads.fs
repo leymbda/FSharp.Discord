@@ -371,6 +371,278 @@ type ModifyAutoModerationRulePayload(
 
 // ----- Resources: Channel -----
 
+type ModifyGroupDmChannelPayload(?name, ?icon) =
+    member val Name: string option = name
+    member val Icon: string option = icon
+
+    static member Encoder(v: ModifyGroupDmChannelPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optional "icon" Encode.string v.Icon
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGroupDmChannelPayload.Encoder this
+            
+type ModifyGuildTextChannelPayload(
+    ?name, ?type', ?position, ?topic, ?nsfw, ?rateLimitPerUser, ?permissionOverwrites, ?parentId,
+    ?defaultAutoArchiveDuration, ?defaultThreadRateLimitPerUser
+) =
+    member val Name: string option = name
+    member val Type: ChannelType option = type'
+    member val Position: int option option = position
+    member val Topic: string option option = topic
+    member val Nsfw: bool option option = nsfw
+    member val RateLimitPerUser: int option option = rateLimitPerUser
+    member val PermissionOverwrites: PermissionOverwrite list option option = permissionOverwrites
+    member val ParentId: string option option = parentId
+    member val DefaultAutoArchiveDuration: int option = defaultAutoArchiveDuration
+    member val DefaultThreadRateLimitPerUser: int option = defaultThreadRateLimitPerUser
+
+    static member Encoder(v: ModifyGuildTextChannelPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optional "type" Encode.Enum.int v.Type
+            |> Encode.optinull "position" Encode.int v.Position
+            |> Encode.optinull "topic" Encode.string v.Topic
+            |> Encode.optinull "nsfw" Encode.bool v.Nsfw
+            |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
+            |> Encode.optinull "permission_overwrites" (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
+            |> Encode.optinull "parent_id" Encode.string v.ParentId
+            |> Encode.optional "default_auto_archive_duration" Encode.int v.DefaultAutoArchiveDuration
+            |> Encode.optional "default_thread_rate_limit_per_user" Encode.int v.DefaultThreadRateLimitPerUser
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildTextChannelPayload.Encoder this
+
+type ModifyGuildForumChannelPayload(
+    ?name, ?position,?topic, ?nsfw, ?rateLimitPerUser, ?permissionOverwrites, ?parentId, ?defaultAutoArchiveDuration,
+    ?flags, ?availableTags, ?defaultReaction, ?defaultThreadRateLimitPerUser, ?defaultSortOrder, ?defaultForumLayout
+) =
+    member val Name: string option = name
+    member val Position: int option option = position
+    member val Topic: string option option = topic
+    member val Nsfw: bool option option = nsfw
+    member val RateLimitPerUser: int option option = rateLimitPerUser
+    member val PermissionOverwrites: PermissionOverwrite list option option = permissionOverwrites
+    member val ParentId: string option option = parentId
+    member val DefaultAutoArchiveDuration: int option = defaultAutoArchiveDuration
+    member val Flags: ChannelFlag list option = flags
+    member val AvailableTags: ForumTag list option = availableTags
+    member val DefaultReactionEmoji: DefaultReaction option option = defaultReaction
+    member val DefaultThreadRateLimitPerUser: int option = defaultThreadRateLimitPerUser
+    member val DefaultSortOrder: ChannelSortOrder option = defaultSortOrder
+    member val DefaultForumLayout: ForumLayout option = defaultForumLayout
+
+    static member Encoder(v: ModifyGuildForumChannelPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optinull "position" Encode.int v.Position
+            |> Encode.optinull "topic" Encode.string v.Topic
+            |> Encode.optinull "nsfw" Encode.bool v.Nsfw
+            |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
+            |> Encode.optinull "permission_overwrites" (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
+            |> Encode.optinull "parent_id" Encode.string v.ParentId
+            |> Encode.optional "default_auto_archive_duration" Encode.int v.DefaultAutoArchiveDuration
+            |> Encode.optional "flags" (List.map Encode.Enum.int<ChannelFlag> >> Encode.list) v.Flags
+            |> Encode.optional "available_tags" (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
+            |> Encode.optinull "default_reaction_emoji" DefaultReaction.encoder v.DefaultReactionEmoji
+            |> Encode.optional "default_thread_rate_limit_per_user" Encode.int v.DefaultThreadRateLimitPerUser
+            |> Encode.optional "default_sort_order" Encode.Enum.int<ChannelSortOrder> v.DefaultSortOrder
+            |> Encode.optional "default_forum_layout" Encode.Enum.int<ForumLayout> v.DefaultForumLayout
+        )
+    
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildForumChannelPayload.Encoder this
+
+type ModifyGuildMediaChannelPayload(
+    ?name, ?position,?topic, ?nsfw, ?rateLimitPerUser, ?permissionOverwrites, ?parentId, ?defaultAutoArchiveDuration,
+    ?flags, ?availableTags, ?defaultReaction, ?defaultThreadRateLimitPerUser, ?defaultSortOrder
+) =
+    member val Name: string option = name
+    member val Position: int option option = position
+    member val Topic: string option option = topic
+    member val Nsfw: bool option option = nsfw
+    member val RateLimitPerUser: int option option = rateLimitPerUser
+    member val PermissionOverwrites: PermissionOverwrite list option option = permissionOverwrites
+    member val ParentId: string option option = parentId
+    member val DefaultAutoArchiveDuration: int option = defaultAutoArchiveDuration
+    member val Flags: ChannelFlag list option = flags
+    member val AvailableTags: ForumTag list option = availableTags
+    member val DefaultReactionEmoji: DefaultReaction option option = defaultReaction
+    member val DefaultThreadRateLimitPerUser: int option = defaultThreadRateLimitPerUser
+    member val DefaultSortOrder: ChannelSortOrder option = defaultSortOrder
+
+    static member Encoder(v: ModifyGuildMediaChannelPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optinull "position" Encode.int v.Position
+            |> Encode.optinull "topic" Encode.string v.Topic
+            |> Encode.optinull "nsfw" Encode.bool v.Nsfw
+            |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
+            |> Encode.optinull "permission_overwrites" (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
+            |> Encode.optinull "parent_id" Encode.string v.ParentId
+            |> Encode.optional "default_auto_archive_duration" Encode.int v.DefaultAutoArchiveDuration
+            |> Encode.optional "flags" (List.map Encode.Enum.int<ChannelFlag> >> Encode.list) v.Flags
+            |> Encode.optional "available_tags" (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
+            |> Encode.optinull "default_reaction_emoji" DefaultReaction.encoder v.DefaultReactionEmoji
+            |> Encode.optional "default_thread_rate_limit_per_user" Encode.int v.DefaultThreadRateLimitPerUser
+            |> Encode.optional "default_sort_order" Encode.Enum.int<ChannelSortOrder> v.DefaultSortOrder
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildMediaChannelPayload.Encoder this
+
+type ModifyGuildVoiceChannelPayload(
+    ?name, ?position, ?bitrate, ?userLimit, ?permissionOverwrites, ?parentId, ?rtcRegion, ?videoQualityMode
+) =
+    member val Name: string option = name
+    member val Position: int option option = position
+    member val Bitrate: int option option = bitrate
+    member val UserLimit: int option option = userLimit
+    member val PermissionOverwrites: PermissionOverwrite list option option = permissionOverwrites
+    member val ParentId: string option option = parentId
+    member val RtcRegion: string option option = rtcRegion
+    member val VideoQualityMode: VideoQualityMode option option = videoQualityMode
+
+    static member Encoder(v: ModifyGuildVoiceChannelPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optinull "position" Encode.int v.Position
+            |> Encode.optinull "bitrate" Encode.int v.Bitrate
+            |> Encode.optinull "user_limit" Encode.int v.UserLimit
+            |> Encode.optinull "permission_overwrites" (List.map PermissionOverwrite.encoder >> Encode.list) v.PermissionOverwrites
+            |> Encode.optinull "parent_id" Encode.string v.ParentId
+            |> Encode.optinull "rtc_region" Encode.string v.RtcRegion
+            |> Encode.optinull "video_quality_mode" Encode.Enum.int<VideoQualityMode> v.VideoQualityMode
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildVoiceChannelPayload.Encoder this
+
+type ModifyThreadChannelPayload(
+    ?name, ?archived, ?autoArchiveDuration, ?locked, ?invitable, ?rateLimitPerUser, ?flags, ?appliedTags
+) =
+    member val Name: string option = name
+    member val Archived: bool option = archived
+    member val AutoArchiveDuration: int option = autoArchiveDuration
+    member val Locked: bool option = locked
+    member val Invitable: bool option = invitable
+    member val RateLimitPerUser: int option option = rateLimitPerUser
+    member val Flags: ChannelFlag list option = flags
+    member val AppliedTags: string list option = appliedTags
+
+    static member Encoder(v: ModifyThreadChannelPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optional "archived" Encode.bool v.Archived
+            |> Encode.optional "auto_archive_duration" Encode.int v.AutoArchiveDuration
+            |> Encode.optional "locked" Encode.bool v.Locked
+            |> Encode.optional "invitable" Encode.bool v.Invitable
+            |> Encode.optinull "rate_limit_per_user" Encode.int v.RateLimitPerUser
+            |> Encode.optional "flags" (List.map Encode.Enum.int<ChannelFlag> >> Encode.list) v.Flags
+            |> Encode.optional "applied_tags" (List.map Encode.string >> Encode.list) v.AppliedTags
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyThreadChannelPayload.Encoder this
+
+type ModifyChannelPayload =
+    | GroupDm of ModifyGroupDmChannelPayload
+    | Text of ModifyGuildTextChannelPayload
+    | Announcement of ModifyGuildTextChannelPayload
+    | Forum of ModifyGuildForumChannelPayload
+    | Media of ModifyGuildMediaChannelPayload
+    | Voice of ModifyGuildVoiceChannelPayload
+    | Stage of ModifyGuildVoiceChannelPayload
+    | Thread of ModifyThreadChannelPayload
+
+module ModifyChannelPayload =
+    let encoder (v: ModifyChannelPayload) =
+        match v with
+        | ModifyChannelPayload.GroupDm v -> ModifyGroupDmChannelPayload.Encoder v
+        | ModifyChannelPayload.Text v -> ModifyGuildTextChannelPayload.Encoder v
+        | ModifyChannelPayload.Announcement v -> ModifyGuildTextChannelPayload.Encoder v
+        | ModifyChannelPayload.Forum v -> ModifyGuildForumChannelPayload.Encoder v
+        | ModifyChannelPayload.Media v -> ModifyGuildMediaChannelPayload.Encoder v
+        | ModifyChannelPayload.Voice v -> ModifyGuildVoiceChannelPayload.Encoder v
+        | ModifyChannelPayload.Stage v -> ModifyGuildVoiceChannelPayload.Encoder v
+        | ModifyChannelPayload.Thread v -> ModifyThreadChannelPayload.Encoder v
+
+    let toPayload (v: ModifyChannelPayload) =
+        match v with
+        | ModifyChannelPayload.GroupDm v -> v :> IPayload
+        | ModifyChannelPayload.Text v -> v :> IPayload
+        | ModifyChannelPayload.Announcement v -> v :> IPayload
+        | ModifyChannelPayload.Forum v -> v :> IPayload
+        | ModifyChannelPayload.Media v -> v :> IPayload
+        | ModifyChannelPayload.Voice v -> v :> IPayload
+        | ModifyChannelPayload.Stage v -> v :> IPayload
+        | ModifyChannelPayload.Thread v -> v :> IPayload
+
+type EditChannelPermissionsType =
+    | ROLE   = 0
+    | MEMBER = 1
+
+type EditChannelPermissionsPayload(type', ?allow, ?deny) =
+    member val Allow: string option = allow
+    member val Deny: string option = deny
+    member val Type: EditChannelPermissionsType = type'
+
+    static member Encoder(v: EditChannelPermissionsPayload) =
+        Encode.object ([]
+            |> Encode.optional "allow" Encode.string v.Allow
+            |> Encode.optional "deny" Encode.string v.Deny
+            |> Encode.required "type" Encode.Enum.int v.Type
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson EditChannelPermissionsPayload.Encoder this
+
+type CreateChannelInvitePayload(?maxAge, ?maxUses, ?temporary, ?unique, ?targetType, ?targetUserId, ?targetApplicationId) =
+    member val MaxAge: int option = maxAge
+    member val MaxUses: int option = maxUses
+    member val Temporary: bool option = temporary
+    member val Unique: bool option = unique
+    member val TargetType: InviteTargetType option = targetType
+    member val TargetUserId: string option = targetUserId
+    member val TargetApplicationId: string option = targetApplicationId
+
+    static member Encoder(v: CreateChannelInvitePayload) =
+        Encode.object ([]
+            |> Encode.optional "max_age" Encode.int v.MaxAge
+            |> Encode.optional "max_uses" Encode.int v.MaxUses
+            |> Encode.optional "temporary" Encode.bool v.Temporary
+            |> Encode.optional "unique" Encode.bool v.Unique
+            |> Encode.optional "target_type" Encode.Enum.int v.TargetType
+            |> Encode.optional "target_user_id" Encode.string v.TargetUserId
+            |> Encode.optional "target_application_id" Encode.string v.TargetApplicationId
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateChannelInvitePayload.Encoder this
+
+type FollowAnnouncementChannelPayload(webhookChannelId) =
+    member val webhookChannelId: string = webhookChannelId
+
+    static member Encoder(v: FollowAnnouncementChannelPayload) =
+        Encode.object ([]
+            |> Encode.required "webhook_channel_id" Encode.string v.webhookChannelId
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson FollowAnnouncementChannelPayload.Encoder this
+
 // ----- Resources: Emoji -----
 
 // ----- Resources: Entitlement -----
