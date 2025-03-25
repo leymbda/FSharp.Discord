@@ -2,6 +2,7 @@
 
 open FSharp.Discord.Types
 open FSharp.Discord.Types.Serialization
+open System
 open Thoth.Json.Net
 
 // ----- Interactions: Receiving and Responding -----
@@ -324,6 +325,79 @@ type StartThreadInForumOrMediaChannelRequest(channelId, payload, ?auditLogReason
     member val AuditLogReason: string option = auditLogReason
 
     member val Payload: StartThreadInForumOrMediaChannelPayload = payload
+    
+type StartThreadInForumOrMediaChannelResponse = {
+    Channel: Channel
+    Message: Message
+}
+
+module StartThreadInForumOrMediaChannelResponse =
+    let decoder: Decoder<StartThreadInForumOrMediaChannelResponse> =
+        Decode.object (fun get -> {
+            Channel = get |> Get.extract Channel.decoder
+            Message = get |> Get.required "message" Message.decoder
+        })
+
+// TODO: Double check this response structure, old rest has message as option but doesn't appear to be in docs
+
+type JoinThreadRequest(channelId) =
+    member val ChannelId: string = channelId
+
+type AddThreadMemberRequest(channelId, userId) =
+    member val ChannelId: string = channelId
+    member val UserId: string = userId
+
+type LeaveThreadRequest(channelId) =
+    member val ChannelId: string = channelId
+
+type RemoveThreadMemberRequest(channelId, userId) =
+    member val ChannelId: string = channelId
+    member val UserId: string = userId
+
+type GetThreadMemberRequest(channelId, userId, ?withMember) =
+    member val ChannelId: string = channelId
+    member val UserId: string = userId
+
+    member val WithMember: bool option = withMember
+
+type ListThreadMembersRequest(channelId, ?withMember, ?after, ?limit) =
+    member val ChannelId: string = channelId
+
+    member val WithMember: bool option = withMember
+    member val After: string option = after
+    member val Limit: int option = limit
+
+type ListPublicArchivedThreadsRequest(channelId, ?before, ?limit) =
+    member val ChannelId: string = channelId
+
+    member val Before: DateTime option = before
+    member val Limit: int option = limit
+    
+type ListPrivateArchivedThreadsRequest(channelId, ?before, ?limit) =
+    member val ChannelId: string = channelId
+
+    member val Before: DateTime option = before
+    member val Limit: int option = limit
+
+type ListJoinedPrivateArchivedThreadsRequest(channelId, ?before, ?limit) =
+    member val ChannelId: string = channelId
+
+    member val Before: string option = before
+    member val Limit: int option = limit
+
+type ArchivedThreadsResponse = {
+    Threads: Channel list
+    Members: ThreadMember list
+    HasMore: bool
+}
+
+module ArchivedThreadsResponse =
+    let decoder: Decoder<ArchivedThreadsResponse> =
+        Decode.object (fun get -> {
+            Threads = get |> Get.required "threads" (Decode.list Channel.decoder)
+            Members = get |> Get.required "members" (Decode.list ThreadMember.decoder)
+            HasMore = get |> Get.required "has_more" Decode.bool
+        })
 
 // ----- Resources: Emoji -----
 

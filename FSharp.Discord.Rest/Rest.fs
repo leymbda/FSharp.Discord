@@ -456,7 +456,78 @@ let startThreadInForumOrMediaChannel (req: StartThreadInForumOrMediaChannelReque
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode StartThreadInForumOrMediaChannelResponse.decoder)
 
-// TODO: Implement remaining thread endpoints from https://discord.com/developers/docs/resources/channel#join-thread
+// https://discord.com/developers/docs/resources/channel#join-thread
+let joinThread (req: JoinThreadRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "thread-members"; "@me"]
+    |> Uri.toRequest HttpMethod.Put
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/channel#add-thread-member
+let addThreadMember (req: AddThreadMemberRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "thread-members"; req.UserId]
+    |> Uri.toRequest HttpMethod.Put
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/channel#leave-thread
+let leaveThread (req: LeaveThreadRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "thread-members"; "@me"]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/channel#remove-thread-member
+let removeThreadMember (req: RemoveThreadMemberRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "thread-members"; req.UserId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/channel#get-thread-member
+let getThreadMember (req: GetThreadMemberRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "thread-members"; req.UserId]
+    |> Uri.withOptionalQuery "with_member" (Option.map string req.WithMember)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ThreadMember.decoder)
+
+// https://discord.com/developers/docs/resources/channel#list-thread-members
+let listThreadMembers (req: ListThreadMembersRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "thread-members"]
+    |> Uri.withOptionalQuery "with_member" (Option.map string req.WithMember)
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list ThreadMember.decoder))
+
+// https://discord.com/developers/docs/resources/channel#list-public-archived-threads
+let listPublicArchivedThreads (req: ListPublicArchivedThreadsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "threads"; "archived"; "public"]
+    |> Uri.withOptionalQuery "before" (Option.map _.ToString() req.Before)
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ArchivedThreadsResponse.decoder)
+
+// https://discord.com/developers/docs/resources/channel#list-private-archived-threads
+let listPrivateArchivedThreads (req: ListPrivateArchivedThreadsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "threads"; "archived"; "private"]
+    |> Uri.withOptionalQuery "before" (Option.map _.ToString() req.Before)
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ArchivedThreadsResponse.decoder)
+
+// https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads
+let listJoinedPrivateArchivedThreads (req: ListJoinedPrivateArchivedThreadsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "users"; "@me"; "threads"; "archived"; "private"]
+    |> Uri.withOptionalQuery "before" req.Before
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ArchivedThreadsResponse.decoder)
 
 // ----- Resources: Emoji -----
 
