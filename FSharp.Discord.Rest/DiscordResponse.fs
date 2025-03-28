@@ -7,6 +7,64 @@ open System.Net.Http
 open System.Threading.Tasks
 open Thoth.Json.Net
 
+// https://discord.com/developers/docs/reference#error-messages
+type ErrorResponse = {
+    Code: JsonErrorCode
+    Message: string
+    Errors: Map<string, string>
+}
+
+module ErrorResponse =
+    module Property =
+        let [<Literal>] Code = "code"
+        let [<Literal>] Message = "message"
+        let [<Literal>] Errors = "errors"
+
+    let decoder: Decoder<ErrorResponse> =
+        Decode.object (fun get -> {
+            Code = get |> Get.required Property.Code Decode.Enum.int<JsonErrorCode>
+            Message = get |> Get.required Property.Message Decode.string
+            Errors = get |> Get.required Property.Errors (Decode.dict Decode.string)
+        })
+
+    let encoder (v: ErrorResponse) =
+        Encode.object ([]
+            |> Encode.required Property.Code Encode.Enum.int v.Code
+            |> Encode.required Property.Message Encode.string v.Message
+            |> Encode.required Property.Errors (Encode.mapv Encode.string) v.Errors
+        )
+        
+// https://discord.com/developers/docs/topics/rate-limits#exceeding-a-rate-limit-rate-limit-response-structure
+type RateLimitResponse = {
+    Message: string
+    RetryAfter: float
+    Global: bool
+    Code: JsonErrorCode option
+}
+
+module RateLimitResponse =
+    module Property =
+        let [<Literal>] Message = "message"
+        let [<Literal>] RetryAfter = "retry_after"
+        let [<Literal>] Global = "global"
+        let [<Literal>] Code = "code"
+
+    let decoder: Decoder<RateLimitResponse> =
+        Decode.object (fun get -> {
+            Message = get |> Get.required Property.Message Decode.string
+            RetryAfter = get |> Get.required Property.RetryAfter Decode.float
+            Global = get |> Get.required Property.Global Decode.bool
+            Code = get |> Get.optional Property.Code Decode.Enum.int<JsonErrorCode>
+        })
+
+    let encoder (v: RateLimitResponse) =
+        Encode.object ([]
+            |> Encode.required Property.Message Encode.string v.Message
+            |> Encode.required Property.RetryAfter Encode.float v.RetryAfter
+            |> Encode.required Property.Global Encode.bool v.Global
+            |> Encode.optional Property.Code Encode.Enum.int v.Code
+        )
+
 type DiscordApiError =
     | ClientError of ErrorResponse
     | RateLimit of RateLimitResponse

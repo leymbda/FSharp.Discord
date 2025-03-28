@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <Compile Include="Old\Common\Constants.fs" />
+    <Compile Include="Old\Common\Responses.fs" />
     <Compile Include="Old\Abstractions\IDiscordClientFactory.fs" />
     <Compile Include="Old\Builders\PayloadBuilder.fs" />
     <Compile Include="Old\Builders\RequestBuilder.fs" />

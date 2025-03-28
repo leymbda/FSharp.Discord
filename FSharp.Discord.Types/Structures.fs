@@ -2,15 +2,6 @@
 
 open System
 
-// ----- API Reference -----
-
-// https://discord.com/developers/docs/reference#error-messages
-type ErrorResponse = {
-    Code: JsonErrorCode
-    Message: string
-    Errors: Map<string, string>
-}
-
 // ----- Interactions: Receiving and Responding -----
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-structure
@@ -2477,18 +2468,6 @@ type RoleTags = {
     SubscriptionListingId: string option
     AvailableForPurchase: bool
     GuildConnections: bool
-}
-
-// ----- Topics: Rate Limits -----
-
-// TODO: Create modules for handling rate limit headers and etc
-
-// https://discord.com/developers/docs/topics/rate-limits#exceeding-a-rate-limit-rate-limit-response-structure
-type RateLimitResponse = {
-    Message: string
-    RetryAfter: float
-    Global: bool
-    Code: JsonErrorCode option
 }
 
 // ----- Topics: Teams -----

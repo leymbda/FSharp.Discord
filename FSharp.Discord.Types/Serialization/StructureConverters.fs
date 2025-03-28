@@ -8,26 +8,6 @@ open Thoth.Json.Net
 // rather than recursive functions. This warning may be suppressed by using '#nowarn "40"' or '--nowarn:40'.
 #nowarn "40"
 
-module ErrorResponse =
-    module Property =
-        let [<Literal>] Code = "code"
-        let [<Literal>] Message = "message"
-        let [<Literal>] Errors = "errors"
-
-    let decoder: Decoder<ErrorResponse> =
-        Decode.object (fun get -> {
-            Code = get |> Get.required Property.Code Decode.Enum.int<JsonErrorCode>
-            Message = get |> Get.required Property.Message Decode.string
-            Errors = get |> Get.required Property.Errors (Decode.dict Decode.string)
-        })
-
-    let encoder (v: ErrorResponse) =
-        Encode.object ([]
-            |> Encode.required Property.Code Encode.Enum.int v.Code
-            |> Encode.required Property.Message Encode.string v.Message
-            |> Encode.required Property.Errors (Encode.mapv Encode.string) v.Errors
-        )
-
 module Interaction =
     module Property =
         let [<Literal>] Id = "id"
@@ -6339,29 +6319,6 @@ module RoleTags =
             |> Encode.optional Property.SubscriptionListingId Encode.string v.SubscriptionListingId
             |> Encode.exists Property.AvailableForPurchase Encode.nil v.AvailableForPurchase
             |> Encode.exists Property.GuildConnections Encode.nil v.GuildConnections
-        )
-
-module RateLimitResponse =
-    module Property =
-        let [<Literal>] Message = "message"
-        let [<Literal>] RetryAfter = "retry_after"
-        let [<Literal>] Global = "global"
-        let [<Literal>] Code = "code"
-
-    let decoder: Decoder<RateLimitResponse> =
-        Decode.object (fun get -> {
-            Message = get |> Get.required Property.Message Decode.string
-            RetryAfter = get |> Get.required Property.RetryAfter Decode.float
-            Global = get |> Get.required Property.Global Decode.bool
-            Code = get |> Get.optional Property.Code Decode.Enum.int<JsonErrorCode>
-        })
-
-    let encoder (v: RateLimitResponse) =
-        Encode.object ([]
-            |> Encode.required Property.Message Encode.string v.Message
-            |> Encode.required Property.RetryAfter Encode.float v.RetryAfter
-            |> Encode.required Property.Global Encode.bool v.Global
-            |> Encode.optional Property.Code Encode.Enum.int v.Code
         )
 
 module Team =
