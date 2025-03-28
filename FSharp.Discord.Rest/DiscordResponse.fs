@@ -16,7 +16,7 @@ type DiscordApiError =
 type DiscordResponse<'a> = Result<'a, DiscordApiError> * RateLimitHeaders
 
 module DiscordResponse =
-    let private map<'a> (mapper: string -> Result<'a, string>) (res: HttpResponseMessage) = task {
+    let private map'<'a> (mapper: string -> Result<'a, string>) (res: HttpResponseMessage) = task {
         let! json = res.Content.ReadAsStringAsync()
 
         let content =
@@ -44,15 +44,20 @@ module DiscordResponse =
 
     /// Resolve the response to the given type from the decoder.
     let decode<'a> (decoder: Decoder<'a>) (res: HttpResponseMessage): Task<DiscordResponse<'a>> =
-        map (Decode.fromString decoder) res
+        map' (Decode.fromString decoder) res
 
     /// Resolve the response to unit if the response is successful.
     let unit (res: HttpResponseMessage): Task<DiscordResponse<unit>> =
-        map (fun _ -> Ok ()) res
+        map' (fun _ -> Ok ()) res
 
     /// Resolve the response body to the type if a body is present, otherwise return None.
     let tryDecode<'a> (decoder: Decoder<'a>) (res: HttpResponseMessage): Task<DiscordResponse<'a option>> =
         match res.Content.Headers.ContentLength |> Option.ofNullable with
         | Some l when l > 0 -> Decode.fromString decoder >> Result.map Some
         | _ -> fun _ -> Ok None
-        |> fun mapper -> map mapper res
+        |> fun mapper -> map' mapper res
+
+    let map (f: 'a -> 'b) (res: DiscordResponse<'a>): DiscordResponse<'b> =
+        match res with
+        | Ok a, r -> Ok (f a), r
+        | Error e, r -> Error e, r

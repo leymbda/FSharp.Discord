@@ -9,9 +9,14 @@ open System.Web
 open Thoth.Json.Net
 
 module Task =
-    let bind f m = task {
-        let! v = m
-        return! f v
+    let bind f v = task {
+        let! v' = v
+        return! f v'
+    }
+
+    let map f v = task {
+        let! v' = v
+        return f v'
     }
 
 module List =

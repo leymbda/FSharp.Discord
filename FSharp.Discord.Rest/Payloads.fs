@@ -737,6 +737,62 @@ type StartThreadInForumOrMediaChannelPayload(name, message, ?autoArchiveDuration
             
 // ----- Resources: Emoji -----
 
+type CreateGuildEmojiPayload(name, image, ?roles) =
+    member val Name: string = name
+    member val Image: string = image
+    member val Roles: string list = defaultArg roles []
+
+    static member Encoder(v: CreateGuildEmojiPayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.required "image" Encode.string v.Image
+            |> Encode.required "roles" (List.map Encode.string >> Encode.list) v.Roles
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateGuildEmojiPayload.Encoder this
+
+type ModifyGuildEmojiPayload(?name, ?roles) =
+    member val Name: string option = name
+    member val Roles: string list option option = roles
+
+    static member Encoder(v: ModifyGuildEmojiPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optinull "roles" (List.map Encode.string >> Encode.list) v.Roles
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildEmojiPayload.Encoder this
+            
+type CreateApplicationEmojiPayload(name, image) =
+    member val Name: string = name
+    member val Image: string = image
+
+    static member Encoder(v: CreateApplicationEmojiPayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.required "image" Encode.string v.Image
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateApplicationEmojiPayload.Encoder this
+            
+type ModifyApplicationEmojiPayload(?name) =
+    member val Name: string option = name
+
+    static member Encoder(v: ModifyApplicationEmojiPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyApplicationEmojiPayload.Encoder this
+            
 // ----- Resources: Entitlement -----
 
 // ----- Resources: Guild -----

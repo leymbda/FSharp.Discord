@@ -529,6 +529,84 @@ let listJoinedPrivateArchivedThreads (req: ListJoinedPrivateArchivedThreadsReque
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode ArchivedThreadsResponse.decoder)
 
+// https://discord.com/developers/docs/resources/emoji#list-guild-emojis
+let listGuildEmojis (req: ListGuildEmojisRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "emojis"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Emoji.decoder))
+
+// https://discord.com/developers/docs/resources/emoji#get-guild-emoji
+let getGuildEmoji (req: GetGuildEmojiRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "emojis"; req.EmojiId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Emoji.decoder)
+
+// https://discord.com/developers/docs/resources/emoji#create-guild-emoji
+let createGuildEmoji (req: CreateGuildEmojiRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "emojis"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Emoji.decoder)
+
+// https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
+let modifyGuildEmoji (req: ModifyGuildEmojiRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "emojis"; req.EmojiId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Emoji.decoder)
+
+// https://discord.com/developers/docs/resources/emoji#delete-guild-emoji
+let deleteGuildEmoji (req: DeleteGuildEmojiRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "emojis"; req.EmojiId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/emoji#list-application-emojis
+let listApplicationEmojis (req: ListApplicationEmojisRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "emojis"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ListApplicationEmojisResponse.decoder)
+    |> Task.map (DiscordResponse.map _.Items)
+
+// https://discord.com/developers/docs/resources/emoji#get-application-emoji
+let getApplicationEmoji (req: GetApplicationEmojiRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "emojis"; req.EmojiId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Emoji.decoder)
+
+// https://discord.com/developers/docs/resources/emoji#create-application-emoji
+let createApplicationEmoji (req: CreateApplicationEmojiRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "emojis"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Emoji.decoder)
+
+// https://discord.com/developers/docs/resources/emoji#modify-application-emoji
+let modifyApplicationEmoji (req: ModifyApplicationEmojiRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "emojis"; req.EmojiId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Emoji.decoder)
+
+// https://discord.com/developers/docs/resources/emoji#delete-application-emoji
+let deleteApplicationEmoji (req: DeleteApplicationEmojiRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "emojis"; req.EmojiId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
 // ----- Resources: Emoji -----
 
 // ----- Resources: Entitlement -----

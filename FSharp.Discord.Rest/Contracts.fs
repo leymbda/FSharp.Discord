@@ -401,6 +401,66 @@ module ArchivedThreadsResponse =
 
 // ----- Resources: Emoji -----
 
+type ListGuildEmojisRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetGuildEmojiRequest(guildId, emojiId) =
+    member val GuildId: string = guildId
+    member val EmojiId: string = emojiId
+
+type CreateGuildEmojiRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateGuildEmojiPayload = payload
+
+type ModifyGuildEmojiRequest(guildId, emojiId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val EmojiId: string = emojiId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildEmojiPayload = payload
+
+type DeleteGuildEmojiRequest(guildId, emojiId, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val EmojiId: string = emojiId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type ListApplicationEmojisRequest(applicationId) =
+    member val ApplicationId: string = applicationId
+
+type ListApplicationEmojisResponse = {
+    Items: Emoji list
+}
+
+module ListApplicationEmojisResponse =
+    let decoder: Decoder<ListApplicationEmojisResponse> =
+        Decode.object (fun get -> {
+            Items = get |> Get.required "emojis" (Decode.list Emoji.decoder)
+        })
+
+type GetApplicationEmojiRequest(applicationId, emojiId) =
+    member val ApplicationId: string = applicationId
+    member val EmojiId: string = emojiId
+
+type CreateApplicationEmojiRequest(applicationId, payload) =
+    member val ApplicationId: string = applicationId
+
+    member val Payload: CreateApplicationEmojiPayload = payload
+
+type ModifyApplicationEmojiRequest(applicationId, emojiId, payload) =
+    member val ApplicationId: string = applicationId
+    member val EmojiId: string = emojiId
+
+    member val Payload: ModifyApplicationEmojiPayload = payload
+
+type DeleteApplicationEmojiRequest(applicationId, emojiId) =
+    member val ApplicationId: string = applicationId
+    member val EmojiId: string = emojiId
+
 // ----- Resources: Entitlement -----
 
 // ----- Resources: Guild -----
