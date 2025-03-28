@@ -529,6 +529,8 @@ let listJoinedPrivateArchivedThreads (req: ListJoinedPrivateArchivedThreadsReque
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode ArchivedThreadsResponse.decoder)
 
+// ----- Resources: Emoji -----
+
 // https://discord.com/developers/docs/resources/emoji#list-guild-emojis
 let listGuildEmojis (req: ListGuildEmojisRequest) (client: IBotClient) =
     Uri.create [API_BASE_URL; "guilds"; req.GuildId; "emojis"]
@@ -607,9 +609,51 @@ let deleteApplicationEmoji (req: DeleteApplicationEmojiRequest) (client: IBotCli
     |> client.SendAsync
     |> Task.bind DiscordResponse.unit
 
-// ----- Resources: Emoji -----
-
 // ----- Resources: Entitlement -----
+
+// https://discord.com/developers/docs/resources/entitlement#list-entitlements
+let listEntitlements (req: ListEntitlementsRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "entitlements"]
+    |> Uri.withOptionalQuery "user_id" req.UserId
+    |> Uri.withOptionalQuery "sku_ids" (Option.map (String.concat ",") req.SkuIds)
+    |> Uri.withOptionalQuery "before" req.Before
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.withOptionalQuery "guild_id" req.GuildId
+    |> Uri.withOptionalQuery "exclude_ended" (Option.map string req.ExcludeEnded)
+    |> Uri.withOptionalQuery "exclude_deleted" (Option.map string req.ExcludeDeleted)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Entitlement.decoder))
+
+// https://discord.com/developers/docs/resources/entitlement#get-entitlement
+let getEntitlement (req: GetEntitlementRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "entitlements"; req.EntitlementId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Entitlement.decoder)
+
+// https://discord.com/developers/docs/resources/entitlement#consume-an-entitlement
+let consumeEntitlement (req: ConsumeEntitlementRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "entitlements"; req.EntitlementId; "consume"]
+    |> Uri.toRequest HttpMethod.Post
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/entitlement#create-test-entitlement
+let createTestEntitlement (req: CreateTestEntitlementRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "entitlements"; "test"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Entitlement.decoder)
+
+// https://discord.com/developers/docs/resources/entitlement#delete-test-entitlement
+let deleteTestEntitlement (req: DeleteTestEntitlementRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "entitlements"; "test"]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
 
 // ----- Resources: Guild -----
 
@@ -622,6 +666,16 @@ let deleteApplicationEmoji (req: DeleteApplicationEmojiRequest) (client: IBotCli
 // ----- Resources: Lobby -----
 
 // ----- Resources: Message -----
+
+// https://discord.com/developers/docs/resources/message#create-message
+let createMessage (req: CreateMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
+// TODO: All other message endpoints (only implemented this one because it is particularly important)
 
 // ----- Resources: Poll -----
 

@@ -463,6 +463,37 @@ type DeleteApplicationEmojiRequest(applicationId, emojiId) =
 
 // ----- Resources: Entitlement -----
 
+type ListEntitlementsRequest(
+    applicationId, ?userId, ?skuIds, ?before, ?after, ?limit, ?guildId, ?excludeEndedm, ?excludeDeleted
+) =
+    member val ApplicationId: string = applicationId
+
+    member val UserId: string option = userId
+    member val SkuIds: string list option = skuIds
+    member val Before: string option = before
+    member val After: string option = after
+    member val Limit: int option = limit
+    member val GuildId: string option = guildId
+    member val ExcludeEnded: bool option = excludeEndedm
+    member val ExcludeDeleted: bool option = excludeDeleted
+
+type GetEntitlementRequest(applicationId, entitlementId) =
+    member val ApplicationId: string = applicationId
+    member val EntitlementId: string = entitlementId
+
+type ConsumeEntitlementRequest(applicationId, entitlementId) =
+    member val ApplicationId: string = applicationId
+    member val EntitlementId: string = entitlementId
+
+type CreateTestEntitlementRequest(applicationId, payload) =
+    member val ApplicationId: string = applicationId
+
+    member val Payload: CreateTestEntitlementPayload = payload
+
+type DeleteTestEntitlementRequest(applicationId, entitlementId) =
+    member val ApplicationId: string = applicationId
+    member val EntitlementId: string = entitlementId
+
 // ----- Resources: Guild -----
 
 // ----- Resources: Guild Scheduled Event -----
@@ -474,6 +505,11 @@ type DeleteApplicationEmojiRequest(applicationId, emojiId) =
 // ----- Resources: Lobby -----
 
 // ----- Resources: Message -----
+
+type CreateMessageRequest(channelId, payload) =
+    member val ChannelId: string = channelId
+
+    member val Payload: CreateMessagePayload = payload
 
 // ----- Resources: Poll -----
 

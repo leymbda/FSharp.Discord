@@ -795,6 +795,26 @@ type ModifyApplicationEmojiPayload(?name) =
             
 // ----- Resources: Entitlement -----
 
+type EntitlementOwnerType =
+    | GUILD_SUBSCRIPTION = 1
+    | USER_SUBSCRIPTION  = 2
+
+type CreateTestEntitlementPayload(skuId, ownerId, ownerType) =
+    member val SkuId: string = skuId
+    member val OwnerId: string = ownerId
+    member val OwnerType: EntitlementOwnerType = ownerType
+
+    static member Encoder(v: CreateTestEntitlementPayload) =
+        Encode.object ([]
+            |> Encode.required "sku_id" Encode.string v.SkuId
+            |> Encode.required "owner_id" Encode.string v.OwnerId
+            |> Encode.required "owner_type" Encode.Enum.int v.OwnerType
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateTestEntitlementPayload.Encoder this
+
 // ----- Resources: Guild -----
 
 // ----- Resources: Guild Scheduled Event -----
@@ -806,6 +826,44 @@ type ModifyApplicationEmojiPayload(?name) =
 // ----- Resources: Lobby -----
 
 // ----- Resources: Message -----
+
+type CreateMessagePayload(
+    ?content, ?nonce, ?tts, ?embeds, ?allowedMentions, ?messageReference, ?components, ?stickerIds, ?attachments,
+    ?flags, ?enforceNonce, ?poll, ?files
+) =
+    member val Content: string option = content
+    member val Nonce: MessageNonce option = nonce
+    member val Tts: bool option = tts
+    member val Embeds: Embed list option = embeds
+    member val AllowedMentions: AllowedMentions option = allowedMentions
+    member val MessageReference: MessageReference option = messageReference
+    member val Components: Component list option = components
+    member val StickerIds: string list option = stickerIds
+    member val Attachments: PartialAttachment list option = attachments
+    member val Flags: MessageFlag list option = flags
+    member val EnforceNonce: bool option = enforceNonce
+    member val Poll: Poll option = poll
+    member val Files: Media list = defaultArg files []
+
+    static member Encoder(v: CreateMessagePayload) =
+        Encode.object ([]
+            |> Encode.optional "content" Encode.string v.Content
+            |> Encode.optional "nonce" MessageNonce.encoder v.Nonce
+            |> Encode.optional "tts" Encode.bool v.Tts
+            |> Encode.optional "embeds" (List.map Embed.encoder >> Encode.list) v.Embeds
+            |> Encode.optional "allowed_mentions" AllowedMentions.encoder v.AllowedMentions
+            |> Encode.optional "message_reference" MessageReference.encoder v.MessageReference
+            |> Encode.optional "components" (List.map Component.encoder >> Encode.list) v.Components
+            |> Encode.optional "sticker_ids" (List.map Encode.string >> Encode.list) v.StickerIds
+            |> Encode.optional "attachments" (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
+            |> Encode.optional "flags" Encode.bitfield v.Flags
+            |> Encode.optional "enforce_nonce" Encode.bool v.EnforceNonce
+            |> Encode.optional "poll" Poll.encoder v.Poll
+        )
+    
+    interface IPayload with
+        member this.ToHttpContent() =
+            HttpContent.createJsonWithFiles CreateMessagePayload.Encoder this this.Files
 
 // ----- Resources: Poll -----
 
