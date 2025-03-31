@@ -13,7 +13,6 @@
     <Compile Include="Modules\SubCommand.fs" />
     <Compile Include="Modules\SubCommandGroup.fs" />
     <Compile Include="Modules\Command.fs" />
-    <Compile Include="Patterns\InteractionPattern.fs" />
     <Compile Include="Options.fs" />
     <Compile Include="Expressions.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />

@@ -359,7 +359,7 @@ type OptionsTests () =
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.User_FindsCorrectUser () =
+    member _.UserId_FindsCorrectUser () =
         // Arrange
         let name = "user"
         let value = "userId"
@@ -377,14 +377,14 @@ type OptionsTests () =
         // Act
         let userId =
             match options with
-            | Options.User name userId -> userId
+            | Options.UserId name userId -> userId
             | _ -> failwith "Could not find user"
 
         // Assert
         Assert.AreEqual<string>(value, userId)
 
     [<TestMethod>]
-    member _.User_ReturnsNoneIfOptionIncorrectType () =
+    member _.UserId_ReturnsNoneIfOptionIncorrectType () =
         // Arrange
         let name = "user"
 
@@ -401,14 +401,14 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.User name _ -> failwith "Unexpectedly found non-existent user"
+            | Options.UserId name _ -> failwith "Unexpectedly found non-existent user"
             | _ -> ()
 
         // Assert
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.User_ReturnsNoneIfOptionNonExistent () =
+    member _.UserId_ReturnsNoneIfOptionNonExistent () =
         // Arrange
         let name = "user"
 
@@ -417,14 +417,14 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.User name _ -> failwith "Unexpectedly found non-existent user"
+            | Options.UserId name _ -> failwith "Unexpectedly found non-existent user"
             | _ -> ()
 
         // Assert
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.Channel_FindsCorrectChannel () =
+    member _.ChannelId_FindsCorrectChannel () =
         // Arrange
         let name = "channel"
         let value = "channelId"
@@ -442,14 +442,14 @@ type OptionsTests () =
         // Act
         let channelId =
             match options with
-            | Options.Channel name channelId -> channelId
+            | Options.ChannelId name channelId -> channelId
             | _ -> failwith "Could not find channel"
 
         // Assert
         Assert.AreEqual<string>(value, channelId)
 
     [<TestMethod>]
-    member _.Channel_ReturnsNoneIfOptionIncorrectType () =
+    member _.ChannelId_ReturnsNoneIfOptionIncorrectType () =
         // Arrange
         let name = "channel"
 
@@ -466,14 +466,14 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Channel "channel" _ -> failwith "Unexpectedly found non-existent channel"
+            | Options.ChannelId "channel" _ -> failwith "Unexpectedly found non-existent channel"
             | _ -> ()
 
         // Assert
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.Channel_ReturnsNoneIfOptionNonExistent () =
+    member _.ChannelId_ReturnsNoneIfOptionNonExistent () =
         // Arrange
         let name = "channel"
 
@@ -482,14 +482,14 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Channel name _ -> failwith "Unexpectedly found non-existent channel"
+            | Options.ChannelId name _ -> failwith "Unexpectedly found non-existent channel"
             | _ -> ()
 
         // Assert
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.Role_FindsCorrectRole () =
+    member _.RoleId_FindsCorrectRole () =
         // Arrange
         let name = "role"
         let value = "roleId"
@@ -507,14 +507,14 @@ type OptionsTests () =
         // Act
         let roleId =
             match options with
-            | Options.Role name roleId -> roleId
+            | Options.RoleId name roleId -> roleId
             | _ -> failwith "Could not find role"
 
         // Assert
         Assert.AreEqual<string>(value, roleId)
 
     [<TestMethod>]
-    member _.Role_ReturnsNoneIfOptionIncorrectType () =
+    member _.RoleId_ReturnsNoneIfOptionIncorrectType () =
         // Arrange
         let name = "role"
 
@@ -531,14 +531,14 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Role name _ -> failwith "Unexpectedly found non-existent role"
+            | Options.RoleId name _ -> failwith "Unexpectedly found non-existent role"
             | _ -> ()
 
         // Assert
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.Role_ReturnsNoneIfOptionNonExistent () =
+    member _.RoleId_ReturnsNoneIfOptionNonExistent () =
         // Arrange
         let name = "role"
 
@@ -547,14 +547,14 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Role name _ -> failwith "Unexpectedly found non-existent role"
+            | Options.RoleId name _ -> failwith "Unexpectedly found non-existent role"
             | _ -> ()
 
         // Assert
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.Mentionable_FindsCorrectMentionable () =
+    member _.MentionableId_FindsCorrectMentionable () =
         // Arrange
         let name = "mentionable"
         let value = "mentionableId"
@@ -572,14 +572,14 @@ type OptionsTests () =
         // Act
         let mentionableId =
             match options with
-            | Options.Mentionable name mentionableId -> mentionableId
+            | Options.MentionableId name mentionableId -> mentionableId
             | _ -> failwith "Could not find mentionable"
 
         // Assert
         Assert.AreEqual<string>(value, mentionableId)
 
     [<TestMethod>]
-    member _.Mentionable_ReturnsNoneIfOptionIncorrectType () =
+    member _.MentionableId_ReturnsNoneIfOptionIncorrectType () =
         // Arrange
         let name = "mentionable"
 
@@ -596,14 +596,14 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Mentionable name _ -> failwith "Unexpectedly found non-existent mentionable"
+            | Options.MentionableId name _ -> failwith "Unexpectedly found non-existent mentionable"
             | _ -> ()
 
         // Assert
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.Mentionable_ReturnsNoneIfOptionNonExistent () =
+    member _.MentionableId_ReturnsNoneIfOptionNonExistent () =
         // Arrange
         let name = "mentionable"
 
@@ -612,7 +612,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Mentionable name _ -> failwith "Unexpectedly found non-existent mentionable"
+            | Options.MentionableId name _ -> failwith "Unexpectedly found non-existent mentionable"
             | _ -> ()
 
         // Assert
@@ -684,7 +684,7 @@ type OptionsTests () =
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.Attachment_FindsCorrectAttachment () =
+    member _.AttachmentId_FindsCorrectAttachment () =
         // Arrange
         let name = "attachment"
         let value = "attachmentId"
@@ -702,14 +702,14 @@ type OptionsTests () =
         // Act
         let attachmentId =
             match options with
-            | Options.Attachment name attachmentId -> attachmentId
+            | Options.AttachmentId name attachmentId -> attachmentId
             | _ -> failwith "Could not find attachment"
 
         // Assert
         Assert.AreEqual<string>(value, attachmentId)
 
     [<TestMethod>]
-    member _.Attachment_ReturnsNoneIfOptionIncorrectType () =
+    member _.AttachmentId_ReturnsNoneIfOptionIncorrectType () =
         // Arrange
         let name = "attachment"
 
@@ -726,14 +726,14 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Attachment name _ -> failwith "Unexpectedly found non-existent attachment"
+            | Options.AttachmentId name _ -> failwith "Unexpectedly found non-existent attachment"
             | _ -> ()
 
         // Assert
         Assert.IsNull(res)
 
     [<TestMethod>]
-    member _.Attachment_ReturnsNoneIfOptionNonExistent () =
+    member _.AttachmentId_ReturnsNoneIfOptionNonExistent () =
         // Arrange
         let name = "attachment"
 
@@ -742,7 +742,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Attachment name _ -> failwith "Unexpectedly found non-existent attachment"
+            | Options.AttachmentId name _ -> failwith "Unexpectedly found non-existent attachment"
             | _ -> ()
 
         // Assert
@@ -778,7 +778,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Role "role1" roleId1 & Options.Role "role2" roleId2 & Options.Channel "channel" channelId ->
+            | Options.RoleId "role1" roleId1 & Options.RoleId "role2" roleId2 & Options.ChannelId "channel" channelId ->
                 {|
                     roleId1 = roleId1;
                     roleId2 = roleId2;
@@ -814,7 +814,7 @@ type OptionsTests () =
         // Act
         let res () =
             match options with
-            | Options.Role "role1" _ & Options.Role "role2" _ & Options.Channel "channel" _ -> ()
+            | Options.RoleId "role1" _ & Options.RoleId "role2" _ & Options.ChannelId "channel" _ -> ()
             | _ -> failwith "Could not find all options"
 
         // Assert
