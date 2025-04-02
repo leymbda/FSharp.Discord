@@ -41,6 +41,18 @@ let (|StringOpt|_|) name (options: ApplicationCommandInteractionDataOption list)
     | String name v -> Some (Some v)
     | _ -> Some None
 
+let (|AutocompletingString|_|) name (options: ApplicationCommandInteractionDataOption list) =
+    options
+    |> List.tryFind (_.Name >> (=) name)
+    |> Option.bind (function
+        | ({
+            Type = ApplicationCommandOptionType.STRING
+            Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
+            Focused = Some true
+        }) -> Some value
+        | _ -> None
+    )
+
 let (|Integer|_|) name (options: ApplicationCommandInteractionDataOption list) =
     options
     |> List.tryFind (_.Name >> (=) name)
@@ -56,6 +68,18 @@ let (|IntegerOpt|_|) name (options: ApplicationCommandInteractionDataOption list
     match options with
     | Integer name v -> Some (Some v)
     | _ -> Some None
+
+let (|AutocompletingInteger|_|) name (options: ApplicationCommandInteractionDataOption list) =
+    options
+    |> List.tryFind (_.Name >> (=) name)
+    |> Option.bind (function
+        | ({
+            Type = ApplicationCommandOptionType.INTEGER
+            Value = Some (ApplicationCommandInteractionDataOptionValue.INT value)
+            Focused = Some true
+        }) -> Some value
+        | _ -> None
+    )
 
 let (|Boolean|_|) name (options: ApplicationCommandInteractionDataOption list) =
     options
@@ -204,6 +228,18 @@ let (|NumberOpt|_|) name (options: ApplicationCommandInteractionDataOption list)
     | Number name v -> Some (Some v)
     | _ -> Some None
 
+let (|AutocompletingNumber|_|) name (options: ApplicationCommandInteractionDataOption list) =
+    options
+    |> List.tryFind (_.Name >> (=) name)
+    |> Option.bind (function
+        | ({
+            Type = ApplicationCommandOptionType.NUMBER
+            Value = Some (ApplicationCommandInteractionDataOptionValue.DOUBLE value)
+            Focused = Some true
+        }) -> Some value
+        | _ -> None
+    )
+
 let (|AttachmentId|_|) name (options: ApplicationCommandInteractionDataOption list) =
     options
     |> List.tryFind (_.Name >> (=) name)
@@ -229,5 +265,3 @@ let (|AttachmentOpt|_|) name (resolved: ResolvedData) (options: ApplicationComma
     match options with
     | Attachment name resolved v -> Some (Some v)
     | _ -> Some None
-
-// TODO: How to handle autocomplete? Occurs when `Focused = true` in the option
