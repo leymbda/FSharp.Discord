@@ -8,6 +8,21 @@ open Thoth.Json.Net
 // rather than recursive functions. This warning may be suppressed by using '#nowarn "40"' or '--nowarn:40'.
 #nowarn "40"
 
+module InteractionAuthor =
+    let decoder: Decoder<InteractionAuthor> =
+        Decode.oneOf [
+            Decode.map InteractionAuthor.User (Decode.field Interaction.Property.User User.decoder)
+            Decode.map InteractionAuthor.GuildMember (Decode.field Interaction.Property.Member GuildMember.decoder)
+        ]
+
+    let encodeProperties (v: InteractionAuthor) =
+        match v with
+        | InteractionAuthor.User u -> [] |> Encode.optional Interaction.Property.User User.encoder (Some u)
+        | InteractionAuthor.GuildMember g -> [] |> Encode.optional Interaction.Property.Member GuildMember.encoder (Some g)
+        
+    let encoder (v: InteractionAuthor) =
+        Encode.object (encodeProperties v)
+
 module Interaction =
     module Property =
         let [<Literal>] Id = "id"
@@ -40,8 +55,7 @@ module Interaction =
             GuildId = get |> Get.optional Property.GuildId Decode.string
             Channel = get |> Get.optional Property.Channel Channel.Partial.decoder
             ChannelId = get |> Get.optional Property.ChannelId Decode.string
-            Member = get |> Get.optional Property.Member GuildMember.decoder
-            User = get |> Get.optional Property.User User.decoder
+            Author = get |> Get.extract InteractionAuthor.decoder
             Token = get |> Get.required Property.Token Decode.string
             Version = get |> Get.required Property.Version Decode.int
             Message = get |> Get.optional Property.Message Message.decoder
@@ -63,8 +77,7 @@ module Interaction =
             |> Encode.optional Property.GuildId Encode.string v.GuildId
             |> Encode.optional Property.Channel Channel.Partial.encoder v.Channel
             |> Encode.optional Property.ChannelId Encode.string v.ChannelId
-            |> Encode.optional Property.Member GuildMember.encoder v.Member
-            |> Encode.optional Property.User User.encoder v.User
+            |> List.append (InteractionAuthor.encodeProperties v.Author)
             |> Encode.required Property.Token Encode.string v.Token
             |> Encode.required Property.Version Encode.int v.Version
             |> Encode.optional Property.Message Message.encoder v.Message

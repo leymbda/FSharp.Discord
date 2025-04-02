@@ -4,6 +4,10 @@ open System
 
 // ----- Interactions: Receiving and Responding -----
 
+type InteractionAuthor =
+    | User of User
+    | GuildMember of GuildMember
+
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-structure
 type Interaction = {
     Id: string
@@ -14,8 +18,7 @@ type Interaction = {
     GuildId: string option
     Channel: PartialChannel option
     ChannelId: string option
-    Member: GuildMember option
-    User: User option
+    Author: InteractionAuthor
     Token: string
     Version: int
     Message: Message option

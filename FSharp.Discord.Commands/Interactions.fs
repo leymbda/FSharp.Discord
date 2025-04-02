@@ -35,6 +35,3 @@ let (|ModalSubmit|_|) (comparer: string -> bool) (interaction: Interaction) =
         if comparer data.CustomId then Some data
         else None
     | _ -> None
-
-// TODO: Change interaction to have author property of either guild member or used for the different contexts since one has to exist
-// TODO: Add extra patterns here as necessary
