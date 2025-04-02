@@ -14,6 +14,7 @@
     <Compile Include="Modules\SubCommandGroup.fs" />
     <Compile Include="Modules\Command.fs" />
     <Compile Include="Options.fs" />
+    <Compile Include="Interactions.fs" />
     <Compile Include="Expressions.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
