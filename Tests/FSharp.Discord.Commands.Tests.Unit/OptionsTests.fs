@@ -33,7 +33,7 @@ type OptionsTests () =
         // Act
         let subcommandOptions =
             match options with
-            | Options.SubCommand name options -> options
+            | SubCommand name options -> options
             | _ -> failwith "Could not find subcommand"
 
         // Assert
@@ -57,7 +57,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.SubCommand name _ -> failwith "Unexpectedly found non-existent subcommand"
+            | SubCommand name _ -> failwith "Unexpectedly found non-existent subcommand"
             | _ -> ()
 
         // Assert
@@ -73,7 +73,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.SubCommand name _ -> failwith "Unexpectedly found non-existent subcommand"
+            | SubCommand name _ -> failwith "Unexpectedly found non-existent subcommand"
             | _ -> ()
 
         // Assert
@@ -117,7 +117,7 @@ type OptionsTests () =
         // Act
         let subcommandGroupOptions =
             match options with
-            | Options.SubCommandGroup name options -> options
+            | SubCommandGroup name options -> options
             | _ -> failwith "Could not find subcommand group"
 
         // Assert
@@ -141,7 +141,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.SubCommandGroup name _ -> failwith "Unexpectedly found non-existent subcommand group"
+            | SubCommandGroup name _ -> failwith "Unexpectedly found non-existent subcommand group"
             | _ -> ()
 
         // Assert
@@ -157,7 +157,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.SubCommand name _ -> failwith "Unexpectedly found non-existent subcommand group"
+            | SubCommand name _ -> failwith "Unexpectedly found non-existent subcommand group"
             | _ -> ()
 
         // Assert
@@ -182,7 +182,7 @@ type OptionsTests () =
         // Act
         let string =
             match options with
-            | Options.String name string -> string
+            | String.Required name string -> string
             | _ -> failwith "Could not find string"
 
         // Assert
@@ -206,7 +206,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.String name _ -> failwith "Unexpectedly found non-existent string"
+            | String.Required name _ -> failwith "Unexpectedly found non-existent string"
             | _ -> ()
 
         // Assert
@@ -222,7 +222,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.String name _ -> failwith "Unexpectedly found non-existent string"
+            | String.Required name _ -> failwith "Unexpectedly found non-existent string"
             | _ -> ()
 
         // Assert
@@ -247,7 +247,7 @@ type OptionsTests () =
         // Act
         let integer =
             match options with
-            | Options.Integer name integer -> integer
+            | Integer.Required name integer -> integer
             | _ -> failwith "Could not find integer"
 
         // Assert
@@ -271,7 +271,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Integer name _ -> failwith "Unexpectedly found non-existent integer"
+            | Integer.Required name _ -> failwith "Unexpectedly found non-existent integer"
             | _ -> ()
 
         // Assert
@@ -287,7 +287,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Integer name _ -> failwith "Unexpectedly found non-existent integer"
+            | Integer.Required name _ -> failwith "Unexpectedly found non-existent integer"
             | _ -> ()
 
         // Assert
@@ -312,7 +312,7 @@ type OptionsTests () =
         // Act
         let boolean =
             match options with
-            | Options.Boolean name boolean -> boolean
+            | Boolean.Required name boolean -> boolean
             | _ -> failwith "Could not find boolean"
 
         // Assert
@@ -336,7 +336,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Boolean name _ -> failwith "Unexpectedly found non-existent boolean"
+            | Boolean.Required name _ -> failwith "Unexpectedly found non-existent boolean"
             | _ -> ()
 
         // Assert
@@ -352,7 +352,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Boolean name _ -> failwith "Unexpectedly found non-existent boolean"
+            | Boolean.Required name _ -> failwith "Unexpectedly found non-existent boolean"
             | _ -> ()
 
         // Assert
@@ -377,7 +377,7 @@ type OptionsTests () =
         // Act
         let userId =
             match options with
-            | Options.UserId name userId -> userId
+            | UserId.Required name userId -> userId
             | _ -> failwith "Could not find user"
 
         // Assert
@@ -401,7 +401,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.UserId name _ -> failwith "Unexpectedly found non-existent user"
+            | UserId.Required name _ -> failwith "Unexpectedly found non-existent user"
             | _ -> ()
 
         // Assert
@@ -417,7 +417,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.UserId name _ -> failwith "Unexpectedly found non-existent user"
+            | UserId.Required name _ -> failwith "Unexpectedly found non-existent user"
             | _ -> ()
 
         // Assert
@@ -442,7 +442,7 @@ type OptionsTests () =
         // Act
         let channelId =
             match options with
-            | Options.ChannelId name channelId -> channelId
+            | ChannelId.Required name channelId -> channelId
             | _ -> failwith "Could not find channel"
 
         // Assert
@@ -466,7 +466,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.ChannelId "channel" _ -> failwith "Unexpectedly found non-existent channel"
+            | ChannelId.Required "channel" _ -> failwith "Unexpectedly found non-existent channel"
             | _ -> ()
 
         // Assert
@@ -482,7 +482,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.ChannelId name _ -> failwith "Unexpectedly found non-existent channel"
+            | ChannelId.Required name _ -> failwith "Unexpectedly found non-existent channel"
             | _ -> ()
 
         // Assert
@@ -507,7 +507,7 @@ type OptionsTests () =
         // Act
         let roleId =
             match options with
-            | Options.RoleId name roleId -> roleId
+            | RoleId.Required name roleId -> roleId
             | _ -> failwith "Could not find role"
 
         // Assert
@@ -531,7 +531,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.RoleId name _ -> failwith "Unexpectedly found non-existent role"
+            | RoleId.Required name _ -> failwith "Unexpectedly found non-existent role"
             | _ -> ()
 
         // Assert
@@ -547,7 +547,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.RoleId name _ -> failwith "Unexpectedly found non-existent role"
+            | RoleId.Required name _ -> failwith "Unexpectedly found non-existent role"
             | _ -> ()
 
         // Assert
@@ -572,7 +572,7 @@ type OptionsTests () =
         // Act
         let mentionableId =
             match options with
-            | Options.MentionableId name mentionableId -> mentionableId
+            | MentionableId.Required name mentionableId -> mentionableId
             | _ -> failwith "Could not find mentionable"
 
         // Assert
@@ -596,7 +596,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.MentionableId name _ -> failwith "Unexpectedly found non-existent mentionable"
+            | MentionableId.Required name _ -> failwith "Unexpectedly found non-existent mentionable"
             | _ -> ()
 
         // Assert
@@ -612,7 +612,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.MentionableId name _ -> failwith "Unexpectedly found non-existent mentionable"
+            | MentionableId.Required name _ -> failwith "Unexpectedly found non-existent mentionable"
             | _ -> ()
 
         // Assert
@@ -637,7 +637,7 @@ type OptionsTests () =
         // Act
         let double =
             match options with
-            | Options.Number name double -> double
+            | Number.Required name double -> double
             | _ -> failwith "Could not find number"
 
         // Assert
@@ -661,7 +661,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Number name _ -> failwith "Unexpectedly found non-existent number"
+            | Number.Required name _ -> failwith "Unexpectedly found non-existent number"
             | _ -> ()
 
         // Assert
@@ -677,7 +677,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.Number name _ -> failwith "Unexpectedly found non-existent number"
+            | Number.Required name _ -> failwith "Unexpectedly found non-existent number"
             | _ -> ()
 
         // Assert
@@ -702,7 +702,7 @@ type OptionsTests () =
         // Act
         let attachmentId =
             match options with
-            | Options.AttachmentId name attachmentId -> attachmentId
+            | AttachmentId.Required name attachmentId -> attachmentId
             | _ -> failwith "Could not find attachment"
 
         // Assert
@@ -726,7 +726,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.AttachmentId name _ -> failwith "Unexpectedly found non-existent attachment"
+            | AttachmentId.Required name _ -> failwith "Unexpectedly found non-existent attachment"
             | _ -> ()
 
         // Assert
@@ -742,7 +742,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.AttachmentId name _ -> failwith "Unexpectedly found non-existent attachment"
+            | AttachmentId.Required name _ -> failwith "Unexpectedly found non-existent attachment"
             | _ -> ()
 
         // Assert
@@ -778,7 +778,7 @@ type OptionsTests () =
         // Act
         let res =
             match options with
-            | Options.RoleId "role1" roleId1 & Options.RoleId "role2" roleId2 & Options.ChannelId "channel" channelId ->
+            | RoleId.Required "role1" roleId1 & RoleId.Required "role2" roleId2 & ChannelId.Required "channel" channelId ->
                 {|
                     roleId1 = roleId1;
                     roleId2 = roleId2;
@@ -814,7 +814,7 @@ type OptionsTests () =
         // Act
         let res () =
             match options with
-            | Options.RoleId "role1" _ & Options.RoleId "role2" _ & Options.ChannelId "channel" _ -> ()
+            | RoleId.Required "role1" _ & RoleId.Required "role2" _ & ChannelId.Required "channel" _ -> ()
             | _ -> failwith "Could not find all options"
 
         // Assert

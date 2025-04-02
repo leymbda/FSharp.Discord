@@ -38,8 +38,6 @@ type ApplicationCommandData = {
     TargetId: string option
 }
 
-// TODO: ApplicationCommandInteractionDataOption can be partial when responding to APPLICATION_COMMAND_AUTOCOMPLETE
-
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-message-component-data-structure
 type MessageComponentData = {
     CustomId: string
