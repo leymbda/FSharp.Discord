@@ -54,10 +54,10 @@ module RateLimitHeaders =
             | false, _ -> None
 
         {
-            Limit = res |> getOptionalHeader LIMIT_HEADER_KEY |> Option.map Int32.Parse
+            Limit = res |> getOptionalHeader LIMIT_HEADER_KEY |> Option.map int
             Remaining = res |> getOptionalHeader REMAINING_HEADER_KEY |> Option.map int
-            Reset = res |> getOptionalHeader RESET_HEADER_KEY |> Option.map DateTime.Parse
-            ResetAfter = res |> getOptionalHeader RESET_AFTER_HEADER_KEY |> Option.map Double.Parse
+            Reset = res |> getOptionalHeader RESET_HEADER_KEY |> Option.map (double >> int64 >> DateTimeOffset.FromUnixTimeSeconds >> _.DateTime)
+            ResetAfter = res |> getOptionalHeader RESET_AFTER_HEADER_KEY |> Option.map double
             Bucket = res |> getOptionalHeader BUCKET_HEADER_KEY
             Global = res |> getOptionalHeader GLOBAL_HEADER_KEY |> Option.map bool.Parse
             Scope = res |> getOptionalHeader SCOPE_HEADER_KEY |> Option.bind RateLimitScope.fromString
