@@ -26,7 +26,7 @@ type Interaction = {
     Locale: string option
     GuildLocale: string option
     Entitlements: Entitlement list
-    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
     Context: InteractionContextType option
 }
 
@@ -1966,7 +1966,7 @@ type ApplicationCommandInteractionMetadata = {
     Id: string
     Type: InteractionType
     User: User
-    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
     OriginalResponseMessageId: string option
     TargetUser: User option
     TargetMessageId: string option
@@ -1977,7 +1977,7 @@ type MessageComponentInteractionMetadata = {
     Id: string
     Type: InteractionType
     User: User
-    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
     OriginalResponseMessageId: string option
     InteractedMessageId: string
 }
@@ -1987,7 +1987,7 @@ type ModalSubmitInteractionMetadata = {
     Id: string
     Type: InteractionType
     User: User
-    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>
+    AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
     OriginalResponseMessageId: string option
     TriggeringInteractionMetadata: MessageInteractionMetadata // TODO: Make this not allowed to be a ModalSubmitInteractionMetadata
 }

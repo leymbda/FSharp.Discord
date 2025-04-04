@@ -63,7 +63,7 @@ module Interaction =
             Locale = get |> Get.optional Property.Locale Decode.string
             GuildLocale = get |> Get.optional Property.GuildLocale Decode.string
             Entitlements = get |> Get.required Property.Entitlements (Decode.list Entitlement.decoder)
-            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
+            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv (int >> enum<ApplicationIntegrationType> >> Some) Decode.string)
             Context = get |> Get.optional Property.Context Decode.Enum.int<InteractionContextType>
         })
 
@@ -85,7 +85,7 @@ module Interaction =
             |> Encode.optional Property.Locale Encode.string v.Locale
             |> Encode.optional Property.GuildLocale Encode.string v.GuildLocale
             |> Encode.required Property.Entitlements (List.map Entitlement.encoder >> Encode.list) v.Entitlements
-            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.AuthorizingIntegrationOwners
+            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv (int >> string) Encode.string) v.AuthorizingIntegrationOwners
             |> Encode.optional Property.Context Encode.Enum.int v.Context
         )
 
@@ -5006,7 +5006,7 @@ module ApplicationCommandInteractionMetadata =
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
             User = get |> Get.required Property.User User.decoder
-            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
+            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv (int >> enum<ApplicationIntegrationType> >> Some) Decode.string)
             OriginalResponseMessageId = get |> Get.optional Property.OriginalResponseMessageId Decode.string
             TargetUser = get |> Get.optional Property.TargetUser User.decoder
             TargetMessageId = get |> Get.optional Property.TargetMessageId Decode.string
@@ -5017,7 +5017,7 @@ module ApplicationCommandInteractionMetadata =
             |> Encode.required Property.Id Encode.string v.Id
             |> Encode.required Property.Type Encode.Enum.int v.Type
             |> Encode.required Property.User User.encoder v.User
-            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.AuthorizingIntegrationOwners
+            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv (int >> string) Encode.string) v.AuthorizingIntegrationOwners
             |> Encode.optional Property.OriginalResponseMessageId Encode.string v.OriginalResponseMessageId
             |> Encode.optional Property.TargetUser User.encoder v.TargetUser
             |> Encode.optional Property.TargetMessageId Encode.string v.TargetMessageId
@@ -5037,7 +5037,7 @@ module MessageComponentInteractionMetadata =
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
             User = get |> Get.required Property.User User.decoder
-            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
+            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv (int >> enum<ApplicationIntegrationType> >> Some) Decode.string)
             OriginalResponseMessageId = get |> Get.optional Property.OriginalResponseMessageId Decode.string
             InteractedMessageId = get |> Get.required Property.InteractedMessageId Decode.string
         })
@@ -5047,7 +5047,7 @@ module MessageComponentInteractionMetadata =
             |> Encode.required Property.Id Encode.string v.Id
             |> Encode.required Property.Type Encode.Enum.int v.Type
             |> Encode.required Property.User User.encoder v.User
-            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.AuthorizingIntegrationOwners
+            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv (int >> string) Encode.string) v.AuthorizingIntegrationOwners
             |> Encode.optional Property.OriginalResponseMessageId Encode.string v.OriginalResponseMessageId
             |> Encode.required Property.InteractedMessageId Encode.string v.InteractedMessageId
         )
@@ -5066,7 +5066,7 @@ module ModalSubmitInteractionMetadata =
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<InteractionType>
             User = get |> Get.required Property.User User.decoder
-            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv ApplicationIntegrationType.fromString ApplicationIntegrationTypeConfiguration.decoder)
+            AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv (int >> enum<ApplicationIntegrationType> >> Some) Decode.string)
             OriginalResponseMessageId = get |> Get.optional Property.OriginalResponseMessageId Decode.string
             TriggeringInteractionMetadata = get |> Get.required Property.TriggeringInteractionMetadata MessageInteractionMetadata.decoder
         })
@@ -5076,7 +5076,7 @@ module ModalSubmitInteractionMetadata =
             |> Encode.required Property.Id Encode.string v.Id
             |> Encode.required Property.Type Encode.Enum.int v.Type
             |> Encode.required Property.User User.encoder v.User
-            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv ApplicationIntegrationType.toString ApplicationIntegrationTypeConfiguration.encoder) v.AuthorizingIntegrationOwners
+            |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv (int >> string) Encode.string) v.AuthorizingIntegrationOwners
             |> Encode.optional Property.OriginalResponseMessageId Encode.string v.OriginalResponseMessageId
             |> Encode.required Property.TriggeringInteractionMetadata MessageInteractionMetadata.encoder v.TriggeringInteractionMetadata
         )
