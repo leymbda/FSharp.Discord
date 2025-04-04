@@ -16,18 +16,13 @@ module ApplicationIntegrationType =
         | "USER_INSTALL" -> Some ApplicationIntegrationType.USER_INSTALL
         | _ -> None
 
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("an application integration type", v))
-        | Some res -> Ok res
+    let decoder: Decoder<ApplicationIntegrationType> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid ApplicationIntegrationType"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -92,18 +87,13 @@ module ConnectionServiceType =
         | "youtube" -> Some ConnectionServiceType.YOUTUBE
         | _ -> None
 
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("a connection service type", v))
-        | Some res -> Ok res
+    let decoder: Decoder<ConnectionServiceType> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid ConnectionServiceType"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -130,18 +120,13 @@ module EmbedType =
         | "poll_result" -> Some EmbedType.POLL_RESULT
         | _ -> None
 
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("an embed type", v))
-        | Some res -> Ok res
+    let decoder: Decoder<EmbedType> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid EmbedType"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -162,18 +147,13 @@ module GuildIntegrationType =
         | "guild_subscription" -> Some GuildIntegrationType.GUILD_SUBSCRIPTION
         | _ -> None
 
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("a guild integration type", v))
-        | Some res -> Ok res
+    let decoder: Decoder<GuildIntegrationType> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid GuildIntegrationType"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -192,18 +172,13 @@ module SelectMenuDefaultValueType =
         | "channel" -> Some SelectMenuDefaultValueType.CHANNEL
         | _ -> None
 
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("a select menu default value type", v))
-        | Some res -> Ok res
+    let decoder: Decoder<SelectMenuDefaultValueType> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid SelectMenuDefaultValueType"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -222,17 +197,13 @@ module TeamMemberRoleType =
         | "read-only" -> Some TeamMemberRoleType.READONLY
         | _ -> None
 
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-        match res with
-        | None -> Error (path, BadPrimitive("a team member role type", v))
-        | Some res -> Ok res
+    let decoder: Decoder<TeamMemberRoleType> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid TeamMemberRoleType"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -249,18 +220,13 @@ module WebhookEventType =
         | "ENTITLEMENT_CREATE" -> Some WebhookEventType.ENTITLEMENT_CREATE
         | _ -> None
 
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("an application event webhook type", v))
-        | Some res -> Ok res
+    let decoder: Decoder<WebhookEventType> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid WebhookEventType"
+        )
 
     let encoder v =
         toString v |> Encode.string

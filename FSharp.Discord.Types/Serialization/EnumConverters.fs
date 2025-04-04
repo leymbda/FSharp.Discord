@@ -94,24 +94,19 @@ module GuildFeature =
         | String.VIP_REGIONS -> Some GuildFeature.VIP_REGIONS
         | String.WELCOME_SCREEN_ENABLED -> Some GuildFeature.WELCOME_SCREEN_ENABLED
         | str -> Some (GuildFeature.UNDOCUMENTED str)
+
+    let decoder: Decoder<GuildFeature> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid GuildFeature"
+        )
         
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("a guild feature", v))
-        | Some res -> Ok res
-
     let encoder v =
         toString v |> Encode.string
 
-    // TODO: Should undocumented be a separate DU?
+    // TODO: Should undocumented be a separate DU? Otherwise fromString/decoder can be simplified since never returns None
 
 module OAuthConsent =
     let toString (consent: OAuthConsent) =
@@ -124,20 +119,15 @@ module OAuthConsent =
         | "consent" -> Some OAuthConsent.Consent
         | "none" -> Some OAuthConsent.None
         | _ -> None
+
+    let decoder: Decoder<OAuthConsent> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid OAuthConsent"
+        )
         
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("an oauth consent", v))
-        | Some res -> Ok res
-
     let encoder v =
         toString v |> Encode.string
 
@@ -154,20 +144,15 @@ module AllowedMentionsParseType =
         | "users" -> Some AllowedMentionsParseType.USERS
         | "everyone" -> Some AllowedMentionsParseType.EVERYONE
         | _ -> None
+
+    let decoder: Decoder<AllowedMentionsParseType> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid AllowedMentionsParseType"
+        )
         
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("an allowed mention parse type", v))
-        | Some res -> Ok res
-
     let encoder v =
         toString v |> Encode.string
 
@@ -182,19 +167,14 @@ module ActivityLocationKind =
         | "gc" -> Some ActivityLocationKind.GUILD_CHANNEL
         | "pc" -> Some ActivityLocationKind.PRIVATE_CHANNEL
         | _ -> None
-        
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
 
-        match res with
-        | None -> Error (path, BadPrimitive("an activity location kind", v))
-        | Some res -> Ok res
+    let decoder: Decoder<ActivityLocationKind> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid ActivityLocationKind"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -262,19 +242,14 @@ module OAuthScope =
         | "voice" -> Some OAuthScope.VOICE
         | "webhook.incoming" -> Some OAuthScope.WEBHOOK_INCOMING
         | _ -> None
-        
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
 
-        match res with
-        | None -> Error (path, BadPrimitive("an oauth scope", v))
-        | Some res -> Ok res
+    let decoder: Decoder<OAuthScope> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid OAuthScope"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -290,19 +265,14 @@ module TokenTypeHint =
         | "access_token" -> Some TokenTypeHint.ACCESS_TOKEN
         | "refresh_token" -> Some TokenTypeHint.REFRESH_TOKEN
         | _ -> None
-        
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
 
-        match res with
-        | None -> Error (path, BadPrimitive("a token type hint", v))
-        | Some res -> Ok res
+    let decoder: Decoder<TokenTypeHint> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid TokenTypeHint"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -324,19 +294,14 @@ module GuildWidgetStyle =
         | "banner_3" -> Some GuildWidgetStyle.BANNER_3
         | "banner_4" -> Some GuildWidgetStyle.BANNER_4
         | _ -> None
-        
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
 
-        match res with
-        | None -> Error (path, BadPrimitive("a guild widget style", v))
-        | Some res -> Ok res
+    let decoder: Decoder<GuildWidgetStyle> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid GuildWidgetStyle"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -352,19 +317,14 @@ module GatewayCompression =
         | "zlib-stream" -> Some GatewayCompression.ZLIBSTREAM
         | "zstd-stream" -> Some GatewayCompression.ZSTDSTREAM
         | _ -> None
-        
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
 
-        match res with
-        | None -> Error (path, BadPrimitive("a gateway compression", v))
-        | Some res -> Ok res
+    let decoder: Decoder<GatewayCompression> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid GatewayCompression"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -380,19 +340,14 @@ module GatewayEncoding =
         | "json" -> Some GatewayEncoding.JSON
         | "etf" -> Some GatewayEncoding.ETF
         | _ -> None
-        
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
 
-        match res with
-        | None -> Error (path, BadPrimitive("a gateway encoding", v))
-        | Some res -> Ok res
+    let decoder: Decoder<GatewayEncoding> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid GatewayEncoding"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -415,18 +370,13 @@ module Status =
         | "offline" -> Some Status.OFFLINE
         | _ -> None
 
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("a status", v))
-        | Some res -> Ok res
+    let decoder: Decoder<Status> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid Status"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -445,18 +395,13 @@ module ClientDeviceStatus =
         | "dnd" -> Some ClientDeviceStatus.DND
         | _ -> None
 
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
-
-        match res with
-        | None -> Error (path, BadPrimitive("a client device status", v))
-        | Some res -> Ok res
+    let decoder: Decoder<ClientDeviceStatus> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid ClientDeviceStatus"
+        )
 
     let encoder v =
         toString v |> Encode.string
@@ -474,19 +419,14 @@ module RateLimitScope =
         | "global" -> Some RateLimitScope.GLOBAL
         | "shared" -> Some RateLimitScope.SHARED
         | _ -> None
-        
-    let decoder path v =
-        let res =
-            if Decode.Helpers.isString v then
-                match fromString (unbox<string> v) with
-                | Some value -> Some value
-                | None -> None
-            else
-                None
 
-        match res with
-        | None -> Error (path, BadPrimitive("a rate limit scope", v))
-        | Some res -> Ok res
+    let decoder: Decoder<RateLimitScope> =
+        Decode.string
+        |> Decode.andThen (fun str ->
+            match fromString str with
+            | Some value -> Decode.succeed value
+            | None -> Decode.fail $"{str} is not a valid RateLimitScope"
+        )
 
     let encoder v =
         toString v |> Encode.string
