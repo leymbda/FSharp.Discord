@@ -126,6 +126,7 @@ type GuildFeature =
     | VERIFIED
     | VIP_REGIONS
     | WELCOME_SCREEN_ENABLED
+    | UNDOCUMENTED of string
 
 // https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-authorization-url-example
 [<RequireQualifiedAccess>]

@@ -4,66 +4,96 @@ open FSharp.Discord.Types
 open Thoth.Json.Net
 
 module GuildFeature =
+    module String =
+        let [<Literal>] ANIMATED_BANNER = "ANIMATED_BANNER"
+        let [<Literal>] ANIMATED_ICON = "ANIMATED_ICON"
+        let [<Literal>] APPLICATION_COMMAND_PERMISSIONS_V2 = "APPLICATION_COMMAND_PERMISSIONS_V2"
+        let [<Literal>] AUTO_MODERATION = "AUTO_MODERATION"
+        let [<Literal>] BANNER = "BANNER"
+        let [<Literal>] COMMUNITY = "COMMUNITY"
+        let [<Literal>] CREATOR_MONETIZABLE_PROVISIONAL = "CREATOR_MONETIZABLE_PROVISIONAL"
+        let [<Literal>] CREATOR_STORE_PAGE = "CREATOR_STORE_PAGE"
+        let [<Literal>] DEVELOPER_SUPPORT_SERVER = "DEVELOPER_SUPPORT_SERVER"
+        let [<Literal>] DISCOVERABLE = "DISCOVERABLE"
+        let [<Literal>] FEATURABLE = "FEATURABLE"
+        let [<Literal>] INVITES_DISABLED = "INVITES_DISABLED"
+        let [<Literal>] INVITE_SPLASH = "INVITE_SPLASH"
+        let [<Literal>] MEMBER_VERIFICATION_GATE_ENABLED = "MEMBER_VERIFICATION_GATE_ENABLED"
+        let [<Literal>] MORE_STICKERS = "MORE_STICKERS"
+        let [<Literal>] NEWS = "NEWS"
+        let [<Literal>] PARTNERED = "PARTNERED"
+        let [<Literal>] PREVIEW_ENABLED = "PREVIEW_ENABLED"
+        let [<Literal>] RAID_ALERTS_DISABLED = "RAID_ALERTS_DISABLED"
+        let [<Literal>] ROLE_ICONS = "ROLE_ICONS"
+        let [<Literal>] ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE = "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE"
+        let [<Literal>] ROLE_SUBSCRIPTIONS_ENABLED = "ROLE_SUBSCRIPTIONS_ENABLED"
+        let [<Literal>] TICKETED_EVENTS_ENABLED = "TICKETED_EVENTS_ENABLED"
+        let [<Literal>] VANITY_URL = "VANITY_URL"
+        let [<Literal>] VERIFIED = "VERIFIED"
+        let [<Literal>] VIP_REGIONS = "VIP_REGIONS"
+        let [<Literal>] WELCOME_SCREEN_ENABLED = "WELCOME_SCREEN_ENABLED"
+
     let toString (feature: GuildFeature) =
         match feature with
-        | GuildFeature.ANIMATED_BANNER -> "ANIMATED_BANNER"
-        | GuildFeature.ANIMATED_ICON -> "ANIMATED_ICON"
-        | GuildFeature.APPLICATION_COMMAND_PERMISSIONS_V2 -> "APPLICATION_COMMAND_PERMISSIONS_V2"
-        | GuildFeature.AUTO_MODERATION -> "AUTO_MODERATION"
-        | GuildFeature.BANNER -> "BANNER"
-        | GuildFeature.COMMUNITY -> "COMMUNITY"
-        | GuildFeature.CREATOR_MONETIZABLE_PROVISIONAL -> "CREATOR_MONETIZABLE_PROVISIONAL"
-        | GuildFeature.CREATOR_STORE_PAGE -> "CREATOR_STORE_PAGE"
-        | GuildFeature.DEVELOPER_SUPPORT_SERVER -> "DEVELOPER_SUPPORT_SERVER"
-        | GuildFeature.DISCOVERABLE -> "DISCOVERABLE"
-        | GuildFeature.FEATURABLE -> "FEATURABLE"
-        | GuildFeature.INVITES_DISABLED -> "INVITES_DISABLED"
-        | GuildFeature.INVITE_SPLASH -> "INVITE_SPLASH"
-        | GuildFeature.MEMBER_VERIFICATION_GATE_ENABLED -> "MEMBER_VERIFICATION_GATE_ENABLED"
-        | GuildFeature.MORE_STICKERS -> "MORE_STICKERS"
-        | GuildFeature.NEWS -> "NEWS"
-        | GuildFeature.PARTNERED -> "PARTNERED"
-        | GuildFeature.PREVIEW_ENABLED -> "PREVIEW_ENABLED"
-        | GuildFeature.RAID_ALERTS_DISABLED -> "RAID_ALERTS_DISABLED"
-        | GuildFeature.ROLE_ICONS -> "ROLE_ICONS"
-        | GuildFeature.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE -> "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE"
-        | GuildFeature.ROLE_SUBSCRIPTIONS_ENABLED -> "ROLE_SUBSCRIPTIONS_ENABLED"
-        | GuildFeature.TICKETED_EVENTS_ENABLED -> "TICKETED_EVENTS_ENABLED"
-        | GuildFeature.VANITY_URL -> "VANITY_URL"
-        | GuildFeature.VERIFIED -> "VERIFIED"
-        | GuildFeature.VIP_REGIONS -> "VIP_REGIONS"
-        | GuildFeature.WELCOME_SCREEN_ENABLED -> "WELCOME_SCREEN_ENABLED"
+        | GuildFeature.ANIMATED_BANNER -> String.ANIMATED_BANNER
+        | GuildFeature.ANIMATED_ICON -> String.ANIMATED_ICON
+        | GuildFeature.APPLICATION_COMMAND_PERMISSIONS_V2 -> String.APPLICATION_COMMAND_PERMISSIONS_V2
+        | GuildFeature.AUTO_MODERATION -> String.AUTO_MODERATION
+        | GuildFeature.BANNER -> String.BANNER
+        | GuildFeature.COMMUNITY -> String.COMMUNITY
+        | GuildFeature.CREATOR_MONETIZABLE_PROVISIONAL -> String.CREATOR_MONETIZABLE_PROVISIONAL
+        | GuildFeature.CREATOR_STORE_PAGE -> String.CREATOR_STORE_PAGE
+        | GuildFeature.DEVELOPER_SUPPORT_SERVER -> String.DEVELOPER_SUPPORT_SERVER
+        | GuildFeature.DISCOVERABLE -> String.DISCOVERABLE
+        | GuildFeature.FEATURABLE -> String.FEATURABLE
+        | GuildFeature.INVITES_DISABLED -> String.INVITES_DISABLED
+        | GuildFeature.INVITE_SPLASH -> String.INVITE_SPLASH
+        | GuildFeature.MEMBER_VERIFICATION_GATE_ENABLED -> String.MEMBER_VERIFICATION_GATE_ENABLED
+        | GuildFeature.MORE_STICKERS -> String.MORE_STICKERS
+        | GuildFeature.NEWS -> String.NEWS
+        | GuildFeature.PARTNERED -> String.PARTNERED
+        | GuildFeature.PREVIEW_ENABLED -> String.PREVIEW_ENABLED
+        | GuildFeature.RAID_ALERTS_DISABLED -> String.RAID_ALERTS_DISABLED
+        | GuildFeature.ROLE_ICONS -> String.ROLE_ICONS
+        | GuildFeature.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE -> String.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE
+        | GuildFeature.ROLE_SUBSCRIPTIONS_ENABLED -> String.ROLE_SUBSCRIPTIONS_ENABLED
+        | GuildFeature.TICKETED_EVENTS_ENABLED -> String.TICKETED_EVENTS_ENABLED
+        | GuildFeature.VANITY_URL -> String.VANITY_URL
+        | GuildFeature.VERIFIED -> String.VERIFIED
+        | GuildFeature.VIP_REGIONS -> String.VIP_REGIONS
+        | GuildFeature.WELCOME_SCREEN_ENABLED -> String.WELCOME_SCREEN_ENABLED
+        | GuildFeature.UNDOCUMENTED str -> str
 
     let fromString (str: string) =
         match str with
-        | "ANIMATED_BANNER" -> Some GuildFeature.ANIMATED_BANNER
-        | "ANIMATED_ICON" -> Some GuildFeature.ANIMATED_ICON
-        | "APPLICATION_COMMAND_PERMISSIONS_V2" -> Some GuildFeature.APPLICATION_COMMAND_PERMISSIONS_V2
-        | "AUTO_MODERATION" -> Some GuildFeature.AUTO_MODERATION
-        | "BANNER" -> Some GuildFeature.BANNER
-        | "COMMUNITY" -> Some GuildFeature.COMMUNITY
-        | "CREATOR_MONETIZABLE_PROVISIONAL" -> Some GuildFeature.CREATOR_MONETIZABLE_PROVISIONAL
-        | "CREATOR_STORE_PAGE" -> Some GuildFeature.CREATOR_STORE_PAGE
-        | "DEVELOPER_SUPPORT_SERVER" -> Some GuildFeature.DEVELOPER_SUPPORT_SERVER
-        | "DISCOVERABLE" -> Some GuildFeature.DISCOVERABLE
-        | "FEATURABLE" -> Some GuildFeature.FEATURABLE
-        | "INVITES_DISABLED" -> Some GuildFeature.INVITES_DISABLED
-        | "INVITE_SPLASH" -> Some GuildFeature.INVITE_SPLASH
-        | "MEMBER_VERIFICATION_GATE_ENABLED" -> Some GuildFeature.MEMBER_VERIFICATION_GATE_ENABLED
-        | "MORE_STICKERS" -> Some GuildFeature.MORE_STICKERS
-        | "NEWS" -> Some GuildFeature.NEWS
-        | "PARTNERED" -> Some GuildFeature.PARTNERED
-        | "PREVIEW_ENABLED" -> Some GuildFeature.PREVIEW_ENABLED
-        | "RAID_ALERTS_DISABLED" -> Some GuildFeature.RAID_ALERTS_DISABLED
-        | "ROLE_ICONS" -> Some GuildFeature.ROLE_ICONS
-        | "ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE" -> Some GuildFeature.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE
-        | "ROLE_SUBSCRIPTIONS_ENABLED" -> Some GuildFeature.ROLE_SUBSCRIPTIONS_ENABLED
-        | "TICKETED_EVENTS_ENABLED" -> Some GuildFeature.TICKETED_EVENTS_ENABLED
-        | "VANITY_URL" -> Some GuildFeature.VANITY_URL
-        | "VERIFIED" -> Some GuildFeature.VERIFIED
-        | "VIP_REGIONS" -> Some GuildFeature.VIP_REGIONS
-        | "WELCOME_SCREEN_ENABLED" -> Some GuildFeature.WELCOME_SCREEN_ENABLED
-        | _ -> None
+        | String.ANIMATED_BANNER -> Some GuildFeature.ANIMATED_BANNER
+        | String.ANIMATED_ICON -> Some GuildFeature.ANIMATED_ICON
+        | String.APPLICATION_COMMAND_PERMISSIONS_V2 -> Some GuildFeature.APPLICATION_COMMAND_PERMISSIONS_V2
+        | String.AUTO_MODERATION -> Some GuildFeature.AUTO_MODERATION
+        | String.BANNER -> Some GuildFeature.BANNER
+        | String.COMMUNITY -> Some GuildFeature.COMMUNITY
+        | String.CREATOR_MONETIZABLE_PROVISIONAL -> Some GuildFeature.CREATOR_MONETIZABLE_PROVISIONAL
+        | String.CREATOR_STORE_PAGE -> Some GuildFeature.CREATOR_STORE_PAGE
+        | String.DEVELOPER_SUPPORT_SERVER -> Some GuildFeature.DEVELOPER_SUPPORT_SERVER
+        | String.DISCOVERABLE -> Some GuildFeature.DISCOVERABLE
+        | String.FEATURABLE -> Some GuildFeature.FEATURABLE
+        | String.INVITES_DISABLED -> Some GuildFeature.INVITES_DISABLED
+        | String.INVITE_SPLASH -> Some GuildFeature.INVITE_SPLASH
+        | String.MEMBER_VERIFICATION_GATE_ENABLED -> Some GuildFeature.MEMBER_VERIFICATION_GATE_ENABLED
+        | String.MORE_STICKERS -> Some GuildFeature.MORE_STICKERS
+        | String.NEWS -> Some GuildFeature.NEWS
+        | String.PARTNERED -> Some GuildFeature.PARTNERED
+        | String.PREVIEW_ENABLED -> Some GuildFeature.PREVIEW_ENABLED
+        | String.RAID_ALERTS_DISABLED -> Some GuildFeature.RAID_ALERTS_DISABLED
+        | String.ROLE_ICONS -> Some GuildFeature.ROLE_ICONS
+        | String.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE -> Some GuildFeature.ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE
+        | String.ROLE_SUBSCRIPTIONS_ENABLED -> Some GuildFeature.ROLE_SUBSCRIPTIONS_ENABLED
+        | String.TICKETED_EVENTS_ENABLED -> Some GuildFeature.TICKETED_EVENTS_ENABLED
+        | String.VANITY_URL -> Some GuildFeature.VANITY_URL
+        | String.VERIFIED -> Some GuildFeature.VERIFIED
+        | String.VIP_REGIONS -> Some GuildFeature.VIP_REGIONS
+        | String.WELCOME_SCREEN_ENABLED -> Some GuildFeature.WELCOME_SCREEN_ENABLED
+        | str -> Some (GuildFeature.UNDOCUMENTED str)
         
     let decoder path v =
         let res =
@@ -80,6 +110,8 @@ module GuildFeature =
 
     let encoder v =
         toString v |> Encode.string
+
+    // TODO: Should undocumented be a separate DU?
 
 module OAuthConsent =
     let toString (consent: OAuthConsent) =
