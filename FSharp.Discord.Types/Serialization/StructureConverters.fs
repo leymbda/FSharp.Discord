@@ -44,6 +44,7 @@ module Interaction =
         let [<Literal>] Entitlements = "entitlements"
         let [<Literal>] AuthorizingIntegrationOwners = "authorizing_integration_owners"
         let [<Literal>] Context = "context"
+        let [<Literal>] AttachmentSizeLimit = "attachment_size_limit"
 
     let decoder: Decoder<Interaction> =
         Decode.object (fun get -> {
@@ -65,6 +66,7 @@ module Interaction =
             Entitlements = get |> Get.required Property.Entitlements (Decode.list Entitlement.decoder)
             AuthorizingIntegrationOwners = get |> Get.required Property.AuthorizingIntegrationOwners (Decode.mapkv (int >> enum<ApplicationIntegrationType> >> Some) Decode.string)
             Context = get |> Get.optional Property.Context Decode.Enum.int<InteractionContextType>
+            AttachmentSizeLimit = get |> Get.required Property.AttachmentSizeLimit Decode.int
         })
 
     let encoder (v: Interaction) =
@@ -87,6 +89,7 @@ module Interaction =
             |> Encode.required Property.Entitlements (List.map Entitlement.encoder >> Encode.list) v.Entitlements
             |> Encode.required Property.AuthorizingIntegrationOwners (Encode.mapkv (int >> string) Encode.string) v.AuthorizingIntegrationOwners
             |> Encode.optional Property.Context Encode.Enum.int v.Context
+            |> Encode.required Property.AttachmentSizeLimit Encode.int v.AttachmentSizeLimit
         )
 
 module ApplicationCommandData =

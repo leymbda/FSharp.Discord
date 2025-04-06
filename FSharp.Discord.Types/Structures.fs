@@ -28,6 +28,7 @@ type Interaction = {
     Entitlements: Entitlement list
     AuthorizingIntegrationOwners: Map<ApplicationIntegrationType, string>
     Context: InteractionContextType option
+    AttachmentSizeLimit: int
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure

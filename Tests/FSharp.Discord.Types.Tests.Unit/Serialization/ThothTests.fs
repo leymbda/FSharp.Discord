@@ -222,6 +222,22 @@ type ThothTests () =
         Assert.AreEqual<string>(expected, actual)
 
     [<TestMethod>]
+    member _.``Decode.mapkv - Correctly deserializes to map`` () =
+        // Arrange
+        let id = "1234567890"
+        let data = $"""{{"0": "{id}"}}"""
+
+        // Act
+        let res = Decode.fromString (Decode.mapkv (int >> enum<ApplicationIntegrationType> >> Some) Decode.string) data
+
+        // Assert
+        match res with
+        | Error err -> Assert.Fail err
+        | Ok actual ->
+            Assert.IsTrue(actual.ContainsKey ApplicationIntegrationType.GUILD_INSTALL)
+            Assert.AreEqual<string>(id, actual |> Map.find ApplicationIntegrationType.GUILD_INSTALL)
+
+    [<TestMethod>]
     member _.``Get.extract - Extracts child records from single parent json payload`` () =
         // Arrange
         let data = """{ "A": true, "B": true }"""
