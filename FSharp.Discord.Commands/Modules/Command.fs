@@ -1,5 +1,6 @@
 ﻿namespace FSharp.Discord.Commands
 
+open FSharp.Core.LanguagePrimitives
 open FSharp.Discord.Rest
 open FSharp.Discord.Types
 
@@ -70,13 +71,16 @@ module ChatInputCommand =
     let addOption option (v: ChatInputCommand) =
         let options =
             match v.Options with
-            | ChatInputCommandOptions.Nesting options -> [option]
+            | ChatInputCommandOptions.Nesting _ -> [option]
             | ChatInputCommandOptions.SubCommand options -> options @ [option]
 
         { v with Options = ChatInputCommandOptions.SubCommand options }
 
     let setDefaultMemberPermissions permissions (v: ChatInputCommand) =
         { v with DefaultMemberPermissions = Some permissions }
+
+    let setAdministratorOnly (v: ChatInputCommand) =
+        { v with DefaultMemberPermissions = Some [EnumOfValue<int64, Permission> 0L] }
 
     let setNsfw nsfw (v: ChatInputCommand) =
         { v with Nsfw = nsfw }
@@ -95,8 +99,8 @@ module ChatInputCommand =
     let setContexts contexts (v: ChatInputCommand) =
         let ctx =
             match v.Context with
-            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = contexts }
-            | CommandContext.Global ctx -> { ctx with Contexts = contexts }
+            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = Some contexts }
+            | CommandContext.Global ctx -> { ctx with Contexts = Some contexts }
 
         { v with Context = CommandContext.Global ctx }
 
@@ -127,7 +131,17 @@ module ChatInputCommand =
             CommandPayload.Guild(guildId, new CreateGuildApplicationCommandPayload(
                 name = command.Name,
                 description = command.Description,
-                // TODO: options,
+                options = (
+                    match command.Options with
+                    | ChatInputCommandOptions.Nesting options ->
+                        options |> List.map (function
+                            | NestedChatInputCommandOption.SubCommand o -> SubCommand.toCommandOption o
+                            | NestedChatInputCommandOption.SubCommandGroup o -> SubCommandGroup.toCommandOption o
+                        )
+
+                    | ChatInputCommandOptions.SubCommand options ->
+                        options |> List.map SubCommandOption.toCommandOption
+                ),   
                 defaultMemberPermissions = command.DefaultMemberPermissions,
                 type' = ApplicationCommandType.CHAT_INPUT,
                 nsfw = command.Nsfw));
@@ -155,6 +169,9 @@ module UserCommand =
 
     let setDefaultMemberPermissions permissions (v: UserCommand) =
         { v with DefaultMemberPermissions = Some permissions }
+        
+    let setAdministratorOnly (v: UserCommand) =
+        { v with DefaultMemberPermissions = Some [EnumOfValue<int64, Permission> 0L] }
 
     let setNsfw nsfw (v: UserCommand) =
         { v with Nsfw = nsfw }
@@ -173,8 +190,8 @@ module UserCommand =
     let setContexts contexts (v: UserCommand) =
         let ctx =
             match v.Context with
-            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = contexts }
-            | CommandContext.Global ctx -> { ctx with Contexts = contexts }
+            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = Some contexts }
+            | CommandContext.Global ctx -> { ctx with Contexts = Some contexts }
 
         { v with Context = CommandContext.Global ctx }
 
@@ -221,6 +238,9 @@ module MessageCommand =
 
     let setDefaultMemberPermissions permissions (v: MessageCommand) =
         { v with DefaultMemberPermissions = Some permissions }
+        
+    let setAdministratorOnly (v: MessageCommand) =
+        { v with DefaultMemberPermissions = Some [EnumOfValue<int64, Permission> 0L] }
 
     let setNsfw nsfw (v: MessageCommand) =
         { v with Nsfw = nsfw }
@@ -239,8 +259,8 @@ module MessageCommand =
     let setContexts contexts (v: MessageCommand) =
         let ctx =
             match v.Context with
-            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = contexts }
-            | CommandContext.Global ctx -> { ctx with Contexts = contexts }
+            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = Some contexts }
+            | CommandContext.Global ctx -> { ctx with Contexts = Some contexts }
 
         { v with Context = CommandContext.Global ctx }
 
@@ -289,6 +309,9 @@ module EntryPointCommand =
 
     let setDefaultMemberPermissions permissions (v: EntryPointCommand) =
         { v with DefaultMemberPermissions = Some permissions }
+        
+    let setAdministratorOnly (v: EntryPointCommand) =
+        { v with DefaultMemberPermissions = Some [EnumOfValue<int64, Permission> 0L] }
 
     let setNsfw nsfw (v: EntryPointCommand) =
         { v with Nsfw = nsfw }
@@ -307,8 +330,8 @@ module EntryPointCommand =
     let setContexts contexts (v: EntryPointCommand) =
         let ctx =
             match v.Context with
-            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = contexts }
-            | CommandContext.Global ctx -> { ctx with Contexts = contexts }
+            | CommandContext.Guild _ -> { IntegrationTypes = None; Contexts = Some contexts }
+            | CommandContext.Global ctx -> { ctx with Contexts = Some contexts }
 
         { v with Context = CommandContext.Global ctx }
 
