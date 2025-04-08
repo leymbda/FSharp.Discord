@@ -104,7 +104,7 @@ type CreateGlobalApplicationCommandPayload(
     member val Description: string option = description
     member val DescriptionLocalizations: Map<string, string> option option = descriptionLocalizations
     member val Options: ApplicationCommandOption list option = options
-    member val DefaultMemberPermissions: string option option = defaultMemberPermissions
+    member val DefaultMemberPermissions: Permission list option option = defaultMemberPermissions
     member val IntegrationTypes: ApplicationIntegrationType list option = integrationTypes
     member val Contexts: InteractionContextType list option = contexts
     member val Type: ApplicationCommandType option = type'
@@ -117,7 +117,7 @@ type CreateGlobalApplicationCommandPayload(
             |> Encode.optional "description" Encode.string v.Description
             |> Encode.optinull "description_localizations" (Encode.mapv Encode.string) v.DescriptionLocalizations
             |> Encode.optional "options" (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
-            |> Encode.optinull "default_member_permissions" Encode.string v.DefaultMemberPermissions
+            |> Encode.optinull "default_member_permissions" Encode.bitfieldL v.DefaultMemberPermissions
             |> Encode.optional "integration_types" (List.map Encode.Enum.int<ApplicationIntegrationType> >> Encode.list) v.IntegrationTypes
             |> Encode.optional "contexts" (List.map Encode.Enum.int<InteractionContextType> >> Encode.list) v.Contexts
             |> Encode.optional "type" Encode.Enum.int<ApplicationCommandType> v.Type
@@ -137,7 +137,7 @@ type EditGlobalApplicationCommandPayload(
     member val Description: string option = description
     member val DescriptionLocalizations: Map<string, string> option option = descriptionLocalizations
     member val Options: ApplicationCommandOption list option = options
-    member val DefaultMemberPermissions: bool option option = defaultMemberPermissions
+    member val DefaultMemberPermissions: Permission list option option = defaultMemberPermissions
     member val IntegrationTypes: ApplicationIntegrationType list option = integrationTypes
     member val Contexts: InteractionContextType list option = contexts
     member val Nsfw: bool option = nsfw
@@ -149,7 +149,7 @@ type EditGlobalApplicationCommandPayload(
             |> Encode.optional "description" Encode.string v.Description
             |> Encode.optinull "description_localizations" (Encode.mapv Encode.string) v.DescriptionLocalizations
             |> Encode.optional "options" (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
-            |> Encode.optinull "default_member_permissions" Encode.bool v.DefaultMemberPermissions
+            |> Encode.optinull "default_member_permissions" Encode.bitfieldL v.DefaultMemberPermissions
             |> Encode.optional "integration_types" (List.map Encode.Enum.int<ApplicationIntegrationType> >> Encode.list) v.IntegrationTypes
             |> Encode.optional "contexts" (List.map Encode.Enum.int<InteractionContextType> >> Encode.list) v.Contexts
             |> Encode.optional "nsfw" Encode.bool v.Nsfw
@@ -180,7 +180,7 @@ type CreateGuildApplicationCommandPayload(
     member val Description: string option = description
     member val DescriptionLocalizations: Map<string, string> option option = descriptionLocalizations
     member val Options: ApplicationCommandOption list option = options
-    member val DefaultMemberPermissions: string option option = defaultMemberPermissions
+    member val DefaultMemberPermissions: Permission list option option = defaultMemberPermissions
     member val Type: ApplicationCommandType option = type'
     member val Nsfw: bool option = nsfw
     
@@ -191,7 +191,7 @@ type CreateGuildApplicationCommandPayload(
             |> Encode.optional "description" Encode.string v.Description
             |> Encode.optinull "description_localizations" (Encode.mapv Encode.string) v.DescriptionLocalizations
             |> Encode.optional "options" (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
-            |> Encode.optinull "default_member_permissions" Encode.string v.DefaultMemberPermissions
+            |> Encode.optinull "default_member_permissions" Encode.bitfieldL v.DefaultMemberPermissions
             |> Encode.optional "type" Encode.Enum.int<ApplicationCommandType> v.Type
             |> Encode.optional "nsfw" Encode.bool v.Nsfw
         )
@@ -208,7 +208,7 @@ type EditGuildApplicationCommandPayload(
     member val Description: string option = description
     member val DescriptionLocalizations: Map<string, string> option option = descriptionLocalizations
     member val Options: ApplicationCommandOption list option = options
-    member val DefaultMemberPermissions: bool option option = defaultMemberPermissions
+    member val DefaultMemberPermissions: Permission list option option = defaultMemberPermissions
     member val Nsfw: bool option = nsfw
     
     static member Encoder(v: EditGuildApplicationCommandPayload) =
@@ -218,7 +218,7 @@ type EditGuildApplicationCommandPayload(
             |> Encode.optional "description" Encode.string v.Description
             |> Encode.optinull "description_localizations" (Encode.mapv Encode.string) v.DescriptionLocalizations
             |> Encode.optional "options" (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
-            |> Encode.optinull "default_member_permissions" Encode.bool v.DefaultMemberPermissions
+            |> Encode.optinull "default_member_permissions" Encode.bitfieldL v.DefaultMemberPermissions
             |> Encode.optional "nsfw" Encode.bool v.Nsfw
         )
     

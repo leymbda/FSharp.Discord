@@ -28,7 +28,7 @@ type ChatInputCommand = {
     Name: string
     Description: string
     Options: ChatInputCommandOptions
-    DefaultMemberPermissions: string option
+    DefaultMemberPermissions: Permission list option
     Nsfw: bool
     Context: CommandContext
 }
@@ -135,7 +135,7 @@ module ChatInputCommand =
 type UserCommand = {
     Name: string
     Description: string
-    DefaultMemberPermissions: string option
+    DefaultMemberPermissions: Permission list option
     Nsfw: bool
     Context: CommandContext
 }
@@ -201,7 +201,7 @@ module UserCommand =
 type MessageCommand = {
     Name: string
     Description: string
-    DefaultMemberPermissions: string option
+    DefaultMemberPermissions: Permission list option
     Nsfw: bool
     Context: CommandContext
 }
@@ -267,7 +267,7 @@ module MessageCommand =
 type EntryPointCommand = {
     Name: string
     Description: string
-    DefaultMemberPermissions: string option
+    DefaultMemberPermissions: Permission list option
     Nsfw: bool
     Handler: ApplicationCommandHandlerType
     Context: CommandContext
