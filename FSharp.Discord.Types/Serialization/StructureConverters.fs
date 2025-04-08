@@ -60,7 +60,7 @@ module Interaction =
             Token = get |> Get.required Property.Token Decode.string
             Version = get |> Get.required Property.Version Decode.int
             Message = get |> Get.optional Property.Message Message.decoder
-            AppPermissions = get |> Get.required Property.AppPermissions Decode.string
+            AppPermissions = get |> Get.required Property.AppPermissions Decode.bitfieldL<Permission>
             Locale = get |> Get.optional Property.Locale Decode.string
             GuildLocale = get |> Get.optional Property.GuildLocale Decode.string
             Entitlements = get |> Get.required Property.Entitlements (Decode.list Entitlement.decoder)
@@ -83,7 +83,7 @@ module Interaction =
             |> Encode.required Property.Token Encode.string v.Token
             |> Encode.required Property.Version Encode.int v.Version
             |> Encode.optional Property.Message Message.encoder v.Message
-            |> Encode.required Property.AppPermissions Encode.string v.AppPermissions
+            |> Encode.required Property.AppPermissions Encode.bitfieldL v.AppPermissions
             |> Encode.optional Property.Locale Encode.string v.Locale
             |> Encode.optional Property.GuildLocale Encode.string v.GuildLocale
             |> Encode.required Property.Entitlements (List.map Entitlement.encoder >> Encode.list) v.Entitlements
@@ -491,7 +491,7 @@ module ApplicationCommand =
             DescriptionLocalizations = get |> Get.optinull Property.DescriptionLocalizations (Decode.dict Decode.string)
             LocalizedDescription = get |> Get.optional Property.LocalizedDescription Decode.string
             Options = get |> Get.optional Property.Options (Decode.list ApplicationCommandOption.decoder)
-            DefaultMemberPermissions = get |> Get.nullable Property.DefaultMemberPermissions Decode.string
+            DefaultMemberPermissions = get |> Get.nullable Property.DefaultMemberPermissions Decode.bitfieldL<Permission>
             Nsfw = get |> Get.optional Property.Nsfw Decode.bool |> Option.defaultValue false
             IntegrationTypes = get |> Get.optional Property.IntegrationTypes (Decode.list Decode.Enum.int<ApplicationIntegrationType>) |> Option.defaultValue [ApplicationIntegrationType.GUILD_INSTALL; ApplicationIntegrationType.USER_INSTALL]
             Contexts = get |> Get.optional Property.Contexts (Decode.list Decode.Enum.int<InteractionContextType>)
@@ -512,7 +512,7 @@ module ApplicationCommand =
             |> Encode.optinull Property.DescriptionLocalizations (Encode.mapv Encode.string) v.DescriptionLocalizations
             |> Encode.optional Property.LocalizedDescription Encode.string v.LocalizedDescription
             |> Encode.optional Property.Options (List.map ApplicationCommandOption.encoder >> Encode.list) v.Options
-            |> Encode.nullable Property.DefaultMemberPermissions Encode.string v.DefaultMemberPermissions
+            |> Encode.nullable Property.DefaultMemberPermissions Encode.bitfieldL v.DefaultMemberPermissions
             |> Encode.optional Property.Nsfw Encode.bool (Some v.Nsfw)
             |> Encode.required Property.IntegrationTypes (List.map Encode.Enum.int >> Encode.list) v.IntegrationTypes
             |> Encode.optional Property.Contexts (List.map Encode.Enum.int >> Encode.list) v.Contexts
@@ -2857,13 +2857,13 @@ module InstallParams =
     let decoder: Decoder<InstallParams> =
         Decode.object (fun get -> {
             Scopes = get |> Get.required Property.Scopes (Decode.list OAuthScope.decoder)
-            Permissions = get |> Get.required Property.Permissions Decode.string
+            Permissions = get |> Get.required Property.Permissions Decode.bitfieldL<Permission>
         })
 
     let encoder (v: InstallParams) =
         Encode.object ([]
             |> Encode.required Property.Scopes (List.map OAuthScope.encoder >> Encode.list) v.Scopes
-            |> Encode.required Property.Permissions Encode.string v.Permissions
+            |> Encode.required Property.Permissions Encode.bitfieldL v.Permissions
         )
 
 module ActivityInstance =
@@ -3258,7 +3258,7 @@ module Channel =
             ThreadMetadata = get |> Get.optional Property.ThreadMetadata ThreadMetadata.decoder
             Member = get |> Get.optional Property.Member ThreadMember.decoder
             DefaultAutoArchiveDuration = get |> Get.optional Property.DefaultAutoArchiveDuration Decode.Enum.int<AutoArchiveDuration>
-            Permissions = get |> Get.optional Property.Permissions Decode.string
+            Permissions = get |> Get.optional Property.Permissions Decode.bitfieldL<Permission>
             Flags = get |> Get.optional Property.Flags Decode.bitfield
             TotalMessagesSent = get |> Get.optional Property.TotalMessagesSent Decode.int
             AvailableTags = get |> Get.optional Property.AvailableTags (Decode.list ForumTag.decoder)
@@ -3297,7 +3297,7 @@ module Channel =
         |> Encode.optional Property.ThreadMetadata ThreadMetadata.encoder v.ThreadMetadata
         |> Encode.optional Property.Member ThreadMember.encoder v.Member
         |> Encode.optional Property.DefaultAutoArchiveDuration Encode.Enum.int v.DefaultAutoArchiveDuration
-        |> Encode.optional Property.Permissions Encode.string v.Permissions
+        |> Encode.optional Property.Permissions Encode.bitfieldL v.Permissions
         |> Encode.optional Property.Flags Encode.bitfield v.Flags
         |> Encode.optional Property.TotalMessagesSent Encode.int v.TotalMessagesSent
         |> Encode.optional Property.AvailableTags (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
@@ -3339,7 +3339,7 @@ module Channel =
                 ThreadMetadata = get |> Get.optional Property.ThreadMetadata ThreadMetadata.decoder
                 Member = get |> Get.optional Property.Member ThreadMember.decoder
                 DefaultAutoArchiveDuration = get |> Get.optional Property.DefaultAutoArchiveDuration Decode.Enum.int<AutoArchiveDuration>
-                Permissions = get |> Get.optional Property.Permissions Decode.string
+                Permissions = get |> Get.optional Property.Permissions Decode.bitfieldL<Permission>
                 Flags = get |> Get.optional Property.Flags Decode.bitfield
                 TotalMessagesSent = get |> Get.optional Property.TotalMessagesSent Decode.int
                 AvailableTags = get |> Get.optional Property.AvailableTags (Decode.list ForumTag.decoder)
@@ -3378,7 +3378,7 @@ module Channel =
                 |> Encode.optional Property.ThreadMetadata ThreadMetadata.encoder v.ThreadMetadata
                 |> Encode.optional Property.Member ThreadMember.encoder v.Member
                 |> Encode.optional Property.DefaultAutoArchiveDuration Encode.Enum.int v.DefaultAutoArchiveDuration
-                |> Encode.optional Property.Permissions Encode.string v.Permissions
+                |> Encode.optional Property.Permissions Encode.bitfieldL v.Permissions
                 |> Encode.optional Property.Flags Encode.bitfield v.Flags
                 |> Encode.optional Property.TotalMessagesSent Encode.int v.TotalMessagesSent
                 |> Encode.optional Property.AvailableTags (List.map ForumTag.encoder >> Encode.list) v.AvailableTags
@@ -3417,16 +3417,16 @@ module PermissionOverwrite =
         Decode.object (fun get -> {
             Id = get |> Get.required Property.Id Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<PermissionOverwriteType>
-            Allow = get |> Get.required Property.Allow Decode.string
-            Deny = get |> Get.required Property.Deny Decode.string
+            Allow = get |> Get.required Property.Allow Decode.bitfieldL<Permission>
+            Deny = get |> Get.required Property.Deny Decode.bitfieldL<Permission>
         })
 
     let encoder (v: PermissionOverwrite) =
         Encode.object ([]
             |> Encode.required Property.Id Encode.string v.Id
             |> Encode.required Property.Type Encode.Enum.int v.Type
-            |> Encode.required Property.Allow Encode.string v.Allow
-            |> Encode.required Property.Deny Encode.string v.Deny
+            |> Encode.required Property.Allow Encode.bitfieldL v.Allow
+            |> Encode.required Property.Deny Encode.bitfieldL v.Deny
         )
 
     module Partial =
@@ -3434,16 +3434,16 @@ module PermissionOverwrite =
             Decode.object (fun get -> {
                 Id = get |> Get.required Property.Id Decode.string
                 Type = get |> Get.optional Property.Type Decode.Enum.int<PermissionOverwriteType>
-                Allow = get |> Get.optional Property.Allow Decode.string
-                Deny = get |> Get.optional Property.Deny Decode.string
+                Allow = get |> Get.optional Property.Allow Decode.bitfieldL<Permission>
+                Deny = get |> Get.optional Property.Deny Decode.bitfieldL<Permission>
             })
 
         let encoder (v: PartialPermissionOverwrite) =
             Encode.object ([]
                 |> Encode.required Property.Id Encode.string v.Id
                 |> Encode.optional Property.Type Encode.Enum.int v.Type
-                |> Encode.optional Property.Allow Encode.string v.Allow
-                |> Encode.optional Property.Deny Encode.string v.Deny
+                |> Encode.optional Property.Allow Encode.bitfieldL v.Allow
+                |> Encode.optional Property.Deny Encode.bitfieldL v.Deny
             )
 
 module ThreadMetadata =
@@ -3703,7 +3703,7 @@ module Guild =
             DiscoverySplash = get |> Get.nullable Property.DiscoverySplash Decode.string
             Owner = get |> Get.optional Property.Owner Decode.bool
             OwnerId = get |> Get.required Property.OwnerId Decode.string
-            Permissions = get |> Get.optional Property.Permissions Decode.string
+            Permissions = get |> Get.optional Property.Permissions Decode.bitfieldL<Permission>
             AfkChannelId = get |> Get.nullable Property.AfkChannelId Decode.string
             AfkTimeout = get |> Get.required Property.AfkTimeout Decode.int
             WidgetEnabled = get |> Get.optional Property.WidgetEnabled Decode.bool
@@ -3750,7 +3750,7 @@ module Guild =
         |> Encode.nullable Property.DiscoverySplash Encode.string v.DiscoverySplash
         |> Encode.optional Property.Owner Encode.bool v.Owner
         |> Encode.required Property.OwnerId Encode.string v.OwnerId
-        |> Encode.optional Property.Permissions Encode.string v.Permissions
+        |> Encode.optional Property.Permissions Encode.bitfieldL v.Permissions
         |> Encode.nullable Property.AfkChannelId Encode.string v.AfkChannelId
         |> Encode.required Property.AfkTimeout Encode.int v.AfkTimeout
         |> Encode.optional Property.WidgetEnabled Encode.bool v.WidgetEnabled
@@ -3799,7 +3799,7 @@ module Guild =
                 DiscoverySplash = get |> Get.optinull Property.DiscoverySplash Decode.string
                 Owner = get |> Get.optional Property.Owner Decode.bool
                 OwnerId = get |> Get.optional Property.OwnerId Decode.string
-                Permissions = get |> Get.optional Property.Permissions Decode.string
+                Permissions = get |> Get.optional Property.Permissions Decode.bitfieldL<Permission>
                 AfkChannelId = get |> Get.optinull Property.AfkChannelId Decode.string
                 AfkTimeout = get |> Get.optional Property.AfkTimeout Decode.int
                 WidgetEnabled = get |> Get.optional Property.WidgetEnabled Decode.bool
@@ -3846,7 +3846,7 @@ module Guild =
             |> Encode.optinull Property.DiscoverySplash Encode.string v.DiscoverySplash
             |> Encode.optional Property.Owner Encode.bool v.Owner
             |> Encode.optional Property.OwnerId Encode.string v.OwnerId
-            |> Encode.optional Property.Permissions Encode.string v.Permissions
+            |> Encode.optional Property.Permissions Encode.bitfieldL v.Permissions
             |> Encode.optinull Property.AfkChannelId Encode.string v.AfkChannelId
             |> Encode.optional Property.AfkTimeout Encode.int v.AfkTimeout
             |> Encode.optional Property.WidgetEnabled Encode.bool v.WidgetEnabled
@@ -4019,7 +4019,7 @@ module GuildMember =
             Mute = get |> Get.required Property.Mute Decode.bool
             Flags = get |> Get.required Property.Flags Decode.bitfield
             Pending = get |> Get.optional Property.Pending Decode.bool
-            Permissions = get |> Get.optional Property.Permissions Decode.string
+            Permissions = get |> Get.optional Property.Permissions Decode.bitfieldL<Permission>
             CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
             AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
         })
@@ -4037,7 +4037,7 @@ module GuildMember =
         |> Encode.required Property.Mute Encode.bool v.Mute
         |> Encode.required Property.Flags Encode.bitfield v.Flags
         |> Encode.optional Property.Pending Encode.bool v.Pending
-        |> Encode.optional Property.Permissions Encode.string v.Permissions
+        |> Encode.optional Property.Permissions Encode.bitfieldL v.Permissions
         |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
         |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
 
@@ -4058,7 +4058,7 @@ module GuildMember =
                 Mute = get |> Get.optional Property.Mute Decode.bool
                 Flags = get |> Get.optional Property.Flags Decode.bitfield
                 Pending = get |> Get.optional Property.Pending Decode.bool
-                Permissions = get |> Get.optional Property.Permissions Decode.string
+                Permissions = get |> Get.optional Property.Permissions Decode.bitfieldL<Permission>
                 CommunicationDisabledUntil = get |> Get.optinull Property.CommunicationDisabledUntil Decode.datetimeUtc
                 AvatarDecorationData = get |> Get.optinull Property.AvatarDecorationData AvatarDecorationData.decoder
             })
@@ -4076,7 +4076,7 @@ module GuildMember =
                 |> Encode.optional Property.Mute Encode.bool v.Mute
                 |> Encode.optional Property.Flags Encode.bitfield v.Flags
                 |> Encode.optional Property.Pending Encode.bool v.Pending
-                |> Encode.optional Property.Permissions Encode.string v.Permissions
+                |> Encode.optional Property.Permissions Encode.bitfieldL v.Permissions
                 |> Encode.optinull Property.CommunicationDisabledUntil Encode.datetime v.CommunicationDisabledUntil
                 |> Encode.optinull Property.AvatarDecorationData AvatarDecorationData.encoder v.AvatarDecorationData
             )
@@ -6285,7 +6285,7 @@ module Role =
             Icon = get |> Get.optinull Property.Icon Decode.string
             UnicodeEmoji = get |> Get.optinull Property.UnicodeEmoji Decode.string
             Position = get |> Get.required Property.Position Decode.int
-            Permissions = get |> Get.required Property.Permissions Decode.string
+            Permissions = get |> Get.required Property.Permissions Decode.bitfieldL<Permission>
             Managed = get |> Get.required Property.Managed Decode.bool
             Mentionable = get |> Get.required Property.Mentionable Decode.bool
             Tags = get |> Get.optional Property.Tags RoleTags.decoder
@@ -6301,7 +6301,7 @@ module Role =
             |> Encode.optinull Property.Icon Encode.string v.Icon
             |> Encode.optinull Property.UnicodeEmoji Encode.string v.UnicodeEmoji
             |> Encode.required Property.Position Encode.int v.Position
-            |> Encode.required Property.Permissions Encode.string v.Permissions
+            |> Encode.required Property.Permissions Encode.bitfieldL<Permission> v.Permissions
             |> Encode.required Property.Managed Encode.bool v.Managed
             |> Encode.required Property.Mentionable Encode.bool v.Mentionable
             |> Encode.optional Property.Tags RoleTags.encoder v.Tags
@@ -6390,4 +6390,3 @@ module TeamMember =
 // TODO: Make `Encode.list'` helper function to remove `List.map` boilerplate
 // TODO: Write updated tests for encoding and decoding helper functions
 // TODO: Rewrite `Decode.oneOf` usages to property check type (probably fair bit more efficient)
-// TODO: Replace all permissions strings with bitfields of permissions

@@ -22,7 +22,7 @@ type Interaction = {
     Token: string
     Version: int
     Message: Message option
-    AppPermissions: string
+    AppPermissions: Permission list
     Locale: string option
     GuildLocale: string option
     Entitlements: Entitlement list
@@ -176,7 +176,7 @@ type ApplicationCommand = {
     DescriptionLocalizations: Map<string, string> option option
     LocalizedDescription: string option
     Options: ApplicationCommandOption list option
-    DefaultMemberPermissions: string option // TODO: Serialize bitfield into permission list
+    DefaultMemberPermissions: Permission list option
     Nsfw: bool
     IntegrationTypes: ApplicationIntegrationType list
     Contexts: InteractionContextType list option
@@ -1121,7 +1121,7 @@ type ApplicationIntegrationTypeConfiguration = {
 // https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure
 type InstallParams = {
     Scopes: OAuthScope list
-    Permissions: string // TODO: Serialize bitfield into permission list
+    Permissions: Permission list
 }
 
 // https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-instance-object
@@ -1280,7 +1280,7 @@ type Channel = {
     ThreadMetadata: ThreadMetadata option
     Member: ThreadMember option // only in certain endpoints (likely should be an ExtraField)
     DefaultAutoArchiveDuration: AutoArchiveDuration option
-    Permissions: string option // TODO: Convert bitfield into permission list
+    Permissions: Permission list option
     Flags: ChannelFlag list option
     TotalMessagesSent: int option
     AvailableTags: ForumTag list option
@@ -1318,7 +1318,7 @@ and PartialChannel = {
     ThreadMetadata: ThreadMetadata option
     Member: ThreadMember option // only in certain endpoints (likely should be an ExtraField)
     DefaultAutoArchiveDuration: AutoArchiveDuration option
-    Permissions: string option // TODO: Convert bitfield into permission list
+    Permissions: Permission list option
     Flags: ChannelFlag list option
     TotalMessagesSent: int option
     AvailableTags: ForumTag list option
@@ -1368,15 +1368,15 @@ type FollowedChannel = {
 type PermissionOverwrite = {
     Id: string
     Type: PermissionOverwriteType
-    Allow: string
-    Deny: string
+    Allow: Permission list
+    Deny: Permission list
 }
 
 and PartialPermissionOverwrite = {
     Id: string
     Type: PermissionOverwriteType option
-    Allow: string option
-    Deny: string option
+    Allow: Permission list option
+    Deny: Permission list option
 }
 
 // https://discord.com/developers/docs/resources/channel#thread-metadata-object-thread-metadata-structure
@@ -1459,7 +1459,7 @@ type Guild = {
     DiscoverySplash: string option
     Owner: bool option
     OwnerId: string
-    Permissions: string option
+    Permissions: Permission list option
     AfkChannelId: string option
     AfkTimeout: int
     WidgetEnabled: bool option
@@ -1505,7 +1505,7 @@ and PartialGuild = {
     DiscoverySplash: string option option
     Owner: bool option
     OwnerId: string option
-    Permissions: string option
+    Permissions: Permission list option
     AfkChannelId: string option option
     AfkTimeout: int option
     WidgetEnabled: bool option
@@ -1592,7 +1592,7 @@ type GuildMember = {
     Mute: bool
     Flags: GuildMemberFlag list
     Pending: bool option // TODO: Only in GUILD_ events (should it be in ExtraFields?)
-    Permissions: string option
+    Permissions: Permission list option
     CommunicationDisabledUntil: DateTime option option
     AvatarDecorationData: AvatarDecorationData option option
 }
@@ -1609,7 +1609,7 @@ and PartialGuildMember = {
     Mute: bool option
     Flags: GuildMemberFlag list option
     Pending: bool option // TODO: Only in GUILD_ events (should it be in ExtraFields?)
-    Permissions: string option
+    Permissions: Permission list option
     CommunicationDisabledUntil: DateTime option option
     AvatarDecorationData: AvatarDecorationData option option
 }
@@ -2455,7 +2455,7 @@ type Role = {
     Icon: string option option
     UnicodeEmoji: string option option
     Position: int
-    Permissions: string
+    Permissions: Permission list
     Managed: bool
     Mentionable: bool
     Tags: RoleTags option

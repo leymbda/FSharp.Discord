@@ -35,6 +35,19 @@ module Decode =
             |> List.mapi (fun i b -> if b then Some (enum<'T> (int <| Math.Pow(i, 2))) else None)
             |> List.collect (function | Some v -> [v] | None -> [])
             |> Ok
+            
+    // Decode an long value representing a bitfield into a list of enum values where the enums themselves are longs.
+    let bitfieldL<'T when 'T: enum<int64>> path v =
+        match Decode.int64 path v with
+        | Error e -> Error e
+        | Ok bitfield ->
+            Convert.ToString(bitfield, 2).ToCharArray()
+            |> Array.toList
+            |> List.map ((=) '1')
+            |> List.rev
+            |> List.mapi (fun i b -> if b then Some (EnumOfValue<int64, 'T> (int64 <| Math.Pow(i, 2))) else None)
+            |> List.collect (function | Some v -> [v] | None -> [])
+            |> Ok
 
 module Encode =
     /// Append an encoding that is required.
@@ -80,8 +93,15 @@ module Encode =
     let bitfield<'T when 'T: enum<int>> (value: 'T list) =
         value
         |> List.map EnumToValue
-        |> List.fold (fun acc cur -> acc + cur) 0
-        |> Encode.int
+        |> List.fold (fun acc cur -> acc + (int64 cur)) 0L
+        |> Encode.int64
+
+    /// Encode a list of enum values to a bitfield where the enum values themselves are longs.
+    let bitfieldL<'T when 'T: enum<int64>> (value: 'T list) =
+        value
+        |> List.map EnumToValue<'T, int64>
+        |> List.fold (fun acc cur -> acc + cur) 0L
+        |> Encode.int64
         
 module Get =
     /// Get a required decoded value.
@@ -136,3 +156,4 @@ module IntPair =
         |> (List.map Encode.int >> Encode.list)
 
 // TODO: Write proper tests for all helpers here
+// TODO: Can bitfield and bitfieldL be combined into one?
