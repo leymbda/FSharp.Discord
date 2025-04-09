@@ -28,6 +28,7 @@ type ChatInputCommandOptions =
 type ChatInputCommand = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Options: ChatInputCommandOptions
     DefaultMemberPermissions: Permission list option
     Nsfw: bool
@@ -39,6 +40,7 @@ module ChatInputCommand =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Options = ChatInputCommandOptions.SubCommand []
             DefaultMemberPermissions = None
             Nsfw = false
@@ -47,6 +49,12 @@ module ChatInputCommand =
                 Contexts = None
             }
         }
+
+    let addLocale locale name description (v: ChatInputCommand) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: ChatInputCommand) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let addSubCommandGroup subCommandGroup (v: ChatInputCommand) =
         let option = NestedChatInputCommandOption.SubCommandGroup subCommandGroup
@@ -149,6 +157,7 @@ module ChatInputCommand =
 type UserCommand = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     DefaultMemberPermissions: Permission list option
     Nsfw: bool
     Context: CommandContext
@@ -159,6 +168,7 @@ module UserCommand =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             DefaultMemberPermissions = None
             Nsfw = false
             Context = CommandContext.Global {
@@ -166,6 +176,12 @@ module UserCommand =
                 Contexts = None
             }
         }
+        
+    let addLocale locale name description (v: UserCommand) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: UserCommand) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setDefaultMemberPermissions permissions (v: UserCommand) =
         { v with DefaultMemberPermissions = Some permissions }
@@ -218,6 +234,7 @@ module UserCommand =
 type MessageCommand = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     DefaultMemberPermissions: Permission list option
     Nsfw: bool
     Context: CommandContext
@@ -228,6 +245,7 @@ module MessageCommand =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             DefaultMemberPermissions = None
             Nsfw = false
             Context = CommandContext.Global {
@@ -235,6 +253,12 @@ module MessageCommand =
                 Contexts = None
             }
         }
+        
+    let addLocale locale name description (v: MessageCommand) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: MessageCommand) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setDefaultMemberPermissions permissions (v: MessageCommand) =
         { v with DefaultMemberPermissions = Some permissions }
@@ -287,6 +311,7 @@ module MessageCommand =
 type EntryPointCommand = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     DefaultMemberPermissions: Permission list option
     Nsfw: bool
     Handler: ApplicationCommandHandlerType
@@ -298,6 +323,7 @@ module EntryPointCommand =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             DefaultMemberPermissions = None
             Nsfw = false
             Handler = ApplicationCommandHandlerType.APP_HANDER
@@ -306,6 +332,12 @@ module EntryPointCommand =
                 Contexts = None
             }
         }
+        
+    let addLocale locale name description (v: EntryPointCommand) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: EntryPointCommand) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setDefaultMemberPermissions permissions (v: EntryPointCommand) =
         { v with DefaultMemberPermissions = Some permissions }
@@ -369,6 +401,6 @@ module Command =
         | Command.Message c -> MessageCommand.toPayload c
         | Command.EntryPoint c -> EntryPointCommand.toPayload c
 
-// TODO: Add localizations
+// TODO: Add localizations to payloads
 // TODO: Validate value conditions e.g. string length, regex, etc (?)
 // TODO: A single `Command` type may be able to contain a DU with type-specific content to allow for a single definition of shared properties and functions

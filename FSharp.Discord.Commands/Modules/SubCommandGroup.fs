@@ -5,6 +5,7 @@ open FSharp.Discord.Types
 type SubCommandGroup = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Options: SubCommand list
 }
 
@@ -13,8 +14,15 @@ module SubCommandGroup =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Options = []
         }
+        
+    let addLocale locale name description (v: SubCommandGroup) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: SubCommandGroup) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let addSubCommand subcommand (v: SubCommandGroup) =
         { v with Options = v.Options @ [subcommand] }
@@ -41,3 +49,5 @@ module SubCommandGroup =
             Choices = None
             Autocomplete = None
         }
+
+// TODO: Add localizations to command option transform

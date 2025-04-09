@@ -4,6 +4,7 @@ open FSharp.Discord.Types
 
 type StringSubCommandOptionChoice = {
     Name: string
+    Localizations: Map<string, string>
     Value: string
 }
 
@@ -11,8 +12,15 @@ module StringSubCommandOptionChoice =
     let create name value =
         {
             Name = name
+            Localizations = Map.empty
             Value = value
         }
+        
+    let addLocale locale name (v: StringSubCommandOptionChoice) =
+        { v with Localizations = v.Localizations |> Map.add locale name }
+
+    let removeLocale locale (v: StringSubCommandOptionChoice) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let toChoice (v: StringSubCommandOptionChoice) =
         {
@@ -36,6 +44,7 @@ module StringSubCommandOptionInput =
 type StringSubCommandOption = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Required: bool
     Length: (int * int) option
     Input: StringSubCommandOptionInput
@@ -46,10 +55,17 @@ module StringSubCommandOption =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Required = false
             Length = None
             Input = StringSubCommandOptionInput.Any
         }
+        
+    let addLocale locale name description (v: StringSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: StringSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setRequired (v: StringSubCommandOption) =
         { v with Required = true }
@@ -96,6 +112,7 @@ module StringSubCommandOption =
 
 type IntegerSubCommandOptionChoice = {
     Name: string
+    Localizations: Map<string, string>
     Value: int
 }
 
@@ -103,9 +120,16 @@ module IntegerSubCommandOptionChoice =
     let create name value =
         {
             Name = name
+            Localizations = Map.empty
             Value = value
         }
         
+    let addLocale locale name (v: IntegerSubCommandOptionChoice) =
+        { v with Localizations = v.Localizations |> Map.add locale name }
+
+    let removeLocale locale (v: IntegerSubCommandOptionChoice) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
+
     let toChoice (v: IntegerSubCommandOptionChoice) =
         {
             Name = v.Name
@@ -128,6 +152,7 @@ module IntegerSubCommandOptionInput =
 type IntegerSubCommandOption = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Required: bool
     Range: (int * int) option
     Input: IntegerSubCommandOptionInput
@@ -138,10 +163,17 @@ module IntegerSubCommandOption =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Required = false
             Range = None
             Input = IntegerSubCommandOptionInput.Any
         }
+        
+    let addLocale locale name description (v: IntegerSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: IntegerSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setRequired (v: IntegerSubCommandOption) =
         { v with Required = true }
@@ -189,6 +221,7 @@ module IntegerSubCommandOption =
 type BooleanSubCommandOption = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Required: bool
 }
 
@@ -197,8 +230,15 @@ module BooleanSubCommandOption =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Required = false
         }
+        
+    let addLocale locale name description (v: BooleanSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: BooleanSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setRequired (v: BooleanSubCommandOption) =
         { v with Required = true }
@@ -229,6 +269,7 @@ module BooleanSubCommandOption =
 type UserSubCommandOption = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Required: bool
 }
 
@@ -237,8 +278,15 @@ module UserSubCommandOption =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Required = false
         }
+        
+    let addLocale locale name description (v: UserSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: UserSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setRequired (v: UserSubCommandOption) =
         { v with Required = true }
@@ -269,6 +317,7 @@ module UserSubCommandOption =
 type ChannelSubCommandOption = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Required: bool
     ChannelTypes: ChannelType list option
 }
@@ -278,9 +327,16 @@ module ChannelSubCommandOption =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Required = false
             ChannelTypes = None
         }
+        
+    let addLocale locale name description (v: ChannelSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: ChannelSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setRequired (v: ChannelSubCommandOption) =
         { v with Required = true }
@@ -317,6 +373,7 @@ module ChannelSubCommandOption =
 type RoleSubCommandOption = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Required: bool
 }
 
@@ -325,8 +382,15 @@ module RoleSubCommandOption =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Required = false
         }
+        
+    let addLocale locale name description (v: RoleSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: RoleSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setRequired (v: RoleSubCommandOption) =
         { v with Required = true }
@@ -357,6 +421,7 @@ module RoleSubCommandOption =
 type MentionableSubCommandOption = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Required: bool
 }
 
@@ -365,8 +430,15 @@ module MentionableSubCommandOption =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Required = false
         }
+        
+    let addLocale locale name description (v: MentionableSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: MentionableSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setRequired (v: MentionableSubCommandOption) =
         { v with Required = true }
@@ -396,6 +468,7 @@ module MentionableSubCommandOption =
 
 type NumberSubCommandOptionChoice = {
     Name: string
+    Localizations: Map<string, string>
     Value: double
 }
 
@@ -403,8 +476,15 @@ module NumberSubCommandOptionChoice =
     let create name value =
         {
             Name = name
+            Localizations = Map.empty
             Value = value
         }
+        
+    let addLocale locale name (v: NumberSubCommandOptionChoice) =
+        { v with Localizations = v.Localizations |> Map.add locale name }
+
+    let removeLocale locale (v: NumberSubCommandOptionChoice) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let toChoice (v: NumberSubCommandOptionChoice) =
         {
@@ -428,6 +508,7 @@ module NumberSubCommandOptionInput =
 type NumberSubCommandOption = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Required: bool
     Range: (double * double) option
     Input: NumberSubCommandOptionInput
@@ -438,10 +519,17 @@ module NumberSubCommandOption =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Required = false
             Range = None
             Input = NumberSubCommandOptionInput.Any
         }
+        
+    let addLocale locale name description (v: NumberSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: NumberSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setRequired (v: NumberSubCommandOption) =
         { v with Required = true }
@@ -489,6 +577,7 @@ module NumberSubCommandOption =
 type AttachmentSubCommandOption = {
     Name: string
     Description: string
+    Localizations: Map<string, string * string>
     Required: bool
 }
 
@@ -497,8 +586,15 @@ module AttachmentSubCommandOption =
         {
             Name = name
             Description = description
+            Localizations = Map.empty
             Required = false
         }
+        
+    let addLocale locale name description (v: AttachmentSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.add locale (name, description) }
+
+    let removeLocale locale (v: AttachmentSubCommandOption) =
+        { v with Localizations = v.Localizations |> Map.remove locale }
 
     let setRequired (v: AttachmentSubCommandOption) =
         { v with Required = true }
@@ -561,3 +657,5 @@ module SubCommandOption =
         | SubCommandOption.Mentionable o -> MentionableSubCommandOption.toCommandOption o
         | SubCommandOption.Number o -> NumberSubCommandOption.toCommandOption o
         | SubCommandOption.Attachment o -> AttachmentSubCommandOption.toCommandOption o
+
+// TODO: Add localizations to command option and option choice transform
