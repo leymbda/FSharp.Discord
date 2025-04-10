@@ -2597,20 +2597,20 @@ module WebhookEventPayload =
         let [<Literal>] Type = "type"
         let [<Literal>] Event = "event"
 
-    let decoder (eventDataDecoder: Decoder<'T>): Decoder<WebhookEventPayload<'T>> =
+    let decoder: Decoder<WebhookEventPayload> =
         Decode.object (fun get -> {
             Version = get |> Get.required Property.Version Decode.int
             ApplicationId = get |> Get.required Property.ApplicationId Decode.string
             Type = get |> Get.required Property.Type Decode.Enum.int<WebhookPayloadType>
-            Event = get |> Get.optional Property.Event (WebhookEventBody.decoder eventDataDecoder)
+            Event = get |> Get.optional Property.Event WebhookEventBody.decoder
         })
 
-    let encoder (eventDataEncoder: Encoder<'T>) (v: WebhookEventPayload<'T>) =
+    let encoder (v: WebhookEventPayload) =
         Encode.object ([]
             |> Encode.required Property.Version Encode.int v.Version
             |> Encode.required Property.ApplicationId Encode.string v.ApplicationId
             |> Encode.required Property.Type Encode.Enum.int<WebhookPayloadType> v.Type
-            |> Encode.optional Property.Event (WebhookEventBody.encoder eventDataEncoder) v.Event
+            |> Encode.optional Property.Event WebhookEventBody.encoder v.Event
         )
 
 module WebhookEventBody =
@@ -2619,19 +2619,31 @@ module WebhookEventBody =
         let [<Literal>] Timestamp = "timestamp"
         let [<Literal>] Data = "data"
 
-    let decoder (dataDecoder: Decoder<'T>): Decoder<WebhookEventBody<'T>> =
+    let decoder: Decoder<WebhookEventBody> =
         Decode.object (fun get -> {
             Type = get |> Get.required Property.Type WebhookEventType.decoder
             Timestamp = get |> Get.required Property.Timestamp Decode.datetimeUtc
-            Data = get |> Get.optional Property.Data dataDecoder
+            Data = get |> Get.optional Property.Data WebhookEventData.decoder
         })
 
-    let encoder (dataEncoder: Encoder<'T>) (v: WebhookEventBody<'T>) =
+    let encoder (v: WebhookEventBody) =
         Encode.object ([]
             |> Encode.required Property.Type WebhookEventType.encoder v.Type
             |> Encode.required Property.Timestamp Encode.datetime v.Timestamp
-            |> Encode.optional Property.Data dataEncoder v.Data
+            |> Encode.optional Property.Data WebhookEventData.encoder v.Data
         )
+
+module WebhookEventData =
+    let decoder: Decoder<WebhookEventData> =
+        Decode.oneOf [
+            Decode.map WebhookEventData.APPLICATION_AUTHORIZED ApplicationAuthorizedEvent.decoder
+            Decode.map WebhookEventData.ENTITLEMENT_CREATE EntitlementCreateEvent.decoder
+        ]
+
+    let encoder (v: WebhookEventData) =
+        match v with
+        | WebhookEventData.APPLICATION_AUTHORIZED d -> ApplicationAuthorizedEvent.encoder d
+        | WebhookEventData.ENTITLEMENT_CREATE d -> EntitlementCreateEvent.encoder d
 
 module ApplicationAuthorizedEvent =
     module Property =

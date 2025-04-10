@@ -1023,19 +1023,23 @@ type MessagePollVoteRemoveReceiveEvent = {
 // ----- Events: Webhook Events -----
 
 // https://discord.com/developers/docs/events/webhook-events#event-body-object
-type WebhookEventPayload<'a> = {
+type WebhookEventPayload = {
     Version: int
     ApplicationId: string
     Type: WebhookPayloadType
-    Event: WebhookEventBody<'a> option
+    Event: WebhookEventBody option
 }
 
 // https://discord.com/developers/docs/events/webhook-events#payload-structure
-type WebhookEventBody<'a> = {
+type WebhookEventBody = {
     Type: WebhookEventType
     Timestamp: DateTime
-    Data: 'a option
+    Data: WebhookEventData option
 }
+
+type WebhookEventData =
+    | APPLICATION_AUTHORIZED of ApplicationAuthorizedEvent
+    | ENTITLEMENT_CREATE     of EntitlementCreateEvent
 
 // https://discord.com/developers/docs/events/webhook-events#application-authorized-application-authorized-structure
 type ApplicationAuthorizedEvent = {
