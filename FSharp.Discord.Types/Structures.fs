@@ -31,6 +31,12 @@ type Interaction = {
     AttachmentSizeLimit: int
 }
 
+module Interaction =
+    let getAuthorId (interaction: Interaction) =
+        match interaction.Author with
+        | InteractionAuthor.User u -> u.Id
+        | InteractionAuthor.GuildMember m -> m.User |> Option.map _.Id |> Option.get
+
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure
 type ApplicationCommandData = {
     Id: string

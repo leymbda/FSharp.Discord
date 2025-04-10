@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="InteractionCreateEvent.fs" />
     <Compile Include="WebhookReceiveEvent.fs" />
-    <Compile Include="WebhookReceiveEventConverter.fs" />
     <Compile Include="Ed25519.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
