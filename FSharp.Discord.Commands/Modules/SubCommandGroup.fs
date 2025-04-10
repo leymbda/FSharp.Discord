@@ -34,10 +34,10 @@ module SubCommandGroup =
         {
             Type = ApplicationCommandOptionType.SUB_COMMAND_GROUP
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = None
             Options = Some <| List.map SubCommand.toCommandOption v.Options
@@ -49,5 +49,3 @@ module SubCommandGroup =
             Choices = None
             Autocomplete = None
         }
-
-// TODO: Add localizations to command option transform

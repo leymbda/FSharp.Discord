@@ -116,8 +116,10 @@ module ChatInputCommand =
         match command.Context with
         | CommandContext.Global ctx ->
             CommandPayload.Global (new CreateGlobalApplicationCommandPayload(
-                name = command.Name,
-                description = command.Description,
+                command.Name,
+                command.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption,
+                command.Description,
+                command.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption,
                 options = (
                     match command.Options with
                     | ChatInputCommandOptions.Nesting options ->
@@ -137,8 +139,10 @@ module ChatInputCommand =
 
         | CommandContext.Guild guildId ->
             CommandPayload.Guild(guildId, new CreateGuildApplicationCommandPayload(
-                name = command.Name,
-                description = command.Description,
+                command.Name,
+                command.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption,
+                command.Description,
+                command.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption,
                 options = (
                     match command.Options with
                     | ChatInputCommandOptions.Nesting options ->
@@ -215,8 +219,10 @@ module UserCommand =
         match command.Context with
         | CommandContext.Global ctx ->
             CommandPayload.Global (new CreateGlobalApplicationCommandPayload(
-                name = command.Name,
-                description = command.Description,
+                command.Name,
+                command.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption,
+                command.Description,
+                command.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption,
                 defaultMemberPermissions = command.DefaultMemberPermissions,
                 ?integrationTypes = ctx.IntegrationTypes,
                 ?contexts = ctx.Contexts,
@@ -225,8 +231,10 @@ module UserCommand =
 
         | CommandContext.Guild guildId ->
             CommandPayload.Guild(guildId, new CreateGuildApplicationCommandPayload(
-                name = command.Name,
-                description = command.Description,
+                command.Name,
+                command.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption,
+                command.Description,
+                command.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption,
                 defaultMemberPermissions = command.DefaultMemberPermissions,
                 type' = ApplicationCommandType.USER,
                 nsfw = command.Nsfw));
@@ -292,8 +300,10 @@ module MessageCommand =
         match command.Context with
         | CommandContext.Global ctx ->
             CommandPayload.Global (new CreateGlobalApplicationCommandPayload(
-                name = command.Name,
-                description = command.Description,
+                command.Name,
+                command.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption,
+                command.Description,
+                command.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption,
                 defaultMemberPermissions = command.DefaultMemberPermissions,
                 ?integrationTypes = ctx.IntegrationTypes,
                 ?contexts = ctx.Contexts,
@@ -302,8 +312,10 @@ module MessageCommand =
 
         | CommandContext.Guild guildId ->
             CommandPayload.Guild(guildId, new CreateGuildApplicationCommandPayload(
-                name = command.Name,
-                description = command.Description,
+                command.Name,
+                command.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption,
+                command.Description,
+                command.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption,
                 defaultMemberPermissions = command.DefaultMemberPermissions,
                 type' = ApplicationCommandType.MESSAGE,
                 nsfw = command.Nsfw));
@@ -371,8 +383,10 @@ module EntryPointCommand =
         match command.Context with
         | CommandContext.Global ctx ->
             CommandPayload.Global (new CreateGlobalApplicationCommandPayload(
-                name = command.Name,
-                description = command.Description,
+                command.Name,
+                command.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption,
+                command.Description,
+                command.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption,
                 defaultMemberPermissions = command.DefaultMemberPermissions,
                 ?integrationTypes = ctx.IntegrationTypes,
                 ?contexts = ctx.Contexts,
@@ -381,8 +395,10 @@ module EntryPointCommand =
 
         | CommandContext.Guild guildId ->
             CommandPayload.Guild(guildId, new CreateGuildApplicationCommandPayload(
-                name = command.Name,
-                description = command.Description,
+                command.Name,
+                command.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption,
+                command.Description,
+                command.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption,
                 defaultMemberPermissions = command.DefaultMemberPermissions,
                 type' = ApplicationCommandType.PRIMARY_ENTRY_POINT,
                 nsfw = command.Nsfw));
@@ -401,6 +417,5 @@ module Command =
         | Command.Message c -> MessageCommand.toPayload c
         | Command.EntryPoint c -> EntryPointCommand.toPayload c
 
-// TODO: Add localizations to payloads
 // TODO: Validate value conditions e.g. string length, regex, etc (?)
 // TODO: A single `Command` type may be able to contain a DU with type-specific content to allow for a single definition of shared properties and functions

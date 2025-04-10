@@ -25,7 +25,7 @@ module StringSubCommandOptionChoice =
     let toChoice (v: StringSubCommandOptionChoice) =
         {
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.toOption |> Some
             Value = ApplicationCommandOptionChoiceValue.STRING v.Value
         }
 
@@ -94,10 +94,10 @@ module StringSubCommandOption =
         {
             Type = ApplicationCommandOptionType.STRING
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = Some v.Required
             Options = None
@@ -133,7 +133,7 @@ module IntegerSubCommandOptionChoice =
     let toChoice (v: IntegerSubCommandOptionChoice) =
         {
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.toOption |> Some
             Value = ApplicationCommandOptionChoiceValue.INT v.Value
         }
 
@@ -202,10 +202,10 @@ module IntegerSubCommandOption =
         {
             Type = ApplicationCommandOptionType.INTEGER
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = Some v.Required
             Options = None
@@ -250,10 +250,10 @@ module BooleanSubCommandOption =
         {
             Type = ApplicationCommandOptionType.BOOLEAN
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = Some v.Required
             Options = None
@@ -298,10 +298,10 @@ module UserSubCommandOption =
         {
             Type = ApplicationCommandOptionType.USER
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = Some v.Required
             Options = None
@@ -354,10 +354,10 @@ module ChannelSubCommandOption =
         {
             Type = ApplicationCommandOptionType.CHANNEL
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = Some v.Required
             Options = None
@@ -402,10 +402,10 @@ module RoleSubCommandOption =
         {
             Type = ApplicationCommandOptionType.ROLE
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = Some v.Required
             Options = None
@@ -450,10 +450,10 @@ module MentionableSubCommandOption =
         {
             Type = ApplicationCommandOptionType.MENTIONABLE
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = Some v.Required
             Options = None
@@ -489,7 +489,7 @@ module NumberSubCommandOptionChoice =
     let toChoice (v: NumberSubCommandOptionChoice) =
         {
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.toOption |> Some
             Value = ApplicationCommandOptionChoiceValue.DOUBLE v.Value
         }
 
@@ -558,10 +558,10 @@ module NumberSubCommandOption =
         {
             Type = ApplicationCommandOptionType.NUMBER
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = Some v.Required
             Options = None
@@ -606,10 +606,10 @@ module AttachmentSubCommandOption =
         {
             Type = ApplicationCommandOptionType.ATTACHMENT
             Name = v.Name
-            NameLocalizations = None
+            NameLocalizations = v.Localizations |> Map.map (fun _ v -> fst v) |> Map.toOption |> Some
             LocalizedName = None
             Description = v.Description
-            DescriptionLocalizations = None
+            DescriptionLocalizations = v.Localizations |> Map.map (fun _ v -> snd v) |> Map.toOption |> Some
             LocalizedDescription = None
             Required = Some v.Required
             Options = None
@@ -657,5 +657,3 @@ module SubCommandOption =
         | SubCommandOption.Mentionable o -> MentionableSubCommandOption.toCommandOption o
         | SubCommandOption.Number o -> NumberSubCommandOption.toCommandOption o
         | SubCommandOption.Attachment o -> AttachmentSubCommandOption.toCommandOption o
-
-// TODO: Add localizations to command option and option choice transform
