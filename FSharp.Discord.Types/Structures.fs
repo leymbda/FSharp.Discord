@@ -415,9 +415,6 @@ type ResumeSendEvent = {
     Sequence: int
 }
 
-// https://discord.com/developers/docs/topics/gateway-events#heartbeat-example-heartbeat
-type HeartbeatSendEvent = int option
-
 // https://discord.com/developers/docs/topics/gateway-events#request-guild-members-request-guild-members-structure
 type RequestGuildMembersSendEvent = {
     GuildId: string
@@ -456,12 +453,6 @@ type PartialUpdatePresenceSendEvent = {
     Afk: bool option
 }
 
-// https://discord.com/developers/docs/events/gateway#connection-lifecycle
-type HeartbeatReceiveEvent = unit
-
-// https://discord.com/developers/docs/events/gateway#connection-lifecycle
-type HeartbeatAckReceiveEvent = unit
-
 // https://discord.com/developers/docs/topics/gateway#hello-event-example-hello-event
 type HelloReceiveEvent = {
     HeartbeatInterval: int
@@ -478,27 +469,6 @@ type ReadyReceiveEvent = {
     Application: PartialApplication
 }
 
-// https://discord.com/developers/docs/events/gateway-events#resumed
-type ResumedReceiveEvent = unit
-
-// https://discord.com/developers/docs/events/gateway-events#reconnect
-type ReconnectReceiveEvent = unit
-
-// https://discord.com/developers/docs/topics/gateway-events#invalid-session
-type InvalidSessionReceiveEvent = bool
-
-// https://discord.com/developers/docs/events/gateway-events#application-command-permissions-update
-type ApplicationCommandPermissionsUpdateReceiveEvent = ApplicationCommandPermission
-
-// https://discord.com/developers/docs/events/gateway-events#auto-moderation-rule-create
-type AutoModerationRuleCreateReceiveEvent = AutoModerationRule
-
-// https://discord.com/developers/docs/events/gateway-events#auto-moderation-rule-update
-type AutoModerationRuleUpdateReceiveEvent = AutoModerationRule
-
-// https://discord.com/developers/docs/events/gateway-events#auto-moderation-rule-delete
-type AutoModerationRuleDeleteReceiveEvent = AutoModerationRule
-
 // https://discord.com/developers/docs/events/gateway-events#auto-moderation-action-execution-auto-moderation-action-execution-event-fields
 type AutoModerationActionExecutionReceiveEvent = {
     GuildId: string
@@ -514,24 +484,12 @@ type AutoModerationActionExecutionReceiveEvent = {
     MatchedContent: string option option
 }
 
-// https://discord.com/developers/docs/events/gateway-events#channel-create
-type ChannelCreateReceiveEvent = Channel
-
-// https://discord.com/developers/docs/events/gateway-events#channel-update
-type ChannelUpdateReceiveEvent = Channel
-
-// https://discord.com/developers/docs/events/gateway-events#channel-delete
-type ChannelDeleteReceiveEvent = Channel
-
 // https://discord.com/developers/docs/events/gateway-events#thread-create
 type ThreadCreateReceiveEvent = {
     Channel: Channel
     NewlyCreated: bool option
     ThreadMember: ThreadMember option
 }
-
-// https://discord.com/developers/docs/events/gateway-events#thread-update
-type ThreadUpdateReceiveEvent = Channel
 
 // https://discord.com/developers/docs/events/gateway-events#thread-delete
 type ThreadDeleteReceiveEvent = {
@@ -571,15 +529,6 @@ type ChannelPinsUpdateReceiveEvent = {
     LastPinTimestamp: DateTime option option
 }
 
-// https://discord.com/developers/docs/events/gateway-events#entitlement-create
-type EntitlementCreateReceiveEvent = Entitlement
-
-// https://discord.com/developers/docs/events/gateway-events#entitlement-update
-type EntitlementUpdateReceiveEvent = Entitlement
-
-// https://discord.com/developers/docs/events/gateway-events#entitlement-delete
-type EntitlementDeleteReceiveEvent = Entitlement
-
 // https://discord.com/developers/docs/events/gateway-events#guild-create
 type GuildCreateReceiveEvent =
     | AvailableGuild of GuildCreateReceiveEventAvailableGuild
@@ -600,9 +549,6 @@ type GuildCreateReceiveEventAvailableGuild = {
     GuildScheduledEvents: GuildScheduledEvent list
     SoundboardSounds: SoundboardSound list
 }
-
-// https://discord.com/developers/docs/events/gateway-events#guild-update
-type GuildUpdateReceiveEvent = Guild
 
 // https://discord.com/developers/docs/events/gateway-events#guild-delete
 type GuildDeleteReceiveEvent = {
@@ -704,15 +650,6 @@ type GuildRoleDeleteReceiveEvent = {
     RoleId: string
 }
 
-// https://discord.com/developers/docs/events/gateway-events#guild-scheduled-event-create
-type GuildScheduledEventCreateReceiveEvent = GuildScheduledEvent
-
-// https://discord.com/developers/docs/events/gateway-events#guild-scheduled-event-update
-type GuildScheduledEventUpdateReceiveEvent = GuildScheduledEvent
-
-// https://discord.com/developers/docs/events/gateway-events#guild-scheduled-event-delete
-type GuildScheduledEventDeleteReceiveEvent = GuildScheduledEvent
-
 // https://discord.com/developers/docs/events/gateway-events#guild-scheduled-event-user-add
 type GuildScheduledEventUserAddReceiveEvent = {
     GuildScheduledEventId: string
@@ -726,12 +663,6 @@ type GuildScheduledEventUserRemoveReceiveEvent = {
     UserId: string
     GuildId: string
 }
-
-// https://discord.com/developers/docs/events/gateway-events#guild-soundboard-sound-create
-type GuildSoundboardSoundCreateReceiveEvent = SoundboardSound
-
-// https://discord.com/developers/docs/events/gateway-events#guild-soundboard-sound-update
-type GuildSoundboardSoundUpdateReceiveEvent = SoundboardSound
 
 // https://discord.com/developers/docs/events/gateway-events#guild-soundboard-sound-delete
 type GuildSoundboardSoundDeleteReceiveEvent = {
@@ -968,9 +899,6 @@ type TypingStartReceiveEvent = {
     Member: GuildMember option
 }
 
-// https://discord.com/developers/docs/events/gateway-events#user-update
-type UserUpdateReceiveEvent = User
-
 // https://discord.com/developers/docs/events/gateway-events#voice-channel-effect-send
 type VoiceChannelEffectSendReceiveEvent = {
     ChannelId: string
@@ -982,9 +910,6 @@ type VoiceChannelEffectSendReceiveEvent = {
     SoundId: string option // TODO: This can be a snowflake OR integer, need to test if an int will cast to string for this (if so, message nonce should be changed)
     SoundVolume: double option
 }
-
-// https://discord.com/developers/docs/events/gateway-events#voice-state-update
-type VoiceStateUpdateReceiveEvent = VoiceState
 
 // https://discord.com/developers/docs/events/gateway-events#voice-server-update
 type VoiceServerUpdateReceiveEvent = {
@@ -998,27 +923,6 @@ type WebhooksUpdateReceiveEvent = {
     GuildId: string
     ChannelId: string
 }
-
-// https://discord.com/developers/docs/events/gateway-events#interaction-create
-type InteractionCreateReceiveEvent = Interaction
-
-// https://discord.com/developers/docs/events/gateway-events#stage-instance-create
-type StageInstanceCreateReceiveEvent = StageInstance
-
-// https://discord.com/developers/docs/events/gateway-events#stage-instance-update
-type StageInstanceUpdateReceiveEvent = StageInstance
-
-// https://discord.com/developers/docs/events/gateway-events#stage-instance-delete
-type StageInstanceDeleteReceiveEvent = StageInstance
-
-// https://discord.com/developers/docs/events/gateway-events#subscription-create
-type SubscriptionCreateReceiveEvent = Subscription
-
-// https://discord.com/developers/docs/events/gateway-events#subscription-update
-type SubscriptionUpdateReceiveEvent = Subscription
-
-// https://discord.com/developers/docs/events/gateway-events#subscription-delete
-type SubscriptionDeleteReceiveEvent = Subscription
 
 // https://discord.com/developers/docs/events/gateway-events#message-poll-vote-add
 type MessagePollVoteAddReceiveEvent = {

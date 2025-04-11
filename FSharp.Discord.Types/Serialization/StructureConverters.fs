@@ -957,6 +957,8 @@ module GatewayReceiveEventData =
         | GatewayReceiveEventData.HELLO d -> HelloReceiveEvent.encoder d
         | GatewayReceiveEventData.READY d -> ReadyReceiveEvent.encoder d
 
+    // TODO: Add other potential receive event data types to serializers above
+
 module IdentifySendEvent =
     module Property =
         let [<Literal>] Token = "token"
@@ -1028,10 +1030,6 @@ module ResumeSendEvent =
             |> Encode.required Property.SessionId Encode.string v.SessionId
             |> Encode.required Property.Sequence Encode.int v.Sequence
         )
-
-module HeartbeatSendEvent =
-    let decoder: Decoder<HeartbeatSendEvent> = Decode.option Decode.int
-    let encoder: Encoder<HeartbeatSendEvent> = Encode.option Encode.int
 
 module RequestGuildMembersSendEvent =
     module Property =
@@ -1139,14 +1137,6 @@ module UpdatePresenceSendEvent =
                 |> Encode.optional Property.Afk Encode.bool v.Afk
             )
 
-module HeartbeatReceiveEvent =
-    let decoder = Decode.nil
-    let encoder (_: HeartbeatReceiveEvent) = Encode.nil
-
-module HeartbeatAckReceiveEvent =
-    let decoder = Decode.nil
-    let encoder (_: HeartbeatReceiveEvent) = Encode.nil
-
 module HelloReceiveEvent =
     module Property =
         let [<Literal>] HeartbeatInterval = "heartbeat_interval"
@@ -1193,34 +1183,6 @@ module ReadyReceiveEvent =
             |> Encode.required Property.Application Application.Partial.encoder v.Application
         )
 
-module ResumedReceiveEvent =
-    let decoder = Decode.nil
-    let encoder (_: HeartbeatReceiveEvent) = Encode.nil
-
-module ReconnectReceiveEvent =
-    let decoder = Decode.nil
-    let encoder (_: HeartbeatReceiveEvent) = Encode.nil
-
-module InvalidSessionReceiveEvent =
-    let decoder: Decoder<InvalidSessionReceiveEvent> = Decode.bool
-    let encoder (v: InvalidSessionReceiveEvent) = Encode.bool v
-
-module ApplicationCommandPermissionsUpdateReceiveEvent =
-    let decoder: Decoder<ApplicationCommandPermissionsUpdateReceiveEvent> = ApplicationCommandPermission.decoder
-    let encoder (v: ApplicationCommandPermissionsUpdateReceiveEvent) = ApplicationCommandPermission.encoder v
-
-module AutoModerationRuleCreateReceiveEvent =
-    let decoder: Decoder<AutoModerationRuleCreateReceiveEvent> = AutoModerationRule.decoder
-    let encoder (v: AutoModerationRuleCreateReceiveEvent) = AutoModerationRule.encoder v
-
-module AutoModerationRuleUpdateReceiveEvent =
-    let decoder: Decoder<AutoModerationRuleUpdateReceiveEvent> = AutoModerationRule.decoder
-    let encoder (v: AutoModerationRuleUpdateReceiveEvent) = AutoModerationRule.encoder v
-
-module AutoModerationRuleDeleteReceiveEvent =
-    let decoder: Decoder<AutoModerationRuleDeleteReceiveEvent> = AutoModerationRule.decoder
-    let encoder (v: AutoModerationRuleDeleteReceiveEvent) = AutoModerationRule.encoder v
-
 module AutoModerationActionExecutionReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
@@ -1265,18 +1227,6 @@ module AutoModerationActionExecutionReceiveEvent =
             |> Encode.optinull Property.MatchedContent Encode.string v.MatchedContent
         )
 
-module ChannelCreateReceiveEvent =
-    let decoder: Decoder<ChannelCreateReceiveEvent> = Channel.decoder
-    let encoder (v: ChannelCreateReceiveEvent) = Channel.encoder v
-
-module ChannelUpdateReceiveEvent =
-    let decoder: Decoder<ChannelUpdateReceiveEvent> = Channel.decoder
-    let encoder (v: ChannelUpdateReceiveEvent) = Channel.encoder v
-
-module ChannelDeleteReceiveEvent =
-    let decoder: Decoder<ChannelDeleteReceiveEvent> = Channel.decoder
-    let encoder (v: ChannelDeleteReceiveEvent) = Channel.encoder v
-
 module ThreadCreateReceiveEvent =
     module Property =
         let [<Literal>] NewlyCreated = "newly_created"
@@ -1295,10 +1245,6 @@ module ThreadCreateReceiveEvent =
             |> Encode.optional Property.NewlyCreated Encode.bool v.NewlyCreated
             |> Encode.optional Property.ThreadMember ThreadMember.encoder v.ThreadMember
         )
-
-module ThreadUpdateReceiveEvent =
-    let decoder: Decoder<ThreadUpdateReceiveEvent> = Channel.decoder
-    let encoder (v: ThreadUpdateReceiveEvent) = Channel.encoder v
 
 module ThreadDeleteReceiveEvent =
     module Property =
@@ -1408,18 +1354,6 @@ module ChannelPinsUpdateReceiveEvent =
             |> Encode.optinull Property.LastPinTimestamp UnixTimestamp.encoder v.LastPinTimestamp
         )
 
-module EntitlementCreateReceiveEvent =
-    let decoder: Decoder<EntitlementCreateReceiveEvent> = Entitlement.decoder
-    let encoder (v: EntitlementCreateReceiveEvent) = Entitlement.encoder v
-
-module EntitlementUpdateReceiveEvent =
-    let decoder: Decoder<EntitlementUpdateReceiveEvent> = Entitlement.decoder
-    let encoder (v: EntitlementUpdateReceiveEvent) = Entitlement.encoder v
-
-module EntitlementDeleteReceiveEvent =
-    let decoder: Decoder<EntitlementDeleteReceiveEvent> = Entitlement.decoder
-    let encoder (v: EntitlementDeleteReceiveEvent) = Entitlement.encoder v
-
 module GuildCreateReceiveEvent =
     let decoder: Decoder<GuildCreateReceiveEvent> =
         Decode.oneOf [
@@ -1479,10 +1413,6 @@ module GuildCreateReceiveEventAvailableGuild =
             |> Encode.required Property.GuildScheduledEvents (List.map GuildScheduledEvent.encoder >> Encode.list) v.GuildScheduledEvents
             |> Encode.required Property.SoundboardSounds (List.map SoundboardSound.encoder >> Encode.list) v.SoundboardSounds
         )
-
-module GuildUpdateReceiveEvent =
-    let decoder: Decoder<GuildUpdateReceiveEvent> = Guild.decoder
-    let encoder (v: GuildUpdateReceiveEvent) = Guild.encoder v
 
 module GuildDeleteReceiveEvent =
     module Property =
@@ -1768,18 +1698,6 @@ module GuildRoleDeleteReceiveEvent =
             |> Encode.required Property.RoleId Encode.string v.RoleId
         )
 
-module GuildScheduledEventCreateReceiveEvent =
-    let decoder: Decoder<GuildScheduledEventCreateReceiveEvent> = GuildScheduledEvent.decoder
-    let encoder (v: GuildScheduledEventCreateReceiveEvent) = GuildScheduledEvent.encoder v
-
-module GuildScheduledEventUpdateReceiveEvent =
-    let decoder: Decoder<GuildScheduledEventUpdateReceiveEvent> = GuildScheduledEvent.decoder
-    let encoder (v: GuildScheduledEventUpdateReceiveEvent) = GuildScheduledEvent.encoder v
-
-module GuildScheduledEventDeleteReceiveEvent =
-    let decoder: Decoder<GuildScheduledEventDeleteReceiveEvent> = GuildScheduledEvent.decoder
-    let encoder (v: GuildScheduledEventDeleteReceiveEvent) = GuildScheduledEvent.encoder v
-
 module GuildScheduledEventUserAddReceiveEvent =
     module Property =
         let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
@@ -1819,14 +1737,6 @@ module GuildScheduledEventUserRemoveReceiveEvent =
             |> Encode.required Property.UserId Encode.string v.UserId
             |> Encode.required Property.GuildId Encode.string v.GuildId
         )
-
-module GuildSoundboardSoundCreateReceiveEvent =
-    let decoder: Decoder<GuildSoundboardSoundCreateReceiveEvent> = SoundboardSound.decoder
-    let encoder (v: GuildSoundboardSoundCreateReceiveEvent) = SoundboardSound.encoder v
-
-module GuildSoundboardSoundUpdateReceiveEvent =
-    let decoder: Decoder<GuildSoundboardSoundUpdateReceiveEvent> = SoundboardSound.decoder
-    let encoder (v: GuildSoundboardSoundUpdateReceiveEvent) = SoundboardSound.encoder v
 
 module GuildSoundboardSoundDeleteReceiveEvent =
     module Property =
@@ -2482,10 +2392,6 @@ module TypingStartReceiveEvent =
             |> Encode.optional Property.Member GuildMember.encoder v.Member
         )
 
-module UserUpdateReceiveEvent =
-    let decoder: Decoder<UserUpdateReceiveEvent> = User.decoder
-    let encoder (v: UserUpdateReceiveEvent) = User.encoder v
-
 module VoiceChannelEffectSendReceiveEvent =
     module Property =
         let [<Literal>] ChannelId = "channel_id"
@@ -2520,10 +2426,6 @@ module VoiceChannelEffectSendReceiveEvent =
             |> Encode.optional Property.SoundId Encode.string v.SoundId
             |> Encode.optional Property.SoundVolume Encode.float v.SoundVolume
         )
-
-module VoiceStateUpdateReceiveEvent =
-    let decoder: Decoder<VoiceStateUpdateReceiveEvent> = VoiceState.decoder
-    let encoder (v: VoiceStateUpdateReceiveEvent) = VoiceState.encoder v
 
 module VoiceServerUpdateReceiveEvent =
     module Property =
@@ -2561,34 +2463,6 @@ module WebhooksUpdateReceiveEvent =
             |> Encode.required Property.GuildId Encode.string v.GuildId
             |> Encode.required Property.ChannelId Encode.string v.ChannelId
         )
-
-module InteractionCreateReceiveEvent =
-    let decoder: Decoder<InteractionCreateReceiveEvent> = Interaction.decoder
-    let encoder (v: InteractionCreateReceiveEvent) = Interaction.encoder v
-
-module StageInstanceCreateReceiveEvent =
-    let decoder: Decoder<StageInstanceCreateReceiveEvent> = StageInstance.decoder
-    let encoder (v: StageInstanceCreateReceiveEvent) = StageInstance.encoder v
-
-module StageInstanceUpdateReceiveEvent =
-    let decoder: Decoder<StageInstanceUpdateReceiveEvent> = StageInstance.decoder
-    let encoder (v: StageInstanceUpdateReceiveEvent) = StageInstance.encoder v
-
-module StageInstanceDeleteReceiveEvent =
-    let decoder: Decoder<StageInstanceDeleteReceiveEvent> = StageInstance.decoder
-    let encoder (v: StageInstanceDeleteReceiveEvent) = StageInstance.encoder v
-
-module SubscriptionCreateReceiveEvent =
-    let decoder: Decoder<SubscriptionCreateReceiveEvent> = Subscription.decoder
-    let encoder (v: SubscriptionCreateReceiveEvent) = Subscription.encoder v
-
-module SubscriptionUpdateReceiveEvent =
-    let decoder: Decoder<SubscriptionUpdateReceiveEvent> = Subscription.decoder
-    let encoder (v: SubscriptionUpdateReceiveEvent) = Subscription.encoder v
-
-module SubscriptionDeleteReceiveEvent =
-    let decoder: Decoder<SubscriptionDeleteReceiveEvent> = Subscription.decoder
-    let encoder (v: SubscriptionDeleteReceiveEvent) = Subscription.encoder v
 
 module MessagePollVoteAddReceiveEvent =
     module Property =

@@ -7,11 +7,84 @@ open Thoth.Json.Net
 type GatewayReceiveEvent =
     | HEARTBEAT
     | HEARTBEAT_ACK
-    | HELLO of event: HelloReceiveEvent * sequence: int
-    | READY of event: ReadyReceiveEvent * sequence: int
+    | HELLO                                  of HelloReceiveEvent * sequence: int
+    | READY                                  of ReadyReceiveEvent * sequence: int
     | RESUMED
     | RECONNECT
-    | INVALID_SESSION of bool
+    | INVALID_SESSION                        of bool
+    | APPLICATION_COMMAND_PERMISSIONS_UPDATE of ApplicationCommandPermission * sequence: int
+    | AUTO_MODERATION_RULE_CREATE            of AutoModerationRule * sequence: int
+    | AUTO_MODERATION_RULE_UPDATE            of AutoModerationRule * sequence: int
+    | AUTO_MODERATION_RULE_DELETE            of AutoModerationRule * sequence: int
+    | AUTO_MODERATION_ACTION_EXECUTION       of AutoModerationActionExecutionReceiveEvent * sequence: int
+    | CHANNEL_CREATE                         of Channel * sequence: int
+    | CHANNEL_UPDATE                         of Channel * sequence: int
+    | CHANNEL_DELETE                         of Channel * sequence: int
+    | CHANNEL_PINS_UPDATE                    of ChannelPinsUpdateReceiveEvent * sequence: int
+    | THREAD_CREATE                          of ThreadCreateReceiveEvent * sequence: int
+    | THREAD_UPDATE                          of Channel * sequence: int
+    | THREAD_DELETE                          of ThreadDeleteReceiveEvent * sequence: int
+    | THREAD_LIST_SYNC                       of ThreadListSyncReceiveEvent * sequence: int
+    | THREAD_MEMBER_UPDATE                   of ThreadMembersUpdateReceiveEvent * sequence: int
+    | THREAD_MEMBERS_UPDATE                  of ThreadMembersUpdateReceiveEvent * sequence: int
+    | ENTITLEMENT_CREATE                     of Entitlement * sequence: int
+    | ENTITLEMENT_UPDATE                     of Entitlement * sequence: int
+    | ENTITLEMENT_DELETE                     of Entitlement * sequence: int
+    | GUILD_CREATE                           of GuildCreateReceiveEvent * sequence: int
+    | GUILD_UPDATE                           of Guild * sequence: int
+    | GUILD_DELETE                           of GuildDeleteReceiveEvent * sequence: int
+    | GUILD_AUDIT_LOG_ENTRY_CREATE           of GuildAuditLogEntryCreateReceiveEvent * sequence: int
+    | GUILD_BAN_ADD                          of GuildBanAddReceiveEvent * sequence: int
+    | GUILD_BAN_REMOVE                       of GuildBanRemoveReceiveEvent * sequence: int
+    | GUILD_EMOJIS_UPDATE                    of GuildEmojisUpdateReceiveEvent * sequence: int
+    | GUILD_STICKERS_UPDATE                  of GuildStickersUpdateReceiveEvent * sequence: int
+    | GUILD_INTEGRATIONS_UPDATE              of GuildIntegrationsUpdateReceiveEvent * sequence: int
+    | GUILD_MEMBER_ADD                       of GuildMemberAddReceiveEvent * sequence: int
+    | GUILD_MEMBER_REMOVE                    of GuildMemberRemoveReceiveEvent * sequence: int
+    | GUILD_MEMBER_UPDATE                    of GuildMemberUpdateReceiveEvent * sequence: int
+    | GUILD_MEMBERS_CHUNK                    of GuildMembersChunkReceiveEvent * sequence: int
+    | GUILD_ROLE_CREATE                      of GuildRoleCreateReceiveEvent * sequence: int
+    | GUILD_ROLE_UPDATE                      of GuildRoleUpdateReceiveEvent * sequence: int
+    | GUILD_ROLE_DELETE                      of GuildRoleDeleteReceiveEvent * sequence: int
+    | GUILD_SCHEDULED_EVENT_CREATE           of GuildScheduledEvent * sequence: int
+    | GUILD_SCHEDULED_EVENT_UPDATE           of GuildScheduledEvent * sequence: int
+    | GUILD_SCHEDULED_EVENT_DELETE           of GuildScheduledEvent * sequence: int
+    | GUILD_SCHEDULED_EVENT_USER_ADD         of GuildScheduledEventUserAddReceiveEvent * sequence: int
+    | GUILD_SCHEDULED_EVENT_USER_REMOVE      of GuildScheduledEventUserRemoveReceiveEvent * sequence: int
+    | GUILD_SOUNDBOARD_SOUND_CREATE          of SoundboardSound * sequence: int
+    | GUILD_SOUNDBOARD_SOUND_UPDATE          of SoundboardSound * sequence: int
+    | GUILD_SOUNDBOARD_SOUND_DELETE          of GuildSoundboardSoundDeleteReceiveEvent * sequence: int
+    | GUILD_SOUNDBOARD_SOUNDS_UPDATE         of GuildSoundboardSoundsUpdateReceiveEvent * sequence: int
+    | GUILD_SOUNDBOARD_SOUNDS                of GuildSoundboardSoundsReceiveEvent * sequence: int
+    | INTEGRATION_CREATE                     of IntegrationCreateReceiveEvent * sequence: int
+    | INTEGRATION_UPDATE                     of IntegrationUpdateReceiveEvent * sequence: int
+    | INTEGRATION_DELETE                     of IntegrationDeleteReceiveEvent * sequence: int
+    | INVITE_CREATE                          of InviteCreateReceiveEvent * sequence: int
+    | INVITE_DELETE                          of InviteDeleteReceiveEvent * sequence: int
+    | MESSAGE_CREATE                         of MessageCreateReceiveEvent * sequence: int
+    | MESSAGE_UPDATE                         of MessageUpdateReceiveEvent * sequence: int
+    | MESSAGE_DELETE                         of MessageDeleteReceiveEvent * sequence: int
+    | MESSAGE_DELETE_BULK                    of MessageDeleteBulkReceiveEvent * sequence: int
+    | MESSAGE_REACTION_ADD                   of MessageReactionAddReceiveEvent * sequence: int
+    | MESSAGE_REACTION_REMOVE                of MessageReactionRemoveReceiveEvent * sequence: int
+    | MESSAGE_REACTION_REMOVE_ALL            of MessageReactionRemoveAllReceiveEvent * sequence: int
+    | MESSAGE_REACTION_REMOVE_EMOJI          of MessageReactionRemoveEmojiReceiveEvent * sequence: int
+    | PRESENCE_UPDATE                        of PresenceUpdateReceiveEvent * sequence: int
+    | TYPING_START                           of TypingStartReceiveEvent * sequence: int
+    | USER_UPDATE                            of User * sequence: int
+    | VOICE_CHANNEL_EFFECT_SEND              of VoiceChannelEffectSendReceiveEvent * sequence: int
+    | VOICE_STATE_UPDATE                     of VoiceState * sequence: int
+    | VOICE_SERVER_UPDATE                    of VoiceServerUpdateReceiveEvent * sequence: int
+    | WEBHOOKS_UPDATE                        of WebhooksUpdateReceiveEvent * sequence: int
+    | INTERACTION_CREATE                     of Interaction * sequence: int
+    | STAGE_INSTANCE_CREATE                  of StageInstance * sequence: int
+    | STAGE_INSTANCE_UPDATE                  of StageInstance * sequence: int
+    | STAGE_INSTANCE_DELETE                  of StageInstance * sequence: int
+    | SUBSCRIPTION_CREATE                    of Subscription * sequence: int
+    | SUBSCRIPTION_UPDATE                    of Subscription * sequence: int
+    | SUBSCRIPTION_DELETE                    of Subscription * sequence: int
+    | MESSAGE_POLL_VOTE_ADD                  of MessagePollVoteAddReceiveEvent * sequence: int
+    | MESSAGE_POLL_VOTE_REMOVE               of MessagePollVoteRemoveReceiveEvent * sequence: int
 
 module GatewayReceiveEvent =
     let decoder: Decoder<GatewayReceiveEvent> =
@@ -47,83 +120,4 @@ module GatewayReceiveEvent =
                 Decode.fail "Unexpected gateway payload received"
         )
 
-// TODO: Delete below once all dispatch events copied over to new
-
-type GatewayReceiveEventOld =
-    | HEARTBEAT                              of GatewayEventPayload<HeartbeatReceiveEvent>
-    | HEARTBEAT_ACK                          of GatewayEventPayload<HeartbeatAckReceiveEvent>
-    | HELLO                                  of GatewayEventPayload<HelloReceiveEvent>
-    | READY                                  of GatewayEventPayload<ReadyReceiveEvent>
-    | RESUMED                                of GatewayEventPayload<ResumedReceiveEvent>
-    | RECONNECT                              of GatewayEventPayload<ReconnectReceiveEvent>
-    | INVALID_SESSION                        of GatewayEventPayload<InvalidSessionReceiveEvent>
-    | APPLICATION_COMMAND_PERMISSIONS_UPDATE of GatewayEventPayload<ApplicationCommandPermissionsUpdateReceiveEvent>
-    | AUTO_MODERATION_RULE_CREATE            of GatewayEventPayload<AutoModerationRuleCreateReceiveEvent>
-    | AUTO_MODERATION_RULE_UPDATE            of GatewayEventPayload<AutoModerationRuleUpdateReceiveEvent>
-    | AUTO_MODERATION_RULE_DELETE            of GatewayEventPayload<AutoModerationRuleDeleteReceiveEvent>
-    | AUTO_MODERATION_ACTION_EXECUTION       of GatewayEventPayload<AutoModerationActionExecutionReceiveEvent>
-    | CHANNEL_CREATE                         of GatewayEventPayload<ChannelCreateReceiveEvent>
-    | CHANNEL_UPDATE                         of GatewayEventPayload<ChannelUpdateReceiveEvent>
-    | CHANNEL_DELETE                         of GatewayEventPayload<ChannelDeleteReceiveEvent>
-    | THREAD_CREATE                          of GatewayEventPayload<ChannelCreateReceiveEvent>
-    | THREAD_UPDATE                          of GatewayEventPayload<ChannelUpdateReceiveEvent>
-    | THREAD_DELETE                          of GatewayEventPayload<ThreadDeleteReceiveEvent>
-    | THREAD_LIST_SYNC                       of GatewayEventPayload<ThreadListSyncReceiveEvent>
-    | ENTITLEMENT_CREATE                     of GatewayEventPayload<EntitlementCreateReceiveEvent>
-    | ENTITLEMENT_UPDATE                     of GatewayEventPayload<EntitlementUpdateReceiveEvent>
-    | ENTITLEMENT_DELETE                     of GatewayEventPayload<EntitlementDeleteReceiveEvent>
-    | GUILD_CREATE                           of GatewayEventPayload<GuildCreateReceiveEvent>
-    | GUILD_UPDATE                           of GatewayEventPayload<GuildUpdateReceiveEvent>
-    | GUILD_DELETE                           of GatewayEventPayload<GuildDeleteReceiveEvent>
-    | GUILD_BAN_ADD                          of GatewayEventPayload<GuildBanAddReceiveEvent>
-    | GUILD_BAN_REMOVE                       of GatewayEventPayload<GuildBanRemoveReceiveEvent>
-    | GUILD_EMOJIS_UPDATE                    of GatewayEventPayload<GuildEmojisUpdateReceiveEvent>
-    | GUILD_STICKERS_UPDATE                  of GatewayEventPayload<GuildStickersUpdateReceiveEvent>
-    | GUILD_INTEGRATIONS_UPDATE              of GatewayEventPayload<GuildIntegrationsUpdateReceiveEvent>
-    | GUILD_MEMBER_ADD                       of GatewayEventPayload<GuildMemberAddReceiveEvent>
-    | GUILD_MEMBER_REMOVE                    of GatewayEventPayload<GuildMemberRemoveReceiveEvent>
-    | GUILD_MEMBER_UPDATE                    of GatewayEventPayload<GuildMemberUpdateReceiveEvent>
-    | GUILD_MEMBERS_CHUNK                    of GatewayEventPayload<GuildMembersChunkReceiveEvent>
-    | GUILD_ROLE_CREATE                      of GatewayEventPayload<GuildRoleCreateReceiveEvent>
-    | GUILD_ROLE_UPDATE                      of GatewayEventPayload<GuildRoleUpdateReceiveEvent>
-    | GUILD_ROLE_DELETE                      of GatewayEventPayload<GuildRoleDeleteReceiveEvent>
-    | GUILD_SCHEDULED_EVENT_CREATE           of GatewayEventPayload<GuildScheduledEventCreateReceiveEvent>
-    | GUILD_SCHEDULED_EVENT_UPDATE           of GatewayEventPayload<GuildScheduledEventUpdateReceiveEvent>
-    | GUILD_SCHEDULED_EVENT_DELETE           of GatewayEventPayload<GuildScheduledEventDeleteReceiveEvent>
-    | GUILD_SCHEDULED_EVENT_USER_ADD         of GatewayEventPayload<GuildScheduledEventUserAddReceiveEvent>
-    | GUILD_SCHEDULED_EVENT_USER_REMOVE      of GatewayEventPayload<GuildScheduledEventUserRemoveReceiveEvent>
-    | GUILD_SOUNDBOARD_SOUND_CREATE          of GatewayEventPayload<GuildSoundboardSoundCreateReceiveEvent>
-    | GUILD_SOUNDBOARD_SOUND_UPDATE          of GatewayEventPayload<GuildSoundboardSoundUpdateReceiveEvent>
-    | GUILD_SOUNDBOARD_SOUND_DELETE          of GatewayEventPayload<GuildSoundboardSoundDeleteReceiveEvent>
-    | GUILD_SOUNDBOARD_SOUNDS_UPDATE         of GatewayEventPayload<GuildSoundboardSoundsUpdateReceiveEvent>
-    | GUILD_SOUNDBOARD_SOUNDS                of GatewayEventPayload<GuildSoundboardSoundsReceiveEvent>
-    | INTEGRATION_CREATE                     of GatewayEventPayload<IntegrationCreateReceiveEvent>
-    | INTEGRATION_UPDATE                     of GatewayEventPayload<IntegrationUpdateReceiveEvent>
-    | INTEGRATION_DELETE                     of GatewayEventPayload<IntegrationDeleteReceiveEvent>
-    | INVITE_CREATE                          of GatewayEventPayload<InviteCreateReceiveEvent>
-    | INVITE_DELETE                          of GatewayEventPayload<InviteDeleteReceiveEvent>
-    | MESSAGE_CREATE                         of GatewayEventPayload<MessageCreateReceiveEvent>
-    | MESSAGE_UPDATE                         of GatewayEventPayload<MessageUpdateReceiveEvent>
-    | MESSAGE_DELETE                         of GatewayEventPayload<MessageDeleteReceiveEvent>
-    | MESSAGE_DELETE_BULK                    of GatewayEventPayload<MessageDeleteBulkReceiveEvent>
-    | MESSAGE_REACTION_ADD                   of GatewayEventPayload<MessageReactionAddReceiveEvent>
-    | MESSAGE_REACTION_REMOVE                of GatewayEventPayload<MessageReactionRemoveReceiveEvent>
-    | MESSAGE_REACTION_REMOVE_ALL            of GatewayEventPayload<MessageReactionRemoveAllReceiveEvent>
-    | MESSAGE_REACTION_REMOVE_EMOJI          of GatewayEventPayload<MessageReactionRemoveEmojiReceiveEvent>
-    | PRESENCE_UPDATE                        of GatewayEventPayload<PresenceUpdateReceiveEvent>
-    | TYPING_START                           of GatewayEventPayload<TypingStartReceiveEvent>
-    | USER_UPDATE                            of GatewayEventPayload<UserUpdateReceiveEvent>
-    | VOICE_CHANNEL_EFFECT_SEND              of GatewayEventPayload<VoiceChannelEffectSendReceiveEvent>
-    | VOICE_STATE_UPDATE                     of GatewayEventPayload<VoiceStateUpdateReceiveEvent>
-    | VOICE_SERVER_UPDATE                    of GatewayEventPayload<VoiceServerUpdateReceiveEvent>
-    | WEBHOOKS_UPDATE                        of GatewayEventPayload<WebhooksUpdateReceiveEvent>
-    | INTERACTION_CREATE                     of GatewayEventPayload<InteractionCreateReceiveEvent>
-    | STAGE_INSTANCE_CREATE                  of GatewayEventPayload<StageInstanceCreateReceiveEvent>
-    | STAGE_INSTANCE_UPDATE                  of GatewayEventPayload<StageInstanceUpdateReceiveEvent>
-    | STAGE_INSTANCE_DELETE                  of GatewayEventPayload<StageInstanceDeleteReceiveEvent>
-    | SUBSCRIPTION_CREATE                    of GatewayEventPayload<SubscriptionCreateReceiveEvent>
-    | SUBSCRIPTION_UPDATE                    of GatewayEventPayload<SubscriptionUpdateReceiveEvent>
-    | SUBSCRIPTION_DELETE                    of GatewayEventPayload<SubscriptionDeleteReceiveEvent>
-    | MESSAGE_POLL_VOTE_ADD                  of GatewayEventPayload<MessagePollVoteAddReceiveEvent>
-    | MESSAGE_POLL_VOTE_REMOVE               of GatewayEventPayload<MessagePollVoteRemoveReceiveEvent>
-    | UNKNOWN                                of GatewayEventPayload<obj>
+// TODO: Identical data (e.g. guild role events) need to be merged into one type for valid decoding
