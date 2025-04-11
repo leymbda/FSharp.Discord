@@ -9,16 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Common\CustomGatewayOpcode.fs" />
-    <Compile Include="Entities\IWebsocket.fs" />
-    <Compile Include="Events\GatewayReceiveEvent.fs" />
-    <Compile Include="Events\GatewaySendEvent.fs" />
-    <Compile Include="Modules\Websocket.fs" />
-    <Compile Include="Modules\Gateway.fs" />
-    <Compile Include="GatewayClient.fs" />
-    <Compile Include="GatewayEnv.fs" />
-    <Compile Include="Socket.fs" />
-    <Compile Include="GatewayState.fs" />
+    <Compile Include="GatewaySendEvent.fs" />
+    <Compile Include="GatewayReceiveEvent.fs" />
+    <Compile Include="Old\Common\CustomGatewayOpcode.fs" />
+    <Compile Include="Old\Entities\IWebsocket.fs" />
+    <Compile Include="Old\Modules\Websocket.fs" />
+    <Compile Include="Old\Modules\Gateway.fs" />
+    <Compile Include="Old\GatewayClient.fs" />
+    <Compile Include="Old\GatewayEnv.fs" />
+    <Compile Include="Old\Socket.fs" />
+    <Compile Include="Old\GatewayState.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 

@@ -947,19 +947,116 @@ module GatewayReceiveEventData =
     let decoder: Decoder<GatewayReceiveEventData> =
         Decode.oneOf [
             Decode.map GatewayReceiveEventData.BOOLEAN Decode.bool
-            // TODO: All reused data
+            Decode.map GatewayReceiveEventData.APPLICATION_COMMAND_PERMISSION ApplicationCommandPermission.decoder
+            Decode.map GatewayReceiveEventData.AUTO_MODERATION_RULE AutoModerationRule.decoder
+            Decode.map GatewayReceiveEventData.CHANNEL Channel.decoder
+            Decode.map GatewayReceiveEventData.ENTITLEMENT Entitlement.decoder
+            Decode.map GatewayReceiveEventData.GUILD Guild.decoder
+            Decode.map GatewayReceiveEventData.GUILD_USER GuildUserReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_ROLE GuildRoleReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_SCHEDULED_EVENT GuildScheduledEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_SCHEDULED_EVENT_USER GuildScheduledEventUserReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.SOUNDBOARD_SOUND SoundboardSound.decoder
+            Decode.map GatewayReceiveEventData.GUILD_SOUNDBOARD_SOUNDS GuildSoundboardSoundsReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.INTEGRATION IntegrationReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.USER User.decoder
+            Decode.map GatewayReceiveEventData.VOICE_STATE VoiceState.decoder
+            Decode.map GatewayReceiveEventData.INTERACTION Interaction.decoder
+            Decode.map GatewayReceiveEventData.STAGE_INSTANCE StageInstance.decoder
+            Decode.map GatewayReceiveEventData.SUBSCRIPTION Subscription.decoder
+            Decode.map GatewayReceiveEventData.MESSAGE_POLL_VOTE MessagePollVoteReceiveEvent.decoder
             Decode.map GatewayReceiveEventData.HELLO HelloReceiveEvent.decoder
             Decode.map GatewayReceiveEventData.READY ReadyReceiveEvent.decoder
-            // TODO: Remaining event specific
+            Decode.map GatewayReceiveEventData.AUTO_MODERATION_ACTION_EXECUTION AutoModerationActionExecutionReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.CHANNEL_PINS_UPDATE ChannelPinsUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.THREAD_CREATE ThreadCreateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.THREAD_DELETE ThreadDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.THREAD_LIST_SYNC ThreadListSyncReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.THREAD_MEMBER_UPDATE ThreadMemberUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.THREAD_MEMBERS_UPDATE ThreadMembersUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_CREATE GuildCreateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_DELETE GuildDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_AUDIT_LOG_ENTRY_CREATE GuildAuditLogEntryCreateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_EMOJIS_UPDATE GuildEmojisUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_STICKERS_UPDATE GuildStickersUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_INTEGRATIONS_UPDATE GuildIntegrationsUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_MEMBER_ADD GuildMemberAddReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_MEMBER_UPDATE GuildMemberUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_MEMBERS_CHUNK GuildMembersChunkReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_ROLE_DELETE GuildRoleDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GUILD_SOUNDBOARD_SOUND_DELETE GuildSoundboardSoundDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.INTEGRATION_DELETE IntegrationDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.INVITE_CREATE InviteCreateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.INVITE_DELETE InviteDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MESSAGE_DELETE MessageDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MESSAGE_DELETE_BULK MessageDeleteBulkReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MESSAGE_REACTION_ADD MessageReactionAddReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MESSAGE_REACTION_REMOVE MessageReactionRemoveReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MESSAGE_REACTION_REMOVE_ALL MessageReactionRemoveAllReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MESSAGE_REACTION_REMOVE_EMOJI MessageReactionRemoveEmojiReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.PRESENCE_UPDATE PresenceUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.TYPING_START TypingStartReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.VOICE_CHANNEL_EFFECT_SEND VoiceChannelEffectSendReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.VOICE_SERVER_UPDATE VoiceServerUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.WEBHOOKS_UPDATE WebhooksUpdateReceiveEvent.decoder
         ]
 
     let encoder (v: GatewayReceiveEventData) =
         match v with
         | GatewayReceiveEventData.BOOLEAN d -> Encode.bool d
-        // TODO: All reused data
+        | GatewayReceiveEventData.APPLICATION_COMMAND_PERMISSION d -> ApplicationCommandPermission.encoder d
+        | GatewayReceiveEventData.AUTO_MODERATION_RULE d -> AutoModerationRule.encoder d
+        | GatewayReceiveEventData.CHANNEL d -> Channel.encoder d
+        | GatewayReceiveEventData.ENTITLEMENT d -> Entitlement.encoder d
+        | GatewayReceiveEventData.GUILD d -> Guild.encoder d
+        | GatewayReceiveEventData.GUILD_USER d -> GuildUserReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_ROLE d -> GuildRoleReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_SCHEDULED_EVENT d -> GuildScheduledEvent.encoder d
+        | GatewayReceiveEventData.GUILD_SCHEDULED_EVENT_USER d -> GuildScheduledEventUserReceiveEvent.encoder d
+        | GatewayReceiveEventData.SOUNDBOARD_SOUND d -> SoundboardSound.encoder d
+        | GatewayReceiveEventData.GUILD_SOUNDBOARD_SOUNDS d -> GuildSoundboardSoundsReceiveEvent.encoder d
+        | GatewayReceiveEventData.INTEGRATION d -> IntegrationReceiveEvent.encoder d
+        | GatewayReceiveEventData.MESSAGE d -> MessageReceiveEvent.encoder d
+        | GatewayReceiveEventData.USER d -> User.encoder d
+        | GatewayReceiveEventData.VOICE_STATE d -> VoiceState.encoder d
+        | GatewayReceiveEventData.INTERACTION d -> Interaction.encoder d
+        | GatewayReceiveEventData.STAGE_INSTANCE d -> StageInstance.encoder d
+        | GatewayReceiveEventData.SUBSCRIPTION d -> Subscription.encoder d
+        | GatewayReceiveEventData.MESSAGE_POLL_VOTE d -> MessagePollVoteReceiveEvent.encoder d
         | GatewayReceiveEventData.HELLO d -> HelloReceiveEvent.encoder d
         | GatewayReceiveEventData.READY d -> ReadyReceiveEvent.encoder d
-        // TODO: Remaining event specific
+        | GatewayReceiveEventData.AUTO_MODERATION_ACTION_EXECUTION d -> AutoModerationActionExecutionReceiveEvent.encoder d
+        | GatewayReceiveEventData.CHANNEL_PINS_UPDATE d -> ChannelPinsUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.THREAD_CREATE d -> ThreadCreateReceiveEvent.encoder d
+        | GatewayReceiveEventData.THREAD_DELETE d -> ThreadDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.THREAD_LIST_SYNC d -> ThreadListSyncReceiveEvent.encoder d
+        | GatewayReceiveEventData.THREAD_MEMBER_UPDATE d -> ThreadMemberUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.THREAD_MEMBERS_UPDATE d -> ThreadMembersUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_CREATE d -> GuildCreateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_DELETE d -> GuildDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_AUDIT_LOG_ENTRY_CREATE d -> GuildAuditLogEntryCreateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_EMOJIS_UPDATE d -> GuildEmojisUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_STICKERS_UPDATE d -> GuildStickersUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_INTEGRATIONS_UPDATE d -> GuildIntegrationsUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_MEMBER_ADD d -> GuildMemberAddReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_MEMBER_UPDATE d -> GuildMemberUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_MEMBERS_CHUNK d -> GuildMembersChunkReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_ROLE_DELETE d -> GuildRoleDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.GUILD_SOUNDBOARD_SOUND_DELETE d -> GuildSoundboardSoundDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.INTEGRATION_DELETE d -> IntegrationDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.INVITE_CREATE d -> InviteCreateReceiveEvent.encoder d
+        | GatewayReceiveEventData.INVITE_DELETE d -> InviteDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.MESSAGE_DELETE d -> MessageDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.MESSAGE_DELETE_BULK d -> MessageDeleteBulkReceiveEvent.encoder d
+        | GatewayReceiveEventData.MESSAGE_REACTION_ADD d -> MessageReactionAddReceiveEvent.encoder d
+        | GatewayReceiveEventData.MESSAGE_REACTION_REMOVE d -> MessageReactionRemoveReceiveEvent.encoder d
+        | GatewayReceiveEventData.MESSAGE_REACTION_REMOVE_ALL d -> MessageReactionRemoveAllReceiveEvent.encoder d
+        | GatewayReceiveEventData.MESSAGE_REACTION_REMOVE_EMOJI d -> MessageReactionRemoveEmojiReceiveEvent.encoder d
+        | GatewayReceiveEventData.PRESENCE_UPDATE d -> PresenceUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.TYPING_START d -> TypingStartReceiveEvent.encoder d
+        | GatewayReceiveEventData.VOICE_CHANNEL_EFFECT_SEND d -> VoiceChannelEffectSendReceiveEvent.encoder d
+        | GatewayReceiveEventData.VOICE_SERVER_UPDATE d -> VoiceServerUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.WEBHOOKS_UPDATE d -> WebhooksUpdateReceiveEvent.encoder d
 
 module IdentifySendEvent =
     module Property =
