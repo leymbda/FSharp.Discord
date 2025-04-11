@@ -25,7 +25,7 @@ type GatewayReceiveEvent =
     | THREAD_UPDATE                          of Channel * sequence: int
     | THREAD_DELETE                          of ThreadDeleteReceiveEvent * sequence: int
     | THREAD_LIST_SYNC                       of ThreadListSyncReceiveEvent * sequence: int
-    | THREAD_MEMBER_UPDATE                   of ThreadMembersUpdateReceiveEvent * sequence: int
+    | THREAD_MEMBER_UPDATE                   of ThreadMemberUpdateReceiveEvent * sequence: int
     | THREAD_MEMBERS_UPDATE                  of ThreadMembersUpdateReceiveEvent * sequence: int
     | ENTITLEMENT_CREATE                     of Entitlement * sequence: int
     | ENTITLEMENT_UPDATE                     of Entitlement * sequence: int
@@ -34,35 +34,35 @@ type GatewayReceiveEvent =
     | GUILD_UPDATE                           of Guild * sequence: int
     | GUILD_DELETE                           of GuildDeleteReceiveEvent * sequence: int
     | GUILD_AUDIT_LOG_ENTRY_CREATE           of GuildAuditLogEntryCreateReceiveEvent * sequence: int
-    | GUILD_BAN_ADD                          of GuildBanAddReceiveEvent * sequence: int
-    | GUILD_BAN_REMOVE                       of GuildBanRemoveReceiveEvent * sequence: int
+    | GUILD_BAN_ADD                          of GuildUserReceiveEvent * sequence: int
+    | GUILD_BAN_REMOVE                       of GuildUserReceiveEvent * sequence: int
     | GUILD_EMOJIS_UPDATE                    of GuildEmojisUpdateReceiveEvent * sequence: int
     | GUILD_STICKERS_UPDATE                  of GuildStickersUpdateReceiveEvent * sequence: int
     | GUILD_INTEGRATIONS_UPDATE              of GuildIntegrationsUpdateReceiveEvent * sequence: int
     | GUILD_MEMBER_ADD                       of GuildMemberAddReceiveEvent * sequence: int
-    | GUILD_MEMBER_REMOVE                    of GuildMemberRemoveReceiveEvent * sequence: int
+    | GUILD_MEMBER_REMOVE                    of GuildUserReceiveEvent * sequence: int
     | GUILD_MEMBER_UPDATE                    of GuildMemberUpdateReceiveEvent * sequence: int
     | GUILD_MEMBERS_CHUNK                    of GuildMembersChunkReceiveEvent * sequence: int
-    | GUILD_ROLE_CREATE                      of GuildRoleCreateReceiveEvent * sequence: int
-    | GUILD_ROLE_UPDATE                      of GuildRoleUpdateReceiveEvent * sequence: int
+    | GUILD_ROLE_CREATE                      of GuildRoleReceiveEvent * sequence: int
+    | GUILD_ROLE_UPDATE                      of GuildRoleReceiveEvent * sequence: int
     | GUILD_ROLE_DELETE                      of GuildRoleDeleteReceiveEvent * sequence: int
     | GUILD_SCHEDULED_EVENT_CREATE           of GuildScheduledEvent * sequence: int
     | GUILD_SCHEDULED_EVENT_UPDATE           of GuildScheduledEvent * sequence: int
     | GUILD_SCHEDULED_EVENT_DELETE           of GuildScheduledEvent * sequence: int
-    | GUILD_SCHEDULED_EVENT_USER_ADD         of GuildScheduledEventUserAddReceiveEvent * sequence: int
-    | GUILD_SCHEDULED_EVENT_USER_REMOVE      of GuildScheduledEventUserRemoveReceiveEvent * sequence: int
+    | GUILD_SCHEDULED_EVENT_USER_ADD         of GuildScheduledEventUserReceiveEvent * sequence: int
+    | GUILD_SCHEDULED_EVENT_USER_REMOVE      of GuildScheduledEventUserReceiveEvent * sequence: int
     | GUILD_SOUNDBOARD_SOUND_CREATE          of SoundboardSound * sequence: int
     | GUILD_SOUNDBOARD_SOUND_UPDATE          of SoundboardSound * sequence: int
     | GUILD_SOUNDBOARD_SOUND_DELETE          of GuildSoundboardSoundDeleteReceiveEvent * sequence: int
-    | GUILD_SOUNDBOARD_SOUNDS_UPDATE         of GuildSoundboardSoundsUpdateReceiveEvent * sequence: int
+    | GUILD_SOUNDBOARD_SOUNDS_UPDATE         of GuildSoundboardSoundsReceiveEvent * sequence: int
     | GUILD_SOUNDBOARD_SOUNDS                of GuildSoundboardSoundsReceiveEvent * sequence: int
-    | INTEGRATION_CREATE                     of IntegrationCreateReceiveEvent * sequence: int
-    | INTEGRATION_UPDATE                     of IntegrationUpdateReceiveEvent * sequence: int
+    | INTEGRATION_CREATE                     of IntegrationReceiveEvent * sequence: int
+    | INTEGRATION_UPDATE                     of IntegrationReceiveEvent * sequence: int
     | INTEGRATION_DELETE                     of IntegrationDeleteReceiveEvent * sequence: int
     | INVITE_CREATE                          of InviteCreateReceiveEvent * sequence: int
     | INVITE_DELETE                          of InviteDeleteReceiveEvent * sequence: int
-    | MESSAGE_CREATE                         of MessageCreateReceiveEvent * sequence: int
-    | MESSAGE_UPDATE                         of MessageUpdateReceiveEvent * sequence: int
+    | MESSAGE_CREATE                         of MessageReceiveEvent * sequence: int
+    | MESSAGE_UPDATE                         of MessageReceiveEvent * sequence: int
     | MESSAGE_DELETE                         of MessageDeleteReceiveEvent * sequence: int
     | MESSAGE_DELETE_BULK                    of MessageDeleteBulkReceiveEvent * sequence: int
     | MESSAGE_REACTION_ADD                   of MessageReactionAddReceiveEvent * sequence: int
@@ -83,8 +83,8 @@ type GatewayReceiveEvent =
     | SUBSCRIPTION_CREATE                    of Subscription * sequence: int
     | SUBSCRIPTION_UPDATE                    of Subscription * sequence: int
     | SUBSCRIPTION_DELETE                    of Subscription * sequence: int
-    | MESSAGE_POLL_VOTE_ADD                  of MessagePollVoteAddReceiveEvent * sequence: int
-    | MESSAGE_POLL_VOTE_REMOVE               of MessagePollVoteRemoveReceiveEvent * sequence: int
+    | MESSAGE_POLL_VOTE_ADD                  of MessagePollVoteReceiveEvent * sequence: int
+    | MESSAGE_POLL_VOTE_REMOVE               of MessagePollVoteReceiveEvent * sequence: int
 
 module GatewayReceiveEvent =
     let decoder: Decoder<GatewayReceiveEvent> =
@@ -119,5 +119,3 @@ module GatewayReceiveEvent =
             | _ ->
                 Decode.fail "Unexpected gateway payload received"
         )
-
-// TODO: Identical data (e.g. guild role events) need to be merged into one type for valid decoding

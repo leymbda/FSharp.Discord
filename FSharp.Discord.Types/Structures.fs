@@ -373,7 +373,10 @@ type GatewayEventPayload<'a> = {
 type GatewaySendEventPayload = GatewayEventPayload<GatewaySendEventData>
 
 type GatewaySendEventData =
+    // Primitive
     | OPTIONAL_INT              of int option
+
+    // Event specific
     | IDENTIFY                  of IdentifySendEvent
     | RESUME                    of ResumeSendEvent
     | REQUEST_GUILD_MEMBERS     of RequestGuildMembersSendEvent
@@ -384,9 +387,65 @@ type GatewaySendEventData =
 type GatewayReceiveEventPayload = GatewayEventPayload<GatewayReceiveEventData option>
 
 type GatewayReceiveEventData =
+    // Primitive
     | BOOLEAN of bool
+
+    // Reused
+    | APPLICATION_COMMAND_PERMISSION of ApplicationCommandPermission
+    | AUTO_MODERATION_RULE of AutoModerationRule
+    | CHANNEL of Channel
+    | ENTITLEMENT of Entitlement
+    | GUILD of Guild
+    | GUILD_USER of GuildUserReceiveEvent
+    | GUILD_ROLE of GuildRoleReceiveEvent
+    | GUILD_SCHEDULED_EVENT of GuildScheduledEvent
+    | GUILD_SCHEDULED_EVENT_USER of GuildScheduledEventUserReceiveEvent
+    | SOUNDBOARD_SOUND of SoundboardSound
+    | GUILD_SOUNDBOARD_SOUNDS of GuildSoundboardSoundsReceiveEvent
+    | INTEGRATION of IntegrationReceiveEvent
+    | MESSAGE of MessageReceiveEvent
+    | USER of User
+    | VOICE_STATE of VoiceState
+    | INTERACTION of Interaction
+    | STAGE_INSTANCE of StageInstance
+    | SUBSCRIPTION of Subscription
+    | MESSAGE_POLL_VOTE of MessagePollVoteReceiveEvent
+
+    // Event specific
     | HELLO of HelloReceiveEvent
     | READY of ReadyReceiveEvent
+    | AUTO_MODERATION_ACTION_EXECUTION of AutoModerationActionExecutionReceiveEvent
+    | CHANNEL_PINS_UPDATE of ChannelPinsUpdateReceiveEvent
+    | THREAD_CREATE of ThreadCreateReceiveEvent
+    | THREAD_DELETE of ThreadDeleteReceiveEvent
+    | THREAD_LIST_SYNC of ThreadListSyncReceiveEvent
+    | THREAD_MEMBER_UPDATE of ThreadMemberUpdateReceiveEvent
+    | THREAD_MEMBERS_UPDATE of ThreadMembersUpdateReceiveEvent
+    | GUILD_CREATE of GuildCreateReceiveEvent
+    | GUILD_DELETE of GuildDeleteReceiveEvent
+    | GUILD_AUDIT_LOG_ENTRY_CREATE of GuildAuditLogEntryCreateReceiveEvent
+    | GUILD_EMOJIS_UPDATE of GuildEmojisUpdateReceiveEvent
+    | GUILD_STICKERS_UPDATE of GuildStickersUpdateReceiveEvent
+    | GUILD_INTEGRATIONS_UPDATE of GuildIntegrationsUpdateReceiveEvent
+    | GUILD_MEMBER_ADD of GuildMemberAddReceiveEvent
+    | GUILD_MEMBER_UPDATE of GuildMemberUpdateReceiveEvent
+    | GUILD_MEMBERS_CHUNK of GuildMembersChunkReceiveEvent
+    | GUILD_ROLE_DELETE of GuildRoleDeleteReceiveEvent
+    | GUILD_SOUNDBOARD_SOUND_DELETE of GuildSoundboardSoundDeleteReceiveEvent
+    | INTEGRATION_DELETE of IntegrationDeleteReceiveEvent
+    | INVITE_CREATE of InviteCreateReceiveEvent
+    | INVITE_DELETE of InviteDeleteReceiveEvent
+    | MESSAGE_DELETE of MessageDeleteReceiveEvent
+    | MESSAGE_DELETE_BULK of MessageDeleteBulkReceiveEvent
+    | MESSAGE_REACTION_ADD of MessageReactionAddReceiveEvent
+    | MESSAGE_REACTION_REMOVE of MessageReactionRemoveReceiveEvent
+    | MESSAGE_REACTION_REMOVE_ALL of MessageReactionRemoveAllReceiveEvent
+    | MESSAGE_REACTION_REMOVE_EMOJI of MessageReactionRemoveEmojiReceiveEvent
+    | PRESENCE_UPDATE of PresenceUpdateReceiveEvent
+    | TYPING_START of TypingStartReceiveEvent
+    | VOICE_CHANNEL_EFFECT_SEND of VoiceChannelEffectSendReceiveEvent
+    | VOICE_SERVER_UPDATE of VoiceServerUpdateReceiveEvent
+    | WEBHOOKS_UPDATE of WebhooksUpdateReceiveEvent
 
 // https://discord.com/developers/docs/topics/gateway-events#identify-identify-structure
 type IdentifySendEvent = {
@@ -563,13 +622,9 @@ type GuildAuditLogEntryCreateReceiveEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-ban-add
-type GuildBanAddReceiveEvent = {
-    User: User
-    GuildId: string
-}
-
 // https://discord.com/developers/docs/events/gateway-events#guild-ban-remove
-type GuildBanRemoveReceiveEvent = {
+// https://discord.com/developers/docs/events/gateway-events#guild-member-remove
+type GuildUserReceiveEvent = {
     User: User
     GuildId: string
 }
@@ -594,12 +649,6 @@ type GuildIntegrationsUpdateReceiveEvent = {
 // https://discord.com/developers/docs/events/gateway-events#guild-member-add
 type GuildMemberAddReceiveEvent = {
     GuildMember: GuildMember
-    GuildId: string
-}
-
-// https://discord.com/developers/docs/events/gateway-events#guild-member-remove
-type GuildMemberRemoveReceiveEvent = {
-    User: User
     GuildId: string
 }
 
@@ -633,13 +682,8 @@ type GuildMembersChunkReceiveEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-role-create
-type GuildRoleCreateReceiveEvent = {
-    GuildId: string
-    Role: Role
-}
-
 // https://discord.com/developers/docs/events/gateway-events#guild-role-update
-type GuildRoleUpdateReceiveEvent = {
+type GuildRoleReceiveEvent = {
     GuildId: string
     Role: Role
 }
@@ -651,14 +695,8 @@ type GuildRoleDeleteReceiveEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-scheduled-event-user-add
-type GuildScheduledEventUserAddReceiveEvent = {
-    GuildScheduledEventId: string
-    UserId: string
-    GuildId: string
-}
-
 // https://discord.com/developers/docs/events/gateway-events#guild-scheduled-event-user-remove
-type GuildScheduledEventUserRemoveReceiveEvent = {
+type GuildScheduledEventUserReceiveEvent = {
     GuildScheduledEventId: string
     UserId: string
     GuildId: string
@@ -671,11 +709,6 @@ type GuildSoundboardSoundDeleteReceiveEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-soundboard-sounds-update
-type GuildSoundboardSoundsUpdateReceiveEvent = {
-    SoundboardSounds: SoundboardSound list
-    GuildId: string
-}
-
 // https://discord.com/developers/docs/events/gateway-events#soundboard-sounds
 type GuildSoundboardSoundsReceiveEvent = {
     SoundboardSounds: SoundboardSound list
@@ -683,13 +716,8 @@ type GuildSoundboardSoundsReceiveEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#integration-create
-type IntegrationCreateReceiveEvent = {
-    Integration: Integration
-    GuildId: string
-}
-
 // https://discord.com/developers/docs/events/gateway-events#integration-update
-type IntegrationUpdateReceiveEvent = {
+type IntegrationReceiveEvent = {
     Integration: Integration
     GuildId: string
 }
@@ -725,27 +753,15 @@ type InviteDeleteReceiveEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-create
-type MessageCreateReceiveEvent = {
-    Message: Message
-    GuildId: string option
-    Member: PartialGuildMember option
-    Mentions: MessageCreateReceiveEventMention list
-}
-
-type MessageCreateReceiveEventMention = {
-    User: User
-    Member: PartialGuildMember option
-}
-
 // https://discord.com/developers/docs/events/gateway-events#message-update
-type MessageUpdateReceiveEvent = {
+type MessageReceiveEvent = {
     Message: Message
     GuildId: string option
     Member: PartialGuildMember option
-    Mentions: MessageUpdateReceiveEventMention list
+    Mentions: MessageReceiveEventMention list
 }
 
-type MessageUpdateReceiveEventMention = {
+type MessageReceiveEventMention = {
     User: User
     Member: PartialGuildMember option
 }
@@ -925,16 +941,8 @@ type WebhooksUpdateReceiveEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#message-poll-vote-add
-type MessagePollVoteAddReceiveEvent = {
-    UserId: string
-    ChannelId: string
-    MessageId: string
-    GuildId: string option
-    AnswerId: int
-}
-
 // https://discord.com/developers/docs/events/gateway-events#message-poll-vote-remove
-type MessagePollVoteRemoveReceiveEvent = {
+type MessagePollVoteReceiveEvent = {
     UserId: string
     ChannelId: string
     MessageId: string

@@ -947,17 +947,19 @@ module GatewayReceiveEventData =
     let decoder: Decoder<GatewayReceiveEventData> =
         Decode.oneOf [
             Decode.map GatewayReceiveEventData.BOOLEAN Decode.bool
+            // TODO: All reused data
             Decode.map GatewayReceiveEventData.HELLO HelloReceiveEvent.decoder
             Decode.map GatewayReceiveEventData.READY ReadyReceiveEvent.decoder
+            // TODO: Remaining event specific
         ]
 
     let encoder (v: GatewayReceiveEventData) =
         match v with
         | GatewayReceiveEventData.BOOLEAN d -> Encode.bool d
+        // TODO: All reused data
         | GatewayReceiveEventData.HELLO d -> HelloReceiveEvent.encoder d
         | GatewayReceiveEventData.READY d -> ReadyReceiveEvent.encoder d
-
-    // TODO: Add other potential receive event data types to serializers above
+        // TODO: Remaining event specific
 
 module IdentifySendEvent =
     module Property =
@@ -1447,35 +1449,18 @@ module GuildAuditLogEntryCreateReceiveEvent =
             |> Encode.required Property.GuildId Encode.string v.GuildId
         )
 
-module GuildBanAddReceiveEvent =
+module GuildUserReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] User = "user"
 
-    let decoder: Decoder<GuildBanAddReceiveEvent> =
+    let decoder: Decoder<GuildUserReceiveEvent> =
         Decode.object (fun get -> {
-            User = get |> Get.extract User.decoder
+            User = get |> Get.required Property.User User.decoder
             GuildId = get |> Get.required Property.GuildId Decode.string
         })
 
-    let encoder (v: GuildBanAddReceiveEvent) =
-        Encode.object (
-            User.encodeProperties v.User
-            |> Encode.required Property.GuildId Encode.string v.GuildId
-        )
-
-module GuildBanRemoveReceiveEvent =
-    module Property =
-        let [<Literal>] GuildId = "guild_id"
-        let [<Literal>] User = "user"
-        
-    let decoder: Decoder<GuildBanRemoveReceiveEvent> =
-        Decode.object (fun get -> {
-            User = get |> Get.extract User.decoder
-            GuildId = get |> Get.required Property.GuildId Decode.string
-        })
-
-    let encoder (v: GuildBanRemoveReceiveEvent) =
+    let encoder (v: GuildUserReceiveEvent) =
         Encode.object (
             User.encodeProperties v.User
             |> Encode.required Property.GuildId Encode.string v.GuildId
@@ -1543,23 +1528,6 @@ module GuildMemberAddReceiveEvent =
         Encode.object (
             GuildMember.encodeProperties v.GuildMember
             |> Encode.required Property.GuildId Encode.string v.GuildId
-        )
-
-module GuildMemberRemoveReceiveEvent =
-    module Property =
-        let [<Literal>] GuildId = "guild_id"
-        let [<Literal>] User = "user"
-
-    let decoder: Decoder<GuildMemberRemoveReceiveEvent> =
-        Decode.object (fun get -> {
-            GuildId = get |> Get.required Property.GuildId Decode.string
-            User = get |> Get.required Property.User User.decoder
-        })
-
-    let encoder (v: GuildMemberRemoveReceiveEvent) =
-        Encode.object ([]
-            |> Encode.required Property.GuildId Encode.string v.GuildId
-            |> Encode.required Property.User User.encoder v.User
         )
 
 module GuildMemberUpdateReceiveEvent =
@@ -1647,35 +1615,18 @@ module GuildMembersChunkReceiveEvent =
             |> Encode.optional Property.Nonce Encode.string v.Nonce
         )
 
-module GuildRoleCreateReceiveEvent =
+module GuildRoleReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Role = "role"
 
-    let decoder: Decoder<GuildRoleCreateReceiveEvent> =
+    let decoder: Decoder<GuildRoleReceiveEvent> =
         Decode.object (fun get -> {
             GuildId = get |> Get.required Property.GuildId Decode.string
             Role = get |> Get.required Property.Role Role.decoder
         })
 
-    let encoder (v: GuildRoleCreateReceiveEvent) =
-        Encode.object ([]
-            |> Encode.required Property.GuildId Encode.string v.GuildId
-            |> Encode.required Property.Role Role.encoder v.Role
-        )
-
-module GuildRoleUpdateReceiveEvent =
-    module Property =
-        let [<Literal>] GuildId = "guild_id"
-        let [<Literal>] Role = "role"
-
-    let decoder: Decoder<GuildRoleUpdateReceiveEvent> =
-        Decode.object (fun get -> {
-            GuildId = get |> Get.required Property.GuildId Decode.string
-            Role = get |> Get.required Property.Role Role.decoder
-        })
-
-    let encoder (v: GuildRoleUpdateReceiveEvent) =
+    let encoder (v: GuildRoleReceiveEvent) =
         Encode.object ([]
             |> Encode.required Property.GuildId Encode.string v.GuildId
             |> Encode.required Property.Role Role.encoder v.Role
@@ -1698,40 +1649,20 @@ module GuildRoleDeleteReceiveEvent =
             |> Encode.required Property.RoleId Encode.string v.RoleId
         )
 
-module GuildScheduledEventUserAddReceiveEvent =
+module GuildScheduledEventUserReceiveEvent =
     module Property =
         let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
         let [<Literal>] UserId = "user_id"
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<GuildScheduledEventUserAddReceiveEvent> =
+    let decoder: Decoder<GuildScheduledEventUserReceiveEvent> =
         Decode.object (fun get -> {
             GuildScheduledEventId = get |> Get.required Property.GuildScheduledEventId Decode.string
             UserId = get |> Get.required Property.UserId Decode.string
             GuildId = get |> Get.required Property.GuildId Decode.string
         })
 
-    let encoder (v: GuildScheduledEventUserAddReceiveEvent) =
-        Encode.object ([]
-            |> Encode.required Property.GuildScheduledEventId Encode.string v.GuildScheduledEventId
-            |> Encode.required Property.UserId Encode.string v.UserId
-            |> Encode.required Property.GuildId Encode.string v.GuildId
-        )
-
-module GuildScheduledEventUserRemoveReceiveEvent =
-    module Property =
-        let [<Literal>] GuildScheduledEventId = "guild_scheduled_event_id"
-        let [<Literal>] UserId = "user_id"
-        let [<Literal>] GuildId = "guild_id"
-
-    let decoder: Decoder<GuildScheduledEventUserRemoveReceiveEvent> =
-        Decode.object (fun get -> {
-            GuildScheduledEventId = get |> Get.required Property.GuildScheduledEventId Decode.string
-            UserId = get |> Get.required Property.UserId Decode.string
-            GuildId = get |> Get.required Property.GuildId Decode.string
-        })
-
-    let encoder (v: GuildScheduledEventUserRemoveReceiveEvent) =
+    let encoder (v: GuildScheduledEventUserReceiveEvent) =
         Encode.object ([]
             |> Encode.required Property.GuildScheduledEventId Encode.string v.GuildScheduledEventId
             |> Encode.required Property.UserId Encode.string v.UserId
@@ -1755,23 +1686,6 @@ module GuildSoundboardSoundDeleteReceiveEvent =
             |> Encode.required Property.GuildId Encode.string v.GuildId
         )
 
-module GuildSoundboardSoundsUpdateReceiveEvent =
-    module Property =
-        let [<Literal>] SoundboardSounds = "soundboard_sounds"
-        let [<Literal>] GuildId = "guild_id"
-
-    let decoder: Decoder<GuildSoundboardSoundsUpdateReceiveEvent> =
-        Decode.object (fun get -> {
-            SoundboardSounds = get |> Get.required Property.SoundboardSounds (Decode.list SoundboardSound.decoder)
-            GuildId = get |> Get.required Property.GuildId Decode.string
-        })
-
-    let encoder (v: GuildSoundboardSoundsUpdateReceiveEvent) =
-        Encode.object ([]
-            |> Encode.required Property.SoundboardSounds (List.map SoundboardSound.encoder >> Encode.list) v.SoundboardSounds
-            |> Encode.required Property.GuildId Encode.string v.GuildId
-        )
-
 module GuildSoundboardSoundsReceiveEvent =
     module Property =
         let [<Literal>] SoundboardSounds = "soundboard_sounds"
@@ -1789,33 +1703,17 @@ module GuildSoundboardSoundsReceiveEvent =
             |> Encode.required Property.GuildId Encode.string v.GuildId
         )
 
-module IntegrationCreateReceiveEvent =
+module IntegrationReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
 
-    let decoder: Decoder<IntegrationCreateReceiveEvent> =
+    let decoder: Decoder<IntegrationReceiveEvent> =
         Decode.object (fun get -> {
             Integration = get |> Get.extract Integration.decoder
             GuildId = get |> Get.required Property.GuildId Decode.string
         })
 
-    let encoder (v: IntegrationCreateReceiveEvent) =
-        Encode.object (
-            Integration.encodeProperties v.Integration
-            |> Encode.required Property.GuildId Encode.string v.GuildId
-        )
-
-module IntegrationUpdateReceiveEvent =
-    module Property =
-        let [<Literal>] GuildId = "guild_id"
-
-    let decoder: Decoder<IntegrationUpdateReceiveEvent> =
-        Decode.object (fun get -> {
-            Integration = get |> Get.extract Integration.decoder
-            GuildId = get |> Get.required Property.GuildId Decode.string
-        })
-
-    let encoder (v: IntegrationUpdateReceiveEvent) =
+    let encoder (v: IntegrationReceiveEvent) =
         Encode.object (
             Integration.encodeProperties v.Integration
             |> Encode.required Property.GuildId Encode.string v.GuildId
@@ -1908,77 +1806,39 @@ module InviteDeleteReceiveEvent =
             |> Encode.required Property.Code Encode.string v.Code
         )
 
-module MessageCreateReceiveEvent =
+module MessageReceiveEvent =
     module Property =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] Member = "member"
         let [<Literal>] Mentions = "mentions"
 
-    let decoder: Decoder<MessageCreateReceiveEvent> =
+    let decoder: Decoder<MessageReceiveEvent> =
         Decode.object (fun get -> {
             Message = get |> Get.extract Message.decoder
             GuildId = get |> Get.optional Property.GuildId Decode.string
             Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
-            Mentions = get |> Get.required Property.Mentions (Decode.list MessageCreateReceiveEventMention.decoder)
+            Mentions = get |> Get.required Property.Mentions (Decode.list MessageReceiveEventMention.decoder)
         })
 
-    let encoder (v: MessageCreateReceiveEvent) =
+    let encoder (v: MessageReceiveEvent) =
         Encode.object (
             Message.encodeProperties v.Message
             |> Encode.optional Property.GuildId Encode.string v.GuildId
             |> Encode.optional Property.Member GuildMember.Partial.encoder v.Member
-            |> Encode.required Property.Mentions (List.map MessageCreateReceiveEventMention.encoder >> Encode.list) v.Mentions
+            |> Encode.required Property.Mentions (List.map MessageReceiveEventMention.encoder >> Encode.list) v.Mentions
         )
 
-module MessageCreateReceiveEventMention =
+module MessageReceiveEventMention =
     module Property =
         let [<Literal>] Member = "member"
 
-    let decoder: Decoder<MessageCreateReceiveEventMention> =
+    let decoder: Decoder<MessageReceiveEventMention> =
         Decode.object (fun get -> {
             User = get |> Get.extract User.decoder
             Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
         })
 
-    let encoder (v: MessageCreateReceiveEventMention) =
-        Encode.object (
-            User.encodeProperties v.User
-            |> Encode.optional Property.Member GuildMember.Partial.encoder v.Member
-        )
-
-module MessageUpdateReceiveEvent =
-    module Property =
-        let [<Literal>] GuildId = "guild_id"
-        let [<Literal>] Member = "member"
-        let [<Literal>] Mentions = "mentions"
-        
-    let decoder: Decoder<MessageUpdateReceiveEvent> =
-        Decode.object (fun get -> {
-            Message = get |> Get.extract Message.decoder
-            GuildId = get |> Get.optional Property.GuildId Decode.string
-            Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
-            Mentions = get |> Get.required Property.Mentions (Decode.list MessageUpdateReceiveEventMention.decoder)
-        })
-
-    let encoder (v: MessageUpdateReceiveEvent) =
-        Encode.object (
-            Message.encodeProperties v.Message
-            |> Encode.optional Property.GuildId Encode.string v.GuildId
-            |> Encode.optional Property.Member GuildMember.Partial.encoder v.Member
-            |> Encode.required Property.Mentions (List.map MessageUpdateReceiveEventMention.encoder >> Encode.list) v.Mentions
-        )
-
-module MessageUpdateReceiveEventMention =
-    module Property =
-        let [<Literal>] Member = "member"
-
-    let decoder: Decoder<MessageUpdateReceiveEventMention> =
-        Decode.object (fun get -> {
-            User = get |> Get.extract User.decoder
-            Member = get |> Get.optional Property.Member GuildMember.Partial.decoder
-        })
-
-    let encoder (v: MessageUpdateReceiveEventMention) =
+    let encoder (v: MessageReceiveEventMention) =
         Encode.object (
             User.encodeProperties v.User
             |> Encode.optional Property.Member GuildMember.Partial.encoder v.Member
@@ -2464,7 +2324,7 @@ module WebhooksUpdateReceiveEvent =
             |> Encode.required Property.ChannelId Encode.string v.ChannelId
         )
 
-module MessagePollVoteAddReceiveEvent =
+module MessagePollVoteReceiveEvent =
     module Property =
         let [<Literal>] UserId = "user_id"
         let [<Literal>] ChannelId = "channel_id"
@@ -2472,7 +2332,7 @@ module MessagePollVoteAddReceiveEvent =
         let [<Literal>] GuildId = "guild_id"
         let [<Literal>] AnswerId = "answer_id"
 
-    let decoder: Decoder<MessagePollVoteAddReceiveEvent> =
+    let decoder: Decoder<MessagePollVoteReceiveEvent> =
         Decode.object (fun get -> {
             UserId = get |> Get.required Property.UserId Decode.string
             ChannelId = get |> Get.required Property.ChannelId Decode.string
@@ -2481,33 +2341,7 @@ module MessagePollVoteAddReceiveEvent =
             AnswerId = get |> Get.required Property.AnswerId Decode.int
         })
 
-    let encoder (v: MessagePollVoteAddReceiveEvent) =
-        Encode.object ([]
-            |> Encode.required Property.UserId Encode.string v.UserId
-            |> Encode.required Property.ChannelId Encode.string v.ChannelId
-            |> Encode.required Property.MessageId Encode.string v.MessageId
-            |> Encode.optional Property.GuildId Encode.string v.GuildId
-            |> Encode.required Property.AnswerId Encode.int v.AnswerId
-        )
-
-module MessagePollVoteRemoveReceiveEvent =
-    module Property =
-        let [<Literal>] UserId = "user_id"
-        let [<Literal>] ChannelId = "channel_id"
-        let [<Literal>] MessageId = "message_id"
-        let [<Literal>] GuildId = "guild_id"
-        let [<Literal>] AnswerId = "answer_id"
-
-    let decoder: Decoder<MessagePollVoteRemoveReceiveEvent> =
-        Decode.object (fun get -> {
-            UserId = get |> Get.required Property.UserId Decode.string
-            ChannelId = get |> Get.required Property.ChannelId Decode.string
-            MessageId = get |> Get.required Property.MessageId Decode.string
-            GuildId = get |> Get.optional Property.GuildId Decode.string
-            AnswerId = get |> Get.required Property.AnswerId Decode.int
-        })
-
-    let encoder (v: MessagePollVoteRemoveReceiveEvent) =
+    let encoder (v: MessagePollVoteReceiveEvent) =
         Encode.object ([]
             |> Encode.required Property.UserId Encode.string v.UserId
             |> Encode.required Property.ChannelId Encode.string v.ChannelId
