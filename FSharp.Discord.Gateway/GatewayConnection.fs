@@ -77,4 +77,6 @@ module GatewayConnection =
         | _ ->
             None
 
+        // TODO: Implement remaining send events here instead of catching to None with Option.iter
+
         |> Option.iter (GatewaySendEventPayload.encoder >> Encode.toString 0 >> connection.Socket.Send)
