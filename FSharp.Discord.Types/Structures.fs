@@ -370,6 +370,24 @@ type GatewayEventPayload<'a> = {
     EventName: string option
 }
 
+type GatewaySendEventPayload = GatewayEventPayload<GatewaySendEventData>
+
+type GatewaySendEventData =
+    | OPTIONAL_INT              of int option
+    | IDENTIFY                  of IdentifySendEvent
+    | RESUME                    of ResumeSendEvent
+    | REQUEST_GUILD_MEMBERS     of RequestGuildMembersSendEvent
+    | REQUEST_SOUNDBOARD_SOUNDS of RequestSoundboardSoundsSendEvent
+    | UPDATE_VOICE_STATE        of UpdateVoiceStateSendEvent
+    | UPDATE_PRESENCE           of UpdatePresenceSendEvent
+
+type GatewayReceiveEventPayload = GatewayEventPayload<GatewayReceiveEventData option>
+
+type GatewayReceiveEventData =
+    | BOOLEAN of bool
+    | HELLO of HelloReceiveEvent
+    | READY of ReadyReceiveEvent
+
 // https://discord.com/developers/docs/topics/gateway-events#identify-identify-structure
 type IdentifySendEvent = {
     Token: string

@@ -1,51 +1,44 @@
 ﻿namespace FSharp.Discord.Gateway
 
 open FSharp.Discord.Types
-open System.Text.Json
-open System.Text.Json.Serialization
+open FSharp.Discord.Types.Serialization
+open Thoth.Json.Net
 
-[<JsonConverter(typeof<GatewaySendEventConverter>)>]
 type GatewaySendEvent =
-    | IDENTIFY                  of GatewayEventPayload<IdentifySendEvent>
-    | RESUME                    of GatewayEventPayload<ResumeSendEvent>
-    | HEARTBEAT                 of GatewayEventPayload<HeartbeatSendEvent>
-    | REQUEST_GUILD_MEMBERS     of GatewayEventPayload<RequestGuildMembersSendEvent>
-    | REQUEST_SOUNDBOARD_SOUNDS of GatewayEventPayload<RequestSoundboardSoundsSendEvent>
-    | UPDATE_VOICE_STATE        of GatewayEventPayload<UpdateVoiceStateSendEvent>
-    | UPDATE_PRESENCE           of GatewayEventPayload<UpdatePresenceSendEvent>
-    | UNKNOWN                   of GatewayEventPayload<obj>
+    | IDENTIFY                  of IdentifySendEvent
+    | RESUME                    of ResumeSendEvent
+    | HEARTBEAT                 of int option
+    | REQUEST_GUILD_MEMBERS     of RequestGuildMembersSendEvent
+    | REQUEST_SOUNDBOARD_SOUNDS of RequestSoundboardSoundsSendEvent
+    | UPDATE_VOICE_STATE        of UpdateVoiceStateSendEvent
+    | UPDATE_PRESENCE           of UpdatePresenceSendEvent
 
-and GatewaySendEventConverter () =
-    inherit JsonConverter<GatewaySendEvent> ()
+module GatewaySendEvent =
+    let decoder: Decoder<GatewaySendEvent> =
+        GatewaySendEventPayload.decoder
+        |> Decode.andThen (fun payload ->
+            match payload.Opcode, payload.Data with
+            | GatewayOpcode.IDENTIFY, GatewaySendEventData.IDENTIFY d ->
+                Decode.succeed (GatewaySendEvent.IDENTIFY d)
 
-    override __.Read (reader, _, _) =
-        let success, document = JsonDocument.TryParseValue(&reader)
-        JsonException.raiseIf (not success)
+            | GatewayOpcode.RESUME, GatewaySendEventData.RESUME d ->
+                Decode.succeed (GatewaySendEvent.RESUME d)
 
-        let opcode =
-            document.RootElement.GetProperty "op"
-            |> _.GetInt32()
-            |> enum<GatewayOpcode>
+            | GatewayOpcode.HEARTBEAT, GatewaySendEventData.OPTIONAL_INT d ->
+                Decode.succeed (GatewaySendEvent.HEARTBEAT d)
 
-        let json = document.RootElement.GetRawText()
+            | GatewayOpcode.REQUEST_GUILD_MEMBERS, GatewaySendEventData.REQUEST_GUILD_MEMBERS d ->
+                Decode.succeed (GatewaySendEvent.REQUEST_GUILD_MEMBERS d)
 
-        match opcode with
-        | GatewayOpcode.IDENTIFY -> IDENTIFY <| Json.deserializeF json
-        | GatewayOpcode.RESUME -> RESUME <| Json.deserializeF json
-        | GatewayOpcode.HEARTBEAT -> HEARTBEAT <| Json.deserializeF json
-        | GatewayOpcode.REQUEST_GUILD_MEMBERS -> REQUEST_GUILD_MEMBERS <| Json.deserializeF json
-        | GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS -> REQUEST_SOUNDBOARD_SOUNDS <| Json.deserializeF json
-        | GatewayOpcode.VOICE_STATE_UPDATE -> UPDATE_VOICE_STATE <| Json.deserializeF json
-        | GatewayOpcode.PRESENCE_UPDATE -> UPDATE_PRESENCE <| Json.deserializeF json
-        | _ -> UNKNOWN <| Json.deserializeF json
-                
-    override __.Write (writer, value, _) =
-        match value with
-        | IDENTIFY i -> Json.serializeF i |> writer.WriteRawValue
-        | RESUME r -> Json.serializeF r |> writer.WriteRawValue
-        | HEARTBEAT h -> Json.serializeF h |> writer.WriteRawValue
-        | REQUEST_GUILD_MEMBERS r -> Json.serializeF r |> writer.WriteRawValue
-        | REQUEST_SOUNDBOARD_SOUNDS r -> Json.serializeF r |> writer.WriteRawValue
-        | UPDATE_VOICE_STATE u -> Json.serializeF u |> writer.WriteRawValue
-        | UPDATE_PRESENCE u -> Json.serializeF u |> writer.WriteRawValue
-        | UNKNOWN u -> Json.serializeF u |> writer.WriteRawValue
+            | GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS d ->
+                Decode.succeed (GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS d)
+
+            | GatewayOpcode.VOICE_STATE_UPDATE, GatewaySendEventData.UPDATE_VOICE_STATE d ->
+                Decode.succeed (GatewaySendEvent.UPDATE_VOICE_STATE d)
+
+            | GatewayOpcode.PRESENCE_UPDATE, GatewaySendEventData.UPDATE_PRESENCE d ->
+                Decode.succeed (GatewaySendEvent.UPDATE_PRESENCE d)
+
+            | _ ->
+                Decode.fail "Unexpected gateway send event data received"
+        )

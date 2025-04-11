@@ -913,6 +913,50 @@ module GatewayEventPayload =
             |> Encode.nullable Property.EventName Encode.string v.EventName
         )
 
+module GatewaySendEventPayload =
+    let decoder: Decoder<GatewaySendEventPayload> = GatewayEventPayload.decoder GatewaySendEventData.decoder
+    let encoder (v: GatewaySendEventPayload) = GatewayEventPayload.encoder GatewaySendEventData.encoder v
+
+module GatewaySendEventData =
+    let decoder: Decoder<GatewaySendEventData> =
+        Decode.oneOf [
+            Decode.map GatewaySendEventData.OPTIONAL_INT (Decode.option Decode.int)
+            Decode.map GatewaySendEventData.IDENTIFY IdentifySendEvent.decoder
+            Decode.map GatewaySendEventData.RESUME ResumeSendEvent.decoder
+            Decode.map GatewaySendEventData.REQUEST_GUILD_MEMBERS RequestGuildMembersSendEvent.decoder
+            Decode.map GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS RequestSoundboardSoundsSendEvent.decoder
+            Decode.map GatewaySendEventData.UPDATE_VOICE_STATE UpdateVoiceStateSendEvent.decoder
+            Decode.map GatewaySendEventData.UPDATE_PRESENCE UpdatePresenceSendEvent.decoder
+        ]
+
+    let encoder (v: GatewaySendEventData) =
+        match v with
+        | GatewaySendEventData.OPTIONAL_INT d -> Encode.option Encode.int d
+        | GatewaySendEventData.IDENTIFY d -> IdentifySendEvent.encoder d
+        | GatewaySendEventData.RESUME d -> ResumeSendEvent.encoder d
+        | GatewaySendEventData.REQUEST_GUILD_MEMBERS d -> RequestGuildMembersSendEvent.encoder d
+        | GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS d -> RequestSoundboardSoundsSendEvent.encoder d
+        | GatewaySendEventData.UPDATE_VOICE_STATE d -> UpdateVoiceStateSendEvent.encoder d
+        | GatewaySendEventData.UPDATE_PRESENCE d -> UpdatePresenceSendEvent.encoder d
+
+module GatewayReceiveEventPayload =
+    let decoder: Decoder<GatewayReceiveEventPayload> = GatewayEventPayload.decoder (Decode.option GatewayReceiveEventData.decoder)
+    let encoder (v: GatewayReceiveEventPayload) = GatewayEventPayload.encoder (Encode.option GatewayReceiveEventData.encoder) v
+
+module GatewayReceiveEventData =
+    let decoder: Decoder<GatewayReceiveEventData> =
+        Decode.oneOf [
+            Decode.map GatewayReceiveEventData.BOOLEAN Decode.bool
+            Decode.map GatewayReceiveEventData.HELLO HelloReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.READY ReadyReceiveEvent.decoder
+        ]
+
+    let encoder (v: GatewayReceiveEventData) =
+        match v with
+        | GatewayReceiveEventData.BOOLEAN d -> Encode.bool d
+        | GatewayReceiveEventData.HELLO d -> HelloReceiveEvent.encoder d
+        | GatewayReceiveEventData.READY d -> ReadyReceiveEvent.encoder d
+
 module IdentifySendEvent =
     module Property =
         let [<Literal>] Token = "token"
@@ -1046,6 +1090,14 @@ module UpdateVoiceStateSendEvent =
             SelfMute = get |> Get.required Property.SelfMute Decode.bool
             SelfDeaf = get |> Get.required Property.SelfDeaf Decode.bool
         })
+
+    let encoder (v: UpdateVoiceStateSendEvent) =
+        Encode.object ([]
+            |> Encode.required Property.GuildId Encode.string v.GuildId
+            |> Encode.nullable Property.ChannelId Encode.string v.ChannelId
+            |> Encode.required Property.SelfMute Encode.bool v.SelfMute
+            |> Encode.required Property.SelfDeaf Encode.bool v.SelfDeaf
+        )
 
 module UpdatePresenceSendEvent =
     module Property =
