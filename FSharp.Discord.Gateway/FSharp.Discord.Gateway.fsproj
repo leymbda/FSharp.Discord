@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="GatewaySendEvent.fs" />
     <Compile Include="GatewayReceiveEvent.fs" />
+    <Compile Include="Gateway.fs" />
     <Compile Include="Old\Common\CustomGatewayOpcode.fs" />
     <Compile Include="Old\Entities\IWebsocket.fs" />
     <Compile Include="Old\Modules\Websocket.fs" />
@@ -23,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Elmish" Version="4.2.0" />
+    <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
   </ItemGroup>
 
   <ItemGroup>
