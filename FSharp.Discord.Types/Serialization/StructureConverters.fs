@@ -4520,6 +4520,41 @@ module Invite =
     let encoder (v: Invite) =
         Encode.object (encodeProperties v)
 
+    module Partial =
+        let decoder: Decoder<PartialInvite> =
+            Decode.object (fun get -> {
+                Type = get |> Get.optional Property.Type Decode.Enum.int<InviteType>
+                Code = get |> Get.optional Property.Code Decode.string
+                Guild = get |> Get.optional Property.Guild Guild.Partial.decoder
+                Channel = get |> Get.nullable Property.Channel Channel.Partial.decoder
+                Inviter = get |> Get.optional Property.Inviter User.Partial.decoder
+                TargetType = get |> Get.optional Property.TargetType Decode.Enum.int<InviteTargetType>
+                TargetUser = get |> Get.optional Property.TargetUser User.decoder
+                TargetApplication = get |> Get.optional Property.TargetApplication Application.Partial.decoder
+                ApproximatePresenceCount = get |> Get.optional Property.ApproximatePresenceCount Decode.int
+                ApproximateMemberCount = get |> Get.optional Property.ApproximateMemberCount Decode.int
+                ExpiresAt = get |> Get.optinull Property.ExpiresAt Decode.datetimeUtc
+                GuildScheduledEvent = get |> Get.optional Property.GuildScheduledEvent GuildScheduledEvent.decoder
+            })
+
+        let internal encodeProperties (v: PartialInvite) =
+            []
+            |> Encode.optional Property.Type Encode.Enum.int v.Type
+            |> Encode.optional Property.Code Encode.string v.Code
+            |> Encode.optional Property.Guild Guild.Partial.encoder v.Guild
+            |> Encode.nullable Property.Channel Channel.Partial.encoder v.Channel
+            |> Encode.optional Property.Inviter User.Partial.encoder v.Inviter
+            |> Encode.optional Property.TargetType Encode.Enum.int v.TargetType
+            |> Encode.optional Property.TargetUser User.encoder v.TargetUser
+            |> Encode.optional Property.TargetApplication Application.Partial.encoder v.TargetApplication
+            |> Encode.optional Property.ApproximatePresenceCount Encode.int v.ApproximatePresenceCount
+            |> Encode.optional Property.ApproximateMemberCount Encode.int v.ApproximateMemberCount
+            |> Encode.optinull Property.ExpiresAt Encode.datetime v.ExpiresAt
+            |> Encode.optional Property.GuildScheduledEvent GuildScheduledEvent.encoder v.GuildScheduledEvent
+
+        let encoder (v: PartialInvite) =
+            Encode.object (encodeProperties v)
+
 module InviteMetadata =
     module Property =
         let [<Literal>] Uses = "uses"
@@ -4547,6 +4582,27 @@ module InviteMetadata =
 
     let encoder (v: InviteMetadata) =
         Encode.object (encodeProperties v)
+        
+    module Partial =
+        let decoder: Decoder<PartialInviteMetadata> =
+            Decode.object (fun get -> {
+                Uses = get |> Get.optional Property.Uses Decode.int
+                MaxUses = get |> Get.optional Property.MaxUses Decode.int
+                MaxAge = get |> Get.optional Property.MaxAge Decode.int
+                Temporary = get |> Get.optional Property.Temporary Decode.bool
+                CreatedAt = get |> Get.optional Property.CreatedAt Decode.datetimeUtc
+            })
+
+        let internal encodeProperties (v: PartialInviteMetadata) =
+            []
+            |> Encode.optional Property.Uses Encode.int v.Uses
+            |> Encode.optional Property.MaxUses Encode.int v.MaxUses
+            |> Encode.optional Property.MaxAge Encode.int v.MaxAge
+            |> Encode.optional Property.Temporary Encode.bool v.Temporary
+            |> Encode.optional Property.CreatedAt Encode.datetime v.CreatedAt
+
+        let encoder (v: PartialInviteMetadata) =
+            Encode.object (encodeProperties v)
 
 module InviteWithMetadata =
     let decoder: Decoder<InviteWithMetadata> =
@@ -4557,6 +4613,16 @@ module InviteWithMetadata =
 
     let encoder (v: InviteWithMetadata) =
         Encode.object (Invite.encodeProperties v.Invite @ InviteMetadata.encodeProperties v.Metadata)
+        
+    module Partial =
+        let decoder: Decoder<PartialInviteWithMetadata> =
+            Decode.object (fun get -> {
+                Invite = get |> Get.extract Invite.Partial.decoder
+                Metadata = get |> Get.extract InviteMetadata.Partial.decoder
+            })
+
+        let encoder (v: PartialInviteWithMetadata) =
+            Encode.object (Invite.Partial.encodeProperties v.Invite @ InviteMetadata.Partial.encodeProperties v.Metadata)
 
     // TODO: Should invite metadata be separated, or should this be treated like old ExtraFields types?
 

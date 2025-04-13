@@ -667,6 +667,78 @@ type DeleteGuildRoleRequest(guildId, roleId, ?auditLogReason) =
 
     member val AuditLogReason: string option = auditLogReason
 
+type GetGuildPruneCountRequest(guildId, ?days, ?includeRoles) =
+    member val GuildId: string = guildId
+
+    member val Days: int option = days
+    member val IncludeRoles: string list option = includeRoles
+
+type BeginGuildPruneRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: BeginGuildPrunePayload = payload
+
+type GetGuildVoiceRegionsRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetGuildInvitesRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetGuildIntegrationsRequest(guildId) =
+    member val GuildId: string = guildId
+
+type DeleteGuildIntegrationRequest(guildId, integrationId, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val IntegrationId: string = integrationId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type GetGuildWidgetSettingsRequest(guildId) =
+    member val GuildId: string = guildId
+
+type ModifyGuildWidgetRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildWidgetPayload = payload
+
+type GetGuildWidgetRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetGuildVanityUrlRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetGuildWidgetImageRequest(guildId, ?style) =
+    member val GuildId: string = guildId
+    member val Style: GuildWidgetStyle option = style
+
+type GetGuildWelcomeScreenRequest(guildId) =
+    member val GuildId: string = guildId
+
+type ModifyGuildWelcomeScreenRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildWelcomeScreenPayload = payload
+
+type GetGuildOnboardingRequest(guildId) =
+    member val GuildId: string = guildId
+
+type ModifyGuildOnboardingRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildOnboardingPayload = payload
+
+type ModifyGuildIncidentActionsRequest(guildId, payload) =
+    member val GuildId: string = guildId
+    member val Payload: ModifyGuildIncidentActionsPayload = payload
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

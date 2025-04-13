@@ -904,6 +904,124 @@ let deleteGuildRole (req: DeleteGuildRoleRequest) (client: IBotClient) =
     |> client.SendAsync
     |> Task.bind DiscordResponse.unit
 
+// https://discord.com/developers/docs/resources/guild#get-guild-prune-count
+let getGuildPruneCount (req: GetGuildPruneCountRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "prune"]
+    |> Uri.withOptionalQuery "days" (Option.map string req.Days)
+    |> Uri.withOptionalQuery "include_roles" (Option.map (String.concat ",") req.IncludeRoles)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GetGuildPruneCountResponse.decoder)
+
+// https://discord.com/developers/docs/resources/guild#begin-guild-prune
+let beginGuildPrune (req: BeginGuildPruneRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "prune"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode BeginGuildPruneResponse.decoder)
+
+// https://discord.com/developers/docs/resources/guild#get-guild-voice-regions
+let getGuildVoiceRegions (req: GetGuildVoiceRegionsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "regions"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list VoiceRegion.decoder))
+
+// https://discord.com/developers/docs/resources/guild#get-guild-invites
+let getGuildInvites (req: GetGuildInvitesRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "invites"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list InviteWithMetadata.decoder))
+
+// https://discord.com/developers/docs/resources/guild#get-guild-integrations
+let getGuildIntegrations (req: GetGuildIntegrationsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "integrations"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Integration.decoder))
+
+// https://discord.com/developers/docs/resources/guild#delete-guild-integration
+let deleteGuildIntegration (req: DeleteGuildIntegrationRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "integrations"; req.IntegrationId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild#get-guild-widget-settings
+let getGuildWidgetSettings (req: GetGuildWidgetSettingsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "widget"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildWidgetSettings.decoder)
+
+// https://discord.com/developers/docs/resources/guild#modify-guild-widget
+let modifyGuildWidget (req: ModifyGuildWidgetRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "widget"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildWidgetSettings.decoder)
+
+// https://discord.com/developers/docs/resources/guild#get-guild-widget
+let getGuildWidget (req: GetGuildWidgetRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "widget.json"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildWidget.decoder)
+
+// https://discord.com/developers/docs/resources/guild#get-guild-vanity-url
+let getGuildVanityUrl (req: GetGuildVanityUrlRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "vanity-url"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode InviteWithMetadata.Partial.decoder)
+
+// https://discord.com/developers/docs/resources/guild#get-guild-widget-image
+let getGuildWidgetImage (req: GetGuildWidgetImageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "widget.png"]
+    |> Uri.withOptionalQuery "style" (Option.map GuildWidgetStyle.toString req.Style)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.string
+
+// https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen
+let modifyGuildWelcomeScreen (req: ModifyGuildWelcomeScreenRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "welcome-screen"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode WelcomeScreen.decoder)
+
+// https://discord.com/developers/docs/resources/guild#get-guild-onboarding
+let getGuildOnboarding (req: GetGuildOnboardingRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "onboarding"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildOnboarding.decoder)
+
+// https://discord.com/developers/docs/resources/guild#modify-guild-onboarding
+let modifyGuildOnboarding (req: ModifyGuildOnboardingRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "onboarding"]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildOnboarding.decoder)
+
+// https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions
+let modifyGuildIncidentActions (req: ModifyGuildIncidentActionsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "incident-actions"]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode IncidentsData.decoder)
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

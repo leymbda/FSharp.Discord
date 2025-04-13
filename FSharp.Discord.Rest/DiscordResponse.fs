@@ -108,6 +108,10 @@ module DiscordResponse =
     let unit (res: HttpResponseMessage): Task<DiscordResponse<unit>> =
         map' (fun _ -> Ok ()) res
 
+    /// Resolve the response to the raw string if successful.
+    let string (res: HttpResponseMessage): Task<DiscordResponse<string>> =
+        map' (fun s -> Ok s) res
+
     /// Resolve the response body to the type if a body is present, otherwise return None.
     let tryDecode<'a> (decoder: Decoder<'a>) (res: HttpResponseMessage): Task<DiscordResponse<'a option>> =
         match res.Content.Headers.ContentLength |> Option.ofNullable with

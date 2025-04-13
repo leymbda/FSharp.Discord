@@ -1761,6 +1761,21 @@ type Invite = {
     GuildScheduledEvent: GuildScheduledEvent option
 }
 
+and PartialInvite = {
+    Type: InviteType option
+    Code: string option
+    Guild: PartialGuild option
+    Channel: PartialChannel option
+    Inviter: PartialUser option
+    TargetType: InviteTargetType option
+    TargetUser: User option
+    TargetApplication: PartialApplication option
+    ApproximatePresenceCount: int option
+    ApproximateMemberCount: int option
+    ExpiresAt: DateTime option option
+    GuildScheduledEvent: GuildScheduledEvent option
+}
+
 // TODO: ApproximatePresenceCount ApproximateMemberCount ExpiresAt all only returned in certain endpoints (should they be ExtraFields?)
 
 // https://discord.com/developers/docs/resources/invite#invite-metadata-object-invite-metadata-structure
@@ -1772,9 +1787,22 @@ type InviteMetadata = {
     CreatedAt: DateTime
 }
 
+and PartialInviteMetadata = {
+    Uses: int option
+    MaxUses: int option
+    MaxAge: int option
+    Temporary: bool option
+    CreatedAt: DateTime option
+}
+
 type InviteWithMetadata = {
     Invite: Invite
     Metadata: InviteMetadata
+}
+
+and PartialInviteWithMetadata = {
+    Invite: PartialInvite
+    Metadata: PartialInviteMetadata
 }
 
 // ----- Resources: Lobby -----

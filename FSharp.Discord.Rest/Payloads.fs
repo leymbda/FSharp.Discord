@@ -991,8 +991,8 @@ type ListActiveGuildThreadsResponse = {
 module ListActiveGuildThreadsResponse =
     let decoder: Decoder<ListActiveGuildThreadsResponse> =
         Decode.object (fun get -> {
-            Threads = get.Required.Field "threads" (Decode.list Channel.decoder)
-            Members = get.Required.Field "members" (Decode.list ThreadMember.decoder)
+            Threads = get |> Get.required "threads" (Decode.list Channel.decoder)
+            Members = get |> Get.required "members" (Decode.list ThreadMember.decoder)
         })
 
 type AddGuildMemberPayload(accessToken, nick, roles, mute, deaf) =
@@ -1085,8 +1085,8 @@ type BulkBanResponse = {
 module BulkBanResponse =
     let decoder: Decoder<BulkBanResponse> =
         Decode.object (fun get -> {
-            BannedUsers = get.Required.Field "banned_users" (Decode.list Decode.string)
-            FailedUsers = get.Required.Field "failed_users" (Decode.list Decode.string)
+            BannedUsers = get |> Get.required "banned_users" (Decode.list Decode.string)
+            FailedUsers = get |> Get.required "failed_users" (Decode.list Decode.string)
         })
 
 type CreateGuildRolePayload(name, permissions, color, hoist, icon, unicodeEmoji, mentionable) =
@@ -1170,6 +1170,104 @@ type ModifyGuildMfaLevelPayload(level) =
     interface IPayload with
         member this.ToHttpContent() =
             StringContent.createJson ModifyGuildMfaLevelPayload.Encoder this
+
+type GetGuildPruneCountResponse = {
+    Pruned: int
+}
+
+module GetGuildPruneCountResponse =
+    let decoder: Decoder<GetGuildPruneCountResponse> =
+        Decode.object (fun get -> {
+            Pruned = get |> Get.required "pruned" Decode.int
+        })
+
+type BeginGuildPrunePayload(days, computePruneCount, includeRoles) =
+    member val Days: int option = days
+    member val ComputePruneCount: bool option = computePruneCount
+    member val IncludeRoles: string list option = includeRoles
+
+    static member Encoder(v: BeginGuildPrunePayload) =
+        Encode.object ([]
+            |> Encode.optional "days" Encode.int v.Days
+            |> Encode.optional "compute_prune_count" Encode.bool v.ComputePruneCount
+            |> Encode.optional "include_roles" (List.map Encode.string >> Encode.list) v.IncludeRoles
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson BeginGuildPrunePayload.Encoder this
+            
+type BeginGuildPruneResponse = {
+    Pruned: int option
+}
+
+module BeginGuildPruneResponse =
+    let decoder: Decoder<BeginGuildPruneResponse> =
+        Decode.object (fun get -> {
+            Pruned = get |> Get.optional "pruned" Decode.int
+        })
+
+type ModifyGuildWidgetPayload(enabled, channelId) =
+    member val Enabled: bool option = enabled
+    member val ChannelId: string option option = channelId
+
+    static member Encoder(v: ModifyGuildWidgetPayload) =
+        Encode.object ([]
+            |> Encode.optional "enabled" Encode.bool v.Enabled
+            |> Encode.optinull "channel_id" Encode.string v.ChannelId
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildWidgetPayload.Encoder this
+
+type ModifyGuildWelcomeScreenPayload(enabled, welcomeChannels, description) =
+    member val Enabled: bool option option = enabled
+    member val WelcomeChannels: WelcomeScreenChannel list option option = welcomeChannels
+    member val Description: string option option = description
+
+    static member Encoder(v: ModifyGuildWelcomeScreenPayload) =
+        Encode.object ([]
+            |> Encode.optinull "enabled" Encode.bool v.Enabled
+            |> Encode.optinull "welcome_channels" (List.map WelcomeScreenChannel.encoder >> Encode.list) v.WelcomeChannels
+            |> Encode.optinull "description" Encode.string v.Description
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildWelcomeScreenPayload.Encoder this
+
+type ModifyGuildOnboardingPayload(prompts, defaultChannelIds, enabled, mode) =
+    member val Prompts: GuildOnboardingPrompt list = prompts
+    member val DefaultChannelIds: string list = defaultChannelIds
+    member val Enabled: bool = enabled
+    member val Mode: OnboardingMode = mode
+
+    static member Encoder(v: ModifyGuildOnboardingPayload) =
+        Encode.object ([]
+            |> Encode.required "prompts" (List.map GuildOnboardingPrompt.encoder >> Encode.list) v.Prompts
+            |> Encode.required "default_channel_ids" (List.map Encode.string >> Encode.list) v.DefaultChannelIds
+            |> Encode.required "enabled" Encode.bool v.Enabled
+            |> Encode.required "mode" Encode.Enum.int v.Mode
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildOnboardingPayload.Encoder this
+
+type ModifyGuildIncidentActionsPayload(invitesDisabledUntil, dmsDisabledUntil) =
+    member val invitesDisabledUntil: DateTime option option = invitesDisabledUntil
+    member val dmsDisabledUntil: DateTime option option = dmsDisabledUntil
+
+    static member Encoder(v: ModifyGuildIncidentActionsPayload) =
+        Encode.object ([]
+            |> Encode.optinull "invites_disabled_until" Encode.datetime v.invitesDisabledUntil
+            |> Encode.optinull "dms_disabled_until" Encode.datetime v.dmsDisabledUntil
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildIncidentActionsPayload.Encoder this
 
 // ----- Resources: Guild Scheduled Event -----
 
