@@ -728,6 +728,57 @@ let listActiveGuildThreads (req: ListActiveGuildThreadsRequest) (client: IBotCli
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode ListActiveGuildThreadsResponse.decoder)
 
+// https://discord.com/developers/docs/resources/guild#get-guild-member
+let getGuildMember (req: GetGuildMemberRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "members"; req.UserId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildMember.decoder)
+
+// https://discord.com/developers/docs/resources/guild#list-guild-members
+let listGuildMembers (req: ListGuildMembersRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "members"]
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list GuildMember.decoder))
+
+// https://discord.com/developers/docs/resources/guild#search-guild-members
+let searchGuildMembers (req: SearchGuildMembersRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "members"; "search"]
+    |> Uri.withRequiredQuery "query" req.Query
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list GuildMember.decoder))
+
+// https://discord.com/developers/docs/resources/guild#add-guild-member
+let addGuildMember (req: AddGuildMemberRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "members"; req.UserId]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildMember.decoder) // TODO: 201 = new, 204 = existing (should return a DU handling this)
+
+// https://discord.com/developers/docs/resources/guild#modify-guild-member
+let modifyGuildMember (req: ModifyGuildMemberRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "members"; req.UserId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildMember.decoder)
+
+// https://discord.com/developers/docs/resources/guild#modify-current-member
+let modifyCurrentMember (req: ModifyCurrentMemberRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "members"; "@me"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildMember.decoder)
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

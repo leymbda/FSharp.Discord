@@ -537,6 +537,43 @@ type ModifyGuildChannelPositionsRequest(guildId, payload, ?auditLogReason) =
 type ListActiveGuildThreadsRequest(guildId) =
     member val GuildId: string = guildId
 
+type GetGuildMemberRequest(guildId, userId) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+
+type ListGuildMembersRequest(guildId, ?after, ?limit) =
+    member val GuildId: string = guildId
+
+    member val After: string option = after
+    member val Limit: int option = limit
+
+type SearchGuildMembersRequest(guildId, query, ?limit) =
+    member val GuildId: string = guildId
+
+    member val Query: string = query
+    member val Limit: int option = limit
+
+type AddGuildMemberRequest(guildId, userId, payload) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+
+    member val Payload: AddGuildMemberPayload = payload
+
+type ModifyGuildMemberRequest(guildId, userId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildMemberPayload = payload
+
+type ModifyCurrentMemberRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyCurrentMemberPayload = payload
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

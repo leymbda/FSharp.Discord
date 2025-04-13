@@ -2,6 +2,7 @@
 
 open FSharp.Discord.Types
 open FSharp.Discord.Types.Serialization
+open System
 open Thoth.Json.Net
 
 // ----- Interactions: Receiving and Responding -----
@@ -993,6 +994,62 @@ module ListActiveGuildThreadsResponse =
             Threads = get.Required.Field "threads" (Decode.list Channel.decoder)
             Members = get.Required.Field "members" (Decode.list ThreadMember.decoder)
         })
+
+type AddGuildMemberPayload(accessToken, nick, roles, mute, deaf) =
+    member val AccessToken: string = accessToken
+    member val Nick: string option = nick
+    member val Roles: string list option = roles
+    member val Mute: bool option = mute
+    member val Deaf: bool option = deaf
+
+    static member Encoder(v: AddGuildMemberPayload) =
+        Encode.object ([]
+            |> Encode.required "access_token" Encode.string v.AccessToken
+            |> Encode.optional "nick" Encode.string v.Nick
+            |> Encode.optional "roles" (List.map Encode.string >> Encode.list) v.Roles
+            |> Encode.optional "mute" Encode.bool v.Mute
+            |> Encode.optional "deaf" Encode.bool v.Deaf
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson AddGuildMemberPayload.Encoder this
+
+type ModifyGuildMemberPayload(nick, roles, mute, deaf, channelId, communicationDisabledUntil, flags) =
+    member val Nick: string option option = nick
+    member val Roles: string list option option = roles
+    member val Mute: bool option option = mute
+    member val Deaf: bool option option = deaf
+    member val ChannelId: string option option = channelId
+    member val CommunicationDisabledUntil: DateTime option option = communicationDisabledUntil
+    member val Flags: GuildMemberFlag list option option = flags
+
+    static member Encoder(v: ModifyGuildMemberPayload) =
+        Encode.object ([]
+            |> Encode.optinull "nick" Encode.string v.Nick
+            |> Encode.optinull "roles" (List.map Encode.string >> Encode.list) v.Roles
+            |> Encode.optinull "mute" Encode.bool v.Mute
+            |> Encode.optinull "deaf" Encode.bool v.Deaf
+            |> Encode.optinull "channel_id" Encode.string v.ChannelId
+            |> Encode.optinull "communication_disabled_until" Encode.datetime v.CommunicationDisabledUntil
+            |> Encode.optinull "flags" Encode.bitfield v.Flags
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildMemberPayload.Encoder this
+
+type ModifyCurrentMemberPayload(nick) =
+    member val Nick: string option = nick
+
+    static member Encoder(v: ModifyCurrentMemberPayload) =
+        Encode.object ([]
+            |> Encode.optional "nick" Encode.string v.Nick
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyCurrentMemberPayload.Encoder this
 
 // ----- Resources: Guild Scheduled Event -----
 
