@@ -574,6 +574,57 @@ type ModifyCurrentMemberRequest(guildId, payload, ?auditLogReason) =
 
     member val Payload: ModifyCurrentMemberPayload = payload
 
+type AddGuildMemberRoleRequest(guildId, userId, roleId, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+    member val RoleId: string = roleId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type RemoveGuildMemberRoleRequest(guildId, userId, roleId, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+    member val RoleId: string = roleId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type RemoveGuildMemberRequest(guildId, userId, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type GetGuildBansRequest(guildId, ?limit, ?before, ?after) =
+    member val GuildId: string = guildId
+    
+    member val Limit: int option = limit
+    member val Before: string option = before
+    member val After: string option = after
+
+type GetGuildBanRequest(guildId, userId) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+
+type CreateGuildBanRequest(guildId, userId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateGuildBanPayload = payload
+
+type RemoveGuildBanRequest(guildId, userId, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+    member val AuditLogReason: string option = auditLogReason
+
+type BulkGuildBanRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: BulkGuildBanPayload = payload
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

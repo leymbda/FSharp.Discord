@@ -779,6 +779,73 @@ let modifyCurrentMember (req: ModifyCurrentMemberRequest) (client: IBotClient) =
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode GuildMember.decoder)
 
+// https://discord.com/developers/docs/resources/guild#add-guild-member-role
+let addGuildMemberRole (req: AddGuildMemberRoleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "members"; req.UserId; "roles"; req.RoleId]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild#remove-guild-member-role
+let removeGuildMemberRole (req: RemoveGuildMemberRoleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "members"; req.UserId; "roles"; req.RoleId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild#remove-guild-member
+let removeGuildMember (req: RemoveGuildMemberRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "members"; req.UserId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild#get-guild-bans
+let getGuildBans (req: GetGuildBansRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "bans"]
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.withOptionalQuery "before" req.Before
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Ban.decoder))
+
+// https://discord.com/developers/docs/resources/guild#get-guild-ban
+let getGuildBan (req: GetGuildBanRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "bans"; req.UserId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Ban.decoder)
+
+// https://discord.com/developers/docs/resources/guild#create-guild-ban
+let createGuildBan (req: CreateGuildBanRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "bans"; req.UserId]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild#remove-guild-ban
+let removeGuildBan (req: RemoveGuildBanRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "bans"; req.UserId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild#bulk-guild-ban
+let bulkGuildBan (req: BulkGuildBanRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "bans"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode BulkBanResponse.decoder)
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

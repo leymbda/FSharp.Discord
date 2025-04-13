@@ -1051,6 +1051,44 @@ type ModifyCurrentMemberPayload(nick) =
         member this.ToHttpContent() =
             StringContent.createJson ModifyCurrentMemberPayload.Encoder this
 
+type CreateGuildBanPayload(deleteMessageSeconds) =
+    member val DeleteMessageSeconds: int option = deleteMessageSeconds
+
+    static member Encoder(v: CreateGuildBanPayload) =
+        Encode.object ([]
+            |> Encode.optional "delete_message_seconds" Encode.int v.DeleteMessageSeconds
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateGuildBanPayload.Encoder this
+
+type BulkGuildBanPayload(userIds, deleteMessageSeconds) =
+    member val UserIds: string list = userIds
+    member val DeleteMessageSeconds: int option = deleteMessageSeconds
+
+    static member Encoder(v: BulkGuildBanPayload) =
+        Encode.object ([]
+            |> Encode.required "user_ids" (List.map Encode.string >> Encode.list) v.UserIds
+            |> Encode.optional "delete_message_seconds" Encode.int v.DeleteMessageSeconds
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson BulkGuildBanPayload.Encoder this
+
+type BulkBanResponse = {
+    BannedUsers: string list
+    FailedUsers: string list
+}
+
+module BulkBanResponse =
+    let decoder: Decoder<BulkBanResponse> =
+        Decode.object (fun get -> {
+            BannedUsers = get.Required.Field "banned_users" (Decode.list Decode.string)
+            FailedUsers = get.Required.Field "failed_users" (Decode.list Decode.string)
+        })
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----
