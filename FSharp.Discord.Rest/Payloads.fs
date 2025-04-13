@@ -817,6 +817,95 @@ type CreateTestEntitlementPayload(skuId, ownerId, ownerType) =
 
 // ----- Resources: Guild -----
 
+type CreateGuildPayload(
+    name, icon, verificationLevel, defaultMessageNotifications, explicitContentFilter, roles, channels, afkChannelId,
+    afkTimeout, systemChannelId, systemChannelFlags
+) =
+    member val Name: string = name
+    member val Icon: string option = icon
+    member val VerificationLevel: VerificationLevel option = verificationLevel
+    member val DefaultMessageNotifications: MessageNotificationLevel option = defaultMessageNotifications
+    member val ExplicitContentFilter: ExplicitContentFilterLevel option = explicitContentFilter
+    member val Roles: Role list option = roles
+    member val Channels: PartialChannel list option = channels
+    member val AfkChannelId: string option = afkChannelId
+    member val AfkTimeout: int option = afkTimeout
+    member val SystemChannelId: string option = systemChannelId
+    member val SystemChannelFlags: SystemChannelFlag list option = systemChannelFlags
+
+    static member Encoder(v: CreateGuildPayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.optional "icon" Encode.string v.Icon
+            |> Encode.optional "verification_level" Encode.Enum.int v.VerificationLevel
+            |> Encode.optional "default_message_notifications" Encode.Enum.int v.DefaultMessageNotifications
+            |> Encode.optional "explicit_content_filter" Encode.Enum.int v.ExplicitContentFilter
+            |> Encode.optional "roles" (List.map Role.encoder >> Encode.list) v.Roles
+            |> Encode.optional "channels" (List.map Channel.Partial.encoder >> Encode.list) v.Channels
+            |> Encode.optional "afk_channel_id" Encode.string v.AfkChannelId
+            |> Encode.optional "afk_timeout" Encode.int v.AfkTimeout
+            |> Encode.optional "system_channel_id" Encode.string v.SystemChannelId
+            |> Encode.optional "system_channel_flags" Encode.bitfield v.SystemChannelFlags
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateGuildPayload.Encoder this
+
+type ModifyGuildPayload(
+    name, verificationLevel, defaultMessageNotifications, explicitContentFilter, afkChannelId, afkTimeout, icon,
+    ownerId, splash, discoverySplash, banner, systemChannelId, systemChannelFlags, rulesChannelId,
+    publicUpdatesChannelId, preferredLocale, features, description, premiumProgressBarEnabled, safetyAlertsChannelId
+) =
+    member val Name: string option = name
+    member val VerificationLevel: VerificationLevel option option = verificationLevel
+    member val DefaultMessageNotifications: MessageNotificationLevel option option = defaultMessageNotifications
+    member val ExplicitContentFilter: ExplicitContentFilterLevel option option = explicitContentFilter
+    member val AfkChannelId: string option option = afkChannelId
+    member val AfkTimeout: int option = afkTimeout
+    member val Icon: string option option = icon
+    member val OwnerId: string option = ownerId
+    member val Splash: string option option = splash
+    member val DiscoverySplash: string option option = discoverySplash
+    member val Banner: string option option = banner
+    member val SystemChannelId: string option option = systemChannelId
+    member val SystemChannelFlags: SystemChannelFlag list option = systemChannelFlags
+    member val RulesChannelId: string option option = rulesChannelId
+    member val PublicUpdatesChannelId: string option option = publicUpdatesChannelId
+    member val PreferredLocale: string option option = preferredLocale
+    member val Features: GuildFeature list option = features
+    member val Description: string option option = description
+    member val PremiumProgressBarEnabled: bool option = premiumProgressBarEnabled
+    member val SafetyAlertsChannelId: string option option = safetyAlertsChannelId
+
+    static member Encoder(v: ModifyGuildPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optinull "verification_level" Encode.Enum.int v.VerificationLevel
+            |> Encode.optinull "default_message_notifications" Encode.Enum.int v.DefaultMessageNotifications
+            |> Encode.optinull "explicit_content_filter" Encode.Enum.int v.ExplicitContentFilter
+            |> Encode.optinull "afk_channel_id" Encode.string v.AfkChannelId
+            |> Encode.optional "afk_timeout" Encode.int v.AfkTimeout
+            |> Encode.optinull "icon" Encode.string v.Icon
+            |> Encode.optional "owner_id" Encode.string v.OwnerId
+            |> Encode.optinull "splash" Encode.string v.Splash
+            |> Encode.optinull "discovery_splash" Encode.string v.DiscoverySplash
+            |> Encode.optinull "banner" Encode.string v.Banner
+            |> Encode.optinull "system_channel_id" Encode.string v.SystemChannelId
+            |> Encode.optional "system_channel_flags" Encode.bitfield v.SystemChannelFlags
+            |> Encode.optinull "rules_channel_id" Encode.string v.RulesChannelId
+            |> Encode.optinull "public_updates_channel_id" Encode.string v.PublicUpdatesChannelId
+            |> Encode.optinull "preferred_locale" Encode.string v.PreferredLocale
+            |> Encode.optional "features" (List.map GuildFeature.encoder >> Encode.list) v.Features
+            |> Encode.optinull "description" Encode.string v.Description
+            |> Encode.optional "premium_progress_bar_enabled" Encode.bool v.PremiumProgressBarEnabled
+            |> Encode.optinull "safety_alerts_channel_id" Encode.string v.SafetyAlertsChannelId
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildPayload.Encoder this
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

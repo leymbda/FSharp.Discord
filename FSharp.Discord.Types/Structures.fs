@@ -1401,7 +1401,7 @@ type Guild = {
     OwnerId: string
     Permissions: Permission list option
     AfkChannelId: string option
-    AfkTimeout: int
+    AfkTimeout: int // TODO: Make this an enum everywhere (can be set to 60, 300, 900, 1800, 3600)
     WidgetEnabled: bool option
     WidgetChannelId: string option option
     VerificationLevel: VerificationLevel

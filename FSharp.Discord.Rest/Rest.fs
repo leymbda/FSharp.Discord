@@ -657,6 +657,45 @@ let deleteTestEntitlement (req: DeleteTestEntitlementRequest) (client: IOAuthCli
 
 // ----- Resources: Guild -----
 
+// https://discord.com/developers/docs/resources/guild#create-guild
+let createGuild (req: CreateGuildRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Guild.decoder)
+
+// https://discord.com/developers/docs/resources/guild#get-guild
+let getGuild (req: GetGuildRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId]
+    |> Uri.withOptionalQuery "with_counts" (Option.map string req.WithCounts)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Guild.decoder)
+
+// https://discord.com/developers/docs/resources/guild#get-guild-preview
+let getGuildPreview (req: GetGuildPreviewRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "preview"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildPreview.decoder)
+
+// https://discord.com/developers/docs/resources/guild#modify-guild
+let modifyGuild (req: ModifyGuildRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Guild.decoder)
+
+// https://discord.com/developers/docs/resources/guild#delete-guild
+let deleteGuild (req: DeleteGuildRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

@@ -496,6 +496,27 @@ type DeleteTestEntitlementRequest(applicationId, entitlementId) =
 
 // ----- Resources: Guild -----
 
+type CreateGuildRequest(payload) =
+    member val Payload: CreateGuildPayload = payload
+
+type GetGuildRequest(guildId, ?withCounts) =
+    member val GuildId: string = guildId
+
+    member val WithCounts: bool option = withCounts
+
+type GetGuildPreviewRequest(guildId) =
+    member val GuildId: string = guildId
+
+type ModifyGuildRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildPayload = payload
+
+type DeleteGuildRequest(guildId) =
+    member val GuildId: string = guildId
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----
