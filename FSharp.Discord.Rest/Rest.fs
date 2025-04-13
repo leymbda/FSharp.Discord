@@ -696,6 +696,38 @@ let deleteGuild (req: DeleteGuildRequest) (client: IBotClient) =
     |> client.SendAsync
     |> Task.bind DiscordResponse.unit
 
+// https://discord.com/developers/docs/resources/guild#get-guild-channels
+let getGuildChannels (req: GetGuildChannelsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "channels"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Channel.decoder))
+
+// https://discord.com/developers/docs/resources/guild#create-guild-channel
+let createGuildChannel (req: CreateGuildChannelRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "channels"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions
+let modifyGuildChannelPositions (req: ModifyGuildChannelPositionsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "channels"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild#list-active-guild-threads
+let listActiveGuildThreads (req: ListActiveGuildThreadsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "threads"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ListActiveGuildThreadsResponse.decoder)
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

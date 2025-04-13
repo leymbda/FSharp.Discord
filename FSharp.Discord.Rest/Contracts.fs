@@ -517,6 +517,26 @@ type ModifyGuildRequest(guildId, payload, ?auditLogReason) =
 type DeleteGuildRequest(guildId) =
     member val GuildId: string = guildId
 
+type GetGuildChannelsRequest(guildId) =
+    member val GuildId: string = guildId
+
+type CreateGuildChannelRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateGuildChannelPayload = payload
+
+type ModifyGuildChannelPositionsRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildChannelPositionsPayload = payload
+
+type ListActiveGuildThreadsRequest(guildId) =
+    member val GuildId: string = guildId
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----
