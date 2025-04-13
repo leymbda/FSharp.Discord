@@ -1089,6 +1089,88 @@ module BulkBanResponse =
             FailedUsers = get.Required.Field "failed_users" (Decode.list Decode.string)
         })
 
+type CreateGuildRolePayload(name, permissions, color, hoist, icon, unicodeEmoji, mentionable) =
+    member val Name: string option = name
+    member val Permissions: string option = permissions
+    member val Color: int option = color
+    member val Hoist: bool option = hoist
+    member val Icon: string option option = icon
+    member val UnicodeEmoji: string option option = unicodeEmoji
+    member val Mentionable: bool option = mentionable
+
+    static member Encoder(v: CreateGuildRolePayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optional "permissions" Encode.string v.Permissions
+            |> Encode.optional "color" Encode.int v.Color
+            |> Encode.optional "hoist" Encode.bool v.Hoist
+            |> Encode.optinull "icon" Encode.string v.Icon
+            |> Encode.optinull "unicode_emoji" Encode.string v.UnicodeEmoji
+            |> Encode.optional "mentionable" Encode.bool v.Mentionable
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateGuildRolePayload.Encoder this
+
+type ModifyGuildRolePosition = {
+    Id: string
+    Position: int option option
+}
+
+module ModifyGuildRolePosition =
+    let encoder (v: ModifyGuildRolePosition) =
+        Encode.object ([]
+            |> Encode.required "id" Encode.string v.Id
+            |> Encode.optinull "position" Encode.int v.Position
+        )
+
+type ModifyGuildRolePositionsPayload(positions) =
+    member val Positions: ModifyGuildRolePosition list = positions
+
+    static member Encoder(v: ModifyGuildRolePositionsPayload) =
+        Encode.list (List.map ModifyGuildRolePosition.encoder v.Positions)
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildRolePositionsPayload.Encoder this
+
+type ModifyGuildRolePayload(name, permissions, color, hoist, icon, unicodeEmoji, mentionable) =
+    member val Name: string option option = name
+    member val Permissions: string option option = permissions
+    member val Color: int option option = color
+    member val Hoist: bool option option = hoist
+    member val Icon: string option option = icon
+    member val UnicodeEmoji: string option option = unicodeEmoji
+    member val Mentionable: bool option option = mentionable
+
+    static member Encoder(v: ModifyGuildRolePayload) =
+        Encode.object ([]
+            |> Encode.optinull "name" Encode.string v.Name
+            |> Encode.optinull "permissions" Encode.string v.Permissions
+            |> Encode.optinull "color" Encode.int v.Color
+            |> Encode.optinull "hoist" Encode.bool v.Hoist
+            |> Encode.optinull "icon" Encode.string v.Icon
+            |> Encode.optinull "unicode_emoji" Encode.string v.UnicodeEmoji
+            |> Encode.optinull "mentionable" Encode.bool v.Mentionable
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildRolePayload.Encoder this
+
+type ModifyGuildMfaLevelPayload(level) =
+    member val Level: MfaLevel = level
+
+    static member Encoder(v: ModifyGuildMfaLevelPayload) =
+        Encode.object ([]
+            |> Encode.required "level" Encode.Enum.int v.Level
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildMfaLevelPayload.Encoder this
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

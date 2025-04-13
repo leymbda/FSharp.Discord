@@ -625,6 +625,48 @@ type BulkGuildBanRequest(guildId, payload, ?auditLogReason) =
 
     member val Payload: BulkGuildBanPayload = payload
 
+type GetGuildRolesRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetGuildRoleRequest(guildId, roleId) =
+    member val GuildId: string = guildId
+    member val RoleId: string = roleId
+
+type CreateGuildRoleRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateGuildRolePayload = payload
+
+type ModifyGuildRolePositionsRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildRolePositionsPayload = payload
+
+type ModifyGuildRoleRequest(guildId, roleId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val RoleId: string = roleId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildRolePayload = payload
+
+type ModifyGuildMfaLevelRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildMfaLevelPayload = payload
+
+type DeleteGuildRoleRequest(guildId, roleId, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val RoleId: string = roleId
+
+    member val AuditLogReason: string option = auditLogReason
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----

@@ -846,6 +846,64 @@ let bulkGuildBan (req: BulkGuildBanRequest) (client: IBotClient) =
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode BulkBanResponse.decoder)
 
+// https://discord.com/developers/docs/resources/guild#get-guild-roles
+let getGuildRoles (req: GetGuildRolesRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "roles"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Role.decoder))
+
+// https://discord.com/developers/docs/resources/guild#get-guild-role
+let getGuildRole (req: GetGuildRoleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "roles"; req.RoleId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Role.decoder)
+
+// https://discord.com/developers/docs/resources/guild#create-guild-role
+let createGuildRole (req: CreateGuildRoleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "roles"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Role.decoder)
+
+// https://discord.com/developers/docs/resources/guild#modify-guild-role-positions
+let modifyGuildRolePositions (req: ModifyGuildRolePositionsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "roles"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild#modify-guild-role
+let modifyGuildRole (req: ModifyGuildRoleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "roles"; req.RoleId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Role.decoder)
+
+// https://discord.com/developers/docs/resources/guild#modify-guild-mfa-level
+let modifyGuildMfaLevel (req: ModifyGuildMfaLevelRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "mfa"]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild#delete-guild-role
+let deleteGuildRole (req: DeleteGuildRoleRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "roles"; req.RoleId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
 // ----- Resources: Guild Scheduled Event -----
 
 // ----- Resources: Guild Template -----
