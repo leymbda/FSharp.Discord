@@ -6,14 +6,27 @@ open System
 open Thoth.Json.Net
 open WebSocketSharp
 
+type Dispatcher = GatewayReceiveEvent -> unit
+
 type GatewayConnectionState = {
+    IdentifyEvent: IdentifySendEvent
     Sequence: int option
-    // TODO: Add other relevant lifecycle state here
+    Interval: int option
+    Heartbeat: DateTime option
+    HeartbeatAcked: bool
+    ResumeGatewayUrl: string option
+    SessionId: string option
 }
 
 module GatewayConnectionState =
-    let create () = {
+    let create identify = {
+        IdentifyEvent = identify
         Sequence = None
+        Interval = None
+        Heartbeat = None
+        HeartbeatAcked = true
+        ResumeGatewayUrl = None
+        SessionId = None
     }
 
 type GatewayConnection(socket, state) =
@@ -25,38 +38,33 @@ type GatewayConnection(socket, state) =
             this.Socket :> IDisposable |> _.Dispose()
 
 module GatewayConnection =
-    let onOpen (state: GatewayConnectionState) = fun () ->
-        ()
+    let private onMessage (dispatcher: Dispatcher) (connection: GatewayConnection) = fun (event: GatewayReceiveEvent) ->
+        // TODO: Handle lifecycle events or forward events to given handler
+        raise (NotImplementedException())
 
-    let onMessage (state: GatewayConnectionState) = fun (event: GatewayReceiveEvent) ->
-        ()
+    let private onClose (connection: GatewayConnection) = fun (code: GatewayCloseEventCode) ->
+        // TODO: Check disconnection reason and either trigger resume/reconnect or close gateway (pass in signal? TBD)
+        raise (NotImplementedException())
 
-    let onClose (state: GatewayConnectionState) = fun (code: GatewayCloseEventCode) ->
-        ()
-
-    // TODO: Implement lifecycle through above functions
-    // TODO: How to notify Gateway when GatewayConnection closes? TBD
-
-    let create gatewayUrl initialState =
+    let create gatewayUrl identify initialState dispatcher =
         let ws = new WebSocket(gatewayUrl)
-        let state = initialState |> Option.defaultValue (GatewayConnectionState.create ())
+        let state = Option.defaultValue (GatewayConnectionState.create identify) initialState
+        let conenction = new GatewayConnection(ws, state)
 
-        ws.OnOpen.Add(fun _ -> onOpen state ())
-
-        ws.OnMessage.Add(fun (e: MessageEventArgs) ->
-            e.Data
-            |> Decode.fromString GatewayReceiveEvent.decoder
-            |> Result.iter (onMessage state)
+        ws.OnMessage.Add(
+            _.Data
+            >> Decode.fromString GatewayReceiveEvent.decoder
+            >> Result.iter (onMessage dispatcher conenction)
         )
 
-        ws.OnClose.Add(fun e ->
-            e.Code
-            |> int
-            |> enum<GatewayCloseEventCode>
-            |> onClose state
+        ws.OnClose.Add(
+            _.Code
+            >> int
+            >> enum<GatewayCloseEventCode>
+            >> onClose conenction
         )
 
-        new GatewayConnection(ws, state)
+        conenction
 
     let connect (connection: GatewayConnection) =
         connection.Socket.Connect()
@@ -65,18 +73,30 @@ module GatewayConnection =
         connection.Socket.Close()
 
     let send event (connection: GatewayConnection) =
-        match event with
-        | GatewaySendEvent.REQUEST_GUILD_MEMBERS d ->
-            Some {
-                Opcode = GatewayOpcode.REQUEST_GUILD_MEMBERS
-                Data = GatewaySendEventData.REQUEST_GUILD_MEMBERS d
-                Sequence = connection.State.Sequence
-                EventName = None
-            }
+        let opcode, data =
+            match event with
+            | GatewaySendEvent.IDENTIFY d ->
+                GatewayOpcode.IDENTIFY, GatewaySendEventData.IDENTIFY d
 
-        | _ ->
-            None
+            | GatewaySendEvent.RESUME d ->
+                GatewayOpcode.IDENTIFY, GatewaySendEventData.IDENTIFY d
+            
+            | GatewaySendEvent.HEARTBEAT d ->
+                GatewayOpcode.HEARTBEAT, GatewaySendEventData.OPTIONAL_INT d
 
-        // TODO: Implement remaining send events here instead of catching to None with Option.iter
+            | GatewaySendEvent.REQUEST_GUILD_MEMBERS d ->
+                GatewayOpcode.REQUEST_GUILD_MEMBERS, GatewaySendEventData.REQUEST_GUILD_MEMBERS d
 
-        |> Option.iter (GatewaySendEventPayload.encoder >> Encode.toString 0 >> connection.Socket.Send)
+            | GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS d ->
+                GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS d
+
+            | GatewaySendEvent.UPDATE_VOICE_STATE d ->
+                GatewayOpcode.VOICE_STATE_UPDATE, GatewaySendEventData.UPDATE_VOICE_STATE d
+            
+            | GatewaySendEvent.UPDATE_PRESENCE d ->
+                GatewayOpcode.PRESENCE_UPDATE, GatewaySendEventData.UPDATE_PRESENCE d
+
+        { Opcode = opcode; Data = data; Sequence = None; EventName = None }
+        |> GatewaySendEventPayload.encoder
+        |> Encode.toString 0
+        |> connection.Socket.Send
