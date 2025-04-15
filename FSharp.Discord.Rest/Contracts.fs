@@ -493,6 +493,49 @@ type CreateTestEntitlementRequest(applicationId, payload) =
 type DeleteTestEntitlementRequest(applicationId, entitlementId) =
     member val ApplicationId: string = applicationId
     member val EntitlementId: string = entitlementId
+    
+// ----- Resources: Guild Scheduled Event -----
+
+type ListScheduledEventsForGuildRequest(guildId, ?withUserCount) =
+    member val GuildId: string = guildId
+
+    member val WithUserCount: bool option = withUserCount
+
+type CreateGuildScheduledEventRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateGuildScheduledEventPayload = payload
+
+type GetGuildScheduledEventRequest(guildId, scheduledEventId, ?withUserCount) =
+    member val GuildId: string = guildId
+    member val ScheduledEventId: string = scheduledEventId
+    
+    member val WithUserCount: bool option = withUserCount
+
+type ModifyGuildScheduledEventRequest(guildId, scheduledEventId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val ScheduledEventId: string = scheduledEventId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildScheduledEventPayload = payload
+
+type DeleteGuildScheduledEventRequest(guildId, scheduledEventId) =
+    member val GuildId: string = guildId
+    member val ScheduledEventId: string = scheduledEventId
+
+type GetGuildScheduledEventUsersRequest(guildId, scheduledEventId, ?limit, ?withMember, ?before, ?after) =
+    member val GuildId: string = guildId
+    member val ScheduledEventId: string = scheduledEventId
+
+    member val Limit: int option = limit
+    member val WithMember: bool option = withMember
+    member val Before: string option = before
+    member val After: string option = after
+
+// ----- Resources: Guild Template -----
 
 // ----- Resources: Guild -----
 
@@ -738,10 +781,6 @@ type ModifyGuildOnboardingRequest(guildId, payload, ?auditLogReason) =
 type ModifyGuildIncidentActionsRequest(guildId, payload) =
     member val GuildId: string = guildId
     member val Payload: ModifyGuildIncidentActionsPayload = payload
-
-// ----- Resources: Guild Scheduled Event -----
-
-// ----- Resources: Guild Template -----
 
 // ----- Resources: Invite -----
 

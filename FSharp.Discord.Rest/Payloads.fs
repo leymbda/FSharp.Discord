@@ -815,8 +815,82 @@ type CreateTestEntitlementPayload(skuId, ownerId, ownerType) =
     interface IPayload with
         member this.ToHttpContent() =
             StringContent.createJson CreateTestEntitlementPayload.Encoder this
+            
+// ----- Resources: Guild Scheduled Event -----
+
+type CreateGuildScheduledEventPayload(
+    name, privacyLevel, scheduledStartTime, entityType, ?channelId, ?entityMetadata, ?scheduledEndTime, ?description,
+    ?image, ?recurrenceRule
+) =
+    member val ChannelId: string option = channelId
+    member val EntityMetadata: EntityMetadata option = entityMetadata
+    member val Name: string = name
+    member val PrivacyLevel: PrivacyLevel = privacyLevel
+    member val ScheduledStartTime: DateTime = scheduledStartTime
+    member val ScheduledEndTime: DateTime option = scheduledEndTime
+    member val Description: string option = description
+    member val EntityType: ScheduledEntityType = entityType
+    member val Image: string option = image
+    member val RecurrenceRule: string option = recurrenceRule
+
+    static member Encoder(v: CreateGuildScheduledEventPayload) =
+        Encode.object ([]
+            |> Encode.optional "channel_id" Encode.string v.ChannelId
+            |> Encode.optional "entity_metadata" EntityMetadata.encoder v.EntityMetadata
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.required "privacy_level" Encode.Enum.int v.PrivacyLevel
+            |> Encode.required "scheduled_start_time" Encode.datetime v.ScheduledStartTime
+            |> Encode.optional "scheduled_end_time" Encode.datetime v.ScheduledEndTime
+            |> Encode.optional "description" Encode.string v.Description
+            |> Encode.required "entity_type" Encode.Enum.int v.EntityType
+            |> Encode.optional "image" Encode.string v.Image
+            |> Encode.optional "recurrence_rule" Encode.string v.RecurrenceRule
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateGuildScheduledEventPayload.Encoder this
+
+type ModifyGuildScheduledEventPayload(
+    ?channelId, ?entityMetadata, ?name, ?privacyLevel, ?scheduledStartTime, ?scheduledEndTime, ?description, ?entityType,
+    ?status, ?image, ?recurrenceRule
+) =
+    member val ChannelId: string option = channelId
+    member val EntityMetadata: EntityMetadata option option = entityMetadata
+    member val Name: string option = name
+    member val PrivacyLevel: PrivacyLevel option = privacyLevel
+    member val ScheduledStartTime: DateTime option = scheduledStartTime
+    member val ScheduledEndTime: DateTime option = scheduledEndTime
+    member val Description: string option option = description
+    member val EntityType: ScheduledEntityType option = entityType
+    member val Status: EventStatus option = status
+    member val Image: string option = image
+    member val RecurrenceRule: string option option = recurrenceRule
+            
+    static member Encoder(v: ModifyGuildScheduledEventPayload) =
+        Encode.object ([]
+            |> Encode.optional "channel_id" Encode.string v.ChannelId
+            |> Encode.optinull "entity_metadata" EntityMetadata.encoder v.EntityMetadata
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optional "privacy_level" Encode.Enum.int v.PrivacyLevel
+            |> Encode.optional "scheduled_start_time" Encode.datetime v.ScheduledStartTime
+            |> Encode.optional "scheduled_end_time" Encode.datetime v.ScheduledEndTime
+            |> Encode.optinull "description" Encode.string v.Description
+            |> Encode.optional "entity_type" Encode.Enum.int v.EntityType
+            |> Encode.optional "status" Encode.Enum.int v.Status
+            |> Encode.optional "image" Encode.string v.Image
+            |> Encode.optinull "recurrence_rule" Encode.string v.RecurrenceRule
+        )
+
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildScheduledEventPayload.Encoder this
+
+// ----- Resources: Guild Template -----
 
 // ----- Resources: Guild -----
+
+// TODO: Add ? to all optional params in constructors for guild resource payloads
 
 type CreateGuildPayload(
     name, icon, verificationLevel, defaultMessageNotifications, explicitContentFilter, roles, channels, afkChannelId,
@@ -1268,10 +1342,6 @@ type ModifyGuildIncidentActionsPayload(invitesDisabledUntil, dmsDisabledUntil) =
     interface IPayload with
         member this.ToHttpContent() =
             StringContent.createJson ModifyGuildIncidentActionsPayload.Encoder this
-
-// ----- Resources: Guild Scheduled Event -----
-
-// ----- Resources: Guild Template -----
 
 // ----- Resources: Invite -----
 

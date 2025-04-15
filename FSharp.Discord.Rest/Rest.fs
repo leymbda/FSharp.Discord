@@ -655,6 +655,62 @@ let deleteTestEntitlement (req: DeleteTestEntitlementRequest) (client: IOAuthCli
     |> client.SendAsync
     |> Task.bind DiscordResponse.unit
 
+// ----- Resources: Guild Scheduled Event -----
+
+// https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild
+let listScheduledEventsForGuild (req: ListScheduledEventsForGuildRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "scheduled-events"]
+    |> Uri.withOptionalQuery "with_user_count" (Option.map string req.WithUserCount)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list GuildScheduledEvent.decoder))
+
+// https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event
+let createGuildScheduledEvent (req: CreateGuildScheduledEventRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "scheduled-events"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildScheduledEvent.decoder)
+
+// https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event
+let getGuildScheduledEvent (req: GetGuildScheduledEventRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "scheduled-events"; req.ScheduledEventId]
+    |> Uri.withOptionalQuery "with_user_count" (Option.map string req.WithUserCount)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildScheduledEvent.decoder)
+
+// https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event
+let modifyGuildScheduledEvent (req: ModifyGuildScheduledEventRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "scheduled-events"; req.ScheduledEventId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildScheduledEvent.decoder)
+
+// https://discord.com/developers/docs/resources/guild-scheduled-event#delete-guild-scheduled-event
+let deleteGuildScheduledEvent (req: DeleteGuildScheduledEventRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "scheduled-events"; req.ScheduledEventId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event-users
+let getGuildScheduledEventUsers (req: GetGuildScheduledEventUsersRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "scheduled-events"; req.ScheduledEventId; "users"]
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.withOptionalQuery "with_member" (Option.map string req.WithMember)
+    |> Uri.withOptionalQuery "before" req.Before
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list GuildScheduledEventUser.decoder))
+
+// ----- Resources: Guild Template -----
+
 // ----- Resources: Guild -----
 
 // https://discord.com/developers/docs/resources/guild#create-guild
@@ -1021,10 +1077,6 @@ let modifyGuildIncidentActions (req: ModifyGuildIncidentActionsRequest) (client:
     |> HttpRequestMessage.withPayload req.Payload
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode IncidentsData.decoder)
-
-// ----- Resources: Guild Scheduled Event -----
-
-// ----- Resources: Guild Template -----
 
 // ----- Resources: Invite -----
 
