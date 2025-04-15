@@ -7,7 +7,7 @@ open Thoth.Json.Net
 type GatewayReceiveEvent =
     | HEARTBEAT
     | HEARTBEAT_ACK
-    | HELLO                                  of HelloReceiveEvent * sequence: int
+    | HELLO                                  of HelloReceiveEvent
     | READY                                  of ReadyReceiveEvent * sequence: int
     | RESUMED
     | RECONNECT
@@ -97,6 +97,9 @@ module GatewayReceiveEvent =
             | GatewayOpcode.HEARTBEAT_ACK, None, None, None ->
                 Decode.succeed GatewayReceiveEvent.HEARTBEAT_ACK
 
+            | GatewayOpcode.HELLO, Some (GatewayReceiveEventData.HELLO d), None, None ->
+                Decode.succeed (GatewayReceiveEvent.HELLO d)
+
             | GatewayOpcode.RECONNECT, None, None, None ->
                 Decode.succeed GatewayReceiveEvent.RECONNECT
 
@@ -105,9 +108,6 @@ module GatewayReceiveEvent =
 
             | GatewayOpcode.DISPATCH, Some data, Some eventName, Some sequence ->
                 match eventName, data with
-                | nameof HELLO, GatewayReceiveEventData.HELLO d ->
-                    Decode.succeed (GatewayReceiveEvent.HELLO (d, sequence))
-
                 | nameof READY, GatewayReceiveEventData.READY d ->
                     Decode.succeed (GatewayReceiveEvent.READY (d, sequence))
 
