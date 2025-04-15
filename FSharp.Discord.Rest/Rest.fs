@@ -1132,6 +1132,24 @@ let modifyGuildIncidentActions (req: ModifyGuildIncidentActionsRequest) (client:
 
 // ----- Resources: Invite -----
 
+// https://discord.com/developers/docs/resources/invite#get-invite
+let getInvite (req: GetInviteRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "invites"; req.Code]
+    |> Uri.withOptionalQuery "with_counts" (Option.map string req.WithCounts)
+    |> Uri.withOptionalQuery "with_expiration" (Option.map string req.WithExpiration)
+    |> Uri.withOptionalQuery "guild_scheduled_event_id" req.GuildScheduledEventId
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode InviteWithMetadata.decoder)
+
+// https://discord.com/developers/docs/resources/invite#delete-invite
+let deleteInvite (req: DeleteInviteRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "invites"; req.Code]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode InviteWithMetadata.decoder)
+
 // ----- Resources: Lobby -----
 
 // ----- Resources: Message -----

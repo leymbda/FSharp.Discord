@@ -814,6 +814,17 @@ type ModifyGuildIncidentActionsRequest(guildId, payload) =
 
 // ----- Resources: Invite -----
 
+type GetInviteRequest(code, ?withCounts, ?withExpiration, ?guildScheduledEventId) =
+    member val Code: string = code
+
+    member val WithCounts: bool option = withCounts
+    member val WithExpiration: bool option = withExpiration
+    member val GuildScheduledEventId: string option = guildScheduledEventId
+
+type DeleteInviteRequest(code, ?auditLogReason) =
+    member val Code: string = code
+    member val AuditLogReason: string option = auditLogReason
+
 // ----- Resources: Lobby -----
 
 // ----- Resources: Message -----
