@@ -932,11 +932,9 @@ type ModifyGuildTemplatePayload(name, description) =
 
 // ----- Resources: Guild -----
 
-// TODO: Add ? to all optional params in constructors for guild resource payloads
-
 type CreateGuildPayload(
-    name, icon, verificationLevel, defaultMessageNotifications, explicitContentFilter, roles, channels, afkChannelId,
-    afkTimeout, systemChannelId, systemChannelFlags
+    name, ?icon, ?verificationLevel, ?defaultMessageNotifications, ?explicitContentFilter, ?roles, ?channels,
+    ?afkChannelId, ?afkTimeout, ?systemChannelId, ?systemChannelFlags
 ) =
     member val Name: string = name
     member val Icon: string option = icon
@@ -970,9 +968,10 @@ type CreateGuildPayload(
             StringContent.createJson CreateGuildPayload.Encoder this
 
 type ModifyGuildPayload(
-    name, verificationLevel, defaultMessageNotifications, explicitContentFilter, afkChannelId, afkTimeout, icon,
-    ownerId, splash, discoverySplash, banner, systemChannelId, systemChannelFlags, rulesChannelId,
-    publicUpdatesChannelId, preferredLocale, features, description, premiumProgressBarEnabled, safetyAlertsChannelId
+    ?name, ?verificationLevel, ?defaultMessageNotifications, ?explicitContentFilter, ?afkChannelId, ?afkTimeout, ?icon,
+    ?ownerId, ?splash, ?discoverySplash, ?banner, ?systemChannelId, ?systemChannelFlags, ?rulesChannelId,
+    ?publicUpdatesChannelId, ?preferredLocale, ?features, ?description, ?premiumProgressBarEnabled,
+    ?safetyAlertsChannelId
 ) =
     member val Name: string option = name
     member val VerificationLevel: VerificationLevel option option = verificationLevel
@@ -1024,9 +1023,9 @@ type ModifyGuildPayload(
             StringContent.createJson ModifyGuildPayload.Encoder this
 
 type CreateGuildChannelPayload(
-    name, type', topic, bitrate, userLimit, rateLimitPerUser, position, permissionOverwrites, parentId, nsfw, rtcRegion,
-    videoQualityMode, defaultAutoArchiveDuration, defaultReactionEmoji, availableTags, defaultSortOrder,
-    defaultForumLayout, defaultThreadRateLimitPerUser
+    name, ?type', ?topic, ?bitrate, ?userLimit, ?rateLimitPerUser, ?position, ?permissionOverwrites, ?parentId, ?nsfw,
+    ?rtcRegion, ?videoQualityMode, ?defaultAutoArchiveDuration, ?defaultReactionEmoji, ?availableTags,
+    ?defaultSortOrder, ?defaultForumLayout, ?defaultThreadRateLimitPerUser
 ) =
     member val Name: string = name
     member val Type: ChannelType option option = type'
@@ -1111,7 +1110,7 @@ module ListActiveGuildThreadsResponse =
             Members = get |> Get.required "members" (Decode.list ThreadMember.decoder)
         })
 
-type AddGuildMemberPayload(accessToken, nick, roles, mute, deaf) =
+type AddGuildMemberPayload(accessToken, ?nick, ?roles, ?mute, ?deaf) =
     member val AccessToken: string = accessToken
     member val Nick: string option = nick
     member val Roles: string list option = roles
@@ -1131,7 +1130,7 @@ type AddGuildMemberPayload(accessToken, nick, roles, mute, deaf) =
         member this.ToHttpContent() =
             StringContent.createJson AddGuildMemberPayload.Encoder this
 
-type ModifyGuildMemberPayload(nick, roles, mute, deaf, channelId, communicationDisabledUntil, flags) =
+type ModifyGuildMemberPayload(?nick, ?roles, ?mute, ?deaf, ?channelId, ?communicationDisabledUntil, ?flags) =
     member val Nick: string option option = nick
     member val Roles: string list option option = roles
     member val Mute: bool option option = mute
@@ -1155,7 +1154,7 @@ type ModifyGuildMemberPayload(nick, roles, mute, deaf, channelId, communicationD
         member this.ToHttpContent() =
             StringContent.createJson ModifyGuildMemberPayload.Encoder this
 
-type ModifyCurrentMemberPayload(nick) =
+type ModifyCurrentMemberPayload(?nick) =
     member val Nick: string option = nick
 
     static member Encoder(v: ModifyCurrentMemberPayload) =
@@ -1167,7 +1166,7 @@ type ModifyCurrentMemberPayload(nick) =
         member this.ToHttpContent() =
             StringContent.createJson ModifyCurrentMemberPayload.Encoder this
 
-type CreateGuildBanPayload(deleteMessageSeconds) =
+type CreateGuildBanPayload(?deleteMessageSeconds) =
     member val DeleteMessageSeconds: int option = deleteMessageSeconds
 
     static member Encoder(v: CreateGuildBanPayload) =
@@ -1179,7 +1178,7 @@ type CreateGuildBanPayload(deleteMessageSeconds) =
         member this.ToHttpContent() =
             StringContent.createJson CreateGuildBanPayload.Encoder this
 
-type BulkGuildBanPayload(userIds, deleteMessageSeconds) =
+type BulkGuildBanPayload(userIds, ?deleteMessageSeconds) =
     member val UserIds: string list = userIds
     member val DeleteMessageSeconds: int option = deleteMessageSeconds
 
@@ -1205,7 +1204,7 @@ module BulkBanResponse =
             FailedUsers = get |> Get.required "failed_users" (Decode.list Decode.string)
         })
 
-type CreateGuildRolePayload(name, permissions, color, hoist, icon, unicodeEmoji, mentionable) =
+type CreateGuildRolePayload(?name, ?permissions, ?color, ?hoist, ?icon, ?unicodeEmoji, ?mentionable) =
     member val Name: string option = name
     member val Permissions: string option = permissions
     member val Color: int option = color
@@ -1251,7 +1250,7 @@ type ModifyGuildRolePositionsPayload(positions) =
         member this.ToHttpContent() =
             StringContent.createJson ModifyGuildRolePositionsPayload.Encoder this
 
-type ModifyGuildRolePayload(name, permissions, color, hoist, icon, unicodeEmoji, mentionable) =
+type ModifyGuildRolePayload(?name, ?permissions, ?color, ?hoist, ?icon, ?unicodeEmoji, ?mentionable) =
     member val Name: string option option = name
     member val Permissions: string option option = permissions
     member val Color: int option option = color
@@ -1323,7 +1322,7 @@ module BeginGuildPruneResponse =
             Pruned = get |> Get.optional "pruned" Decode.int
         })
 
-type ModifyGuildWidgetPayload(enabled, channelId) =
+type ModifyGuildWidgetPayload(?enabled, ?channelId) =
     member val Enabled: bool option = enabled
     member val ChannelId: string option option = channelId
 
@@ -1337,7 +1336,7 @@ type ModifyGuildWidgetPayload(enabled, channelId) =
         member this.ToHttpContent() =
             StringContent.createJson ModifyGuildWidgetPayload.Encoder this
 
-type ModifyGuildWelcomeScreenPayload(enabled, welcomeChannels, description) =
+type ModifyGuildWelcomeScreenPayload(?enabled, ?welcomeChannels, ?description) =
     member val Enabled: bool option option = enabled
     member val WelcomeChannels: WelcomeScreenChannel list option option = welcomeChannels
     member val Description: string option option = description
@@ -1371,7 +1370,7 @@ type ModifyGuildOnboardingPayload(prompts, defaultChannelIds, enabled, mode) =
         member this.ToHttpContent() =
             StringContent.createJson ModifyGuildOnboardingPayload.Encoder this
 
-type ModifyGuildIncidentActionsPayload(invitesDisabledUntil, dmsDisabledUntil) =
+type ModifyGuildIncidentActionsPayload(?invitesDisabledUntil, ?dmsDisabledUntil) =
     member val invitesDisabledUntil: DateTime option option = invitesDisabledUntil
     member val dmsDisabledUntil: DateTime option option = dmsDisabledUntil
 
