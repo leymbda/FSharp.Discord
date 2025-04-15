@@ -569,9 +569,6 @@ type DeleteGuildTemplateRequest(guildId, code) =
 
 // ----- Resources: Guild -----
 
-type CreateGuildRequest(payload) =
-    member val Payload: CreateGuildPayload = payload
-
 type GetGuildRequest(guildId, ?withCounts) =
     member val GuildId: string = guildId
 

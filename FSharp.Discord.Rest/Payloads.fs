@@ -932,41 +932,6 @@ type ModifyGuildTemplatePayload(name, description) =
 
 // ----- Resources: Guild -----
 
-type CreateGuildPayload(
-    name, ?icon, ?verificationLevel, ?defaultMessageNotifications, ?explicitContentFilter, ?roles, ?channels,
-    ?afkChannelId, ?afkTimeout, ?systemChannelId, ?systemChannelFlags
-) =
-    member val Name: string = name
-    member val Icon: string option = icon
-    member val VerificationLevel: VerificationLevel option = verificationLevel
-    member val DefaultMessageNotifications: MessageNotificationLevel option = defaultMessageNotifications
-    member val ExplicitContentFilter: ExplicitContentFilterLevel option = explicitContentFilter
-    member val Roles: Role list option = roles
-    member val Channels: PartialChannel list option = channels
-    member val AfkChannelId: string option = afkChannelId
-    member val AfkTimeout: int option = afkTimeout
-    member val SystemChannelId: string option = systemChannelId
-    member val SystemChannelFlags: SystemChannelFlag list option = systemChannelFlags
-
-    static member Encoder(v: CreateGuildPayload) =
-        Encode.object ([]
-            |> Encode.required "name" Encode.string v.Name
-            |> Encode.optional "icon" Encode.string v.Icon
-            |> Encode.optional "verification_level" Encode.Enum.int v.VerificationLevel
-            |> Encode.optional "default_message_notifications" Encode.Enum.int v.DefaultMessageNotifications
-            |> Encode.optional "explicit_content_filter" Encode.Enum.int v.ExplicitContentFilter
-            |> Encode.optional "roles" (List.map Role.encoder >> Encode.list) v.Roles
-            |> Encode.optional "channels" (List.map Channel.Partial.encoder >> Encode.list) v.Channels
-            |> Encode.optional "afk_channel_id" Encode.string v.AfkChannelId
-            |> Encode.optional "afk_timeout" Encode.int v.AfkTimeout
-            |> Encode.optional "system_channel_id" Encode.string v.SystemChannelId
-            |> Encode.optional "system_channel_flags" Encode.bitfield v.SystemChannelFlags
-        )
-        
-    interface IPayload with
-        member this.ToHttpContent() =
-            StringContent.createJson CreateGuildPayload.Encoder this
-
 type ModifyGuildPayload(
     ?name, ?verificationLevel, ?defaultMessageNotifications, ?explicitContentFilter, ?afkChannelId, ?afkTimeout, ?icon,
     ?ownerId, ?splash, ?discoverySplash, ?banner, ?systemChannelId, ?systemChannelFlags, ?rulesChannelId,

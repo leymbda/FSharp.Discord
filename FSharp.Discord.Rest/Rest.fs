@@ -765,14 +765,6 @@ let deleteGuildTemplate (req: DeleteGuildTemplateRequest) (client: IBotClient) =
 
 // ----- Resources: Guild -----
 
-// https://discord.com/developers/docs/resources/guild#create-guild
-let createGuild (req: CreateGuildRequest) (client: IBotClient) =
-    Uri.create [API_BASE_URL; "guilds"]
-    |> Uri.toRequest HttpMethod.Post
-    |> HttpRequestMessage.withPayload req.Payload
-    |> client.SendAsync
-    |> Task.bind (DiscordResponse.decode Guild.decoder)
-
 // https://discord.com/developers/docs/resources/guild#get-guild
 let getGuild (req: GetGuildRequest) (client: IBotClient) =
     Uri.create [API_BASE_URL; "guilds"; req.GuildId]
