@@ -888,6 +888,48 @@ type ModifyGuildScheduledEventPayload(
 
 // ----- Resources: Guild Template -----
 
+type CreateGuildFromGuildTemplatePayload(name, ?icon) =
+    member val Name: string = name
+    member val Icon: string option = icon
+
+    static member Encoder(v: CreateGuildFromGuildTemplatePayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.optional "icon" Encode.string v.Icon
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateGuildFromGuildTemplatePayload.Encoder this
+
+type CreateGuildTemplatePayload(name, ?description) =
+    member val Name: string = name
+    member val Description: string option option = description
+
+    static member Encoder(v: CreateGuildTemplatePayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.optinull "description" Encode.string v.Description
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateGuildTemplatePayload.Encoder this
+
+type ModifyGuildTemplatePayload(name, description) =
+    member val Name: string option option = name
+    member val Description: string option option = description
+
+    static member Encoder(v: ModifyGuildTemplatePayload) =
+        Encode.object ([]
+            |> Encode.optinull "name" Encode.string v.Name
+            |> Encode.optinull "description" Encode.string v.Description
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildTemplatePayload.Encoder this
+
 // ----- Resources: Guild -----
 
 // TODO: Add ? to all optional params in constructors for guild resource payloads

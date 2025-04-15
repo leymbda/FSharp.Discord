@@ -711,6 +711,58 @@ let getGuildScheduledEventUsers (req: GetGuildScheduledEventUsersRequest) (clien
 
 // ----- Resources: Guild Template -----
 
+// https://discord.com/developers/docs/resources/guild-template#get-guild-template
+let getGuildTemplate (req: GetGuildTemplateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; "templates"; req.Code]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildTemplate.decoder)
+
+// https://discord.com/developers/docs/resources/guild-template#create-guild-from-guild-template
+let createGuildFromGuildTemplate (req: CreateGuildFromGuildTemplateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; "templates"; req.Code]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Guild.decoder)
+
+// https://discord.com/developers/docs/resources/guild-template#get-guild-templates
+let getGuildTemplates (req: GetGuildTemplatesRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "templates"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list GuildTemplate.decoder))
+
+// https://discord.com/developers/docs/resources/guild-template#create-guild-template
+let createGuildTemplate (req: CreateGuildTemplateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "templates"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildTemplate.decoder)
+
+// https://discord.com/developers/docs/resources/guild-template#sync-guild-template
+let syncGuildTemplate (req: SyncGuildTemplateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "templates"; req.Code]
+    |> Uri.toRequest HttpMethod.Put
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildTemplate.decoder)
+
+// https://discord.com/developers/docs/resources/guild-template#modify-guild-template
+let modifyGuildTemplate (req: ModifyGuildTemplateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "templates"; req.Code]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildTemplate.decoder)
+
+// https://discord.com/developers/docs/resources/guild-template#delete-guild-template
+let deleteGuildTemplate (req: DeleteGuildTemplateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "templates"; req.Code]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildTemplate.decoder)
+
 // ----- Resources: Guild -----
 
 // https://discord.com/developers/docs/resources/guild#create-guild

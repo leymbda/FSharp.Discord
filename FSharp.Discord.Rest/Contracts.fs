@@ -537,6 +537,36 @@ type GetGuildScheduledEventUsersRequest(guildId, scheduledEventId, ?limit, ?with
 
 // ----- Resources: Guild Template -----
 
+type GetGuildTemplateRequest(code) =
+    member val Code: string = code
+
+type CreateGuildFromGuildTemplateRequest(code, payload) =
+    member val Code: string = code
+
+    member val Payload: CreateGuildFromGuildTemplatePayload = payload
+
+type GetGuildTemplatesRequest(guildId) =
+    member val GuildId: string = guildId
+
+type CreateGuildTemplateRequest(guildId, payload) =
+    member val GuildId: string = guildId
+
+    member val Payload: CreateGuildTemplatePayload = payload
+
+type SyncGuildTemplateRequest(guildId, code) =
+    member val GuildId: string = guildId
+    member val Code: string = code
+
+type ModifyGuildTemplateRequest(guildId, code, payload) =
+    member val GuildId: string = guildId
+    member val Code: string = code
+
+    member val Payload: ModifyGuildTemplatePayload = payload
+
+type DeleteGuildTemplateRequest(guildId, code) =
+    member val GuildId: string = guildId
+    member val Code: string = code
+
 // ----- Resources: Guild -----
 
 type CreateGuildRequest(payload) =
