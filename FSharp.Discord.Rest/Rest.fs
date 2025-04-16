@@ -1320,6 +1320,23 @@ let bulkDeleteMessages (req: BulkDeleteMessagesRequest) (client: IBotClient) =
 
 // ----- Resources: Poll -----
 
+// https://discord.com/developers/docs/resources/poll#get-answer-voters
+let getAnswerVoters (req: GetAnswerVotersRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "polls"; req.MessageId; "answers"; req.AnswerId]
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GetAnswerVotersResponse.decoder)
+    |> Task.map (DiscordResponse.map _.Users)
+
+// https://discord.com/developers/docs/resources/poll#end-poll
+let endPoll (req: EndPollRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "polls"; req.MessageId; "expire"]
+    |> Uri.toRequest HttpMethod.Post
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
 // ----- Resources: SKU -----
 
 // ----- Resources: Soundboard -----

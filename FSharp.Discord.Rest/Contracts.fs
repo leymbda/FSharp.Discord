@@ -937,6 +937,18 @@ type BulkDeleteMessagesRequest(channelId, payload, ?auditLogReason) =
 
 // ----- Resources: Poll -----
 
+type GetAnswerVotersRequest(channelId, messageId, answerId, ?after, ?limit) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+    member val AnswerId: string = answerId
+
+    member val After: string option = after
+    member val Limit: int option = limit
+
+type EndPollRequest(channelId, messageId) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+
 // ----- Resources: SKU -----
 
 // ----- Resources: Soundboard -----

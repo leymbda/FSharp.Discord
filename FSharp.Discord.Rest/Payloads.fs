@@ -1488,6 +1488,16 @@ type BulkDeleteMessagesPayload(messages) =
 
 // ----- Resources: Poll -----
 
+type GetAnswerVotersResponse = {
+    Users: User list
+}
+
+module GetAnswerVotersResponse =
+    let decoder: Decoder<GetAnswerVotersResponse> =
+        Decode.object (fun get -> {
+            Users = get |> Get.required "users" (Decode.list User.decoder)
+        })
+
 // ----- Resources: SKU -----
 
 // ----- Resources: Soundboard -----
