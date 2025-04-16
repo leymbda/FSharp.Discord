@@ -861,10 +861,79 @@ type UnlinkChannelFromLobbyRequest(lobbyId) =
 
 // ----- Resources: Message -----
 
+type GetChannelMessagesRequest(channelId, ?around, ?before, ?after, ?limit) =
+    member val ChannelId: string = channelId
+
+    member val Around: string option = around
+    member val Before: string option = before
+    member val After: string option = after
+    member val Limit: int option = limit
+
+type GetChannelMessageRequest(channelId, messageId) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+
 type CreateMessageRequest(channelId, payload) =
     member val ChannelId: string = channelId
 
     member val Payload: CreateMessagePayload = payload
+
+type CrosspostMessageRequest(channelId, messageId) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+
+type CreateReactionRequest(channelId, messageId, emoji) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+    member val Emoji: string = emoji
+
+type DeleteOwnReactionRequest(channelId, messageId, emoji) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+    member val Emoji: string = emoji
+
+type DeleteUserReactionRequest(channelId, messageId, emoji, userId) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+    member val Emoji: string = emoji
+    member val UserId: string = userId
+
+type GetReactionsRequest(channelId, messageId, emoji, ?type', ?limit, ?after) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+    member val Emoji: string = emoji
+
+    member val Type: ReactionType option = type'
+    member val Limit: int option = limit
+    member val After: string option = after
+
+type DeleteAllReactionsRequest(channelId, messageId) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+
+type DeleteAllReactionsForEmojiRequest(channelId, messageId, emoji) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+    member val Emoji: string = emoji
+
+type EditMessageRequest(channelId, messageId, payload) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+
+    member val Payload: EditMessagePayload = payload
+
+type DeleteMessageRequest(channelId, messageId, ?auditLogReason) =
+    member val ChannelId: string = channelId
+    member val MessageId: string = messageId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type BulkDeleteMessagesRequest(channelId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: BulkDeleteMessagesPayload = payload
 
 // ----- Resources: Poll -----
 

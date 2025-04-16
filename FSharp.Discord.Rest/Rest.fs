@@ -1215,6 +1215,24 @@ let unlinkChannelFromLobby (req: UnlinkChannelFromLobbyRequest) (client: IOAuthC
 
 // ----- Resources: Message -----
 
+// https://discord.com/developers/docs/resources/message#get-channel-messages
+let getChannelMessages (req: GetChannelMessagesRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"]
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.withOptionalQuery "before" req.Before
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.withOptionalQuery "around" req.Around
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Message.decoder))
+
+// https://discord.com/developers/docs/resources/message#get-channel-message
+let getChannelMessage (req: GetChannelMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
 // https://discord.com/developers/docs/resources/message#create-message
 let createMessage (req: CreateMessageRequest) (client: IBotClient) =
     Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"]
@@ -1223,7 +1241,82 @@ let createMessage (req: CreateMessageRequest) (client: IBotClient) =
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode Message.decoder)
 
-// TODO: All other message endpoints (only implemented this one because it is particularly important)
+// https://discord.com/developers/docs/resources/message#crosspost-message
+let crosspostMessage (req: CrosspostMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId; "crosspost"]
+    |> Uri.toRequest HttpMethod.Post
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
+// https://discord.com/developers/docs/resources/message#create-reaction
+let createReaction (req: CreateReactionRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId; "reactions"; req.Emoji; "@me"]
+    |> Uri.toRequest HttpMethod.Put
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/message#delete-own-reaction
+let deleteOwnReaction (req: DeleteOwnReactionRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId; "reactions"; req.Emoji; "@me"]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/message#delete-user-reaction
+let deleteUserReaction (req: DeleteUserReactionRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId; "reactions"; req.Emoji; req.UserId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/message#get-reactions
+let getReactions (req: GetReactionsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId; "reactions"; req.Emoji]
+    |> Uri.withOptionalQuery "type" (Option.map (int >> string) req.Type)
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list User.decoder))
+
+// https://discord.com/developers/docs/resources/message#delete-all-reactions
+let deleteAllReactions (req: DeleteAllReactionsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId; "reactions"]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/message#delete-all-reactions-for-emoji
+let deleteAllReactionsForEmoji (req: DeleteAllReactionsForEmojiRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId; "reactions"; req.Emoji]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/message#edit-message
+let editMessage (req: EditMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
+// https://discord.com/developers/docs/resources/message#delete-message
+let deleteMessage (req: DeleteMessageRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; req.MessageId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/message#bulk-delete-messages
+let bulkDeleteMessages (req: BulkDeleteMessagesRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "messages"; "bulk-delete"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
 
 // ----- Resources: Poll -----
 

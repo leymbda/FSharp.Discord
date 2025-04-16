@@ -1450,6 +1450,41 @@ type CreateMessagePayload(
     interface IPayload with
         member this.ToHttpContent() =
             HttpContent.createJsonWithFiles CreateMessagePayload.Encoder this this.Files
+            
+type EditMessagePayload(?content, ?embeds, ?flags, ?allowedMentions, ?components, ?attachments, ?files) =
+    member val Content: string option option = content
+    member val Embeds: Embed list option option = embeds
+    member val Flags: MessageFlag list option option = flags
+    member val AllowedMentions: AllowedMentions option option = allowedMentions
+    member val Components: Component list option option = components
+    member val Attachments: PartialAttachment list option option = attachments
+    member val Files: Media list = defaultArg files []
+
+    static member Encoder(v: EditMessagePayload) =
+        Encode.object ([]
+            |> Encode.optinull "content" Encode.string v.Content
+            |> Encode.optinull "embeds" (List.map Embed.encoder >> Encode.list) v.Embeds
+            |> Encode.optinull "flags" Encode.bitfield v.Flags
+            |> Encode.optinull "allowed_mentions" AllowedMentions.encoder v.AllowedMentions
+            |> Encode.optinull "components" (List.map Component.encoder >> Encode.list) v.Components
+            |> Encode.optinull "attachments" (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
+        )
+    
+    interface IPayload with
+        member this.ToHttpContent() =
+            HttpContent.createJsonWithFiles EditMessagePayload.Encoder this this.Files
+
+type BulkDeleteMessagesPayload(messages) =
+    member val messages: string list = messages
+
+    static member Encoder(v: BulkDeleteMessagesPayload) =
+        Encode.object ([]
+            |> Encode.required "messages" (List.map Encode.string >> Encode.list) v.messages
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson BulkDeleteMessagesPayload.Encoder this
 
 // ----- Resources: Poll -----
 

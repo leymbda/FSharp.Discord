@@ -1,9 +1,12 @@
 ﻿namespace FSharp.Discord.Gateway
 
+open FSharp.Discord.Types
 open System
 
-type Gateway(gatewayUrl) =
+type Gateway(gatewayUrl, identify, dispatcher) =
     member val GatewayUrl: string = gatewayUrl
+    member val IdentifyEvent: IdentifySendEvent = identify
+    member val Dispatcher: Dispatcher = dispatcher
     member val Connection: GatewayConnection option = None with get, set
     
     interface IDisposable with
@@ -20,7 +23,10 @@ module Gateway =
             Error "Connection already exists"
 
         | None ->
-            gateway.Connection <- Some (GatewayConnection.create gateway.GatewayUrl None)
+            gateway.Connection <-
+                GatewayConnection.create gateway.GatewayUrl gateway.IdentifyEvent None gateway.Dispatcher
+                |> Some
+
             Ok ()
 
     let close (gateway: Gateway) =
