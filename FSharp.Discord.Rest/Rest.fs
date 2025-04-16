@@ -1144,6 +1144,75 @@ let deleteInvite (req: DeleteInviteRequest) (client: IBotClient) =
 
 // ----- Resources: Lobby -----
 
+// https://discord.com/developers/docs/resources/lobby#create-lobby
+let createLobby (req: CreateLobbyRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "lobbies"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Lobby.decoder)
+
+// https://discord.com/developers/docs/resources/lobby#get-lobby
+let getLobby (req: GetLobbyRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "lobbies"; req.LobbyId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Lobby.decoder)
+
+// https://discord.com/developers/docs/resources/lobby#modify-lobby
+let modifyLobby (req: ModifyLobbyRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "lobbies"; req.LobbyId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Lobby.decoder)
+
+// https://discord.com/developers/docs/resources/lobby#delete-lobby
+let deleteLobby (req: DeleteLobbyRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "lobbies"; req.LobbyId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/lobby#add-a-member-to-a-lobby
+let addMemberToLobby (req: AddMemberToLobbyRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "lobbies"; req.LobbyId; "members"; req.UserId]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode LobbyMember.decoder)
+
+// https://discord.com/developers/docs/resources/lobby#remove-a-member-from-a-lobby
+let removeMemberFromLobby (req: RemoveMemberFromLobbyRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "lobbies"; req.LobbyId; "members"; req.UserId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/lobby#leave-lobby
+let leaveLobby (req: LeaveLobbyRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "lobbies"; req.LobbyId; "members"; "@me"]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/lobby#link-channel-to-lobby
+let linkChannelToLobby (req: LinkChannelToLobbyRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "lobbies"; req.LobbyId; "channel-linking"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// https://discord.com/developers/docs/resources/lobby#unlink-channel-from-lobby
+let unlinkChannelFromLobby (req: UnlinkChannelFromLobbyRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "lobbies"; req.LobbyId; "channel-linking"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// TODO: Can channel linking and leave lobby endpoints be used with bot token? Openapi specs seems to say yes but docs text implies no
+
 // ----- Resources: Message -----
 
 // https://discord.com/developers/docs/resources/message#create-message

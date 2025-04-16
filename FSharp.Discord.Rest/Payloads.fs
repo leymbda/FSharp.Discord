@@ -1353,6 +1353,64 @@ type ModifyGuildIncidentActionsPayload(?invitesDisabledUntil, ?dmsDisabledUntil)
 
 // ----- Resources: Lobby -----
 
+type CreateLobbyPayload(?metadata, ?members, ?idleTimeoutSeconds) =
+    member val Metadata: Map<string, string> option option = metadata
+    member val Members: LobbyMember list option = members
+    member val IdleTimeoutSeconds: int option = idleTimeoutSeconds
+
+    static member Encoder(v: CreateLobbyPayload) =
+        Encode.object ([]
+            |> Encode.optinull "metadata" (Encode.mapv Encode.string) v.Metadata
+            |> Encode.optional "members" (List.map LobbyMember.encoder >> Encode.list) v.Members
+            |> Encode.optional "idle_timeout_seconds" Encode.int v.IdleTimeoutSeconds
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateLobbyPayload.Encoder this
+
+type ModifyLobbyPayload(?metadata, ?members, ?idleTimeoutSeconds) =
+    member val Metadata: Map<string, string> option option = metadata
+    member val Members: LobbyMember list option = members
+    member val IdleTimeoutSeconds: int option = idleTimeoutSeconds
+
+    static member Encoder(v: ModifyLobbyPayload) =
+        Encode.object ([]
+            |> Encode.optinull "metadata" (Encode.mapv Encode.string) v.Metadata
+            |> Encode.optional "members" (List.map LobbyMember.encoder >> Encode.list) v.Members
+            |> Encode.optional "idle_timeout_seconds" Encode.int v.IdleTimeoutSeconds
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyLobbyPayload.Encoder this
+
+type AddMemberToLobbyPayload(?metadata, ?flags) =
+    member val Metadata: Map<string, string> option option = metadata
+    member val Flags: LobbyMemberFlag list option = flags
+
+    static member Encoder(v: AddMemberToLobbyPayload) =
+        Encode.object ([]
+            |> Encode.optinull "metadata" (Encode.mapv Encode.string) v.Metadata
+            |> Encode.optional "flags" Encode.bitfield v.Flags
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson AddMemberToLobbyPayload.Encoder this
+
+type LinkChannelToLobbyPayload(?channelId) =
+    member val ChannelId: string option = channelId
+
+    static member Encoder(v: LinkChannelToLobbyPayload) =
+        Encode.object ([]
+            |> Encode.optional "channel_id" Encode.string v.ChannelId
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson LinkChannelToLobbyPayload.Encoder this
+
 // ----- Resources: Message -----
 
 type CreateMessagePayload(

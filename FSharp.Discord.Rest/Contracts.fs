@@ -824,6 +824,41 @@ type DeleteInviteRequest(code, ?auditLogReason) =
 
 // ----- Resources: Lobby -----
 
+type CreateLobbyRequest(payload) =
+    member val Payload: CreateLobbyPayload = payload
+
+type GetLobbyRequest(lobbyId) =
+    member val LobbyId: string = lobbyId
+
+type ModifyLobbyRequest(lobbyId, payload) =
+    member val LobbyId: string = lobbyId
+
+    member val Payload: ModifyLobbyPayload = payload
+
+type DeleteLobbyRequest(lobbyId) =
+    member val LobbyId: string = lobbyId
+
+type AddMemberToLobbyRequest(lobbyId, userId, payload) =
+    member val LobbyId: string = lobbyId
+    member val UserId: string = userId
+
+    member val Payload: AddMemberToLobbyPayload = payload
+
+type RemoveMemberFromLobbyRequest(lobbyId, userId) =
+    member val LobbyId: string = lobbyId
+    member val UserId: string = userId
+
+type LeaveLobbyRequest(lobbyId) =
+    member val LobbyId: string = lobbyId
+
+type LinkChannelToLobbyRequest(lobbyId, payload) =
+    member val LobbyId: string = lobbyId
+
+    member val Payload: LinkChannelToLobbyPayload = payload
+
+type UnlinkChannelFromLobbyRequest(lobbyId) =
+    member val LobbyId: string = lobbyId
+
 // ----- Resources: Message -----
 
 type CreateMessageRequest(channelId, payload) =
