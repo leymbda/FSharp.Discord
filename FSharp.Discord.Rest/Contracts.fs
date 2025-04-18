@@ -951,6 +951,9 @@ type EndPollRequest(channelId, messageId) =
 
 // ----- Resources: SKU -----
 
+type ListSkusRequest(applicationId) =
+    member val ApplicationId: string = applicationId
+ 
 // ----- Resources: Soundboard -----
 
 // ----- Resources: Stage Instance -----

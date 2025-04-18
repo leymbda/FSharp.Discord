@@ -1339,6 +1339,13 @@ let endPoll (req: EndPollRequest) (client: IBotClient) =
 
 // ----- Resources: SKU -----
 
+// https://discord.com/developers/docs/resources/sku#list-skus
+let listSkus (req: ListSkusRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "applications"; req.ApplicationId; "skus"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Sku.decoder))
+
 // ----- Resources: Soundboard -----
 
 // ----- Resources: Stage Instance -----
