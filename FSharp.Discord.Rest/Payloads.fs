@@ -1475,11 +1475,11 @@ type EditMessagePayload(?content, ?embeds, ?flags, ?allowedMentions, ?components
             HttpContent.createJsonWithFiles EditMessagePayload.Encoder this this.Files
 
 type BulkDeleteMessagesPayload(messages) =
-    member val messages: string list = messages
+    member val Messages: string list = messages
 
     static member Encoder(v: BulkDeleteMessagesPayload) =
         Encode.object ([]
-            |> Encode.required "messages" (List.map Encode.string >> Encode.list) v.messages
+            |> Encode.required "messages" (List.map Encode.string >> Encode.list) v.Messages
         )
         
     interface IPayload with
@@ -1501,6 +1501,68 @@ module GetAnswerVotersResponse =
 // ----- Resources: SKU -----
 
 // ----- Resources: Soundboard -----
+
+type SendSoundboardSoundPayload(soundId, ?sourceGuildId) =
+    member val SoundId: string = soundId
+    member val SourceGuildId: string option = sourceGuildId
+
+    static member Encoder(v: SendSoundboardSoundPayload) =
+        Encode.object ([]
+            |> Encode.required "sound_id" Encode.string v.SoundId
+            |> Encode.optional "source_guild_id" Encode.string v.SourceGuildId
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson SendSoundboardSoundPayload.Encoder this
+
+type ListGuildSoundboardSoundsResponse = {
+    Items: SoundboardSound list
+}
+
+module ListGuildSoundboardSoundsResponse =
+    let decoder: Decoder<ListGuildSoundboardSoundsResponse> =
+        Decode.object (fun get -> {
+            Items = get |> Get.required "items" (Decode.list SoundboardSound.decoder)
+        })
+
+type CreateGuildSoundboardSoundPayload(name, sound, ?volume, ?emojiId, ?emojiName) =
+    member val Name: string = name
+    member val Sound: string = sound
+    member val Volume: double option option = volume
+    member val EmojiId: string option option = emojiId
+    member val EmojiName: string option option = emojiName
+
+    static member Encoder(v: CreateGuildSoundboardSoundPayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.required "sound" Encode.string v.Sound
+            |> Encode.optinull "volume" Encode.float v.Volume
+            |> Encode.optinull "emoji_id" Encode.string v.EmojiId
+            |> Encode.optinull "emoji_name" Encode.string v.EmojiName
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateGuildSoundboardSoundPayload.Encoder this
+
+type ModifyGuildSoundboardSoundPayload(?name, ?volume, ?emojiId, ?emojiName) =
+    member val Name: string option = name
+    member val Volume: double option option = volume
+    member val EmojiId: string option option = emojiId
+    member val EmojiName: string option option = emojiName
+    
+    static member Encoder(v: ModifyGuildSoundboardSoundPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optinull "volume" Encode.float v.Volume
+            |> Encode.optinull "emoji_id" Encode.string v.EmojiId
+            |> Encode.optinull "emoji_name" Encode.string v.EmojiName
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildSoundboardSoundPayload.Encoder this
 
 // ----- Resources: Stage Instance -----
 

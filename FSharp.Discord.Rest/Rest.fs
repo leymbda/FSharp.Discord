@@ -1348,6 +1348,62 @@ let listSkus (req: ListSkusRequest) (client: IBotClient) =
 
 // ----- Resources: Soundboard -----
 
+// https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound
+let sendSoundboardSound (req: SendSoundboardSoundRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "send-soundboard-sound"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode SoundboardSound.decoder)
+
+// https://discord.com/developers/docs/resources/soundboard#list-default-soundboard-sounds
+let listDefaultSoundboardSounds (client: IBotClient) =
+    Uri.create [API_BASE_URL; "soundboard-default-sounds"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list SoundboardSound.decoder))
+
+// https://discord.com/developers/docs/resources/soundboard#list-guild-soundboard-sounds
+let listGuildSoundboardSounds (req: ListGuildSoundboardSoundsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "soundboard-sounds"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ListGuildSoundboardSoundsResponse.decoder)
+    |> Task.map (DiscordResponse.map _.Items)
+
+// https://discord.com/developers/docs/resources/soundboard#get-guild-soundboard-sound
+let getGuildSoundboardSound (req: GetGuildSoundboardSoundRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "soundboard-sounds"; req.SoundId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode SoundboardSound.decoder)
+
+// https://discord.com/developers/docs/resources/soundboard#create-guild-soundboard-sound
+let createGuildSoundboardSound (req: CreateGuildSoundboardSoundRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "soundboard-sounds"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode SoundboardSound.decoder)
+
+// https://discord.com/developers/docs/resources/soundboard#modify-guild-soundboard-sound
+let modifyGuildSoundboardSound (req: ModifyGuildSoundboardSoundRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "soundboard-sounds"; req.SoundId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode SoundboardSound.decoder)
+
+// https://discord.com/developers/docs/resources/soundboard#delete-guild-soundboard-sound
+let deleteGuildSoundboardSound (req: DeleteGuildSoundboardSoundRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "soundboard-sounds"; req.SoundId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
 // ----- Resources: Stage Instance -----
 
 // ----- Resources: Sticker -----

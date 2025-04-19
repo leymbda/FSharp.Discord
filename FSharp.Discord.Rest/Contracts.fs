@@ -956,6 +956,39 @@ type ListSkusRequest(applicationId) =
  
 // ----- Resources: Soundboard -----
 
+type SendSoundboardSoundRequest(channelId, payload) =
+    member val ChannelId: string = channelId
+
+    member val Payload: SendSoundboardSoundPayload = payload
+
+type ListGuildSoundboardSoundsRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetGuildSoundboardSoundRequest(guildId, soundId) =
+    member val GuildId: string = guildId
+    member val SoundId: string = soundId
+
+type CreateGuildSoundboardSoundRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateGuildSoundboardSoundPayload = payload
+
+type ModifyGuildSoundboardSoundRequest(guildId, soundId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val SoundId: string = soundId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildSoundboardSoundPayload = payload
+
+type DeleteGuildSoundboardSoundRequest(guildId, soundId, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val SoundId: string = soundId
+
+    member val AuditLogReason: string option = auditLogReason    
+
 // ----- Resources: Stage Instance -----
 
 // ----- Resources: Sticker -----
