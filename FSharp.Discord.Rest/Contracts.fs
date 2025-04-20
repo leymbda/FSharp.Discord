@@ -991,6 +991,26 @@ type DeleteGuildSoundboardSoundRequest(guildId, soundId, ?auditLogReason) =
 
 // ----- Resources: Stage Instance -----
 
+type CreateStageInstanceRequest(payload, ?auditLogReason) =
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateStageInstancePayload = payload
+
+type GetStageInstanceRequest(channelId) =
+    member val ChannelId: string = channelId
+
+type ModifyStageInstanceRequest(channelId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyStageInstancePayload = payload
+
+type DeleteStageInstanceRequest(channelId, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
 // ----- Resources: Sticker -----
 
 // ----- Resources: Subscription -----

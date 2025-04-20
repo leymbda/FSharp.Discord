@@ -1406,6 +1406,39 @@ let deleteGuildSoundboardSound (req: DeleteGuildSoundboardSoundRequest) (client:
 
 // ----- Resources: Stage Instance -----
 
+// https://discord.com/developers/docs/resources/stage-instance#create-stage-instance
+let createStageInstance (req: CreateStageInstanceRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "stage-instances"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode StageInstance.decoder)
+
+// https://discord.com/developers/docs/resources/stage-instance#get-stage-instance
+let getStageInstance (req: GetStageInstanceRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "stage-instances"; req.ChannelId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode StageInstance.decoder)
+
+// https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance
+let modifyStageInstance (req: ModifyStageInstanceRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "stage-instances"; req.ChannelId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode StageInstance.decoder)
+
+// https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance
+let deleteStageInstance (req: DeleteStageInstanceRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "stage-instances"; req.ChannelId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
 // ----- Resources: Sticker -----
 
 // ----- Resources: Subscription -----

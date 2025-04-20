@@ -1566,6 +1566,40 @@ type ModifyGuildSoundboardSoundPayload(?name, ?volume, ?emojiId, ?emojiName) =
 
 // ----- Resources: Stage Instance -----
 
+type CreateStageInstancePayload(channelId, topic, ?privacyLevel, ?sendStartNotification, ?guildScheduledEventId) =
+    member val ChannelId: string = channelId
+    member val Topic: string = topic
+    member val PrivacyLevel: PrivacyLevel option = privacyLevel
+    member val SendStartNotification: bool option = sendStartNotification
+    member val GuildScheduledEventId: string option = guildScheduledEventId
+
+    static member Encoder(v: CreateStageInstancePayload) =
+        Encode.object ([]
+            |> Encode.required "channel_id" Encode.string v.ChannelId
+            |> Encode.required "topic" Encode.string v.Topic
+            |> Encode.optional "privacy_level" Encode.Enum.int v.PrivacyLevel
+            |> Encode.optional "send_start_notification" Encode.bool v.SendStartNotification
+            |> Encode.optional "guild_scheduled_event_id" Encode.string v.GuildScheduledEventId
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateStageInstancePayload.Encoder this
+
+type ModifyStageInstancePayload(?topic, ?privacyLevel) =
+    member val Topic: string option = topic
+    member val PrivacyLevel: PrivacyLevel option = privacyLevel
+    
+    static member Encoder(v: ModifyStageInstancePayload) =
+        Encode.object ([]
+            |> Encode.optional "topic" Encode.string v.Topic
+            |> Encode.optional "privacy_level" Encode.Enum.int v.PrivacyLevel
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyStageInstancePayload.Encoder this
+
 // ----- Resources: Sticker -----
 
 // ----- Resources: Subscription -----
