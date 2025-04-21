@@ -1525,6 +1525,91 @@ let getSkuSubscription (req: GetSkuSubscriptionRequest) (client: IBotClient) =
 
 // ----- Resources: User -----
 
+// https://discord.com/developers/docs/resources/user#get-current-user
+let getCurrentUser (client: IDiscordClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode User.decoder)
+
+// https://discord.com/developers/docs/resources/user#get-user
+let getUser (req: GetUserRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "users"; req.UserId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode User.decoder)
+
+// https://discord.com/developers/docs/resources/user#modify-current-user
+let modifyCurrentUser (req: ModifyCurrentUserRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode User.decoder)
+
+// https://discord.com/developers/docs/resources/user#get-current-user-guilds
+let getCurrentUserGuilds (req: GetCurrentUserGuildsRequest) (client: IDiscordClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"; "guilds"]
+    |> Uri.withOptionalQuery "before" req.Before
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.withOptionalQuery "with_counts" (Option.map string req.WithCounts)
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Guild.Partial.decoder))
+
+// https://discord.com/developers/docs/resources/user#get-current-user-guild-member
+let getCurrentUserGuildMember (req: GetCurrentUserGuildMemberRequest) (client: IDiscordClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"; "guilds"; req.GuildId; "member"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GuildMember.decoder)
+
+// https://discord.com/developers/docs/resources/user#leave-guild
+let leaveGuild (req: LeaveGuildRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"; "guilds"; req.GuildId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/user#create-dm
+let createDm (req: CreateDmRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"; "channels"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// https://discord.com/developers/docs/resources/user#create-group-dm
+let createGroupDm (req: CreateGroupDmRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"; "channels"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Channel.decoder)
+
+// https://discord.com/developers/docs/resources/user#get-current-user-connections
+let getCurrentUserConnections (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"; "connections"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Connection.decoder))
+
+// https://discord.com/developers/docs/resources/user#get-current-user-application-role-connection
+let getCurrentUserApplicationRoleConnection (req: GetCurrentUserApplicationRoleConnectionRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"; "applications"; req.ApplicationId; "role-connection"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ApplicationRoleConnection.decoder)
+
+// https://discord.com/developers/docs/resources/user#update-current-user-application-role-connection
+let updateCurrentUserApplicationRoleConnection (req: UpdateCurrentUserApplicationRoleConnectionRequest) (client: IOAuthClient) =
+    Uri.create [API_BASE_URL; "users"; "@me"; "applications"; req.ApplicationId; "role-connection"]
+    |> Uri.toRequest HttpMethod.Put
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ApplicationRoleConnection.decoder)
+
 // ----- Resources: Voice -----
 
 // ----- Resources: Webhook -----

@@ -1628,7 +1628,7 @@ type CreateGuildStickerPayload(name, description, tags, file) =
             |> MultipartFormDataContent.withMedia "file" this.File
             :> HttpContent
 
-type ModifyGuildStickerPayload(name, description, tags) =
+type ModifyGuildStickerPayload(?name, ?description, ?tags) =
     member val Name: string option = name
     member val Description: string option = description
     member val Tags: string option = tags // TODO: Should this be a list? Comma delimited? Not documented
@@ -1647,6 +1647,64 @@ type ModifyGuildStickerPayload(name, description, tags) =
 // ----- Resources: Subscription -----
 
 // ----- Resources: User -----
+
+type ModifyCurrentUserPayload(?username, ?avatar, ?banner) =
+    member val Username: string option = username
+    member val Avatar: string option option = avatar
+    member val Banner: string option option = banner
+
+    static member Encoder(v: ModifyCurrentUserPayload) =
+        Encode.object ([]
+            |> Encode.optional "username" Encode.string v.Username
+            |> Encode.optinull "avatar" Encode.string v.Avatar
+            |> Encode.optinull "banner" Encode.string v.Banner
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyCurrentUserPayload.Encoder this
+
+type CreateDmPayload(recipientId) =
+    member val RecipientId: string = recipientId
+
+    static member Encoder(v: CreateDmPayload) =
+        Encode.object ([]
+            |> Encode.required "recipient_id" Encode.string v.RecipientId
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateDmPayload.Encoder this
+
+type CreateGroupDmPayload(accessTokens, nicks) =
+    member val AccessTokens: string list = accessTokens
+    member val Nicks: Map<string, string> = nicks // TODO: Docs do not specify this as optional but seems like it should be
+
+    static member Encoder(v: CreateGroupDmPayload) =
+        Encode.object ([]
+            |> Encode.required "access_tokens" (List.map Encode.string >> Encode.list) v.AccessTokens
+            |> Encode.required "nicks" (Encode.mapv Encode.string) v.Nicks
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateGroupDmPayload.Encoder this
+
+type UpdateCurrentUserApplicationRoleConnectionPayload(?platformName, ?platformUsername, ?metadata) =
+    member val PlatformName: string option = platformName
+    member val PlatformUsername: string option = platformUsername
+    member val Metadata: Map<string, string> option = metadata
+    
+    static member Encoder(v: UpdateCurrentUserApplicationRoleConnectionPayload) =
+        Encode.object ([]
+            |> Encode.optional "platform_name" Encode.string v.PlatformName
+            |> Encode.optional "platform_username" Encode.string v.PlatformUsername
+            |> Encode.optional "metadata" (Encode.mapv Encode.string) v.Metadata
+        )
+
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson UpdateCurrentUserApplicationRoleConnectionPayload.Encoder this
 
 // ----- Resources: Voice -----
 

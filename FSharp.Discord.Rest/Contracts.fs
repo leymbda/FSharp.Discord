@@ -1063,6 +1063,38 @@ type GetSkuSubscriptionRequest(skuId, subscriptionId) =
 
 // ----- Resources: User -----
 
+type GetUserRequest(userId) =
+    member val UserId: string = userId
+
+type ModifyCurrentUserRequest(payload) =
+    member val Payload: ModifyCurrentUserPayload = payload
+
+type GetCurrentUserGuildsRequest(?before, ?after, ?limit, ?withCounts) =
+    member val Before: string option = before
+    member val After: string option = after
+    member val Limit: int option = limit
+    member val WithCounts: bool option = withCounts
+
+type GetCurrentUserGuildMemberRequest(guildId) =
+    member val GuildId: string = guildId
+
+type LeaveGuildRequest(guildId) =
+    member val GuildId: string = guildId
+
+type CreateDmRequest(payload) =
+    member val Payload: CreateDmPayload = payload
+
+type CreateGroupDmRequest(payload) =
+    member val Payload: CreateGroupDmPayload = payload
+
+type GetCurrentUserApplicationRoleConnectionRequest(applicationId) =
+    member val ApplicationId: string = applicationId
+
+type UpdateCurrentUserApplicationRoleConnectionRequest(applicationId, payload) =
+    member val ApplicationId: string = applicationId
+
+    member val Payload: UpdateCurrentUserApplicationRoleConnectionPayload = payload
+
 // ----- Resources: Voice -----
 
 // ----- Resources: Webhook -----
