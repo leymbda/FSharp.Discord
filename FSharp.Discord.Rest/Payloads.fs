@@ -3,6 +3,7 @@
 open FSharp.Discord.Types
 open FSharp.Discord.Types.Serialization
 open System
+open System.Net.Http
 open Thoth.Json.Net
 
 // ----- Interactions: Receiving and Responding -----
@@ -1601,6 +1602,47 @@ type ModifyStageInstancePayload(?topic, ?privacyLevel) =
             StringContent.createJson ModifyStageInstancePayload.Encoder this
 
 // ----- Resources: Sticker -----
+
+type ListStickerPacksResponse = {
+    StickerPacks: StickerPack list
+}
+
+module ListStickerPacksResponse =
+    let decoder: Decoder<ListStickerPacksResponse> =
+        Decode.object (fun get -> {
+            StickerPacks = get |> Get.required "sticker_packs" (Decode.list StickerPack.decoder)
+        })
+
+type CreateGuildStickerPayload(name, description, tags, file) =
+    member val Name: string = name
+    member val Description: string = description
+    member val Tags: string = tags // TODO: Should this be a list? Comma delimited? Not documented
+    member val File: Media = file
+    
+    interface IPayload with
+        member this.ToHttpContent() =
+            MultipartFormDataContent.create()
+            |> MultipartFormDataContent.withText "name" this.Name
+            |> MultipartFormDataContent.withText "description" this.Description
+            |> MultipartFormDataContent.withText "tags" this.Tags
+            |> MultipartFormDataContent.withMedia "file" this.File
+            :> HttpContent
+
+type ModifyGuildStickerPayload(name, description, tags) =
+    member val Name: string option = name
+    member val Description: string option = description
+    member val Tags: string option = tags // TODO: Should this be a list? Comma delimited? Not documented
+    
+    static member Encoder(v: ModifyGuildStickerPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optional "description" Encode.string v.Description
+            |> Encode.optional "tags" Encode.string v.Tags
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyGuildStickerPayload.Encoder this
 
 // ----- Resources: Subscription -----
 

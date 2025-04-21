@@ -1441,6 +1441,68 @@ let deleteStageInstance (req: DeleteStageInstanceRequest) (client: IBotClient) =
 
 // ----- Resources: Sticker -----
 
+// https://discord.com/developers/docs/resources/sticker#get-sticker
+let getSticker (req: GetStickerRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "stickers"; req.StickerId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Sticker.decoder)
+
+// https://discord.com/developers/docs/resources/sticker#list-sticker-packs
+let listStickerPacks (client: IBotClient) =
+    Uri.create [API_BASE_URL; "sticker-packs"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode ListStickerPacksResponse.decoder)
+    |> Task.map (DiscordResponse.map _.StickerPacks)
+
+// https://discord.com/developers/docs/resources/sticker#get-sticker-pack
+let getStickerPack (req: GetStickerPackRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "sticker-packs"; req.PackId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list StickerPack.decoder))
+
+// https://discord.com/developers/docs/resources/sticker#list-guild-stickers
+let listGuildStickers (req: ListGuildStickersRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "stickers"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Sticker.decoder))
+
+// https://discord.com/developers/docs/resources/sticker#get-guild-sticker
+let getGuildSticker (req: GetGuildStickerRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "stickers"; req.StickerId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Sticker.decoder)
+
+// https://discord.com/developers/docs/resources/sticker#create-guild-sticker
+let createGuildSticker (req: CreateGuildStickerRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "stickers"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Sticker.decoder)
+
+// https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
+let modifyGuildSticker (req: ModifyGuildStickerRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "stickers"; req.StickerId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Sticker.decoder)
+
+// https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
+let deleteGuildSticker (req: DeleteGuildStickerRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "stickers"; req.StickerId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
 // ----- Resources: Subscription -----
 
 // ----- Resources: User -----

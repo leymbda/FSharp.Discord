@@ -1013,6 +1013,40 @@ type DeleteStageInstanceRequest(channelId, ?auditLogReason) =
 
 // ----- Resources: Sticker -----
 
+type GetStickerRequest(stickerId) =
+    member val StickerId: string = stickerId
+
+type GetStickerPackRequest(packId) =
+    member val PackId: string = packId
+
+type ListGuildStickersRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetGuildStickerRequest(guildId, stickerId) =
+    member val GuildId: string = guildId
+    member val StickerId: string = stickerId
+
+type CreateGuildStickerRequest(guildId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateGuildStickerPayload = payload
+
+type ModifyGuildStickerRequest(guildId, stickerId, payload, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val StickerId: string = stickerId
+    
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyGuildStickerPayload = payload
+
+type DeleteGuildStickerRequest(guildId, stickerId, ?auditLogReason) =
+    member val GuildId: string = guildId
+    member val StickerId: string = stickerId
+    
+    member val AuditLogReason: string option = auditLogReason
+
 // ----- Resources: Subscription -----
 
 // ----- Resources: User -----
