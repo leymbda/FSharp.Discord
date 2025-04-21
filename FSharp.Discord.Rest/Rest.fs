@@ -1505,6 +1505,24 @@ let deleteGuildSticker (req: DeleteGuildStickerRequest) (client: IBotClient) =
 
 // ----- Resources: Subscription -----
 
+// https://discord.com/developers/docs/resources/subscription#list-sku-subscriptions
+let listSkuSubscriptions (req: ListSkuSubscriptionsRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "skus"; req.SkuId; "subscriptions"]
+    |> Uri.withOptionalQuery "before" req.Before
+    |> Uri.withOptionalQuery "after" req.After
+    |> Uri.withOptionalQuery "limit" (Option.map string req.Limit)
+    |> Uri.withOptionalQuery "user_id" req.UserId
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Subscription.decoder))
+
+// https://discord.com/developers/docs/resources/subscription#get-sku-subscription
+let getSkuSubscription (req: GetSkuSubscriptionRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "skus"; req.SkuId; "subscriptions"; req.SubscriptionId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Subscription.decoder)
+
 // ----- Resources: User -----
 
 // ----- Resources: Voice -----

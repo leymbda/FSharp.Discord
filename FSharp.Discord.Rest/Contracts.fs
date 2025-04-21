@@ -1049,6 +1049,18 @@ type DeleteGuildStickerRequest(guildId, stickerId, ?auditLogReason) =
 
 // ----- Resources: Subscription -----
 
+type ListSkuSubscriptionsRequest(skuId, ?before, ?after, ?limit, ?userId) =
+    member val SkuId: string = skuId
+
+    member val Before: string option = before
+    member val After: string option = after
+    member val Limit: int option = limit
+    member val UserId: string option = userId
+
+type GetSkuSubscriptionRequest(skuId, subscriptionId) =
+    member val SkuId: string = skuId
+    member val SubscriptionId: string = subscriptionId
+
 // ----- Resources: User -----
 
 // ----- Resources: Voice -----
