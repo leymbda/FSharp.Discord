@@ -122,6 +122,8 @@ type MessageFlag =
     | IS_VOICE_MESSAGE =                       (1 <<< 13)
     /// This message has a snapshot (via Message Forwarding)
     | HAS_SNAPSHOT =                           (1 <<< 14)
+    /// This message allows you to create fully component driven messages
+    | IS_COMPONENTS_V2 =                       (1 <<< 15)
 
 // https://discord.com/developers/docs/topics/permissions#role-object-role-flags
 [<RequireQualifiedAccess>]

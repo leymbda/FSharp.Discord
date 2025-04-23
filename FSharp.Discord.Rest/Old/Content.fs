@@ -11,7 +11,7 @@ open System.Text.Json.Serialization
 
 type CreateInteractionResponsePayload<'a> (
     payload: InteractionResponse, // TODO: Create DU for interaction responses to ensure valid type/data
-    ?files:  File list
+    ?files:  FSharp.Discord.Rest.Old.File list
 ) =
     interface IPayload with
         member _.Content =
@@ -29,7 +29,7 @@ type EditOriginalInteractionResponsePayload (
     ?components:       Component list,
     ?attachments:      PartialAttachment list,
     ?poll:             Poll,
-    ?files:            File list
+    ?files:            FSharp.Discord.Rest.Old.File list
 ) =
     interface IPayload with
         member _.Content =
@@ -58,7 +58,7 @@ type CreateFollowUpMessagePayload (
     ?attachments:      PartialAttachment list,
     ?flags:            MessageFlag list, // Only supports EPHEMERAL
     ?poll:             Poll,
-    ?files:            File list
+    ?files:            FSharp.Discord.Rest.Old.File list
 ) =
     interface IPayload with
         member _.Content =
@@ -87,7 +87,7 @@ type EditFollowUpMessagePayload (
     ?components:       Component list option,
     ?attachments:      PartialAttachment list option,
     ?poll:             Poll option,
-    ?files:            File list
+    ?files:            FSharp.Discord.Rest.Old.File list
 ) =
     interface IPayload with
         member _.Content =
@@ -561,7 +561,7 @@ type StartThreadInForumOrMediaChannelPayload (
     message:                ForumAndMediaThreadMessageParams,
     ?auto_archive_duration: int,
     ?applied_tags:          string list,
-    ?files:                 File list
+    ?files:                 FSharp.Discord.Rest.Old.File list
 ) =
     interface IPayload with
         member _.Content =
@@ -1209,7 +1209,7 @@ type CreateMessagePayload (
     ?flags:             MessageFlag list,
     ?enforce_nonce:     bool,
     ?poll:              Poll,
-    ?files:             File list
+    ?files:             FSharp.Discord.Rest.Old.File list
 ) =
     interface IPayload with
         member _.Content =
@@ -1243,7 +1243,7 @@ type EditMessagePayload (
     ?allow_mentions: AllowedMentions option,
     ?components:     Component list option,
     ?attachments:    PartialAttachment list option,
-    ?files:          File list
+    ?files:          FSharp.Discord.Rest.Old.File list
 ) =
     interface IPayload with
         member _.Content =
@@ -1383,7 +1383,7 @@ type CreateGuildStickerPayload (
     name: string,
     description: string,
     tags: string,
-    stickerFile: File
+    stickerFile: FSharp.Discord.Rest.Old.File
 ) =
     interface IPayload with
         member _.Content =
@@ -1554,7 +1554,7 @@ type ExecuteWebhookPayload (
     ?thread_name:      string,
     ?applied_tags:     string list,
     ?poll:             Poll,
-    ?files:            File list
+    ?files:            FSharp.Discord.Rest.Old.File list
 ) =
     interface IPayload with
         member _.Content =
@@ -1587,7 +1587,7 @@ type EditWebhookMessagePayload (
     ?components:       Component list option,
     ?attachments:      PartialAttachment list option,
     ?poll:             Poll option,
-    ?files:            File list
+    ?files:            FSharp.Discord.Rest.Old.File list
 ) =
     interface IPayload with
         member _.Content =

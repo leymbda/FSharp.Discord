@@ -222,6 +222,32 @@ type ThothTests () =
         Assert.AreEqual<string>(expected, actual)
 
     [<TestMethod>]
+    member _.``ComponentType - Correctly serializes valid type`` () =
+        // Arrange
+        let json = """{"type":1,"id":123,"components":[]}"""
+
+        // Act
+        let res = Decode.fromString ActionRow.decoder json
+
+        // Assert
+        match res with
+        | Ok { Id = Some 123; Components = [] } -> ()
+        | _ -> Assert.Fail()
+
+    [<TestMethod>]
+    member _.``ComponentType - Correctly fails on invalid type`` () =
+        // Arrange
+        let json = """{"type":2,"id":123,"components":[]}"""
+
+        // Act
+        let res = Decode.fromString ActionRow.decoder json
+
+        // Assert
+        match res with
+        | Error _ -> ()
+        | _ -> Assert.Fail()
+
+    [<TestMethod>]
     member _.``Decode.mapkv - Correctly deserializes to map`` () =
         // Arrange
         let id = "1234567890"

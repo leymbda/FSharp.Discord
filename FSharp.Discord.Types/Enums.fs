@@ -12,6 +12,7 @@ type ButtonStyle =
     | SUCCESS   = 3
     | DANGER    = 4
     | LINK      = 5
+    | PREMIUM   = 6
     
 [<RequireQualifiedAccess>]
 type ForumLayout =

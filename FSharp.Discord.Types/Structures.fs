@@ -52,7 +52,7 @@ type ApplicationCommandData = {
 type MessageComponentData = {
     CustomId: string
     ComponentType: ComponentType
-    Values: SelectMenuOption list option
+    Values: SelectOption list option
     Resolved: ResolvedData option
 }
 
@@ -276,44 +276,87 @@ module ApplicationCommandPermissionConstants =
 
 // ----- Interactions: Message Components -----
 
-// https://discord.com/developers/docs/interactions/message-components#action-rows
+// https://discord.com/developers/docs/components/reference#action-row
 type ActionRow = {
-    Type: ComponentType
+    Id: int option
     Components: Component list
 }
 
-// https://discord.com/developers/docs/interactions/message-components#button-object-button-structure
-type Button = {
-    Type: ComponentType
-    Style: ButtonStyle
+// https://discord.com/developers/docs/components/reference#button-button-styles
+type PrimaryButton = {
+    Id: int option
     Label: string option
     Emoji: PartialEmoji option
-    CustomId: string option
-    SkuId: string option
-    Url: string option
+    CustomId: string
     Disabled: bool
 }
 
-// TODO: Ensure values meet requirements set in docs for buttons
-
-// https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure
-type SelectMenu = {
-    Type: ComponentType
+// https://discord.com/developers/docs/components/reference#button-button-styles
+type SecondaryButton = {
+    Id: int option
+    Label: string option
+    Emoji: PartialEmoji option
     CustomId: string
-    Options: SelectMenuOption list option
-    ChannelTypes: ChannelType list option
+    Disabled: bool
+}
+
+// https://discord.com/developers/docs/components/reference#button-button-styles
+type SuccessButton = {
+    Id: int option
+    Label: string option
+    Emoji: PartialEmoji option
+    CustomId: string
+    Disabled: bool
+}
+
+// https://discord.com/developers/docs/components/reference#button-button-styles
+type DangerButton = {
+    Id: int option
+    Label: string option
+    Emoji: PartialEmoji option
+    CustomId: string
+    Disabled: bool
+}
+
+// https://discord.com/developers/docs/components/reference#button-button-styles
+type LinkButton = {
+    Id: int option
+    Label: string option
+    Emoji: PartialEmoji option
+    Url: string
+    Disabled: bool
+}
+
+// https://discord.com/developers/docs/components/reference#button-button-styles
+type PremiumButton = {
+    Id: int option
+    Label: string option
+    Emoji: PartialEmoji option
+    SkuId: string
+    Disabled: bool
+}
+
+type Button =
+    | PRIMARY of PrimaryButton
+    | SECONDARY of SecondaryButton
+    | SUCCESS of SuccessButton
+    | DANGER of DangerButton
+    | LINK of LinkButton
+    | PREMIUM of PremiumButton
+
+// https://discord.com/developers/docs/components/reference#string-select-string-select-structure
+type StringSelect = {
+    Id: int option
+    CustomId: string
+    Options: SelectOption list
     Placeholder: string option
-    DefaultValues: SelectMenuDefaultValue list option
     MinValues: int
     MaxValues: int
     Disabled: bool
 }
 
-// TODO: DU for different types of select menus
-// TODO: Ensure values meet requirements set in docs for select menus
-
-// https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-option-structure
-type SelectMenuOption = {
+// https://discord.com/developers/docs/components/reference#string-select-select-option-structure
+type SelectOption = {
     Label: string
     Value: string
     Description: string option
@@ -321,19 +364,10 @@ type SelectMenuOption = {
     Default: bool option
 }
 
-// TODO: Ensure values meet requirements set in docs for select menu options
-
-// https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-default-value-structure
-type SelectMenuDefaultValue = {
-    Id: string
-    Type: SelectMenuDefaultValueType
-}
-
-// https://discord.com/developers/docs/interactions/message-components#text-input-object-text-input-structure
-type TextInput = {
-    Type: ComponentType
+// https://discord.com/developers/docs/components/reference#text-input-text-input-structure
+type ShortTextInput = {
+    Id: int option
     CustomId: string
-    Style: TextInputStyle
     Label: string
     MinLength: int option
     MaxLength: int option
@@ -342,13 +376,154 @@ type TextInput = {
     Placeholder: string option
 }
 
-// TODO: Ensure values meet requirements set in docs for text input
+// https://discord.com/developers/docs/components/reference#text-input-text-input-structure
+type ParagraphTextInput = {
+    Id: int option
+    CustomId: string
+    Label: string
+    MinLength: int option
+    MaxLength: int option
+    Required: bool
+    Value: string option
+    Placeholder: string option
+}
+
+type TextInput =
+    | SHORT of ShortTextInput
+    | PARAGRAPH of ParagraphTextInput
+
+// https://discord.com/developers/docs/components/reference#user-select-user-select-structure
+type UserSelect = {
+    Id: int option
+    CustomId: string
+    Placeholder: string option
+    DefaultValues: SelectDefaultValue list option
+    MinValues: int
+    MaxValues: int
+    Disabled: bool
+}
+
+// https://discord.com/developers/docs/components/reference#user-select-select-default-value-structure
+type SelectDefaultValue =
+    | USER of string
+    | ROLE of string
+    | CHANNEL of string
+
+// https://discord.com/developers/docs/components/reference#role-select
+type RoleSelect = {
+    Id: int option
+    CustomId: string
+    Placeholder: string option
+    DefaultValues: SelectDefaultValue list option
+    MinValues: int
+    MaxValues: int
+    Disabled: bool
+}
+
+// https://discord.com/developers/docs/components/reference#mentionable-select-mentionable-select-structure
+type MentionableSelect = {
+    Id: int option
+    CustomId: string
+    Placeholder: string option
+    DefaultValues: SelectDefaultValue list option
+    MinValues: int
+    MaxValues: int
+    Disabled: bool
+}
+
+// https://discord.com/developers/docs/components/reference#channel-select-channel-select-structure
+type ChannelSelect = {
+    Id: int option
+    CustomId: string
+    ChannelTypes: ChannelType list option
+    Placeholder: string option
+    DefaultValues: SelectDefaultValue list option
+    MinValues: int
+    MaxValues: int
+    Disabled: bool
+}
+
+// https://discord.com/developers/docs/components/reference#section
+type Section = {
+    Id: int option
+    Components: Component list
+    Accessory: Component option
+}
+
+// https://discord.com/developers/docs/components/reference#text-display
+type TextDisplay = {
+    Id: int option
+    Content: string
+}
+
+// https://discord.com/developers/docs/components/reference#thumbnail
+type Thumbnail = {
+    Id: int option
+    Media: UnfurledMediaItem
+    Description: string option
+    Spoiler: bool
+}
+
+// https://discord.com/developers/docs/components/reference#media-gallery
+type MediaGallery = {
+    Id: int option
+    Items: MediaGalleryItem list
+}
+
+// https://discord.com/developers/docs/components/reference#media-gallery-media-gallery-item-structure
+type MediaGalleryItem = {
+    Media: UnfurledMediaItem
+    Description: string option
+    Spoiler: bool
+}
+
+// https://discord.com/developers/docs/components/reference#file
+type File = {
+    Id: int option
+    File: UnfurledMediaItem
+    Spoiler: bool
+}
+
+// https://discord.com/developers/docs/components/reference#separator
+type Separator = {
+    Id: int option
+    Divider: bool
+    Spacing: SeparatorPaddingType
+}
+
+// https://discord.com/developers/docs/components/reference#container
+type Container = {
+    Id: int option
+    Components: Component list
+    AccentColor: int option option // TODO: Change to some color type?
+    Spoiler: bool
+}
+
+// https://discord.com/developers/docs/components/reference#unfurled-media-item-structure
+type UnfurledMediaItem = {
+    Url: string
+    ProxyUrl: string option
+    Height: int option option
+    Width: int option option
+    ContentType: string option
+}
 
 type Component =
     | ACTION_ROW of ActionRow
     | BUTTON of Button
-    | SELECT_MENU of SelectMenu
+    | STRING_SELECT of StringSelect
     | TEXT_INPUT of TextInput
+    | USER_SELECT of UserSelect
+    | ROLE_SELECT of RoleSelect
+    | MENTIONABLE_SELECT of MentionableSelect
+    | CHANNEL_SELECT of ChannelSelect
+    | SECTION of Section
+    | TEXT_DISPLAY of TextDisplay
+    | THUMBNAIL of Thumbnail
+    | MEDIA_GALLERY of MediaGallery
+    | FILE of File
+    | SEPARATOR of Separator
+    | CONTAINER of Container
 
 // ----- Events: Using Gateway -----
 
@@ -2462,3 +2637,4 @@ type TeamMember = {
 // TODO: Convert url strings to Uri type (?)
 // TODO: Create single DUs for values with range/size/etc rules
 // TODO: Add comments describing properties as per docs
+// TODO: Remove all `type` properties as this should be handled in serialization alone into DUs

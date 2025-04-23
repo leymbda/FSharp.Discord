@@ -135,7 +135,7 @@ module MessageComponentData =
         Decode.object (fun get -> {
             CustomId = get |> Get.required Property.CustomId Decode.string
             ComponentType = get |> Get.required Property.ComponentType Decode.Enum.int<ComponentType>
-            Values = get |> Get.optional Property.Values (Decode.list SelectMenuOption.decoder)
+            Values = get |> Get.optional Property.Values (Decode.list SelectOption.decoder)
             Resolved = get |> Get.optional Property.Resolved ResolvedData.decoder
         })
 
@@ -143,7 +143,7 @@ module MessageComponentData =
         Encode.object ([]
             |> Encode.required Property.CustomId Encode.string v.CustomId
             |> Encode.required Property.ComponentType Encode.Enum.int v.ComponentType
-            |> Encode.optional Property.Values (List.map SelectMenuOption.encoder >> Encode.list) v.Values
+            |> Encode.optional Property.Values (List.map SelectOption.encoder >> Encode.list) v.Values
             |> Encode.optional Property.Resolved ResolvedData.encoder v.Resolved
         )
 
@@ -682,95 +682,259 @@ module ApplicationCommandPermission =
 
 module ActionRow =
     module Property =
-        let [<Literal>] Type = "type"
+        let [<Literal>] Id = "id"
         let [<Literal>] Components = "components"
 
     let decoder: Decoder<ActionRow> =
         Decode.object (fun get -> {
-            Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
+            Id = get |> Get.optional Property.Id Decode.int
             Components = get |> Get.required Property.Components (Decode.list Component.decoder)
         })
-
+        |> Component.typeDecoder<ActionRow> ComponentType.ACTION_ROW
+        
     let encoder (v: ActionRow) =
         Encode.object ([]
-            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Component.typeEncoder ComponentType.ACTION_ROW
+            |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.required Property.Components (List.map Component.encoder >> Encode.list) v.Components
         )
 
-module Button =
+module PrimaryButton =
     module Property =
-        let [<Literal>] Type = "type"
-        let [<Literal>] Style = "style"
+        let [<Literal>] Id = "id"
         let [<Literal>] Label = "label"
         let [<Literal>] Emoji = "emoji"
         let [<Literal>] CustomId = "custom_id"
-        let [<Literal>] SkuId = "sku_id"
-        let [<Literal>] Url = "url"
         let [<Literal>] Disabled = "disabled"
 
-    let decoder: Decoder<Button> =
+    let decoder: Decoder<PrimaryButton> =
         Decode.object (fun get -> {
-            Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
-            Style = get |> Get.required Property.Style Decode.Enum.int<ButtonStyle>
+            PrimaryButton.Id = get |> Get.optional Property.Id Decode.int
             Label = get |> Get.optional Property.Label Decode.string
             Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
-            CustomId = get |> Get.optional Property.CustomId Decode.string
-            SkuId = get |> Get.optional Property.SkuId Decode.string
-            Url = get |> Get.optional Property.Url Decode.string
+            CustomId = get |> Get.required Property.CustomId Decode.string
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         })
+        |> Button.styleDecoder<PrimaryButton> ButtonStyle.PRIMARY
 
-    let encoder (v: Button) =
+    let encoder (v: PrimaryButton) =
         Encode.object ([]
-            |> Encode.required Property.Type Encode.Enum.int v.Type
-            |> Encode.required Property.Style Encode.Enum.int v.Style
+            |> Button.styleEncoder ButtonStyle.PRIMARY
+            |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.optional Property.Label Encode.string v.Label
             |> Encode.optional Property.Emoji Emoji.Partial.encoder v.Emoji
-            |> Encode.optional Property.CustomId Encode.string v.CustomId
-            |> Encode.optional Property.SkuId Encode.string v.SkuId
-            |> Encode.optional Property.Url Encode.string v.Url
+            |> Encode.required Property.CustomId Encode.string v.CustomId
             |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
         )
 
-module SelectMenu =
+module SecondaryButton =
     module Property =
-        let [<Literal>] Type = "type"
+        let [<Literal>] Id = "id"
+        let [<Literal>] Label = "label"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] CustomId = "custom_id"
+        let [<Literal>] Disabled = "disabled"
+
+    let decoder: Decoder<SecondaryButton> =
+        Decode.object (fun get -> {
+            SecondaryButton.Id = get |> Get.optional Property.Id Decode.int
+            Label = get |> Get.optional Property.Label Decode.string
+            Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
+        })
+        |> Button.styleDecoder<SecondaryButton> ButtonStyle.SECONDARY
+
+    let encoder (v: SecondaryButton) =
+        Encode.object ([]
+            |> Button.styleEncoder ButtonStyle.SECONDARY
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.optional Property.Label Encode.string v.Label
+            |> Encode.optional Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
+
+module SuccessButton =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Label = "label"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] CustomId = "custom_id"
+        let [<Literal>] Disabled = "disabled"
+
+    let decoder: Decoder<SuccessButton> =
+        Decode.object (fun get -> {
+            SuccessButton.Id = get |> Get.optional Property.Id Decode.int
+            Label = get |> Get.optional Property.Label Decode.string
+            Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
+        })
+        |> Button.styleDecoder<SuccessButton> ButtonStyle.SUCCESS
+
+    let encoder (v: SuccessButton) =
+        Encode.object ([]
+            |> Button.styleEncoder ButtonStyle.SUCCESS
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.optional Property.Label Encode.string v.Label
+            |> Encode.optional Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
+
+module DangerButton =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Label = "label"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] CustomId = "custom_id"
+        let [<Literal>] Disabled = "disabled"
+
+    let decoder: Decoder<DangerButton> =
+        Decode.object (fun get -> {
+            DangerButton.Id = get |> Get.optional Property.Id Decode.int
+            Label = get |> Get.optional Property.Label Decode.string
+            Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
+        })
+        |> Button.styleDecoder<DangerButton> ButtonStyle.DANGER
+
+    let encoder (v: DangerButton) =
+        Encode.object ([]
+            |> Button.styleEncoder ButtonStyle.DANGER
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.optional Property.Label Encode.string v.Label
+            |> Encode.optional Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
+
+module LinkButton =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Label = "label"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] Url = "url"
+        let [<Literal>] Disabled = "disabled"
+
+    let decoder: Decoder<LinkButton> =
+        Decode.object (fun get -> {
+            LinkButton.Id = get |> Get.optional Property.Id Decode.int
+            Label = get |> Get.optional Property.Label Decode.string
+            Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
+            Url = get |> Get.required Property.Url Decode.string
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
+        })
+        |> Button.styleDecoder<LinkButton> ButtonStyle.LINK
+
+    let encoder (v: LinkButton) =
+        Encode.object ([]
+            |> Button.styleEncoder ButtonStyle.LINK
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.optional Property.Label Encode.string v.Label
+            |> Encode.optional Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.required Property.Url Encode.string v.Url
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
+
+module PremiumButton =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Label = "label"
+        let [<Literal>] Emoji = "emoji"
+        let [<Literal>] SkuId = "sku_id"
+        let [<Literal>] Disabled = "disabled"
+
+    let decoder: Decoder<PremiumButton> =
+        Decode.object (fun get -> {
+            PremiumButton.Id = get |> Get.optional Property.Id Decode.int
+            Label = get |> Get.optional Property.Label Decode.string
+            Emoji = get |> Get.optional Property.Emoji Emoji.Partial.decoder
+            SkuId = get |> Get.required Property.SkuId Decode.string
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
+        })
+        |> Button.styleDecoder<PremiumButton> ButtonStyle.PREMIUM
+
+    let encoder (v: PremiumButton) =
+        Encode.object ([]
+            |> Button.styleEncoder ButtonStyle.PREMIUM
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.optional Property.Label Encode.string v.Label
+            |> Encode.optional Property.Emoji Emoji.Partial.encoder v.Emoji
+            |> Encode.required Property.SkuId Encode.string v.SkuId
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
+
+module Button =
+    module internal Property =
+        let [<Literal>] Style = "style"
+
+    let internal styleDecoder<'a> (expected: ButtonStyle) (decoder: Decoder<'a>): Decoder<'a> =
+        Decode.field Property.Style Decode.Enum.int<ButtonStyle>
+        |> Decode.andThen (fun style ->
+            if style = expected then decoder
+            else Decode.fail "Invalid component json provided"
+        )
+
+    let internal styleEncoder (expected: ButtonStyle) (list: (string * JsonValue) list) =
+        list |> Encode.required Property.Style Encode.Enum.int expected
+
+    let decoder: Decoder<Button> =
+        Decode.oneOf [
+            Decode.map Button.PRIMARY PrimaryButton.decoder
+            Decode.map Button.SECONDARY SecondaryButton.decoder
+            Decode.map Button.SUCCESS SuccessButton.decoder
+            Decode.map Button.DANGER DangerButton.decoder
+            Decode.map Button.LINK LinkButton.decoder
+            Decode.map Button.PREMIUM PremiumButton.decoder
+        ]
+
+    let encoder (v: Button) =
+        match v with
+        | Button.PRIMARY data -> PrimaryButton.encoder data
+        | Button.SECONDARY data -> SecondaryButton.encoder data
+        | Button.SUCCESS data -> SuccessButton.encoder data
+        | Button.DANGER data -> DangerButton.encoder data
+        | Button.LINK data -> LinkButton.encoder data
+        | Button.PREMIUM data -> PremiumButton.encoder data
+
+module StringSelect =
+    module Property =
+        let [<Literal>] Id = "id"
         let [<Literal>] CustomId = "custom_id"
         let [<Literal>] Options = "options"
-        let [<Literal>] ChannelTypes = "channel_types"
         let [<Literal>] Placeholder = "placeholder"
-        let [<Literal>] DefaultValues = "default_values"
         let [<Literal>] MinValues = "min_values"
         let [<Literal>] MaxValues = "max_values"
         let [<Literal>] Disabled = "disabled"
 
-    let decoder: Decoder<SelectMenu> =
+    let decoder: Decoder<StringSelect> =
         Decode.object (fun get -> {
-            Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
+            Id = get |> Get.optional Property.Id Decode.int
             CustomId = get |> Get.required Property.CustomId Decode.string
-            Options = get |> Get.optional Property.Options (Decode.list SelectMenuOption.decoder)
-            ChannelTypes = get |> Get.optional Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
+            Options = get |> Get.required Property.Options (Decode.list SelectOption.decoder)
             Placeholder = get |> Get.optional Property.Placeholder Decode.string
-            DefaultValues = get |> Get.optional Property.DefaultValues (Decode.list SelectMenuDefaultValue.decoder)
             MinValues = get |> Get.optional Property.MinValues Decode.int |> Option.defaultValue 1
             MaxValues = get |> Get.optional Property.MaxValues Decode.int |> Option.defaultValue 1
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         })
+        |> Component.typeDecoder ComponentType.STRING_SELECT
 
-    let encoder (v: SelectMenu) =
+    let encoder (v: StringSelect) =
         Encode.object ([]
-            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Component.typeEncoder ComponentType.STRING_SELECT
+            |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.required Property.CustomId Encode.string v.CustomId
-            |> Encode.optional Property.Options (List.map SelectMenuOption.encoder >> Encode.list) v.Options
-            |> Encode.optional Property.ChannelTypes (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes
+            |> Encode.required Property.Options (List.map SelectOption.encoder >> Encode.list) v.Options
             |> Encode.optional Property.Placeholder Encode.string v.Placeholder
-            |> Encode.optional Property.DefaultValues (List.map SelectMenuDefaultValue.encoder >> Encode.list) v.DefaultValues
             |> Encode.optional Property.MinValues Encode.int (Some v.MinValues)
             |> Encode.optional Property.MaxValues Encode.int (Some v.MaxValues)
             |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
         )
 
-module SelectMenuOption =
+module SelectOption =
     module Property =
         let [<Literal>] Label = "label"
         let [<Literal>] Value = "value"
@@ -778,7 +942,7 @@ module SelectMenuOption =
         let [<Literal>] Emoji = "emoji"
         let [<Literal>] Default = "default"
 
-    let decoder: Decoder<SelectMenuOption> =
+    let decoder: Decoder<SelectOption> =
         Decode.object (fun get -> {
             Label = get |> Get.required Property.Label Decode.string
             Value = get |> Get.required Property.Value Decode.string
@@ -787,7 +951,7 @@ module SelectMenuOption =
             Default = get |> Get.optional Property.Default Decode.bool
         })
 
-    let encoder (v: SelectMenuOption) =
+    let encoder (v: SelectOption) =
         Encode.object ([]
             |> Encode.required Property.Label Encode.string v.Label
             |> Encode.required Property.Value Encode.string v.Value
@@ -796,28 +960,10 @@ module SelectMenuOption =
             |> Encode.optional Property.Default Encode.bool v.Default
         )
 
-module SelectMenuDefaultValue =
+module ShortTextInput =
     module Property =
         let [<Literal>] Id = "id"
-        let [<Literal>] Type = "type"
-
-    let decoder: Decoder<SelectMenuDefaultValue> =
-        Decode.object (fun get -> {
-            Id = get |> Get.required Property.Id Decode.string
-            Type = get |> Get.required Property.Type SelectMenuDefaultValueType.decoder
-        })
-
-    let encoder (v: SelectMenuDefaultValue) =
-        Encode.object ([]
-            |> Encode.required Property.Id Encode.string v.Id
-            |> Encode.required Property.Type SelectMenuDefaultValueType.encoder v.Type
-        )
-
-module TextInput =
-    module Property =
-        let [<Literal>] Type = "type"
         let [<Literal>] CustomId = "custom_id"
-        let [<Literal>] Style = "style"
         let [<Literal>] Label = "label"
         let [<Literal>] MinLength = "min_length"
         let [<Literal>] MaxLength = "max_length"
@@ -825,11 +971,10 @@ module TextInput =
         let [<Literal>] Value = "value"
         let [<Literal>] Placeholder = "placeholder"
 
-    let decoder: Decoder<TextInput> =
+    let decoder: Decoder<ShortTextInput> =
         Decode.object (fun get -> {
-            Type = get |> Get.required Property.Type Decode.Enum.int<ComponentType>
+            ShortTextInput.Id = get |> Get.optional Property.Id Decode.int
             CustomId = get |> Get.required Property.CustomId Decode.string
-            Style = get |> Get.required Property.Style Decode.Enum.int<TextInputStyle>
             Label = get |> Get.required Property.Label Decode.string
             MinLength = get |> Get.optional Property.MinLength Decode.int
             MaxLength = get |> Get.optional Property.MaxLength Decode.int
@@ -837,12 +982,15 @@ module TextInput =
             Value = get |> Get.optional Property.Value Decode.string
             Placeholder = get |> Get.optional Property.Placeholder Decode.string
         })
+        |> TextInput.styleDecoder<ShortTextInput> TextInputStyle.SHORT
+        |> Component.typeDecoder ComponentType.TEXT_INPUT
 
-    let encoder (v: TextInput) =
+    let encoder (v: ShortTextInput) =
         Encode.object ([]
-            |> Encode.required Property.Type Encode.Enum.int v.Type
+            |> Component.typeEncoder ComponentType.TEXT_INPUT
+            |> TextInput.styleEncoder TextInputStyle.SHORT
+            |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.required Property.CustomId Encode.string v.CustomId
-            |> Encode.required Property.Style Encode.Enum.int v.Style
             |> Encode.required Property.Label Encode.string v.Label
             |> Encode.optional Property.MinLength Encode.int v.MinLength
             |> Encode.optional Property.MaxLength Encode.int v.MaxLength
@@ -851,21 +999,489 @@ module TextInput =
             |> Encode.optional Property.Placeholder Encode.string v.Placeholder
         )
 
+module ParagraphTextInput =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] CustomId = "custom_id"
+        let [<Literal>] Label = "label"
+        let [<Literal>] MinLength = "min_length"
+        let [<Literal>] MaxLength = "max_length"
+        let [<Literal>] Required = "required"
+        let [<Literal>] Value = "value"
+        let [<Literal>] Placeholder = "placeholder"
+
+    let decoder: Decoder<ParagraphTextInput> =
+        Decode.object (fun get -> {
+            ParagraphTextInput.Id = get |> Get.optional Property.Id Decode.int
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Label = get |> Get.required Property.Label Decode.string
+            MinLength = get |> Get.optional Property.MinLength Decode.int
+            MaxLength = get |> Get.optional Property.MaxLength Decode.int
+            Required = get |> Get.optional Property.Required Decode.bool |> Option.defaultValue true
+            Value = get |> Get.optional Property.Value Decode.string
+            Placeholder = get |> Get.optional Property.Placeholder Decode.string
+        })
+        |> TextInput.styleDecoder<ParagraphTextInput> TextInputStyle.PARAGRAPH
+        |> Component.typeDecoder ComponentType.TEXT_INPUT
+
+    let encoder (v: ParagraphTextInput) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.TEXT_INPUT
+            |> TextInput.styleEncoder TextInputStyle.PARAGRAPH
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.required Property.Label Encode.string v.Label
+            |> Encode.optional Property.MinLength Encode.int v.MinLength
+            |> Encode.optional Property.MaxLength Encode.int v.MaxLength
+            |> Encode.optional Property.Required Encode.bool (Some v.Required)
+            |> Encode.optional Property.Value Encode.string v.Value
+            |> Encode.optional Property.Placeholder Encode.string v.Placeholder
+        )
+
+module TextInput =
+    module internal Property =
+        let [<Literal>] Style = "style"
+        
+    let internal styleDecoder<'a> (expected: TextInputStyle) (decoder: Decoder<'a>): Decoder<'a> =
+        Decode.field Property.Style Decode.Enum.int<TextInputStyle>
+        |> Decode.andThen (fun style ->
+            if style = expected then decoder
+            else Decode.fail "Invalid component json provided"
+        )
+
+    let internal styleEncoder (expected: TextInputStyle) (list: (string * JsonValue) list) =
+        list |> Encode.required Property.Style Encode.Enum.int expected
+
+    let decoder: Decoder<TextInput> =
+        Decode.oneOf [
+            Decode.map TextInput.SHORT ShortTextInput.decoder
+            Decode.map TextInput.PARAGRAPH ParagraphTextInput.decoder
+        ]
+
+    let encoder (v: TextInput) =
+        match v with
+        | TextInput.SHORT data -> ShortTextInput.encoder data
+        | TextInput.PARAGRAPH data -> ParagraphTextInput.encoder data
+        
+module UserSelect =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] CustomId = "custom_id"
+        let [<Literal>] Placeholder = "placeholder"
+        let [<Literal>] DefaultValues = "default_values"
+        let [<Literal>] MinValues = "min_values"
+        let [<Literal>] MaxValues = "max_values"
+        let [<Literal>] Disabled = "disabled"
+
+    let decoder: Decoder<UserSelect> =
+        Decode.object (fun get -> {
+            UserSelect.Id = get |> Get.optional Property.Id Decode.int
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Placeholder = get |> Get.optional Property.Placeholder Decode.string
+            DefaultValues = get |> Get.optional Property.DefaultValues (Decode.list SelectDefaultValue.decoder)
+            MinValues = get |> Get.optional Property.MinValues Decode.int |> Option.defaultValue 1
+            MaxValues = get |> Get.optional Property.MaxValues Decode.int |> Option.defaultValue 1
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
+        })
+        |> Component.typeDecoder ComponentType.USER_SELECT
+
+    let encoder (v: UserSelect) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.USER_SELECT
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.optional Property.Placeholder Encode.string v.Placeholder
+            |> Encode.optional Property.DefaultValues (List.map SelectDefaultValue.encoder >> Encode.list) v.DefaultValues
+            |> Encode.optional Property.MinValues Encode.int (Some v.MinValues)
+            |> Encode.optional Property.MaxValues Encode.int (Some v.MaxValues)
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
+
+module SelectDefaultValue =
+    module internal Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Type = "type"
+
+    type internal RawSelectDefaultValue = {
+        Id: string
+        Type: SelectMenuDefaultValueType
+    }
+
+    let decoder: Decoder<SelectDefaultValue> =
+        Decode.object (fun get -> {
+            Id = get |> Get.required Property.Id Decode.string
+            Type = get |> Get.required Property.Type SelectMenuDefaultValueType.decoder
+        })
+        |> Decode.andThen (fun raw ->
+            match raw.Type with
+            | SelectMenuDefaultValueType.USER -> Decode.succeed (SelectDefaultValue.USER raw.Id)
+            | SelectMenuDefaultValueType.ROLE -> Decode.succeed (SelectDefaultValue.ROLE raw.Id)
+            | SelectMenuDefaultValueType.CHANNEL -> Decode.succeed (SelectDefaultValue.CHANNEL raw.Id)
+        )
+
+    let encoder (v: SelectDefaultValue) =
+        let type', id =
+            match v with
+            | SelectDefaultValue.USER id -> SelectMenuDefaultValueType.USER, id
+            | SelectDefaultValue.ROLE id -> SelectMenuDefaultValueType.ROLE, id
+            | SelectDefaultValue.CHANNEL id -> SelectMenuDefaultValueType.CHANNEL, id
+
+        Encode.object ([]
+            |> Encode.required Property.Id Encode.string id
+            |> Encode.required Property.Type SelectMenuDefaultValueType.encoder type'
+        )
+          
+module RoleSelect =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] CustomId = "custom_id"
+        let [<Literal>] Placeholder = "placeholder"
+        let [<Literal>] DefaultValues = "default_values"
+        let [<Literal>] MinValues = "min_values"
+        let [<Literal>] MaxValues = "max_values"
+        let [<Literal>] Disabled = "disabled"
+
+    let decoder: Decoder<RoleSelect> =
+        Decode.object (fun get -> {
+            RoleSelect.Id = get |> Get.optional Property.Id Decode.int
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Placeholder = get |> Get.optional Property.Placeholder Decode.string
+            DefaultValues = get |> Get.optional Property.DefaultValues (Decode.list SelectDefaultValue.decoder)
+            MinValues = get |> Get.optional Property.MinValues Decode.int |> Option.defaultValue 1
+            MaxValues = get |> Get.optional Property.MaxValues Decode.int |> Option.defaultValue 1
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
+        })
+        |> Component.typeDecoder ComponentType.ROLE_SELECT
+
+    let encoder (v: RoleSelect) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.ROLE_SELECT
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.optional Property.Placeholder Encode.string v.Placeholder
+            |> Encode.optional Property.DefaultValues (List.map SelectDefaultValue.encoder >> Encode.list) v.DefaultValues
+            |> Encode.optional Property.MinValues Encode.int (Some v.MinValues)
+            |> Encode.optional Property.MaxValues Encode.int (Some v.MaxValues)
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
+          
+module MentionableSelect =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] CustomId = "custom_id"
+        let [<Literal>] Placeholder = "placeholder"
+        let [<Literal>] DefaultValues = "default_values"
+        let [<Literal>] MinValues = "min_values"
+        let [<Literal>] MaxValues = "max_values"
+        let [<Literal>] Disabled = "disabled"
+
+    let decoder: Decoder<MentionableSelect> =
+        Decode.object (fun get -> {
+            MentionableSelect.Id = get |> Get.optional Property.Id Decode.int
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            Placeholder = get |> Get.optional Property.Placeholder Decode.string
+            DefaultValues = get |> Get.optional Property.DefaultValues (Decode.list SelectDefaultValue.decoder)
+            MinValues = get |> Get.optional Property.MinValues Decode.int |> Option.defaultValue 1
+            MaxValues = get |> Get.optional Property.MaxValues Decode.int |> Option.defaultValue 1
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
+        })
+        |> Component.typeDecoder ComponentType.MENTIONABLE_SELECT
+
+    let encoder (v: MentionableSelect) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.MENTIONABLE_SELECT
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.optional Property.Placeholder Encode.string v.Placeholder
+            |> Encode.optional Property.DefaultValues (List.map SelectDefaultValue.encoder >> Encode.list) v.DefaultValues
+            |> Encode.optional Property.MinValues Encode.int (Some v.MinValues)
+            |> Encode.optional Property.MaxValues Encode.int (Some v.MaxValues)
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
+          
+module ChannelSelect =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] CustomId = "custom_id"
+        let [<Literal>] ChannelTypes = "channel_types"
+        let [<Literal>] Placeholder = "placeholder"
+        let [<Literal>] DefaultValues = "default_values"
+        let [<Literal>] MinValues = "min_values"
+        let [<Literal>] MaxValues = "max_values"
+        let [<Literal>] Disabled = "disabled"
+
+    let decoder: Decoder<ChannelSelect> =
+        Decode.object (fun get -> {
+            ChannelSelect.Id = get |> Get.optional Property.Id Decode.int
+            CustomId = get |> Get.required Property.CustomId Decode.string
+            ChannelTypes = get |> Get.optional Property.ChannelTypes (Decode.list Decode.Enum.int<ChannelType>)
+            Placeholder = get |> Get.optional Property.Placeholder Decode.string
+            DefaultValues = get |> Get.optional Property.DefaultValues (Decode.list SelectDefaultValue.decoder)
+            MinValues = get |> Get.optional Property.MinValues Decode.int |> Option.defaultValue 1
+            MaxValues = get |> Get.optional Property.MaxValues Decode.int |> Option.defaultValue 1
+            Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
+        })
+        |> Component.typeDecoder ComponentType.CHANNEL_SELECT
+
+    let encoder (v: ChannelSelect) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.CHANNEL_SELECT
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.CustomId Encode.string v.CustomId
+            |> Encode.optional Property.ChannelTypes (List.map Encode.Enum.int >> Encode.list) v.ChannelTypes
+            |> Encode.optional Property.Placeholder Encode.string v.Placeholder
+            |> Encode.optional Property.DefaultValues (List.map SelectDefaultValue.encoder >> Encode.list) v.DefaultValues
+            |> Encode.optional Property.MinValues Encode.int (Some v.MinValues)
+            |> Encode.optional Property.MaxValues Encode.int (Some v.MaxValues)
+            |> Encode.optional Property.Disabled Encode.bool (Some v.Disabled)
+        )
+
+module Section =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Components = "components"
+        let [<Literal>] Accessory = "accessory"
+
+    let decoder: Decoder<Section> =
+        Decode.object (fun get -> {
+            Id = get |> Get.optional Property.Id Decode.int
+            Components = get |> Get.required Property.Components (Decode.list Component.decoder)
+            Accessory = get |> Get.optional Property.Accessory Component.decoder
+        })
+        |> Component.typeDecoder ComponentType.SECTION
+
+    let encoder (v: Section) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.SECTION
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.Components (List.map Component.encoder >> Encode.list) v.Components
+            |> Encode.optional Property.Accessory Component.encoder v.Accessory
+        )
+
+module TextDisplay =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Content = "content"
+        
+    let decoder: Decoder<TextDisplay> =
+        Decode.object (fun get -> {
+            Id = get |> Get.optional Property.Id Decode.int
+            Content = get |> Get.required Property.Content Decode.string
+        })
+        |> Component.typeDecoder ComponentType.TEXT_DISPLAY
+
+    let encoder (v: TextDisplay) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.TEXT_DISPLAY
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.Content Encode.string v.Content
+        )
+
+module Thumbnail =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Media = "media"
+        let [<Literal>] Description = "description"
+        let [<Literal>] Spoiler = "spoiler"
+
+    let decoder: Decoder<Thumbnail> =
+        Decode.object (fun get -> {
+            Id = get |> Get.optional Property.Id Decode.int
+            Media = get |> Get.required Property.Media UnfurledMediaItem.decoder
+            Description = get |> Get.optional Property.Description Decode.string
+            Spoiler = get |> Get.optional Property.Spoiler Decode.bool |> Option.defaultValue false
+        })
+        |> Component.typeDecoder ComponentType.THUMBNAIL
+
+    let encoder (v: Thumbnail) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.THUMBNAIL
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.Media UnfurledMediaItem.encoder v.Media
+            |> Encode.optional Property.Description Encode.string v.Description
+            |> Encode.optional Property.Spoiler Encode.bool (Some v.Spoiler)
+        )
+
+module MediaGallery =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Items = "items"
+
+    let decoder: Decoder<MediaGallery> =
+        Decode.object (fun get -> {
+            Id = get |> Get.optional Property.Id Decode.int
+            Items = get |> Get.required Property.Items (Decode.list MediaGalleryItem.decoder)
+        })
+        |> Component.typeDecoder ComponentType.MEDIA_GALLERY
+
+    let encoder (v: MediaGallery) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.MEDIA_GALLERY
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.Items (List.map MediaGalleryItem.encoder >> Encode.list) v.Items
+        )
+
+module MediaGalleryItem =
+    module Property =
+        let [<Literal>] Media = "media"
+        let [<Literal>] Description = "description"
+        let [<Literal>] Spoiler = "spoiler"
+
+    let decoder: Decoder<MediaGalleryItem> =
+        Decode.object (fun get -> {
+            Media = get |> Get.required Property.Media UnfurledMediaItem.decoder
+            Description = get |> Get.optional Property.Description Decode.string
+            Spoiler = get |> Get.optional Property.Spoiler Decode.bool |> Option.defaultValue false
+        })
+
+    let encoder (v: MediaGalleryItem) =
+        Encode.object ([]
+            |> Encode.required Property.Media UnfurledMediaItem.encoder v.Media
+            |> Encode.optional Property.Description Encode.string v.Description
+            |> Encode.optional Property.Spoiler Encode.bool (Some v.Spoiler)
+        )
+
+module File =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] File = "file"
+        let [<Literal>] Spoiler = "spoiler"
+
+    let decoder: Decoder<File> =
+        Decode.object (fun get -> {
+            Id = get |> Get.optional Property.Id Decode.int
+            File = get |> Get.required Property.File UnfurledMediaItem.decoder
+            Spoiler = get |> Get.optional Property.Spoiler Decode.bool |> Option.defaultValue false
+        })
+        |> Component.typeDecoder ComponentType.FILE
+
+    let encoder (v: File) =
+        Encode.object ([]
+            |> Component.typeEncoder ComponentType.FILE
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.File UnfurledMediaItem.encoder v.File
+            |> Encode.optional Property.Spoiler Encode.bool (Some v.Spoiler)
+        )
+
+module Separator =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Divider = "divider"
+        let [<Literal>] Spacing = "spacing"
+        
+    let decoder: Decoder<Separator> =
+        Decode.object (fun get -> {
+            Id = get |> Get.optional Property.Id Decode.int
+            Divider = get |> Get.optional Property.Divider Decode.bool |> Option.defaultValue true
+            Spacing = get |> Get.optional Property.Spacing Decode.Enum.int<SeparatorPaddingType> |> Option.defaultValue SeparatorPaddingType.SMALL
+        })
+
+    let encoder (v: Separator) =
+        Encode.object ([]
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.optional Property.Divider Encode.bool (Some v.Divider)
+            |> Encode.optional Property.Spacing Encode.Enum.int (Some v.Spacing)
+        )
+
+module Container =
+    module Property =
+        let [<Literal>] Id = "id"
+        let [<Literal>] Components = "components"
+        let [<Literal>] AccentColor = "accent_color"
+        let [<Literal>] Spoiler = "spoiler"
+
+    let decoder: Decoder<Container> =
+        Decode.object (fun get -> {
+            Id = get |> Get.optional Property.Id Decode.int
+            Components = get |> Get.required Property.Components (Decode.list Component.decoder)
+            AccentColor = get |> Get.optinull Property.AccentColor Decode.int
+            Spoiler = get |> Get.optional Property.Spoiler Decode.bool |> Option.defaultValue false
+        })
+
+    let encoder (v: Container) =
+        Encode.object ([]
+            |> Encode.optional Property.Id Encode.int v.Id
+            |> Encode.required Property.Components (List.map Component.encoder >> Encode.list) v.Components
+            |> Encode.optinull Property.AccentColor Encode.int v.AccentColor
+            |> Encode.optional Property.Spoiler Encode.bool (Some v.Spoiler)
+        )
+
+module UnfurledMediaItem =
+    module Property =
+        let [<Literal>] Url = "url"
+        let [<Literal>] ProxyUrl = "proxy_url"
+        let [<Literal>] Height = "height"
+        let [<Literal>] Width = "width"
+        let [<Literal>] ContentType = "content_type"
+        
+    let decoder: Decoder<UnfurledMediaItem> =
+        Decode.object (fun get -> {
+            Url = get |> Get.required Property.Url Decode.string
+            ProxyUrl = get |> Get.optional Property.ProxyUrl Decode.string
+            Height = get |> Get.optinull Property.Height Decode.int
+            Width = get |> Get.optinull Property.Width Decode.int
+            ContentType = get |> Get.optional Property.ContentType Decode.string
+        })
+
+    let encoder (v: UnfurledMediaItem) =
+        Encode.object ([]
+            |> Encode.required Property.Url Encode.string v.Url
+            |> Encode.optional Property.ProxyUrl Encode.string v.ProxyUrl
+            |> Encode.optinull Property.Height Encode.int v.Height
+            |> Encode.optinull Property.Width Encode.int v.Width
+            |> Encode.optional Property.ContentType Encode.string v.ContentType
+        )
+
 module Component =
+    module internal Property =
+        let [<Literal>] Type = "type"
+
+    let internal typeDecoder<'a> (expected: ComponentType) (decoder: Decoder<'a>): Decoder<'a> =
+        Decode.field Property.Type Decode.Enum.int<ComponentType>
+        |> Decode.andThen (fun type' ->
+            if type' = expected then decoder
+            else Decode.fail "Invalid component json provided"
+        )
+
+    let internal typeEncoder (expected: ComponentType) (list: (string * JsonValue) list) =
+        list |> Encode.required Property.Type Encode.Enum.int expected
+
     let decoder: Decoder<Component> =
         Decode.oneOf [
             Decode.map Component.ACTION_ROW ActionRow.decoder
             Decode.map Component.BUTTON Button.decoder
-            Decode.map Component.SELECT_MENU SelectMenu.decoder
+            Decode.map Component.STRING_SELECT StringSelect.decoder
             Decode.map Component.TEXT_INPUT TextInput.decoder
+            Decode.map Component.USER_SELECT UserSelect.decoder
+            Decode.map Component.ROLE_SELECT RoleSelect.decoder
+            Decode.map Component.MENTIONABLE_SELECT MentionableSelect.decoder
+            Decode.map Component.CHANNEL_SELECT ChannelSelect.decoder
+            Decode.map Component.SECTION Section.decoder
+            Decode.map Component.TEXT_DISPLAY TextDisplay.decoder
+            Decode.map Component.THUMBNAIL Thumbnail.decoder
+            Decode.map Component.MEDIA_GALLERY MediaGallery.decoder
+            Decode.map Component.FILE File.decoder
+            Decode.map Component.SEPARATOR Separator.decoder
+            Decode.map Component.CONTAINER Container.decoder
         ]
 
     let encoder (v: Component) =
         match v with
         | Component.ACTION_ROW data -> ActionRow.encoder data
         | Component.BUTTON data -> Button.encoder data
-        | Component.SELECT_MENU data -> SelectMenu.encoder data
+        | Component.STRING_SELECT data -> StringSelect.encoder data
         | Component.TEXT_INPUT data -> TextInput.encoder data
+        | Component.USER_SELECT data -> UserSelect.encoder data
+        | Component.ROLE_SELECT data -> RoleSelect.encoder data
+        | Component.MENTIONABLE_SELECT data -> MentionableSelect.encoder data
+        | Component.CHANNEL_SELECT data -> ChannelSelect.encoder data
+        | Component.SECTION data -> Section.encoder data
+        | Component.TEXT_DISPLAY data -> TextDisplay.encoder data
+        | Component.THUMBNAIL data -> Thumbnail.encoder data
+        | Component.MEDIA_GALLERY data -> MediaGallery.encoder data
+        | Component.FILE data -> File.encoder data
+        | Component.SEPARATOR data -> Separator.encoder data
+        | Component.CONTAINER data -> Container.encoder data
 
 module SessionStartLimit =
     module Property =
@@ -6325,3 +6941,4 @@ module TeamMember =
 // TODO: Make `Encode.list'` helper function to remove `List.map` boilerplate
 // TODO: Write updated tests for encoding and decoding helper functions
 // TODO: Rewrite `Decode.oneOf` usages to property check type (probably fair bit more efficient)
+// TODO: Check for uses of Decode.extract and replace with Decode.extractOpt where applicable
