@@ -1387,9 +1387,11 @@ module Separator =
             Divider = get |> Get.optional Property.Divider Decode.bool |> Option.defaultValue true
             Spacing = get |> Get.optional Property.Spacing Decode.Enum.int<SeparatorPaddingType> |> Option.defaultValue SeparatorPaddingType.SMALL
         })
+        |> Component.typeDecoder ComponentType.SEPARATOR
 
     let encoder (v: Separator) =
         Encode.object ([]
+            |> Component.typeEncoder ComponentType.SEPARATOR
             |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.optional Property.Divider Encode.bool (Some v.Divider)
             |> Encode.optional Property.Spacing Encode.Enum.int (Some v.Spacing)
@@ -1409,9 +1411,11 @@ module Container =
             AccentColor = get |> Get.optinull Property.AccentColor Decode.int
             Spoiler = get |> Get.optional Property.Spoiler Decode.bool |> Option.defaultValue false
         })
+        |> Component.typeDecoder ComponentType.CONTAINER
 
     let encoder (v: Container) =
         Encode.object ([]
+            |> Component.typeEncoder ComponentType.CONTAINER
             |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.required Property.Components (List.map Component.encoder >> Encode.list) v.Components
             |> Encode.optinull Property.AccentColor Encode.int v.AccentColor
