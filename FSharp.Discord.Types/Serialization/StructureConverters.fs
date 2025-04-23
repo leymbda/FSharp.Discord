@@ -716,9 +716,11 @@ module PrimaryButton =
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         })
         |> Button.styleDecoder<PrimaryButton> ButtonStyle.PRIMARY
+        |> Component.typeDecoder ComponentType.BUTTON
 
     let encoder (v: PrimaryButton) =
         Encode.object ([]
+            |> Component.typeEncoder ComponentType.BUTTON
             |> Button.styleEncoder ButtonStyle.PRIMARY
             |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.optional Property.Label Encode.string v.Label
@@ -744,9 +746,11 @@ module SecondaryButton =
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         })
         |> Button.styleDecoder<SecondaryButton> ButtonStyle.SECONDARY
+        |> Component.typeDecoder ComponentType.BUTTON
 
     let encoder (v: SecondaryButton) =
         Encode.object ([]
+            |> Component.typeEncoder ComponentType.BUTTON
             |> Button.styleEncoder ButtonStyle.SECONDARY
             |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.optional Property.Label Encode.string v.Label
@@ -772,9 +776,11 @@ module SuccessButton =
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         })
         |> Button.styleDecoder<SuccessButton> ButtonStyle.SUCCESS
+        |> Component.typeDecoder ComponentType.BUTTON
 
     let encoder (v: SuccessButton) =
         Encode.object ([]
+            |> Component.typeEncoder ComponentType.BUTTON
             |> Button.styleEncoder ButtonStyle.SUCCESS
             |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.optional Property.Label Encode.string v.Label
@@ -800,9 +806,11 @@ module DangerButton =
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         })
         |> Button.styleDecoder<DangerButton> ButtonStyle.DANGER
+        |> Component.typeDecoder ComponentType.BUTTON
 
     let encoder (v: DangerButton) =
         Encode.object ([]
+            |> Component.typeEncoder ComponentType.BUTTON
             |> Button.styleEncoder ButtonStyle.DANGER
             |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.optional Property.Label Encode.string v.Label
@@ -828,9 +836,11 @@ module LinkButton =
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         })
         |> Button.styleDecoder<LinkButton> ButtonStyle.LINK
+        |> Component.typeDecoder ComponentType.BUTTON
 
     let encoder (v: LinkButton) =
         Encode.object ([]
+            |> Component.typeEncoder ComponentType.BUTTON
             |> Button.styleEncoder ButtonStyle.LINK
             |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.optional Property.Label Encode.string v.Label
@@ -856,9 +866,11 @@ module PremiumButton =
             Disabled = get |> Get.optional Property.Disabled Decode.bool |> Option.defaultValue false
         })
         |> Button.styleDecoder<PremiumButton> ButtonStyle.PREMIUM
+        |> Component.typeDecoder ComponentType.BUTTON
 
     let encoder (v: PremiumButton) =
         Encode.object ([]
+            |> Component.typeEncoder ComponentType.BUTTON
             |> Button.styleEncoder ButtonStyle.PREMIUM
             |> Encode.optional Property.Id Encode.int v.Id
             |> Encode.optional Property.Label Encode.string v.Label
