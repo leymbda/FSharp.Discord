@@ -1652,3 +1652,17 @@ let modifyUserVoiceState (req: ModifyUserVoiceStateRequest) (client: IBotClient)
 // ----- Resources: Webhook -----
 
 // ----- Topics: OAuth2 -----
+
+// https://discord.com/developers/docs/topics/oauth2#get-current-bot-application-information
+let getCurrentBotApplicationInformation (client: IOAuthClient) =
+    Uri.create [OAUTH_BASE_URL; "applications"; "@me"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Application.decoder)
+
+// https://discord.com/developers/docs/topics/oauth2#get-current-authorization-information
+let getCurrentAuthorizationInformation (client: IOAuthClient) =
+    Uri.create [OAUTH_BASE_URL; "@me"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode GetCurrentAuthorizationInformationResponse.decoder)

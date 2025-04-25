@@ -1741,3 +1741,19 @@ type ModifyUserVoiceStatePayload(channelId, ?suppress) =
 // ----- Resources: Webhook -----
 
 // ----- Topics: OAuth2 -----
+
+type GetCurrentAuthorizationInformationResponse = {
+    Application: PartialApplication
+    Scopes: OAuthScope list
+    Expires: DateTime
+    User: User option
+}
+
+module GetCurrentAuthorizationInformationResponse =
+    let decoder: Decoder<GetCurrentAuthorizationInformationResponse> =
+        Decode.object (fun get -> {
+            Application = get |> Get.required "application" Application.Partial.decoder
+            Scopes = get |> Get.required "scopes" (Decode.list OAuthScope.decoder)
+            Expires = get |> Get.required "expires" Decode.datetimeUtc
+            User = get |> Get.optional "user" User.decoder
+        })
