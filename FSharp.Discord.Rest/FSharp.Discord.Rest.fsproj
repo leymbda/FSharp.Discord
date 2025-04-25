@@ -13,17 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Old\Common\Constants.fs" />
-    <Compile Include="Old\Common\Responses.fs" />
-    <Compile Include="Old\Abstractions\IDiscordClientFactory.fs" />
-    <Compile Include="Old\Builders\PayloadBuilder.fs" />
-    <Compile Include="Old\Builders\RequestBuilder.fs" />
-    <Compile Include="Old\Modules\HttpClient.fs" />
-    <Compile Include="Old\Modules\DiscordError.fs" />
-    <Compile Include="Old\Modules\DiscordRequest.fs" />
-    <Compile Include="Old\Modules\DiscordResponse.fs" />
-    <Compile Include="Old\Content.fs" />
-    <Compile Include="Old\Rest.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Extensions.fs" />
     <Compile Include="DiscordResponse.fs" />
