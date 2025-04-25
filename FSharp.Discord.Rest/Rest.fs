@@ -197,7 +197,7 @@ let editApplicationCommandPermissions (req: EditApplicationCommandPermissionsReq
 // ----- Events: Using Gateway -----
 
 // https://discord.com/developers/docs/events/gateway#get-gateway
-let getGateway (req: GetGatewayRequest) (client: HttpClient) = // TODO: This should probably use an interface rather than the concrete HttpClient
+let getGateway (req: GetGatewayRequest) (client: HttpClient) =
     Uri.create [API_BASE_URL; "gateway"]
     |> Uri.withRequiredQuery "v" req.Version
     |> Uri.withRequiredQuery "encoding" (GatewayEncoding.toString req.Encoding)
@@ -1651,6 +1651,116 @@ let modifyUserVoiceState (req: ModifyUserVoiceStateRequest) (client: IBotClient)
 
 // ----- Resources: Webhook -----
 
+// https://discord.com/developers/docs/resources/webhook#create-webhook
+let createWebhook (req: CreateWebhookRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "webhooks"]
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Webhook.decoder)
+
+// https://discord.com/developers/docs/resources/webhook#get-channel-webhooks
+let getChannelWebhooks (req: GetChannelWebhooksRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "channels"; req.ChannelId; "webhooks"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Webhook.decoder))
+
+// https://discord.com/developers/docs/resources/webhook#get-guild-webhooks
+let getGuildWebhooks (req: GetGuildWebhooksRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "webhooks"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list Webhook.decoder))
+
+// https://discord.com/developers/docs/resources/webhook#get-webhook
+let getWebhook (req: GetWebhookRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Webhook.decoder)
+
+// https://discord.com/developers/docs/resources/webhook#get-webhook-with-token
+let getWebhookWithToken (req: GetWebhookWithTokenRequest) (client: HttpClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId; req.Token]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Webhook.decoder)
+
+// https://discord.com/developers/docs/resources/webhook#modify-webhook
+let modifyWebhook (req: ModifyWebhookRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Webhook.decoder)
+
+// https://discord.com/developers/docs/resources/webhook#modify-webhook-with-token
+let modifyWebhookWithToken (req: ModifyWebhookWithTokenRequest) (client: HttpClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId; req.Token]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Webhook.decoder)
+
+// https://discord.com/developers/docs/resources/webhook#delete-webhook
+let deleteWebhook (req: DeleteWebhookRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/webhook#delete-webhook-with-token
+let deleteWebhookWithToken (req: DeleteWebhookWithTokenRequest) (client: HttpClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId; req.Token]
+    |> Uri.toRequest HttpMethod.Delete
+    |> HttpRequestMessage.withAuditLogReason req.AuditLogReason
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/webhook#execute-webhook
+let executeWebhook (req: ExecuteWebhookRequest) (client: HttpClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId; req.Token]
+    |> Uri.withOptionalQuery "wait" (Option.map string req.Wait)
+    |> Uri.withOptionalQuery "thread_id" req.ThreadId
+    |> Uri.withOptionalQuery "with_components" (Option.map string req.WithComponents)
+    |> Uri.toRequest HttpMethod.Post
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.tryDecode Message.decoder)
+
+// TODO: Slack and github compatible webhook execution operations
+
+// https://discord.com/developers/docs/resources/webhook#get-webhook-message
+let getWebhookMessage (req: GetWebhookMessageRequest) (client: HttpClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId; req.Token; "messages"; req.MessageId]
+    |> Uri.withOptionalQuery "thread_id" req.ThreadId
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
+// https://discord.com/developers/docs/resources/webhook#edit-webhook-message
+let editWebhookMessage (req: EditWebhookMessageRequest) (client: HttpClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId; req.Token; "messages"; req.MessageId]
+    |> Uri.withOptionalQuery "thread_id" req.ThreadId
+    |> Uri.withOptionalQuery "with_components" (Option.map string req.WithComponents)
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode Message.decoder)
+
+// https://discord.com/developers/docs/resources/webhook#delete-webhook-message
+let deleteWebhookMessage (req: DeleteWebhookMessageRequest) (client: HttpClient) =
+    Uri.create [API_BASE_URL; "webhooks"; req.WebhookId; req.Token; "messages"; req.MessageId]
+    |> Uri.withOptionalQuery "thread_id" req.ThreadId
+    |> Uri.toRequest HttpMethod.Delete
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
 // ----- Topics: OAuth2 -----
 
 // https://discord.com/developers/docs/topics/oauth2#get-current-bot-application-information
@@ -1666,3 +1776,6 @@ let getCurrentAuthorizationInformation (client: IOAuthClient) =
     |> Uri.toRequest HttpMethod.Get
     |> client.SendAsync
     |> Task.bind (DiscordResponse.decode GetCurrentAuthorizationInformationResponse.decoder)
+
+// TODO: Replace use of HttpClient for unauthenticated requests with an interface
+// TODO: Double check webhook rest operations (execute and below) don't need auth since token included in url

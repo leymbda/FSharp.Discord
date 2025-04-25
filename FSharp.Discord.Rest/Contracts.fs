@@ -1117,4 +1117,84 @@ type ModifyUserVoiceStateRequest(guildId, userId, payload) =
 
 // ----- Resources: Webhook -----
 
+type CreateWebhookRequest(channelId, payload, ?auditLogReason) =
+    member val ChannelId: string = channelId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: CreateWebhookPayload = payload
+
+type GetChannelWebhooksRequest(channelId) =
+    member val ChannelId: string = channelId
+
+type GetGuildWebhooksRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetWebhookRequest(webhookId) =
+    member val WebhookId: string = webhookId
+
+type GetWebhookWithTokenRequest(webhookId, token) =
+    member val WebhookId: string = webhookId
+    member val Token: string = token
+
+type ModifyWebhookRequest(webhookId, payload, ?auditLogReason) =
+    member val WebhookId: string = webhookId
+
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyWebhookPayload = payload
+
+type ModifyWebhookWithTokenRequest(webhookId, token, payload, ?auditLogReason) =
+    member val WebhookId: string = webhookId
+    member val Token: string = token
+    
+    member val AuditLogReason: string option = auditLogReason
+
+    member val Payload: ModifyWebhookPayload = payload
+
+type DeleteWebhookRequest(webhookId, ?auditLogReason) =
+    member val WebhookId: string = webhookId
+
+    member val AuditLogReason: string option = auditLogReason
+
+type DeleteWebhookWithTokenRequest(webhookId, token, ?auditLogReason) =
+    member val WebhookId: string = webhookId
+    member val Token: string = token
+
+    member val AuditLogReason: string option = auditLogReason
+
+type ExecuteWebhookRequest(webhookId, token, payload, ?wait, ?threadId, ?withComponents) =
+    member val WebhookId: string = webhookId
+    member val Token: string = token
+
+    member val Wait: bool option = wait
+    member val ThreadId: string option = threadId
+    member val WithComponents: bool option = withComponents
+
+    member val Payload: ExecuteWebhookPayload = payload
+
+type GetWebhookMessageRequest(webhookId, token, messageId, ?threadId) =
+    member val WebhookId: string = webhookId
+    member val Token: string = token
+    member val MessageId: string = messageId
+
+    member val ThreadId: string option = threadId
+
+type EditWebhookMessageRequest(webhookId, token, messageId, payload, ?threadId, ?withComponents) =
+    member val WebhookId: string = webhookId
+    member val Token: string = token
+    member val MessageId: string = messageId
+
+    member val ThreadId: string option = threadId
+    member val WithComponents: bool option = withComponents
+
+    member val Payload: EditWebhookMessagePayload = payload
+
+type DeleteWebhookMessageRequest(webhookId, token, messageId, ?threadId) =
+    member val WebhookId: string = webhookId
+    member val Token: string = token
+    member val MessageId: string = messageId
+
+    member val ThreadId: string option = threadId
+
 // ----- Topics: OAuth2 -----

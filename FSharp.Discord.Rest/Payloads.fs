@@ -1740,6 +1740,97 @@ type ModifyUserVoiceStatePayload(channelId, ?suppress) =
 
 // ----- Resources: Webhook -----
 
+type CreateWebhookPayload(name, ?avatar) =
+    member val Name: string = name
+    member val Avatar: string option option = avatar
+
+    static member Encoder(v: CreateWebhookPayload) =
+        Encode.object ([]
+            |> Encode.required "name" Encode.string v.Name
+            |> Encode.optinull "avatar" Encode.string v.Avatar
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson CreateWebhookPayload.Encoder this
+
+type ModifyWebhookPayload(?name, ?avatar, ?channelId) =
+    member val Name: string option = name
+    member val Avatar: string option option = avatar
+    member val ChannelId: string option = channelId
+
+    static member Encoder(v: ModifyWebhookPayload) =
+        Encode.object ([]
+            |> Encode.optional "name" Encode.string v.Name
+            |> Encode.optinull "avatar" Encode.string v.Avatar
+            |> Encode.optional "channel_id" Encode.string v.ChannelId
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyWebhookPayload.Encoder this
+
+type ExecuteWebhookPayload(
+    ?content, ?username, ?avatarUrl, ?tts, ?embeds, ?allowedMentions, ?components, ?attachments, ?flags, ?threadName,
+    ?appliedTags, ?poll, ?files
+) =
+    member val Content: string option = content
+    member val Username: string option = username
+    member val AvatarUrl: string option = avatarUrl
+    member val Tts: bool option = tts
+    member val Embeds: Embed list option = embeds
+    member val AllowedMentions: AllowedMentions option = allowedMentions
+    member val Components: Component list option = components
+    member val Attachments: PartialAttachment list option = attachments
+    member val Flags: MessageFlag list option = flags
+    member val ThreadName: string option = threadName
+    member val AppliedTags: string list option = appliedTags
+    member val Poll: Poll option = poll
+    member val Files: Media list = defaultArg files []
+
+    static member Encoder(v: ExecuteWebhookPayload) =
+        Encode.object ([]
+            |> Encode.optional "content" Encode.string v.Content
+            |> Encode.optional "username" Encode.string v.Username
+            |> Encode.optional "avatar_url" Encode.string v.AvatarUrl
+            |> Encode.optional "tts" Encode.bool v.Tts
+            |> Encode.optional "embeds" (List.map Embed.encoder >> Encode.list) v.Embeds
+            |> Encode.optional "allowed_mentions" AllowedMentions.encoder v.AllowedMentions
+            |> Encode.optional "components" (List.map Component.encoder >> Encode.list) v.Components
+            |> Encode.optional "attachments" (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
+            |> Encode.optional "flags" Encode.bitfield v.Flags
+            |> Encode.optional "thread_name" Encode.string v.ThreadName
+            |> Encode.optional "applied_tags" (List.map Encode.string >> Encode.list) v.AppliedTags
+            |> Encode.optional "poll" Poll.encoder v.Poll
+        )
+
+    interface IPayload with
+        member this.ToHttpContent() =
+            HttpContent.createJsonWithFiles ExecuteWebhookPayload.Encoder this this.Files
+
+type EditWebhookMessagePayload(?content, ?embeds, ?allowedMentions, ?components, ?attachments, ?poll, ?files) =
+    member val Content: string option option = content
+    member val Embeds: Embed list option option = embeds
+    member val AllowedMentions: AllowedMentions option option = allowedMentions
+    member val Components: Component list option option = components
+    member val Attachments: PartialAttachment list option option = attachments
+    member val Poll: Poll option option = poll
+    member val Files: Media list = defaultArg files []
+    
+    static member Encoder(v: EditWebhookMessagePayload) =
+        Encode.object ([]
+            |> Encode.optinull "content" Encode.string v.Content
+            |> Encode.optinull "embeds" (List.map Embed.encoder >> Encode.list) v.Embeds
+            |> Encode.optinull "allowed_mentions" AllowedMentions.encoder v.AllowedMentions
+            |> Encode.optinull "components" (List.map Component.encoder >> Encode.list) v.Components
+            |> Encode.optinull "attachments" (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
+            |> Encode.optinull "poll" Poll.encoder v.Poll
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            HttpContent.createJsonWithFiles EditWebhookMessagePayload.Encoder this this.Files
+
 // ----- Topics: OAuth2 -----
 
 type GetCurrentAuthorizationInformationResponse = {
