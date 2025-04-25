@@ -1708,6 +1708,36 @@ type UpdateCurrentUserApplicationRoleConnectionPayload(?platformName, ?platformU
 
 // ----- Resources: Voice -----
 
+type ModifyCurrentUserVoiceStatePayload(?channelId, ?suppress, ?requestToSpeakTimestamp) =
+    member val ChannelId: string option = channelId
+    member val Suppress: bool option = suppress
+    member val RequestToSpeakTimestamp: DateTime option option = requestToSpeakTimestamp
+
+    static member Encoder(v: ModifyCurrentUserVoiceStatePayload) =
+        Encode.object ([]
+            |> Encode.optional "channel_id" Encode.string v.ChannelId
+            |> Encode.optional "suppress" Encode.bool v.Suppress
+            |> Encode.optinull "request_to_speak_timestamp" Encode.datetime v.RequestToSpeakTimestamp
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyCurrentUserVoiceStatePayload.Encoder this
+
+type ModifyUserVoiceStatePayload(channelId, ?suppress) =
+    member val ChannelId: string option = channelId
+    member val Suppress: bool option = suppress
+
+    static member Encoder(v: ModifyUserVoiceStatePayload) =
+        Encode.object ([]
+            |> Encode.optional "channel_id" Encode.string v.ChannelId
+            |> Encode.optional "suppress" Encode.bool v.Suppress
+        )
+        
+    interface IPayload with
+        member this.ToHttpContent() =
+            StringContent.createJson ModifyUserVoiceStatePayload.Encoder this
+
 // ----- Resources: Webhook -----
 
 // ----- Topics: OAuth2 -----

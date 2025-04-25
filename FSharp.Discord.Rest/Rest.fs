@@ -1612,6 +1612,43 @@ let updateCurrentUserApplicationRoleConnection (req: UpdateCurrentUserApplicatio
 
 // ----- Resources: Voice -----
 
+// https://discord.com/developers/docs/resources/voice#list-voice-regions
+let listVoiceRegions (client: IBotClient) =
+    Uri.create [API_BASE_URL; "voice"; "regions"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode (Decode.list VoiceRegion.decoder))
+
+// https://discord.com/developers/docs/resources/voice#get-current-user-voice-state
+let getCurrentUserVoiceState (req: GetCurrentUserVoiceStateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "voice-states"; "@me"]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode VoiceState.decoder)
+
+// https://discord.com/developers/docs/resources/voice#get-user-voice-state
+let getUserVoiceState (req: GetUserVoiceStateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "voice-states"; req.UserId]
+    |> Uri.toRequest HttpMethod.Get
+    |> client.SendAsync
+    |> Task.bind (DiscordResponse.decode VoiceState.decoder)
+
+// https://discord.com/developers/docs/resources/voice#modify-current-user-voice-state
+let modifyCurrentUserVoiceState (req: ModifyCurrentUserVoiceStateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "voice-states"; "@me"]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
+// https://discord.com/developers/docs/resources/voice#modify-user-voice-state
+let modifyUserVoiceState (req: ModifyUserVoiceStateRequest) (client: IBotClient) =
+    Uri.create [API_BASE_URL; "guilds"; req.GuildId; "voice-states"; req.UserId]
+    |> Uri.toRequest HttpMethod.Patch
+    |> HttpRequestMessage.withPayload req.Payload
+    |> client.SendAsync
+    |> Task.bind DiscordResponse.unit
+
 // ----- Resources: Webhook -----
 
 // ----- Topics: OAuth2 -----

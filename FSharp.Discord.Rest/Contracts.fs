@@ -1097,6 +1097,24 @@ type UpdateCurrentUserApplicationRoleConnectionRequest(applicationId, payload) =
 
 // ----- Resources: Voice -----
 
+type GetCurrentUserVoiceStateRequest(guildId) =
+    member val GuildId: string = guildId
+
+type GetUserVoiceStateRequest(guildId, userId) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+
+type ModifyCurrentUserVoiceStateRequest(guildId, payload) =
+    member val GuildId: string = guildId
+
+    member val Payload: ModifyCurrentUserVoiceStatePayload = payload
+
+type ModifyUserVoiceStateRequest(guildId, userId, payload) =
+    member val GuildId: string = guildId
+    member val UserId: string = userId
+
+    member val Payload: ModifyUserVoiceStatePayload = payload
+
 // ----- Resources: Webhook -----
 
 // ----- Topics: OAuth2 -----
