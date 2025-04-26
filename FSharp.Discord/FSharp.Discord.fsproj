@@ -8,8 +8,11 @@
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
+  <ItemGroup />
+
   <ItemGroup>
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    <Compile Include="Component.fs" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
