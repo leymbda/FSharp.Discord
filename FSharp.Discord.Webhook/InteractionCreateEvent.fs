@@ -34,3 +34,5 @@ module InteractionCreateEvent =
             | _ ->
                 Decode.fail "Unexpected interaction data received"
         )
+        
+    let encoder: Encoder<InteractionCreateEvent> = raise (System.NotImplementedException()) // TODO: Include outer data in decoded result to preserve and support encoding then implement encoder

@@ -91,31 +91,25 @@ module GatewayReceiveEvent =
         GatewayReceiveEventPayload.decoder
         |> Decode.andThen (fun payload ->
             match payload.Opcode, payload.Data, payload.EventName, payload.Sequence with
-            | GatewayOpcode.HEARTBEAT, None, None, None ->
-                Decode.succeed GatewayReceiveEvent.HEARTBEAT
-
-            | GatewayOpcode.HEARTBEAT_ACK, None, None, None ->
-                Decode.succeed GatewayReceiveEvent.HEARTBEAT_ACK
-
-            | GatewayOpcode.HELLO, Some (GatewayReceiveEventData.HELLO d), None, None ->
-                Decode.succeed (GatewayReceiveEvent.HELLO d)
-
-            | GatewayOpcode.RECONNECT, None, None, None ->
-                Decode.succeed GatewayReceiveEvent.RECONNECT
-
-            | GatewayOpcode.INVALID_SESSION, Some (GatewayReceiveEventData.BOOLEAN d), None, None ->
-                Decode.succeed (GatewayReceiveEvent.INVALID_SESSION d)
-
+            | GatewayOpcode.HEARTBEAT, None, None, None -> Decode.succeed GatewayReceiveEvent.HEARTBEAT
+            | GatewayOpcode.HEARTBEAT_ACK, None, None, None -> Decode.succeed GatewayReceiveEvent.HEARTBEAT_ACK
+            | GatewayOpcode.HELLO, Some (GatewayReceiveEventData.HELLO d), None, None -> Decode.succeed (GatewayReceiveEvent.HELLO d)
+            | GatewayOpcode.RECONNECT, None, None, None -> Decode.succeed GatewayReceiveEvent.RECONNECT
+            | GatewayOpcode.INVALID_SESSION, Some (GatewayReceiveEventData.BOOLEAN d), None, None -> Decode.succeed (GatewayReceiveEvent.INVALID_SESSION d)
             | GatewayOpcode.DISPATCH, Some data, Some eventName, Some sequence ->
                 match eventName, data with
-                | nameof READY, GatewayReceiveEventData.READY d ->
-                    Decode.succeed (GatewayReceiveEvent.READY (d, sequence))
-
-                // TODO: Add remaining dispatch events
-
-                | _ ->
-                    Decode.fail "Unexpected gateway dispatch event received"
-
-            | _ ->
-                Decode.fail "Unexpected gateway payload received"
+                | nameof READY, GatewayReceiveEventData.READY d -> Decode.succeed (GatewayReceiveEvent.READY (d, sequence))
+                | _ when true -> raise (System.NotImplementedException()) // TODO: Add remaining dispatch events here
+                | _ -> Decode.fail "Unexpected gateway dispatch event received"
+            | _ -> Decode.fail "Unexpected gateway payload received"
         )
+
+    let encoder (v: GatewayReceiveEvent) =
+        match v with
+        | GatewayReceiveEvent.HEARTBEAT -> GatewayReceiveEventPayload.encoder { Opcode = GatewayOpcode.HEARTBEAT; EventName = None; Sequence = None; Data = None }
+        | GatewayReceiveEvent.HEARTBEAT_ACK -> GatewayReceiveEventPayload.encoder { Opcode = GatewayOpcode.HEARTBEAT_ACK; EventName = None; Sequence = None; Data = None }
+        | GatewayReceiveEvent.HELLO ev -> GatewayReceiveEventPayload.encoder { Opcode = GatewayOpcode.HELLO; EventName = None; Sequence = None; Data = Some (GatewayReceiveEventData.HELLO ev) }
+        | GatewayReceiveEvent.RECONNECT -> GatewayReceiveEventPayload.encoder { Opcode = GatewayOpcode.RECONNECT; EventName = None; Sequence = None; Data = None }
+        | GatewayReceiveEvent.INVALID_SESSION ev -> GatewayReceiveEventPayload.encoder { Opcode = GatewayOpcode.INVALID_SESSION; EventName = None; Sequence = None; Data = Some (GatewayReceiveEventData.BOOLEAN ev) }
+        | GatewayReceiveEvent.READY (ev, seq) -> GatewayReceiveEventPayload.encoder { Opcode = GatewayOpcode.DISPATCH; EventName = Some (nameof READY); Sequence = Some seq; Data = Some (GatewayReceiveEventData.READY ev) }
+        | _ -> raise (System.NotImplementedException()) // TODO: Add remaining dispatch events here

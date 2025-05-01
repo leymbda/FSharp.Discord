@@ -18,27 +18,22 @@ module GatewaySendEvent =
         GatewaySendEventPayload.decoder
         |> Decode.andThen (fun payload ->
             match payload.Opcode, payload.Data with
-            | GatewayOpcode.IDENTIFY, GatewaySendEventData.IDENTIFY d ->
-                Decode.succeed (GatewaySendEvent.IDENTIFY d)
-
-            | GatewayOpcode.RESUME, GatewaySendEventData.RESUME d ->
-                Decode.succeed (GatewaySendEvent.RESUME d)
-
-            | GatewayOpcode.HEARTBEAT, GatewaySendEventData.OPTIONAL_INT d ->
-                Decode.succeed (GatewaySendEvent.HEARTBEAT d)
-
-            | GatewayOpcode.REQUEST_GUILD_MEMBERS, GatewaySendEventData.REQUEST_GUILD_MEMBERS d ->
-                Decode.succeed (GatewaySendEvent.REQUEST_GUILD_MEMBERS d)
-
-            | GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS d ->
-                Decode.succeed (GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS d)
-
-            | GatewayOpcode.VOICE_STATE_UPDATE, GatewaySendEventData.UPDATE_VOICE_STATE d ->
-                Decode.succeed (GatewaySendEvent.UPDATE_VOICE_STATE d)
-
-            | GatewayOpcode.PRESENCE_UPDATE, GatewaySendEventData.UPDATE_PRESENCE d ->
-                Decode.succeed (GatewaySendEvent.UPDATE_PRESENCE d)
-
-            | _ ->
-                Decode.fail "Unexpected gateway send event data received"
+            | GatewayOpcode.IDENTIFY, GatewaySendEventData.IDENTIFY d -> Decode.succeed (GatewaySendEvent.IDENTIFY d)
+            | GatewayOpcode.RESUME, GatewaySendEventData.RESUME d -> Decode.succeed (GatewaySendEvent.RESUME d)
+            | GatewayOpcode.HEARTBEAT, GatewaySendEventData.OPTIONAL_INT d -> Decode.succeed (GatewaySendEvent.HEARTBEAT d)
+            | GatewayOpcode.REQUEST_GUILD_MEMBERS, GatewaySendEventData.REQUEST_GUILD_MEMBERS d -> Decode.succeed (GatewaySendEvent.REQUEST_GUILD_MEMBERS d)
+            | GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS d -> Decode.succeed (GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS d)
+            | GatewayOpcode.VOICE_STATE_UPDATE, GatewaySendEventData.UPDATE_VOICE_STATE d -> Decode.succeed (GatewaySendEvent.UPDATE_VOICE_STATE d)
+            | GatewayOpcode.PRESENCE_UPDATE, GatewaySendEventData.UPDATE_PRESENCE d -> Decode.succeed (GatewaySendEvent.UPDATE_PRESENCE d)
+            | _ -> Decode.fail "Unexpected gateway send event data received"
         )
+
+    let encoder (v: GatewaySendEvent) =
+        match v with
+        | GatewaySendEvent.IDENTIFY ev -> GatewaySendEventPayload.encoder { Opcode = GatewayOpcode.IDENTIFY; EventName = None; Sequence = None; Data = GatewaySendEventData.IDENTIFY ev }
+        | GatewaySendEvent.RESUME ev -> GatewaySendEventPayload.encoder { Opcode = GatewayOpcode.RESUME; EventName = None; Sequence = None; Data = GatewaySendEventData.RESUME ev }
+        | GatewaySendEvent.HEARTBEAT ev -> GatewaySendEventPayload.encoder { Opcode = GatewayOpcode.HEARTBEAT; EventName = None; Sequence = None; Data = GatewaySendEventData.OPTIONAL_INT ev }
+        | GatewaySendEvent.REQUEST_GUILD_MEMBERS ev -> GatewaySendEventPayload.encoder { Opcode = GatewayOpcode.REQUEST_GUILD_MEMBERS; EventName = None; Sequence = None; Data = GatewaySendEventData.REQUEST_GUILD_MEMBERS ev }
+        | GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS ev -> GatewaySendEventPayload.encoder { Opcode = GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS; EventName = None; Sequence = None; Data = GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS ev }
+        | GatewaySendEvent.UPDATE_VOICE_STATE ev -> GatewaySendEventPayload.encoder { Opcode = GatewayOpcode.VOICE_STATE_UPDATE; EventName = None; Sequence = None; Data = GatewaySendEventData.UPDATE_VOICE_STATE ev }
+        | GatewaySendEvent.UPDATE_PRESENCE ev -> GatewaySendEventPayload.encoder { Opcode = GatewayOpcode.PRESENCE_UPDATE; EventName = None; Sequence = None; Data = GatewaySendEventData.UPDATE_PRESENCE ev }

@@ -585,7 +585,7 @@ module Container =
         { v with Components = v.Components @ [component'] }
 
     let setAccentColor color (v: Container) =
-        { v with AccentColor = Some color }
+        { v with AccentColor = Some (Some color) }
 
     let setSpoiler spoiler (v: Container) =
         { v with Spoiler = spoiler }
