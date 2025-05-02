@@ -3,6 +3,8 @@
 open FSharp.Discord.Types
 open FSharp.Discord.Types.Serialization
 open System
+open System.Threading
+open System.Threading.Tasks
 open Thoth.Json.Net
 open WebSocketSharp
 
@@ -32,6 +34,9 @@ module GatewayConnectionState =
 type GatewayConnection(socket, state) =
     member val Socket: WebSocket = socket with get, set
     member val State: GatewayConnectionState = state with get, set
+
+    member val CancellationTokenSource = new CancellationTokenSource() with get, set
+    member val Heartbeat: Task option = None with get, set
 
     interface IDisposable with
         member this.Dispose() =
@@ -87,6 +92,23 @@ module GatewayConnection =
             send event connection
 
             connection.State <- { state with HeartbeatInterval = Some data.HeartbeatInterval }
+
+            connection.Heartbeat <- Some (task {
+                while not connection.CancellationTokenSource.IsCancellationRequested do
+                    if not connection.State.HeartbeatAcked then
+                        do! connection.CancellationTokenSource.CancelAsync()
+                    else
+                        connection.State <- { state with HeartbeatAcked = false }
+                        send (GatewaySendEvent.HEARTBEAT state.Sequence) connection
+
+                    do! Task.Delay (data.HeartbeatInterval |> float |> TimeSpan.FromMilliseconds)
+
+                // TODO: Make this not so crude... There's probably a more functional way to do this, may involve
+                // switching from this pre-release package to FSharp.Control.Websockets. I fully expect this not to
+                // fully work, and I think state.Heartbeat is a remnant of previous code and should be used for the
+                // Task.Delay instead. Currently this will ignore immediate heartbeat requests entirely and just do
+                // its own thing.
+            })
 
         | GatewayReceiveEvent.HEARTBEAT ->
             let event = GatewaySendEvent.HEARTBEAT state.Sequence
@@ -148,8 +170,10 @@ module GatewayConnection =
 
     let connect (connection: GatewayConnection) =
         connection.Socket.Connect()
-
-        // TODO: Figure out how to manage heartbeat
+        connection.CancellationTokenSource <- new CancellationTokenSource()
+        connection.Heartbeat <- None
 
     let close (connection: GatewayConnection) =
         connection.Socket.Close()
+        connection.CancellationTokenSource.Cancel()
+        connection.Heartbeat <- None
