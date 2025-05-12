@@ -14,8 +14,8 @@ type Gateway(gatewayUrl, identify, dispatcher) =
             this.Connection |> Option.iter (fun c -> c :> IDisposable |> _.Dispose())
 
 module Gateway =
-    let create gatewayUrl =
-        new Gateway(gatewayUrl)
+    let create gatewayUrl identify dispatcher =
+        new Gateway(gatewayUrl, identify, dispatcher)
 
     let connect (gateway: Gateway) =
         match gateway.Connection with
@@ -23,9 +23,10 @@ module Gateway =
             Error "Connection already exists"
 
         | None ->
-            gateway.Connection <-
-                GatewayConnection.create gateway.GatewayUrl gateway.IdentifyEvent None gateway.Dispatcher
-                |> Some
+            let connection = GatewayConnection.create gateway.GatewayUrl gateway.IdentifyEvent None gateway.Dispatcher
+            gateway.Connection <- Some connection
+
+            GatewayConnection.connect connection
 
             Ok ()
 
