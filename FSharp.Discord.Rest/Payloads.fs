@@ -1808,9 +1808,10 @@ type ExecuteWebhookPayload(
         member this.ToHttpContent() =
             HttpContent.createJsonWithFiles ExecuteWebhookPayload.Encoder this this.Files
 
-type EditWebhookMessagePayload(?content, ?embeds, ?allowedMentions, ?components, ?attachments, ?poll, ?files) =
+type EditWebhookMessagePayload(?content, ?embeds, ?flags, ?allowedMentions, ?components, ?attachments, ?poll, ?files) =
     member val Content: string option option = content
     member val Embeds: Embed list option option = embeds
+    member val Flags: MessageFlag list option option = flags
     member val AllowedMentions: AllowedMentions option option = allowedMentions
     member val Components: Component list option option = components
     member val Attachments: PartialAttachment list option option = attachments
@@ -1821,6 +1822,7 @@ type EditWebhookMessagePayload(?content, ?embeds, ?allowedMentions, ?components,
         Encode.object ([]
             |> Encode.optinull "content" Encode.string v.Content
             |> Encode.optinull "embeds" (List.map Embed.encoder >> Encode.list) v.Embeds
+            |> Encode.optinull "flags" Encode.bitfield v.Flags
             |> Encode.optinull "allowed_mentions" AllowedMentions.encoder v.AllowedMentions
             |> Encode.optinull "components" (List.map Component.encoder >> Encode.list) v.Components
             |> Encode.optinull "attachments" (List.map Attachment.Partial.encoder >> Encode.list) v.Attachments
