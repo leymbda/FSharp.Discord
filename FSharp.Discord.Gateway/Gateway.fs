@@ -57,7 +57,7 @@ type Msg =
 let connect uri = async {
     let ws = new ClientWebSocket()
     do! ws.ConnectAsync(uri, CancellationToken.None) |> Async.AwaitTask
-    return ThreadSafeWebSocket.createFromWebSocket ws
+    return ThreadSafeWebSocket.createFromWebSocket ws // TODO: Partially apply to allow testing with a mock socket
 }
 
 let disconnect model status = async {
@@ -142,7 +142,7 @@ let update msg model =
             let state = {
                 model.State with
                     HeartbeatInterval = Some data.HeartbeatInterval
-                    HeartbeatNextDue = Some (DateTime.UtcNow.AddMilliseconds data.HeartbeatInterval) }
+                    HeartbeatNextDue = Some (DateTime.UtcNow.AddMilliseconds data.HeartbeatInterval) } // TODO: Remove DateTime.UtcNow side effect
 
             { model with State = state }, Cmd.ofMsg (Msg.Send sendEvent) // TODO: Initiate heartbeat
 
@@ -184,7 +184,6 @@ let subscribe model =
     // TODO: Create subscription to gateway receive events
     // TODO: Create subscription to ws disconnect
     // TODO: Create subscription to heartbeat in model.State.HeartbeatNextDue
-    // TODO: Figure out how outside events can trigger messages e.g. client.StopAsync, send events
 
     []
 

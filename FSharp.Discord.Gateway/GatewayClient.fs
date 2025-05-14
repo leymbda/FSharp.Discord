@@ -24,10 +24,41 @@ type GatewayClient(gatewayUri: Uri, identify: IdentifySendEvent, handler: Gatewa
     member this.Stop() =
         this.TaskCompletionSource.SetResult()
 
+    // TODO: Figure out how to implement below signals. Could probably be done with an observable passed into the init,
+    //       but may be a more standard approach too.
+
     /// Request the client to disconnect gracefully, resolving once terminated.
     member this.StopAsync() = async {
         raise (new NotImplementedException()) // TODO: Call Msg.Disconnect to stop gracefully
     }
+
+    /// Send event to request guild members.
+    member this.RequestGuildMembers(event) =
+        GatewaySendEvent.REQUEST_GUILD_MEMBERS event
+        |> ignore // TODO: Send to program (somehow)
+
+        raise (new NotImplementedException()) // TODO: Call Msg.Send to send event
+
+    /// Send event to request soundboard sounds.
+    member this.RequestSoundboardSounds(event) =
+        GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS event
+        |> ignore // TODO: Send to program (somehow)
+
+        raise (new NotImplementedException()) // TODO: Call Msg.Send to send event
+
+    /// Send event to update voice state.
+    member this.UpdateVoiceState(event) =
+        GatewaySendEvent.UPDATE_VOICE_STATE event
+        |> ignore // TODO: Send to program (somehow)
+
+        raise (new NotImplementedException()) // TODO: Call Msg.Send to send event
+
+    /// Send event to update presence.
+    member this.UpdatePresence(event) =
+        GatewaySendEvent.UPDATE_PRESENCE event
+        |> ignore // TODO: Send to program (somehow)
+
+        raise (new NotImplementedException()) // TODO: Call Msg.Send to send event
 
     /// Wait until the client disconnects synchronously.
     member this.Wait() =

@@ -13,16 +13,6 @@
     <Compile Include="GatewayReceiveEvent.fs" />
     <Compile Include="Gateway.fs" />
     <Compile Include="GatewayClient.fs" />
-    <Compile Include="Unsupported\GatewayConnection.fs" />
-    <Compile Include="Unsupported\Gateway.fs" />
-    <Compile Include="Old\Common\CustomGatewayOpcode.fs" />
-    <Compile Include="Old\Entities\IWebsocket.fs" />
-    <Compile Include="Old\Modules\Websocket.fs" />
-    <Compile Include="Old\Modules\Gateway.fs" />
-    <Compile Include="Old\GatewayClient.fs" />
-    <Compile Include="Old\GatewayEnv.fs" />
-    <Compile Include="Old\Socket.fs" />
-    <Compile Include="Old\GatewayState.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
