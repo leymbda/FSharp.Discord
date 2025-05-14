@@ -1,5 +1,6 @@
-﻿namespace FSharp.Discord.Gateway
+﻿namespace FSharp.Discord.Gateway.Unsupported
 
+open FSharp.Discord.Gateway
 open FSharp.Discord.Types
 open System
 

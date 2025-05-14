@@ -1,4 +1,5 @@
 ﻿open FSharp.Discord.Gateway
+open FSharp.Discord.Gateway.Unsupported
 open FSharp.Discord.Rest
 open FSharp.Discord.Types
 open FsToolkit.ErrorHandling
