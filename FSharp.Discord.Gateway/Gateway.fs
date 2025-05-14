@@ -8,10 +8,12 @@ open System.Net.WebSockets
 open System.Threading
 open Thoth.Json.Net
 
+type Handler = GatewayReceiveEvent -> Async<unit>
+
 type Model = {
     GatewayUri: Uri
     Identify: IdentifySendEvent
-    Handler: GatewayReceiveEvent -> Async<unit>
+    Handler: Handler
     Socket: ThreadSafeWebSocket.ThreadSafeWebSocket option
 }
 
