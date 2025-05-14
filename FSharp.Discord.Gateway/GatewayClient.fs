@@ -36,4 +36,15 @@ type GatewayClient(gatewayUri: Uri, identify: IdentifySendEvent, handler: Gatewa
     /// Wait until the client disconnects asynchronously.
     member this.WaitAsync() =
         this.TaskCompletionSource.Task |> Async.AwaitTask
+
+    interface IDisposable with
+        member this.Dispose() =
+            this.Stop()
     
+    interface IAsyncDisposable with
+        member this.DisposeAsync() =
+            async {
+                do! this.StopAsync()
+            }
+            |> Async.StartAsTask
+            |> ValueTask
