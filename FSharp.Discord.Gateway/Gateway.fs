@@ -10,8 +10,29 @@ open Thoth.Json.Net
 
 type Handler = GatewayReceiveEvent -> Async<unit>
 
+type GatewayState = {
+    Sequence: int option
+    HeartbeatInterval: int option
+    HeartbeatAcked: bool
+    HeartbeatNextDue: DateTime option
+    ResumeGatewayUrl: string option
+    SessionId: string option
+}
+
+module GatewayState =
+    let zero () =
+        {
+            Sequence = None
+            HeartbeatInterval = None
+            HeartbeatAcked = true
+            HeartbeatNextDue = None
+            ResumeGatewayUrl = None
+            SessionId = None
+        }
+
 type Model = {
     GatewayUri: Uri
+    State: GatewayState
     Identify: IdentifySendEvent
     Handler: Handler
     Socket: ThreadSafeWebSocket.ThreadSafeWebSocket option
@@ -22,7 +43,9 @@ type Msg =
     | OnConnectSuccess of ThreadSafeWebSocket.ThreadSafeWebSocket
     | OnConnectError of exn
 
-    | Disconnect of WebSocketCloseStatus option
+    | Reconnect of resumable: bool
+
+    | Disconnect
     | OnDisconnect
 
     | Send of GatewaySendEvent
@@ -43,7 +66,7 @@ let disconnect model status = async {
         return ()
 
     | Some socket ->
-        do! ThreadSafeWebSocket.close socket status "TODO: Informative status description" |> Async.Ignore
+        do! ThreadSafeWebSocket.close socket status "" |> Async.Ignore // TODO: Informative status description
 }
 
 let send model event = async {
@@ -56,13 +79,10 @@ let send model event = async {
         do! ThreadSafeWebSocket.sendMessageAsUTF8 socket content |> Async.Ignore
 }
 
-let receive model event = async {
-    do! model.Handler event // TODO: Handle gateway lifecycle
-}
-
 let init (gatewayUri, identify, handler) =
     {
         GatewayUri = gatewayUri
+        State = GatewayState.zero ()
         Identify = identify
         Handler = handler
         Socket = None
@@ -78,14 +98,22 @@ let update msg model =
         { model with Socket = Some socket }, Cmd.none
 
     | Msg.OnConnectError _ ->
-        model, Cmd.ofMsg (Msg.Disconnect None)
+        model, Cmd.ofMsg Msg.Disconnect
 
-    | Msg.Disconnect status ->
-        let code = status |> Option.defaultValue WebSocketCloseStatus.Empty
+    | Msg.Reconnect resumable ->
+        let model, reconnectUri =
+            match resumable, model.State.ResumeGatewayUrl, model.State.SessionId, model.State.Sequence with
+            | true, Some url, Some _, Some _ ->
+                let state = { model.State with HeartbeatAcked = true; HeartbeatInterval = None }
+                { model with State = state }, Uri url
 
-        // TODO: Reconnect if allowed, otherwise finish and call OnDisconnect to terminate
+            | _ ->
+                { model with State = GatewayState.zero () }, model.GatewayUri
 
-        model, Cmd.OfAsync.perform (disconnect model) code (fun _ -> Msg.OnDisconnect)
+        model, Cmd.OfAsync.perform (disconnect model) WebSocketCloseStatus.Empty (fun _ -> Msg.Connect reconnectUri)
+
+    | Msg.Disconnect ->
+        model, Cmd.OfAsync.perform (disconnect model) WebSocketCloseStatus.NormalClosure (fun _ -> Msg.OnDisconnect)
 
     | Msg.OnDisconnect ->
         model, Cmd.none
@@ -97,7 +125,57 @@ let update msg model =
         model, Cmd.none
 
     | Msg.Receive event ->
-        model, Cmd.OfAsync.attempt (receive model) event Msg.OnReceiveError
+        match event with
+        | GatewayReceiveEvent.HELLO data ->
+            let sendEvent =
+                match model.State.SessionId, model.State.Sequence with
+                | Some sessionId, Some sequence ->
+                    GatewaySendEvent.RESUME {
+                        Token = model.Identify.Token
+                        SessionId = sessionId
+                        Sequence = sequence
+                    }
+
+                | _ ->
+                    GatewaySendEvent.IDENTIFY model.Identify
+
+            let state = {
+                model.State with
+                    HeartbeatInterval = Some data.HeartbeatInterval
+                    HeartbeatNextDue = Some (DateTime.UtcNow.AddMilliseconds data.HeartbeatInterval) }
+
+            { model with State = state }, Cmd.ofMsg (Msg.Send sendEvent) // TODO: Initiate heartbeat
+
+        | GatewayReceiveEvent.HEARTBEAT ->
+            let sendEvent = GatewaySendEvent.HEARTBEAT model.State.Sequence
+
+            let state = { model.State with HeartbeatAcked = false }
+            { model with State = state }, Cmd.ofMsg (Msg.Send sendEvent)
+
+        | GatewayReceiveEvent.HEARTBEAT_ACK ->
+            let state = { model.State with HeartbeatAcked = true }
+            { model with State = state }, Cmd.none
+
+        | GatewayReceiveEvent.READY (data, sequence) ->
+            let state =
+                { model.State with
+                    ResumeGatewayUrl = Some data.ResumeGatewayUrl
+                    SessionId = Some data.SessionId
+                    Sequence = Some sequence }
+
+            { model with State = state }, Cmd.none
+
+        | GatewayReceiveEvent.RESUMED ->
+            model, Cmd.none
+
+        | GatewayReceiveEvent.RECONNECT ->
+            model, Cmd.ofMsg (Msg.Reconnect true)
+
+        | GatewayReceiveEvent.INVALID_SESSION resumable ->
+            model, Cmd.ofMsg (Msg.Reconnect resumable)
+
+        | event ->
+            model, Cmd.OfAsync.attempt model.Handler event Msg.OnReceiveError
 
     | Msg.OnReceiveError _ ->
         model, Cmd.none
@@ -105,6 +183,8 @@ let update msg model =
 let subscribe model =
     // TODO: Create subscription to gateway receive events
     // TODO: Create subscription to ws disconnect
+    // TODO: Create subscription to heartbeat in model.State.HeartbeatNextDue
+    // TODO: Figure out how outside events can trigger messages e.g. client.StopAsync, send events
 
     []
 
