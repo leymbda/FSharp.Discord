@@ -212,11 +212,7 @@ let subscribe model =
         match model.Socket, model.State.HeartbeatNextDue with
         | Some _, Some due ->
             let timespan = due.Subtract DateTime.UtcNow
-
-            let onDelay dispatch () =
-                dispatch Msg.HeartbeatTimeout
-
-            [["heartbeat"; string due.Ticks], fun dispatch -> Sub.delay timespan (onDelay dispatch)]
+            [["heartbeat"; string due.Ticks], Sub.delay timespan (fun dispatch -> dispatch Msg.HeartbeatTimeout)]
 
         | _ -> []
 
@@ -226,3 +222,6 @@ let subscribe model =
 
 let terminate msg =
     msg |> function | Msg.OnDisconnect -> true | _ -> false
+
+// TODO: Implement new separated GatewayHeartbeat MVU to replace current
+// TODO: Can gateway lifecycle be extracted into separate MVU too?
