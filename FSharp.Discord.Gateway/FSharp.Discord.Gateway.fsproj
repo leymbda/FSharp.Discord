@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Sub.fs" />
     <Compile Include="MessageObservable.fs" />
     <Compile Include="GatewaySendEvent.fs" />
     <Compile Include="GatewayReceiveEvent.fs" />

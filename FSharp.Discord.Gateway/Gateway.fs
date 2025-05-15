@@ -48,6 +48,9 @@ type Msg =
     | Disconnect
     | OnDisconnect
 
+    | Heartbeat
+    | HeartbeatTimeout
+
     | Send of GatewaySendEvent
     | OnSendError of exn
 
@@ -104,7 +107,7 @@ let update msg model =
         let model, reconnectUri =
             match resumable, model.State.ResumeGatewayUrl, model.State.SessionId, model.State.Sequence with
             | true, Some url, Some _, Some _ ->
-                let state = { model.State with HeartbeatAcked = true; HeartbeatInterval = None }
+                let state = { model.State with HeartbeatAcked = true; HeartbeatInterval = None; HeartbeatNextDue = None }
                 { model with State = state }, Uri url
 
             | _ ->
@@ -113,10 +116,34 @@ let update msg model =
         model, Cmd.OfAsync.perform (disconnect model) WebSocketCloseStatus.Empty (fun _ -> Msg.Connect reconnectUri)
 
     | Msg.Disconnect ->
-        model, Cmd.OfAsync.perform (disconnect model) WebSocketCloseStatus.NormalClosure (fun _ -> Msg.OnDisconnect)
+        let state = { model.State with HeartbeatNextDue = None }
+
+        { model with State = state },
+        Cmd.OfAsync.perform (disconnect model) WebSocketCloseStatus.NormalClosure (fun _ -> Msg.OnDisconnect)
 
     | Msg.OnDisconnect ->
         model, Cmd.none
+
+    | Msg.Heartbeat ->
+        match model.Socket, model.State.HeartbeatInterval with
+        | Some _, Some interval ->
+            let state =
+                { model.State with
+                    HeartbeatAcked = false
+                    HeartbeatNextDue = Some (DateTime.UtcNow.AddMilliseconds interval) }
+
+            let sendEvent = GatewaySendEvent.HEARTBEAT model.State.Sequence
+
+            { model with State = state }, Cmd.ofMsg (Msg.Send sendEvent)
+
+        | _ ->
+            model, Cmd.none
+
+    | Msg.HeartbeatTimeout ->
+        match model.Socket, model.State with
+        | Some _, { HeartbeatAcked = true } -> model, Cmd.ofMsg (Msg.Heartbeat)
+        | Some _, { HeartbeatAcked = false } -> model, Cmd.ofMsg (Msg.Reconnect true)
+        | _ -> model, Cmd.none
 
     | Msg.Send event ->
         model, Cmd.OfAsync.attempt (send model) event Msg.OnSendError
@@ -142,15 +169,12 @@ let update msg model =
             let state = {
                 model.State with
                     HeartbeatInterval = Some data.HeartbeatInterval
-                    HeartbeatNextDue = Some (DateTime.UtcNow.AddMilliseconds data.HeartbeatInterval) } // TODO: Remove DateTime.UtcNow side effect
+                    HeartbeatNextDue = Some DateTime.UtcNow }
 
-            { model with State = state }, Cmd.ofMsg (Msg.Send sendEvent) // TODO: Initiate heartbeat
+            { model with State = state }, Cmd.ofMsg (Msg.Send sendEvent)
 
         | GatewayReceiveEvent.HEARTBEAT ->
-            let sendEvent = GatewaySendEvent.HEARTBEAT model.State.Sequence
-
-            let state = { model.State with HeartbeatAcked = false }
-            { model with State = state }, Cmd.ofMsg (Msg.Send sendEvent)
+            model, Cmd.ofMsg (Msg.Heartbeat)
 
         | GatewayReceiveEvent.HEARTBEAT_ACK ->
             let state = { model.State with HeartbeatAcked = true }
@@ -183,9 +207,22 @@ let update msg model =
 let subscribe model =
     // TODO: Create subscription to gateway receive events
     // TODO: Create subscription to ws disconnect
-    // TODO: Create subscription to heartbeat in model.State.HeartbeatNextDue
 
-    []
+    let heartbeat model =
+        match model.Socket, model.State.HeartbeatNextDue with
+        | Some _, Some due ->
+            let timespan = due.Subtract DateTime.UtcNow
+
+            let onDelay dispatch () =
+                dispatch Msg.HeartbeatTimeout
+
+            [["heartbeat"; string due.Ticks], fun dispatch -> Sub.delay timespan (onDelay dispatch)]
+
+        | _ -> []
+
+    Sub.batch [
+        heartbeat model
+    ]
 
 let terminate msg =
     msg |> function | Msg.OnDisconnect -> true | _ -> false
