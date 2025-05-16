@@ -13,7 +13,8 @@
     <Compile Include="MessageObservable.fs" />
     <Compile Include="GatewaySendEvent.fs" />
     <Compile Include="GatewayReceiveEvent.fs" />
-    <Compile Include="GatewayHeartbeat.fs" />
+    <Compile Include="Heartbeat.fs" />
+    <Compile Include="Lifecycle.fs" />
     <Compile Include="Gateway.fs" />
     <Compile Include="GatewayClient.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />

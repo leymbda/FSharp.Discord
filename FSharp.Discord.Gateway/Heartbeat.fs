@@ -1,4 +1,4 @@
-﻿module FSharp.Discord.Gateway.GatewayHeartbeat
+﻿module FSharp.Discord.Gateway.Heartbeat
 
 open Elmish
 open System
