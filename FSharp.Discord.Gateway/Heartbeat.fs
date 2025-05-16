@@ -3,11 +3,6 @@
 open Elmish
 open System
 
-type State =
-    | NotStarted of interval: TimeSpan
-    | Active of due: DateTime * interval: TimeSpan * acked: bool
-    | Stopped of dead: bool
-
 type Model = {
     Interval: TimeSpan
     Due: DateTime option
@@ -24,12 +19,22 @@ module Model =
             Stopped = false
         }
 
-    let getState currentTime model =
+module State =
+    let (|NotStarted|Active|Stopped|) model =
         match model with
-        | { Due = Some due } when due < currentTime -> State.Stopped true
-        | { Stopped = true } -> State.Stopped false
-        | { Due = Some due; Interval = interval; Acked = acked } -> State.Active (due, interval, acked)
-        | { Due = None; Interval = interval } -> State.NotStarted interval
+        | { Stopped = true } -> Stopped
+        | { Due = Some due; Interval = interval; Acked = acked } -> Active (due, interval, acked)
+        | { Due = None; Interval = interval } -> NotStarted interval
+        
+    let (|Dead|_|) currentTime model =
+        match model with
+        | Active (due, _, _) when due < currentTime -> Some ()
+        | _ -> None
+
+    let (|Alive|_|) currentTime model =
+        match model with
+        | Active (due, interval, acked) when due >= currentTime -> Some (due, interval, acked)
+        | _ -> None
 
 type Msg =
     /// Start the heartbeat.
@@ -53,18 +58,18 @@ let init interval =
 let update msg model =
     let currentTime = DateTime.UtcNow // TODO: Extract elsewhere to remove side effect
 
-    match Model.getState currentTime model, msg with
+    match model, msg with
     | State.NotStarted _, Msg.Start ->
         model, Cmd.ofMsg Msg.Beat
 
     | State.NotStarted interval, Msg.Beat
-    | State.Active (_, interval, _), Msg.Beat ->
+    | State.Alive currentTime (_, interval, _), Msg.Beat ->
         { model with Due = Some (currentTime.Add interval); Acked = false }, Cmd.none
 
-    | State.Active _, Msg.Ack ->
+    | State.Alive currentTime _, Msg.Ack ->
         { model with Acked = true }, Cmd.none
         
-    | State.Stopped true, Msg.Timeout ->
+    | State.Dead currentTime _, Msg.Timeout ->
         model, Cmd.ofMsg Msg.Stop
 
     | _, Msg.Stop ->

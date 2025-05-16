@@ -15,12 +15,6 @@ type ResumeData = {
     ResumeGatewayUrl: string
 }
 
-type State =
-    | NotStarted of IdentifySendEvent * SessionState option
-    | Starting of SessionState option
-    | Active of SessionState
-    | Stopped
-
 type Model = {
     Identify: IdentifySendEvent
     ResumeGatewayUrl: string option
@@ -41,12 +35,13 @@ module Model =
             Stopped = false
         }
 
-    let getState model =
+module State =
+    let (|NotStarted|Starting|Active|Stopped|) model =
         match model with
-        | { Stopped = true } -> State.Stopped
-        | { Ready = true; SessionState = Some state } -> State.Active state
-        | { Started = true; SessionState = state } -> State.Starting state
-        | { Started = false; Identify = identify; SessionState = state } -> State.NotStarted (identify, state)
+        | { Stopped = true } -> Stopped
+        | { Ready = true; SessionState = Some state } -> Active state
+        | { Started = true; SessionState = state } -> Starting state
+        | { Started = false; Identify = identify; SessionState = state } -> NotStarted (identify, state)
 
 type Msg =
     /// Handle hello lifecycle event.
@@ -77,7 +72,7 @@ let init identify =
     Model.zero identify, Cmd.none
 
 let update msg model =
-    match Model.getState model, msg with
+    match model, msg with
     | State.NotStarted (identify, None), Msg.Hello _ ->
         let event = GatewaySendEvent.IDENTIFY identify
 
