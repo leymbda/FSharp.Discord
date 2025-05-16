@@ -9,13 +9,21 @@ type SessionState = {
     SessionId: string
 }
 
+type ResumeData = {
+    Sequence: int
+    SessionId: string
+    ResumeGatewayUrl: string
+}
+
 type State =
-    | NotStarted of SessionState option
+    | NotStarted of IdentifySendEvent * SessionState option
     | Starting of SessionState option
     | Active of SessionState
     | Stopped
 
 type Model = {
+    Identify: IdentifySendEvent
+    ResumeGatewayUrl: string option
     SessionState: SessionState option
     Started: bool
     Ready: bool
@@ -23,8 +31,10 @@ type Model = {
 }
 
 module Model =
-    let zero () =
+    let zero identify =
         {
+            Identify = identify
+            ResumeGatewayUrl = None
             SessionState = None
             Started = false
             Ready = false
@@ -36,11 +46,11 @@ module Model =
         | { Stopped = true } -> State.Stopped
         | { Ready = true; SessionState = Some state } -> State.Active state
         | { Started = true; SessionState = state } -> State.Starting state
-        | { Started = false; SessionState = state } -> State.NotStarted state
+        | { Started = false; Identify = identify; SessionState = state } -> State.NotStarted (identify, state)
 
 type Msg =
     /// Handle hello lifecycle event.
-    | Hello of IdentifySendEvent
+    | Hello of HelloReceiveEvent
 
     /// Handle ready lifecycle event.
     | Ready of ReadyReceiveEvent * sequence: int
@@ -58,22 +68,22 @@ type Msg =
     | Send of GatewaySendEvent
 
     /// Request a connection restart.
-    | Restart of SessionState option
+    | Restart of ResumeData option
 
     /// Stop the lifecycle.
     | Stop
 
-let init () =
-    Model.zero (), Cmd.none
+let init identify =
+    Model.zero identify, Cmd.none
 
 let update msg model =
     match Model.getState model, msg with
-    | State.NotStarted None, Msg.Hello identify ->
+    | State.NotStarted (identify, None), Msg.Hello _ ->
         let event = GatewaySendEvent.IDENTIFY identify
 
         { model with Started = true }, Cmd.ofMsg (Msg.Send event)
         
-    | State.NotStarted (Some state), Msg.Hello identify ->
+    | State.NotStarted (identify, Some state), Msg.Hello _ ->
         let event = GatewaySendEvent.RESUME {
             Token = identify.Token
             SessionId = state.SessionId
@@ -89,6 +99,7 @@ let update msg model =
         }
 
         { model with
+            ResumeGatewayUrl = Some event.ResumeGatewayUrl
             SessionState = Some state
             Ready = true },
         Cmd.none
@@ -97,12 +108,28 @@ let update msg model =
         { model with Ready = true }, Cmd.none
 
     | State.Active state, Msg.Reconnect ->
-        { model with Stopped = true }, Cmd.ofMsg (Msg.Restart (Some state))
+        let resumeData =
+            model.ResumeGatewayUrl
+            |> Option.map (fun resumeGatewayUrl -> {
+                Sequence = state.Sequence
+                SessionId = state.SessionId
+                ResumeGatewayUrl = resumeGatewayUrl
+            })
+
+        { model with Stopped = true }, Cmd.ofMsg (Msg.Restart resumeData)
 
     | State.Starting (Some state), Msg.InvalidSession resumable
     | State.Active state, Msg.InvalidSession resumable ->
-        let resume = if resumable then Some state else None
-        { model with Stopped = true }, Cmd.ofMsg (Msg.Restart resume)
+        let resumeData =
+            model.ResumeGatewayUrl
+            |> Option.filter (fun _ -> resumable)
+            |> Option.map (fun resumeGatewayUrl -> {
+                Sequence = state.Sequence
+                SessionId = state.SessionId
+                ResumeGatewayUrl = resumeGatewayUrl
+            })
+
+        { model with Stopped = true }, Cmd.ofMsg (Msg.Restart resumeData)
 
     | _, Msg.Send _ ->
         model, Cmd.none
