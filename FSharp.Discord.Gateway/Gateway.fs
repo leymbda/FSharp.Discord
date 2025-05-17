@@ -34,28 +34,50 @@ type Msg =
     | Heartbeat of Heartbeat.Msg
     | Lifecycle of Lifecycle.Msg
 
-    | Connect of AsyncEitherMsg<Uri option, ThreadSafeWebSocket.ThreadSafeWebSocket>
-    | Reconnect of AsyncPerformMsg<Lifecycle.ResumeData option, ThreadSafeWebSocket.ThreadSafeWebSocket>
+    | Connect of AsyncEitherMsg<unit, ThreadSafeWebSocket.ThreadSafeWebSocket>
+    | Reconnect of AsyncEitherMsg<Lifecycle.ResumeData option, ThreadSafeWebSocket.ThreadSafeWebSocket>
     | Disconnect of AsyncPerformMsg<unit, unit>
+    | Terminate
 
     | Receive of GatewayReceiveEvent
     | Handle of AsyncAttemptMsg<GatewayReceiveEvent>
+    | Send of AsyncAttemptMsg<GatewaySendEvent>
 
-    // TODO: Handle sending gateway events
-    // TODO: Msg to detect for termination
+let private connect model () = async {
+    let ws = new ClientWebSocket() // TODO: Partially apply to allow testing with a mock socket
+    do! ws.ConnectAsync(model.GatewayUri, CancellationToken.None) |> Async.AwaitTask
+    return ThreadSafeWebSocket.createFromWebSocket ws
+}
 
-let private connect model resumeUri = async {
-    let uri = resumeUri |> Option.defaultValue model.GatewayUri
+let private reconnect model (resumeData: Lifecycle.ResumeData option) = async {
+    // TODO: Disconnect if currently connected
+
+    let uri =
+        resumeData
+        |> Option.map (fun data -> Uri data.ResumeGatewayUrl)
+        |> Option.defaultValue model.GatewayUri
 
     let ws = new ClientWebSocket() // TODO: Partially apply to allow testing with a mock socket
     do! ws.ConnectAsync(uri, CancellationToken.None) |> Async.AwaitTask
     return ThreadSafeWebSocket.createFromWebSocket ws
 }
 
+let private disconnect model () = async {
+    return ()
+
+    // TODO: Implement disconnect
+}
+
 let private receive model event = async {
     do! model.Handler event
 
     // TODO: Update handler to handle failures
+}
+
+let private send model event = async {
+    return ()
+
+    // TODO: Attempt to send event to socket
 }
 
 let init (gatewayUri, identify, handler) =
@@ -66,13 +88,13 @@ let update msg model =
 
     match model.Lifecycle, model.Heartbeat, msg with
     // Connect
-    | None, None, Msg.Connect (AsyncEitherMsg.Either resumeUri) ->
-        let lifecycle, cmd = Lifecycle.init model.Identify
+    | None, None, Msg.Connect (AsyncEitherMsg.Either _) ->
+        let lifecycle, cmd = Lifecycle.init model.Identify None
 
         { model with Lifecycle = Some lifecycle },
         Cmd.batch [
             Cmd.map Msg.Lifecycle cmd
-            AsyncEitherMsg.toCmd (connect model) resumeUri Msg.Connect
+            AsyncEitherMsg.toCmd (connect model) () Msg.Connect
         ]
 
     | None, None, Msg.Connect (AsyncEitherMsg.Success socket) ->
@@ -80,24 +102,42 @@ let update msg model =
 
     | None, None, Msg.Connect (AsyncEitherMsg.Failure exn) ->
         eprintfn "%A" exn
-        model, Cmd.none // TODO: Implement
+        model, Cmd.none // TODO: Handle failure
 
     // Reconnect
-    | _, _, Msg.Reconnect (AsyncPerformMsg.Perform resumeUri) ->
-        model, Cmd.none // TODO: Trigger disconnect then reconnect
-        
-    | _, _, Msg.Reconnect (AsyncPerformMsg.Success socket) ->
+    | _, _, Msg.Reconnect (AsyncEitherMsg.Either resumeData) ->
+        let state: Lifecycle.SessionState option =
+            resumeData
+            |> Option.map (fun data -> {
+                SessionId = data.SessionId
+                Sequence = data.Sequence
+            })
+
+        let lifecycle, cmd = Lifecycle.init model.Identify state
+
+        { model with Lifecycle = Some lifecycle },
+        Cmd.batch [
+            Cmd.map Msg.Lifecycle cmd
+            AsyncEitherMsg.toCmd (reconnect model) resumeData Msg.Reconnect
+        ]
+
+    | None, None, Msg.Reconnect (AsyncEitherMsg.Success socket) ->
         model, Cmd.none // TODO: Implement
 
-    // TODO: Reconnect should instead call disconnect then connect...
-    // TODO: If above, disconnect needs to know whether to or not to terminate
+    | None, None, Msg.Reconnect (AsyncEitherMsg.Failure exn) ->
+        eprintfn "%A" exn
+        model, Cmd.none // TODO: Handle failure
 
     // Disconnect
     | _, _, Msg.Disconnect (AsyncPerformMsg.Perform _) ->
-        model, Cmd.none // TODO: Implement
+        model, AsyncPerformMsg.toCmd (disconnect model) () Msg.Disconnect
         
     | _, _, Msg.Disconnect (AsyncPerformMsg.Success _) ->
-        model, Cmd.none // TODO: Implement
+        model, Cmd.ofMsg Msg.Terminate
+
+    // Terminate
+    | _, _, Msg.Terminate ->
+        model, Cmd.none
 
     // Lifecycle gateway receive events
     | Some _, _, Msg.Receive (GatewayReceiveEvent.HELLO data) ->
@@ -135,18 +175,20 @@ let update msg model =
     | Some lifecycle, _, Msg.Lifecycle ((Lifecycle.Msg.Send event) as msg) ->
         let updated, cmd = Lifecycle.update msg lifecycle
 
-        { model with Lifecycle = Some updated }, Cmd.map Msg.Lifecycle cmd
-        
-        // TODO: Send event
+        { model with Lifecycle = Some updated },
+        Cmd.batch [
+            Cmd.map Msg.Lifecycle cmd
+            Cmd.ofMsg (Msg.Send (AsyncAttemptMsg.Attempt event))
+        ]
         
     // Lifecycle requested restart
-    | Some lifecycle, Some heartbeat, Msg.Lifecycle ((Lifecycle.Msg.Restart resumeData) as msg) ->
+    | Some lifecycle, _, Msg.Lifecycle ((Lifecycle.Msg.Restart resumeData) as msg) ->
         let updated, cmd = Lifecycle.update msg lifecycle
 
         { model with Lifecycle = Some updated },
         Cmd.batch [
             Cmd.map Msg.Lifecycle cmd
-            Cmd.ofMsg (Msg.Reconnect (AsyncPerformMsg.Perform resumeData))
+            Cmd.ofMsg (Msg.Reconnect (AsyncEitherMsg.Either resumeData))
         ]
         
     // Lifecycle requested stop
@@ -173,13 +215,27 @@ let update msg model =
         model, Cmd.ofMsg (Msg.Heartbeat Heartbeat.Msg.Ack)
 
     // Heartbeat requested stop
-    | _, Some (Heartbeat.State.Active _ as heartbeat), Msg.Heartbeat (Heartbeat.Msg.Stop as msg) ->
+    | lifecycle, Some (Heartbeat.State.Active _ as heartbeat), Msg.Heartbeat (Heartbeat.Msg.Stop as msg) ->
+        let resumeGatewayUrl =
+            lifecycle |> Option.bind _.ResumeGatewayUrl
+
+        let state =
+            lifecycle |> Option.bind _.SessionState
+
+        let resumeData: Lifecycle.ResumeData option =
+            Option.map2 (fun a b -> a, b) resumeGatewayUrl state
+            |> Option.map (fun (resumeGatewayUrl, state) -> {
+                ResumeGatewayUrl = resumeGatewayUrl
+                SessionId = state.SessionId
+                Sequence = state.Sequence
+            })
+
         let updated, cmd = Heartbeat.update msg heartbeat
 
         { model with Heartbeat = Some updated },
         Cmd.batch [
             Cmd.map Msg.Heartbeat cmd
-            Cmd.ofMsg (Msg.Disconnect (AsyncPerformMsg.Perform ()))
+            Cmd.ofMsg (Msg.Reconnect (AsyncEitherMsg.Either resumeData))
         ]
 
     // Catch remaining heartbeat messages
@@ -196,12 +252,28 @@ let update msg model =
         model, AsyncAttemptMsg.toCmd (receive model) event Msg.Handle
 
     | Some (Lifecycle.State.Active _), Some (Heartbeat.State.Alive currentTime _), Msg.Handle (AsyncAttemptMsg.Failure exn) ->
-        model, Cmd.none // TODO: Implement
+        eprintfn "%A" exn
+        model, Cmd.none // TODO: Handle failure
+        
+    // Send gateway events
+    | _, _, Msg.Send (AsyncAttemptMsg.Attempt event) ->
+        model, AsyncAttemptMsg.toCmd (send model) event Msg.Send
+
+    | _, _, Msg.Send (AsyncAttemptMsg.Failure exn) ->
+        eprintfn "%A" exn
+        model, Cmd.none // TODO: Handle failure
 
     // Catch invalid messages
     | lifecycle, heartbeat, msg ->
         eprintfn "Attempted to call msg %A in invate state %A %A" msg lifecycle heartbeat
         model, Cmd.ofMsg (Msg.Disconnect (AsyncPerformMsg.Perform ()))
 
+        // TODO: Currently kills conenction on invalid state, likely want to handle gracefully after testing
+
 let subscribe model: Sub<Msg> =
     [] // TODO: Implement all necessary subscriptions
+
+let terminate msg =
+    match msg with
+    | Msg.Terminate -> true
+    | _ -> false

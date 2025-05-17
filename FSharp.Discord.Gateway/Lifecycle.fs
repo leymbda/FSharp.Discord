@@ -25,11 +25,11 @@ type Model = {
 }
 
 module Model =
-    let zero identify =
+    let zero identify state =
         {
             Identify = identify
             ResumeGatewayUrl = None
-            SessionState = None
+            SessionState = state
             Started = false
             Ready = false
             Stopped = false
@@ -68,8 +68,8 @@ type Msg =
     /// Stop the lifecycle.
     | Stop
 
-let init identify =
-    Model.zero identify, Cmd.none
+let init identify state =
+    Model.zero identify state, Cmd.none
 
 let update msg model =
     match model, msg with
