@@ -30,7 +30,12 @@ type GatewayClient(gatewayUri: Uri, identify: IdentifySendEvent, handler: Gatewa
     /// Start the client, resolving once the gateway connection is ready.
     member this.StartAsync() = async {
         this.Start()
-        do! this.Observable.Interceptor.AwaitMessage (function | Gateway.Msg.OnConnectSuccess _ -> true | _ -> false)
+
+        do! this.Observable.Interceptor.AwaitMessage (function
+            | Gateway.Msg.Lifecycle (Lifecycle.Msg.Ready _) -> true
+            | Gateway.Msg.Lifecycle (Lifecycle.Msg.Resumed) -> true
+            | _ -> false
+        )
     }
     
     /// Wait until the client disconnects synchronously.
@@ -47,31 +52,38 @@ type GatewayClient(gatewayUri: Uri, identify: IdentifySendEvent, handler: Gatewa
 
     /// Request the client to disconnect gracefully, resolving once terminated.
     member this.StopAsync() = async {
-        this.Observable.Forwarder.Send Gateway.Msg.Disconnect
+        AsyncPerformMsg.Perform ()
+        |> Gateway.Msg.Disconnect
+        |> this.Observable.Forwarder.Send
+
         do! this.WaitAsync()
     }
 
     /// Send event to request guild members.
     member this.RequestGuildMembers(event) =
         GatewaySendEvent.REQUEST_GUILD_MEMBERS event
+        |> AsyncAttemptMsg.Attempt
         |> Gateway.Msg.Send
         |> this.Observable.Forwarder.Send
 
     /// Send event to request soundboard sounds.
     member this.RequestSoundboardSounds(event) =
         GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS event
+        |> AsyncAttemptMsg.Attempt
         |> Gateway.Msg.Send
         |> this.Observable.Forwarder.Send
 
     /// Send event to update voice state.
     member this.UpdateVoiceState(event) =
         GatewaySendEvent.UPDATE_VOICE_STATE event
+        |> AsyncAttemptMsg.Attempt
         |> Gateway.Msg.Send
         |> this.Observable.Forwarder.Send
 
     /// Send event to update presence.
     member this.UpdatePresence(event) =
         GatewaySendEvent.UPDATE_PRESENCE event
+        |> AsyncAttemptMsg.Attempt
         |> Gateway.Msg.Send
         |> this.Observable.Forwarder.Send
 

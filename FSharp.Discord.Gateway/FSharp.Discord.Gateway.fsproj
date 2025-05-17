@@ -17,7 +17,6 @@
     <Compile Include="Heartbeat.fs" />
     <Compile Include="Lifecycle.fs" />
     <Compile Include="Gateway.fs" />
-    <Compile Include="GatewayOld.fs" />
     <Compile Include="GatewayClient.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
