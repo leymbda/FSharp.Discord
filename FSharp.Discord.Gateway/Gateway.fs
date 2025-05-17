@@ -35,11 +35,13 @@ type Msg =
     | Lifecycle of Lifecycle.Msg
 
     | Connect of AsyncEitherMsg<Uri option, ThreadSafeWebSocket.ThreadSafeWebSocket>
-    | Reconnect of AsyncPerformMsg<Uri option, ThreadSafeWebSocket.ThreadSafeWebSocket>
+    | Reconnect of AsyncPerformMsg<Lifecycle.ResumeData option, ThreadSafeWebSocket.ThreadSafeWebSocket>
     | Disconnect of AsyncPerformMsg<unit, unit>
 
-    // TODO: Handle websocket action success/failure
-    // TODO: Handle sending and receiving gateway events
+    | Receive of GatewayReceiveEvent
+    | Handle of AsyncAttemptMsg<GatewayReceiveEvent>
+
+    // TODO: Handle sending gateway events
     // TODO: Msg to detect for termination
 
 let private connect model resumeUri = async {
@@ -50,10 +52,18 @@ let private connect model resumeUri = async {
     return ThreadSafeWebSocket.createFromWebSocket ws
 }
 
+let private receive model event = async {
+    do! model.Handler event
+
+    // TODO: Update handler to handle failures
+}
+
 let init (gatewayUri, identify, handler) =
     Model.zero gatewayUri identify handler, Cmd.none
 
 let update msg model =
+    let currentTime = DateTime.UtcNow // TODO: Extract elsewhere to remove side effect
+
     match model.Lifecycle, model.Heartbeat, msg with
     // Connect
     | None, None, Msg.Connect (AsyncEitherMsg.Either resumeUri) ->
@@ -89,6 +99,22 @@ let update msg model =
     | _, _, Msg.Disconnect (AsyncPerformMsg.Success _) ->
         model, Cmd.none // TODO: Implement
 
+    // Lifecycle gateway receive events
+    | Some _, _, Msg.Receive (GatewayReceiveEvent.HELLO data) ->
+        model, Cmd.ofMsg (Msg.Lifecycle (Lifecycle.Msg.Hello data))
+
+    | Some _, _, Msg.Receive (GatewayReceiveEvent.READY (data, sequence)) ->
+        model, Cmd.ofMsg (Msg.Lifecycle (Lifecycle.Msg.Ready (data, sequence)))
+
+    | Some _, _, Msg.Receive (GatewayReceiveEvent.RESUMED) ->
+        model, Cmd.ofMsg (Msg.Lifecycle Lifecycle.Msg.Resumed)
+
+    | Some _, _, Msg.Receive (GatewayReceiveEvent.RECONNECT) ->
+        model, Cmd.ofMsg (Msg.Lifecycle Lifecycle.Msg.Reconnect)
+
+    | Some _, _, Msg.Receive (GatewayReceiveEvent.INVALID_SESSION resumable) ->
+        model, Cmd.ofMsg (Msg.Lifecycle (Lifecycle.Msg.InvalidSession resumable))
+
     // Lifecycle hello start heartbeat
     | Some (Lifecycle.State.Starting _ as lifecycle), None, Msg.Lifecycle (Lifecycle.Msg.Hello data as msg) ->
         let interval = TimeSpan.FromMilliseconds data.HeartbeatInterval
@@ -117,10 +143,11 @@ let update msg model =
     | Some lifecycle, Some heartbeat, Msg.Lifecycle ((Lifecycle.Msg.Restart resumeData) as msg) ->
         let updated, cmd = Lifecycle.update msg lifecycle
 
-        { model with Lifecycle = Some updated }, Cmd.map Msg.Lifecycle cmd
-        
-        // TODO: Handle resume or reconnect based on `resumeData`
-        // TODO: Handle restarting new heartbeat
+        { model with Lifecycle = Some updated },
+        Cmd.batch [
+            Cmd.map Msg.Lifecycle cmd
+            Cmd.ofMsg (Msg.Reconnect (AsyncPerformMsg.Perform resumeData))
+        ]
         
     // Lifecycle requested stop
     | Some lifecycle, _, Msg.Lifecycle (Lifecycle.Msg.Stop as msg) ->
@@ -138,6 +165,13 @@ let update msg model =
 
         { model with Lifecycle = Some updated }, Cmd.map Msg.Lifecycle cmd
     
+    // Heartbeat gateway receive events
+    | _, Some _, Msg.Receive (GatewayReceiveEvent.HEARTBEAT) ->
+        model, Cmd.ofMsg (Msg.Heartbeat Heartbeat.Msg.Beat)
+
+    | _, Some _, Msg.Receive (GatewayReceiveEvent.HEARTBEAT_ACK) ->
+        model, Cmd.ofMsg (Msg.Heartbeat Heartbeat.Msg.Ack)
+
     // Heartbeat requested stop
     | _, Some (Heartbeat.State.Active _ as heartbeat), Msg.Heartbeat (Heartbeat.Msg.Stop as msg) ->
         let updated, cmd = Heartbeat.update msg heartbeat
@@ -148,13 +182,21 @@ let update msg model =
             Cmd.ofMsg (Msg.Disconnect (AsyncPerformMsg.Perform ()))
         ]
 
-        // TODO: Handle heartbeat stop
-
     // Catch remaining heartbeat messages
     | _, Some heartbeat, Msg.Heartbeat msg ->
         let updated, cmd = Heartbeat.update msg heartbeat
 
         { model with Heartbeat = Some updated }, Cmd.map Msg.Heartbeat cmd
+
+    // Handle remaining gateway receive events through model handler
+    | Some (Lifecycle.State.Active _), Some (Heartbeat.State.Alive currentTime _), Msg.Receive event ->
+        model, Cmd.ofMsg (Msg.Handle (AsyncAttemptMsg.Attempt event))
+
+    | Some (Lifecycle.State.Active _), Some (Heartbeat.State.Alive currentTime _), Msg.Handle (AsyncAttemptMsg.Attempt event) ->
+        model, AsyncAttemptMsg.toCmd (receive model) event Msg.Handle
+
+    | Some (Lifecycle.State.Active _), Some (Heartbeat.State.Alive currentTime _), Msg.Handle (AsyncAttemptMsg.Failure exn) ->
+        model, Cmd.none // TODO: Implement
 
     // Catch invalid messages
     | lifecycle, heartbeat, msg ->

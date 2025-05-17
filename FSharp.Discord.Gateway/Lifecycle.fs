@@ -73,6 +73,7 @@ let init identify =
 
 let update msg model =
     match model, msg with
+    // Hello event
     | State.NotStarted (identify, None), Msg.Hello _ ->
         let event = GatewaySendEvent.IDENTIFY identify
 
@@ -87,6 +88,7 @@ let update msg model =
         
         { model with Started = true }, Cmd.ofMsg (Msg.Send event)
 
+    // Ready event
     | State.Starting None, Msg.Ready (event, sequence) ->
         let state = {
             Sequence = sequence
@@ -99,13 +101,15 @@ let update msg model =
             Ready = true },
         Cmd.none
 
+    // Resumed event
     | State.Starting (Some _), Msg.Resumed ->
         { model with Ready = true }, Cmd.none
-
-    | State.Active state, Msg.Reconnect ->
+    
+    // Reconnect event
+    | _, Msg.Reconnect ->
         let resumeData =
-            model.ResumeGatewayUrl
-            |> Option.map (fun resumeGatewayUrl -> {
+            Option.map2 (fun a b -> a, b) model.ResumeGatewayUrl model.SessionState
+            |> Option.map (fun (resumeGatewayUrl, state) -> {
                 Sequence = state.Sequence
                 SessionId = state.SessionId
                 ResumeGatewayUrl = resumeGatewayUrl
@@ -113,12 +117,12 @@ let update msg model =
 
         { model with Stopped = true }, Cmd.ofMsg (Msg.Restart resumeData)
 
-    | State.Starting (Some state), Msg.InvalidSession resumable
-    | State.Active state, Msg.InvalidSession resumable ->
+    // Invalid session event
+    | _, Msg.InvalidSession resumable ->
         let resumeData =
-            model.ResumeGatewayUrl
+            Option.map2 (fun a b -> a, b) model.ResumeGatewayUrl model.SessionState
             |> Option.filter (fun _ -> resumable)
-            |> Option.map (fun resumeGatewayUrl -> {
+            |> Option.map (fun (resumeGatewayUrl, state) -> {
                 Sequence = state.Sequence
                 SessionId = state.SessionId
                 ResumeGatewayUrl = resumeGatewayUrl
@@ -126,15 +130,19 @@ let update msg model =
 
         { model with Stopped = true }, Cmd.ofMsg (Msg.Restart resumeData)
 
+    // Trigger send
     | _, Msg.Send _ ->
         model, Cmd.none
 
+    // Trigger restart
     | _, Msg.Restart _ ->
         model, Cmd.none
 
+    // Trigger stop
     | _, Msg.Stop ->
         { model with Stopped = true }, Cmd.none
 
+    // Catch invalid state operations
     | state, msg ->
         eprintfn "Attempted to call msg %A in invalid state %A" msg state
         model, Cmd.ofMsg Msg.Stop
