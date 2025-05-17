@@ -5,7 +5,9 @@ open FSharp.Discord.Types
 open System
 open System.Threading.Tasks
 
-type GatewayClient(gatewayUri: Uri, identify: IdentifySendEvent, handler: Gateway.Handler) =
+type GatewayClient(gatewayUri: Uri, identify: IdentifySendEvent, handler: Gateway.Handler, ?withConsoleTrace: bool) =
+    member val ConsoleTraceEnabled = defaultArg withConsoleTrace false with get
+
     member val private TerminationTaskSource = TaskCompletionSource()
 
     member val private Observable = MessageObservable<Gateway.Msg>(["clientevent"])
@@ -25,6 +27,7 @@ type GatewayClient(gatewayUri: Uri, identify: IdentifySendEvent, handler: Gatewa
         Program.mkProgram Gateway.init update (fun _ _ -> ())
         |> Program.withSubscription subscribe
         |> Program.withTermination Gateway.terminate (fun _ -> this.TerminationTaskSource.SetResult())
+        |> fun p -> if this.ConsoleTraceEnabled then Program.withConsoleTrace p else p
         |> Program.runWith (gatewayUri, identify, handler)
 
     /// Start the client, resolving once the gateway connection is ready.
@@ -98,3 +101,5 @@ type GatewayClient(gatewayUri: Uri, identify: IdentifySendEvent, handler: Gatewa
             }
             |> Async.StartAsTask
             |> ValueTask
+
+    // TODO: These dispose methods are not implemented per the standard
