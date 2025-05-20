@@ -167,16 +167,16 @@ module ModalSubmitData =
 module InteractionData =
     let decoder: Decoder<InteractionData> =
         Decode.oneOf [
-            Decode.map InteractionData.APPLICATION_COMMAND ApplicationCommandData.decoder
-            Decode.map InteractionData.MESSAGE_COMPONENT MessageComponentData.decoder
-            Decode.map InteractionData.MODAL_SUBMIT ModalSubmitData.decoder
+            Decode.map InteractionData.ApplicationCommand ApplicationCommandData.decoder
+            Decode.map InteractionData.MessageComponent MessageComponentData.decoder
+            Decode.map InteractionData.ModalSubmit ModalSubmitData.decoder
         ]
 
     let encoder (v: InteractionData) =
         match v with
-        | InteractionData.APPLICATION_COMMAND data -> ApplicationCommandData.encoder data
-        | InteractionData.MESSAGE_COMPONENT data -> MessageComponentData.encoder data
-        | InteractionData.MODAL_SUBMIT data -> ModalSubmitData.encoder data
+        | InteractionData.ApplicationCommand data -> ApplicationCommandData.encoder data
+        | InteractionData.MessageComponent data -> MessageComponentData.encoder data
+        | InteractionData.ModalSubmit data -> ModalSubmitData.encoder data
 
 module ResolvedData =
     module Property =
@@ -236,10 +236,10 @@ module ApplicationCommandInteractionDataOption =
 module ApplicationCommandInteractionDataOptionValue =
     let decoder: Decoder<ApplicationCommandInteractionDataOptionValue> =
         Decode.oneOf [
-            Decode.map ApplicationCommandInteractionDataOptionValue.STRING Decode.string
-            Decode.map ApplicationCommandInteractionDataOptionValue.INT Decode.int
-            Decode.map ApplicationCommandInteractionDataOptionValue.DOUBLE Decode.float
-            Decode.map ApplicationCommandInteractionDataOptionValue.BOOL Decode.bool
+            Decode.map ApplicationCommandInteractionDataOptionValue.String Decode.string
+            Decode.map ApplicationCommandInteractionDataOptionValue.Int Decode.int
+            Decode.map ApplicationCommandInteractionDataOptionValue.Double Decode.float
+            Decode.map ApplicationCommandInteractionDataOptionValue.Bool Decode.bool
         ]
 
         // TODO: Test if int will fail decoding if a float is provided
@@ -247,10 +247,10 @@ module ApplicationCommandInteractionDataOptionValue =
 
     let encoder (v: ApplicationCommandInteractionDataOptionValue) =
         match v with
-        | ApplicationCommandInteractionDataOptionValue.STRING data -> Encode.string data
-        | ApplicationCommandInteractionDataOptionValue.INT data -> Encode.int data
-        | ApplicationCommandInteractionDataOptionValue.DOUBLE data -> Encode.float data
-        | ApplicationCommandInteractionDataOptionValue.BOOL data -> Encode.bool data
+        | ApplicationCommandInteractionDataOptionValue.String data -> Encode.string data
+        | ApplicationCommandInteractionDataOptionValue.Int data -> Encode.int data
+        | ApplicationCommandInteractionDataOptionValue.Double data -> Encode.float data
+        | ApplicationCommandInteractionDataOptionValue.Bool data -> Encode.bool data
 
 module MessageInteraction =
     module Property =
@@ -367,16 +367,16 @@ module ModalInteractionCallbackData =
 module InteractionCallbackData =
     let decoder: Decoder<InteractionCallbackData> =
         Decode.oneOf [
-            Decode.map InteractionCallbackData.MESSAGE MessageInteractionCallbackData.decoder
-            Decode.map InteractionCallbackData.AUTOCOMPLETE AutocompleteInteractionCallbackData.decoder
-            Decode.map InteractionCallbackData.MODAL ModalInteractionCallbackData.decoder
+            Decode.map InteractionCallbackData.Message MessageInteractionCallbackData.decoder
+            Decode.map InteractionCallbackData.Autocomplete AutocompleteInteractionCallbackData.decoder
+            Decode.map InteractionCallbackData.Modal ModalInteractionCallbackData.decoder
         ]
 
     let encoder (v: InteractionCallbackData) =
         match v with
-        | InteractionCallbackData.MESSAGE data -> MessageInteractionCallbackData.encoder data
-        | InteractionCallbackData.AUTOCOMPLETE data -> AutocompleteInteractionCallbackData.encoder data
-        | InteractionCallbackData.MODAL data -> ModalInteractionCallbackData.encoder data
+        | InteractionCallbackData.Message data -> MessageInteractionCallbackData.encoder data
+        | InteractionCallbackData.Autocomplete data -> AutocompleteInteractionCallbackData.encoder data
+        | InteractionCallbackData.Modal data -> ModalInteractionCallbackData.encoder data
 
 module InteractionCallbackResponse =
     module Property =
@@ -582,26 +582,26 @@ module ApplicationCommandOption =
 module ApplicationCommandOptionMinValue =
     let decoder: Decoder<ApplicationCommandOptionMinValue> =
         Decode.oneOf [
-            Decode.map ApplicationCommandOptionMinValue.INT Decode.int
-            Decode.map ApplicationCommandOptionMinValue.DOUBLE Decode.float
+            Decode.map ApplicationCommandOptionMinValue.Int Decode.int
+            Decode.map ApplicationCommandOptionMinValue.Double Decode.float
         ]
 
     let encoder (v: ApplicationCommandOptionMinValue) =
         match v with
-        | ApplicationCommandOptionMinValue.INT data -> Encode.int data
-        | ApplicationCommandOptionMinValue.DOUBLE data -> Encode.float data
+        | ApplicationCommandOptionMinValue.Int data -> Encode.int data
+        | ApplicationCommandOptionMinValue.Double data -> Encode.float data
 
 module ApplicationCommandOptionMaxValue =
     let decoder: Decoder<ApplicationCommandOptionMaxValue> =
         Decode.oneOf [
-            Decode.map ApplicationCommandOptionMaxValue.INT Decode.int
-            Decode.map ApplicationCommandOptionMaxValue.DOUBLE Decode.float
+            Decode.map ApplicationCommandOptionMaxValue.Int Decode.int
+            Decode.map ApplicationCommandOptionMaxValue.Double Decode.float
         ]
 
     let encoder (v: ApplicationCommandOptionMaxValue) =
         match v with
-        | ApplicationCommandOptionMaxValue.INT data -> Encode.int data
-        | ApplicationCommandOptionMaxValue.DOUBLE data -> Encode.float data
+        | ApplicationCommandOptionMaxValue.Int data -> Encode.int data
+        | ApplicationCommandOptionMaxValue.Double data -> Encode.float data
 
 module ApplicationCommandOptionChoice =
     module Property =
@@ -626,16 +626,16 @@ module ApplicationCommandOptionChoice =
 module ApplicationCommandOptionChoiceValue =
     let decoder: Decoder<ApplicationCommandOptionChoiceValue>  =
         Decode.oneOf [
-            Decode.map ApplicationCommandOptionChoiceValue.STRING Decode.string
-            Decode.map ApplicationCommandOptionChoiceValue.INT Decode.int
-            Decode.map ApplicationCommandOptionChoiceValue.DOUBLE Decode.float
+            Decode.map ApplicationCommandOptionChoiceValue.String Decode.string
+            Decode.map ApplicationCommandOptionChoiceValue.Int Decode.int
+            Decode.map ApplicationCommandOptionChoiceValue.Double Decode.float
         ]
 
     let encoder (v: ApplicationCommandOptionChoiceValue) =
         match v with
-        | ApplicationCommandOptionChoiceValue.STRING data -> Encode.string data
-        | ApplicationCommandOptionChoiceValue.INT data -> Encode.int data
-        | ApplicationCommandOptionChoiceValue.DOUBLE data -> Encode.float data
+        | ApplicationCommandOptionChoiceValue.String data -> Encode.string data
+        | ApplicationCommandOptionChoiceValue.Int data -> Encode.int data
+        | ApplicationCommandOptionChoiceValue.Double data -> Encode.float data
 
 module GuildApplicationCommandPermissions =
     module Property =
@@ -895,22 +895,22 @@ module Button =
 
     let decoder: Decoder<Button> =
         Decode.oneOf [
-            Decode.map Button.PRIMARY PrimaryButton.decoder
-            Decode.map Button.SECONDARY SecondaryButton.decoder
-            Decode.map Button.SUCCESS SuccessButton.decoder
-            Decode.map Button.DANGER DangerButton.decoder
-            Decode.map Button.LINK LinkButton.decoder
-            Decode.map Button.PREMIUM PremiumButton.decoder
+            Decode.map Button.Primary PrimaryButton.decoder
+            Decode.map Button.Secondary SecondaryButton.decoder
+            Decode.map Button.Success SuccessButton.decoder
+            Decode.map Button.Danger DangerButton.decoder
+            Decode.map Button.Link LinkButton.decoder
+            Decode.map Button.Premium PremiumButton.decoder
         ]
 
     let encoder (v: Button) =
         match v with
-        | Button.PRIMARY data -> PrimaryButton.encoder data
-        | Button.SECONDARY data -> SecondaryButton.encoder data
-        | Button.SUCCESS data -> SuccessButton.encoder data
-        | Button.DANGER data -> DangerButton.encoder data
-        | Button.LINK data -> LinkButton.encoder data
-        | Button.PREMIUM data -> PremiumButton.encoder data
+        | Button.Primary data -> PrimaryButton.encoder data
+        | Button.Secondary data -> SecondaryButton.encoder data
+        | Button.Success data -> SuccessButton.encoder data
+        | Button.Danger data -> DangerButton.encoder data
+        | Button.Link data -> LinkButton.encoder data
+        | Button.Premium data -> PremiumButton.encoder data
 
 module StringSelect =
     module Property =
@@ -1066,14 +1066,14 @@ module TextInput =
 
     let decoder: Decoder<TextInput> =
         Decode.oneOf [
-            Decode.map TextInput.SHORT ShortTextInput.decoder
-            Decode.map TextInput.PARAGRAPH ParagraphTextInput.decoder
+            Decode.map TextInput.Short ShortTextInput.decoder
+            Decode.map TextInput.Paragraph ParagraphTextInput.decoder
         ]
 
     let encoder (v: TextInput) =
         match v with
-        | TextInput.SHORT data -> ShortTextInput.encoder data
-        | TextInput.PARAGRAPH data -> ParagraphTextInput.encoder data
+        | TextInput.Short data -> ShortTextInput.encoder data
+        | TextInput.Paragraph data -> ParagraphTextInput.encoder data
         
 module UserSelect =
     module Property =
@@ -1126,17 +1126,17 @@ module SelectDefaultValue =
         })
         |> Decode.andThen (fun raw ->
             match raw.Type with
-            | SelectMenuDefaultValueType.USER -> Decode.succeed (SelectDefaultValue.USER raw.Id)
-            | SelectMenuDefaultValueType.ROLE -> Decode.succeed (SelectDefaultValue.ROLE raw.Id)
-            | SelectMenuDefaultValueType.CHANNEL -> Decode.succeed (SelectDefaultValue.CHANNEL raw.Id)
+            | SelectMenuDefaultValueType.USER -> Decode.succeed (SelectDefaultValue.User raw.Id)
+            | SelectMenuDefaultValueType.ROLE -> Decode.succeed (SelectDefaultValue.Role raw.Id)
+            | SelectMenuDefaultValueType.CHANNEL -> Decode.succeed (SelectDefaultValue.Channel raw.Id)
         )
 
     let encoder (v: SelectDefaultValue) =
         let type', id =
             match v with
-            | SelectDefaultValue.USER id -> SelectMenuDefaultValueType.USER, id
-            | SelectDefaultValue.ROLE id -> SelectMenuDefaultValueType.ROLE, id
-            | SelectDefaultValue.CHANNEL id -> SelectMenuDefaultValueType.CHANNEL, id
+            | SelectDefaultValue.User id -> SelectMenuDefaultValueType.USER, id
+            | SelectDefaultValue.Role id -> SelectMenuDefaultValueType.ROLE, id
+            | SelectDefaultValue.Channel id -> SelectMenuDefaultValueType.CHANNEL, id
 
         Encode.object ([]
             |> Encode.required Property.Id Encode.string id
@@ -1464,40 +1464,40 @@ module Component =
 
     let decoder: Decoder<Component> =
         Decode.oneOf [
-            Decode.map Component.ACTION_ROW ActionRow.decoder
-            Decode.map Component.BUTTON Button.decoder
-            Decode.map Component.STRING_SELECT StringSelect.decoder
-            Decode.map Component.TEXT_INPUT TextInput.decoder
-            Decode.map Component.USER_SELECT UserSelect.decoder
-            Decode.map Component.ROLE_SELECT RoleSelect.decoder
-            Decode.map Component.MENTIONABLE_SELECT MentionableSelect.decoder
-            Decode.map Component.CHANNEL_SELECT ChannelSelect.decoder
-            Decode.map Component.SECTION Section.decoder
-            Decode.map Component.TEXT_DISPLAY TextDisplay.decoder
-            Decode.map Component.THUMBNAIL Thumbnail.decoder
-            Decode.map Component.MEDIA_GALLERY MediaGallery.decoder
-            Decode.map Component.FILE File.decoder
-            Decode.map Component.SEPARATOR Separator.decoder
-            Decode.map Component.CONTAINER Container.decoder
+            Decode.map Component.ActionRow ActionRow.decoder
+            Decode.map Component.Button Button.decoder
+            Decode.map Component.StringSelect StringSelect.decoder
+            Decode.map Component.TextInput TextInput.decoder
+            Decode.map Component.UserSelect UserSelect.decoder
+            Decode.map Component.RoleSelect RoleSelect.decoder
+            Decode.map Component.MentionableSelect MentionableSelect.decoder
+            Decode.map Component.ChannelSelect ChannelSelect.decoder
+            Decode.map Component.Section Section.decoder
+            Decode.map Component.TextDisplay TextDisplay.decoder
+            Decode.map Component.Thumbnail Thumbnail.decoder
+            Decode.map Component.MediaGallery MediaGallery.decoder
+            Decode.map Component.File File.decoder
+            Decode.map Component.Separator Separator.decoder
+            Decode.map Component.Container Container.decoder
         ]
 
     let encoder (v: Component) =
         match v with
-        | Component.ACTION_ROW data -> ActionRow.encoder data
-        | Component.BUTTON data -> Button.encoder data
-        | Component.STRING_SELECT data -> StringSelect.encoder data
-        | Component.TEXT_INPUT data -> TextInput.encoder data
-        | Component.USER_SELECT data -> UserSelect.encoder data
-        | Component.ROLE_SELECT data -> RoleSelect.encoder data
-        | Component.MENTIONABLE_SELECT data -> MentionableSelect.encoder data
-        | Component.CHANNEL_SELECT data -> ChannelSelect.encoder data
-        | Component.SECTION data -> Section.encoder data
-        | Component.TEXT_DISPLAY data -> TextDisplay.encoder data
-        | Component.THUMBNAIL data -> Thumbnail.encoder data
-        | Component.MEDIA_GALLERY data -> MediaGallery.encoder data
-        | Component.FILE data -> File.encoder data
-        | Component.SEPARATOR data -> Separator.encoder data
-        | Component.CONTAINER data -> Container.encoder data
+        | Component.ActionRow data -> ActionRow.encoder data
+        | Component.Button data -> Button.encoder data
+        | Component.StringSelect data -> StringSelect.encoder data
+        | Component.TextInput data -> TextInput.encoder data
+        | Component.UserSelect data -> UserSelect.encoder data
+        | Component.RoleSelect data -> RoleSelect.encoder data
+        | Component.MentionableSelect data -> MentionableSelect.encoder data
+        | Component.ChannelSelect data -> ChannelSelect.encoder data
+        | Component.Section data -> Section.encoder data
+        | Component.TextDisplay data -> TextDisplay.encoder data
+        | Component.Thumbnail data -> Thumbnail.encoder data
+        | Component.MediaGallery data -> MediaGallery.encoder data
+        | Component.File data -> File.encoder data
+        | Component.Separator data -> Separator.encoder data
+        | Component.Container data -> Container.encoder data
 
 module SessionStartLimit =
     module Property =
@@ -1552,24 +1552,24 @@ module GatewaySendEventPayload =
 module GatewaySendEventData =
     let decoder: Decoder<GatewaySendEventData> =
         Decode.oneOf [
-            Decode.map GatewaySendEventData.OPTIONAL_INT (Decode.option Decode.int)
-            Decode.map GatewaySendEventData.IDENTIFY IdentifySendEvent.decoder
-            Decode.map GatewaySendEventData.RESUME ResumeSendEvent.decoder
-            Decode.map GatewaySendEventData.REQUEST_GUILD_MEMBERS RequestGuildMembersSendEvent.decoder
-            Decode.map GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS RequestSoundboardSoundsSendEvent.decoder
-            Decode.map GatewaySendEventData.UPDATE_VOICE_STATE UpdateVoiceStateSendEvent.decoder
-            Decode.map GatewaySendEventData.UPDATE_PRESENCE UpdatePresenceSendEvent.decoder
+            Decode.map GatewaySendEventData.OptionalInt (Decode.option Decode.int)
+            Decode.map GatewaySendEventData.Identify IdentifySendEvent.decoder
+            Decode.map GatewaySendEventData.Resume ResumeSendEvent.decoder
+            Decode.map GatewaySendEventData.RequestGuildMembers RequestGuildMembersSendEvent.decoder
+            Decode.map GatewaySendEventData.RequestSoundboardSounds RequestSoundboardSoundsSendEvent.decoder
+            Decode.map GatewaySendEventData.UpdateVoiceState UpdateVoiceStateSendEvent.decoder
+            Decode.map GatewaySendEventData.UpdatePresence UpdatePresenceSendEvent.decoder
         ]
 
     let encoder (v: GatewaySendEventData) =
         match v with
-        | GatewaySendEventData.OPTIONAL_INT d -> Encode.option Encode.int d
-        | GatewaySendEventData.IDENTIFY d -> IdentifySendEvent.encoder d
-        | GatewaySendEventData.RESUME d -> ResumeSendEvent.encoder d
-        | GatewaySendEventData.REQUEST_GUILD_MEMBERS d -> RequestGuildMembersSendEvent.encoder d
-        | GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS d -> RequestSoundboardSoundsSendEvent.encoder d
-        | GatewaySendEventData.UPDATE_VOICE_STATE d -> UpdateVoiceStateSendEvent.encoder d
-        | GatewaySendEventData.UPDATE_PRESENCE d -> UpdatePresenceSendEvent.encoder d
+        | GatewaySendEventData.OptionalInt d -> Encode.option Encode.int d
+        | GatewaySendEventData.Identify d -> IdentifySendEvent.encoder d
+        | GatewaySendEventData.Resume d -> ResumeSendEvent.encoder d
+        | GatewaySendEventData.RequestGuildMembers d -> RequestGuildMembersSendEvent.encoder d
+        | GatewaySendEventData.RequestSoundboardSounds d -> RequestSoundboardSoundsSendEvent.encoder d
+        | GatewaySendEventData.UpdateVoiceState d -> UpdateVoiceStateSendEvent.encoder d
+        | GatewaySendEventData.UpdatePresence d -> UpdatePresenceSendEvent.encoder d
 
 module GatewayReceiveEventPayload =
     let decoder: Decoder<GatewayReceiveEventPayload> = GatewayEventPayload.decoder (Decode.option GatewayReceiveEventData.decoder)
@@ -1578,117 +1578,117 @@ module GatewayReceiveEventPayload =
 module GatewayReceiveEventData =
     let decoder: Decoder<GatewayReceiveEventData> =
         Decode.oneOf [
-            Decode.map GatewayReceiveEventData.BOOLEAN Decode.bool
-            Decode.map GatewayReceiveEventData.APPLICATION_COMMAND_PERMISSION ApplicationCommandPermission.decoder
-            Decode.map GatewayReceiveEventData.AUTO_MODERATION_RULE AutoModerationRule.decoder
-            Decode.map GatewayReceiveEventData.CHANNEL Channel.decoder
-            Decode.map GatewayReceiveEventData.ENTITLEMENT Entitlement.decoder
-            Decode.map GatewayReceiveEventData.GUILD Guild.decoder
-            Decode.map GatewayReceiveEventData.GUILD_USER GuildUserReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_ROLE GuildRoleReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_SCHEDULED_EVENT GuildScheduledEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_SCHEDULED_EVENT_USER GuildScheduledEventUserReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.SOUNDBOARD_SOUND SoundboardSound.decoder
-            Decode.map GatewayReceiveEventData.GUILD_SOUNDBOARD_SOUNDS GuildSoundboardSoundsReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.INTEGRATION IntegrationReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.USER User.decoder
-            Decode.map GatewayReceiveEventData.VOICE_STATE VoiceState.decoder
-            Decode.map GatewayReceiveEventData.INTERACTION Interaction.decoder
-            Decode.map GatewayReceiveEventData.STAGE_INSTANCE StageInstance.decoder
-            Decode.map GatewayReceiveEventData.SUBSCRIPTION Subscription.decoder
-            Decode.map GatewayReceiveEventData.MESSAGE_POLL_VOTE MessagePollVoteReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.HELLO HelloReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.READY ReadyReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.AUTO_MODERATION_ACTION_EXECUTION AutoModerationActionExecutionReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.CHANNEL_PINS_UPDATE ChannelPinsUpdateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.THREAD_CREATE ThreadCreateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.THREAD_DELETE ThreadDeleteReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.THREAD_LIST_SYNC ThreadListSyncReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.THREAD_MEMBER_UPDATE ThreadMemberUpdateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.THREAD_MEMBERS_UPDATE ThreadMembersUpdateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_CREATE GuildCreateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_DELETE GuildDeleteReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_AUDIT_LOG_ENTRY_CREATE GuildAuditLogEntryCreateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_EMOJIS_UPDATE GuildEmojisUpdateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_STICKERS_UPDATE GuildStickersUpdateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_INTEGRATIONS_UPDATE GuildIntegrationsUpdateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_MEMBER_ADD GuildMemberAddReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_MEMBER_UPDATE GuildMemberUpdateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_MEMBERS_CHUNK GuildMembersChunkReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_ROLE_DELETE GuildRoleDeleteReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.GUILD_SOUNDBOARD_SOUND_DELETE GuildSoundboardSoundDeleteReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.INTEGRATION_DELETE IntegrationDeleteReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.INVITE_CREATE InviteCreateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.INVITE_DELETE InviteDeleteReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.MESSAGE_DELETE MessageDeleteReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.MESSAGE_DELETE_BULK MessageDeleteBulkReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.MESSAGE_REACTION_ADD MessageReactionAddReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.MESSAGE_REACTION_REMOVE MessageReactionRemoveReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.MESSAGE_REACTION_REMOVE_ALL MessageReactionRemoveAllReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.MESSAGE_REACTION_REMOVE_EMOJI MessageReactionRemoveEmojiReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.PRESENCE_UPDATE PresenceUpdateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.TYPING_START TypingStartReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.VOICE_CHANNEL_EFFECT_SEND VoiceChannelEffectSendReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.VOICE_SERVER_UPDATE VoiceServerUpdateReceiveEvent.decoder
-            Decode.map GatewayReceiveEventData.WEBHOOKS_UPDATE WebhooksUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.Boolean Decode.bool
+            Decode.map GatewayReceiveEventData.ApplicationCommandPermission ApplicationCommandPermission.decoder
+            Decode.map GatewayReceiveEventData.AutoModerationRule AutoModerationRule.decoder
+            Decode.map GatewayReceiveEventData.Channel Channel.decoder
+            Decode.map GatewayReceiveEventData.Entitlement Entitlement.decoder
+            Decode.map GatewayReceiveEventData.Guild Guild.decoder
+            Decode.map GatewayReceiveEventData.GuildUser GuildUserReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildRole GuildRoleReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildScheduledEvent GuildScheduledEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildScheduledEventUser GuildScheduledEventUserReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.SoundboardSound SoundboardSound.decoder
+            Decode.map GatewayReceiveEventData.GuildSoundboardSounds GuildSoundboardSoundsReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.Integration IntegrationReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.User User.decoder
+            Decode.map GatewayReceiveEventData.VoiceState VoiceState.decoder
+            Decode.map GatewayReceiveEventData.Interaction Interaction.decoder
+            Decode.map GatewayReceiveEventData.StageInstance StageInstance.decoder
+            Decode.map GatewayReceiveEventData.Subscription Subscription.decoder
+            Decode.map GatewayReceiveEventData.MessagePollVote MessagePollVoteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.Hello HelloReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.Ready ReadyReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.AutoModerationActionExecution AutoModerationActionExecutionReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.ChannelPinsUpdate ChannelPinsUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.ThreadCreate ThreadCreateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.ThreadDelete ThreadDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.ThreadListSync ThreadListSyncReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.ThreadMemberUpdate ThreadMemberUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.ThreadMembersUpdate ThreadMembersUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildCreate GuildCreateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildDelete GuildDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildAuditLogEntryCreate GuildAuditLogEntryCreateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildEmojisUpdate GuildEmojisUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildStickersUpdate GuildStickersUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildIntegrationsUpdate GuildIntegrationsUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildMemberAdd GuildMemberAddReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildMemberUpdate GuildMemberUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildMembersChunk GuildMembersChunkReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildRoleDelete GuildRoleDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.GuildSoundboardSoundDelete GuildSoundboardSoundDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.IntegrationDelete IntegrationDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.InviteCreate InviteCreateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.InviteDelete InviteDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MessageDelete MessageDeleteReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MessageDeleteBulk MessageDeleteBulkReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MessageReactionAdd MessageReactionAddReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MessageReactionRemove MessageReactionRemoveReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MessageReactionRemoveAll MessageReactionRemoveAllReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.MessageReactionRemoveEmoji MessageReactionRemoveEmojiReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.PresenceUpdate PresenceUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.TypingStart TypingStartReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.VoiceChannelEffectSend VoiceChannelEffectSendReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.VoiceServerUpdate VoiceServerUpdateReceiveEvent.decoder
+            Decode.map GatewayReceiveEventData.WebhooksUpdate WebhooksUpdateReceiveEvent.decoder
         ]
 
     let encoder (v: GatewayReceiveEventData) =
         match v with
-        | GatewayReceiveEventData.BOOLEAN d -> Encode.bool d
-        | GatewayReceiveEventData.APPLICATION_COMMAND_PERMISSION d -> ApplicationCommandPermission.encoder d
-        | GatewayReceiveEventData.AUTO_MODERATION_RULE d -> AutoModerationRule.encoder d
-        | GatewayReceiveEventData.CHANNEL d -> Channel.encoder d
-        | GatewayReceiveEventData.ENTITLEMENT d -> Entitlement.encoder d
-        | GatewayReceiveEventData.GUILD d -> Guild.encoder d
-        | GatewayReceiveEventData.GUILD_USER d -> GuildUserReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_ROLE d -> GuildRoleReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_SCHEDULED_EVENT d -> GuildScheduledEvent.encoder d
-        | GatewayReceiveEventData.GUILD_SCHEDULED_EVENT_USER d -> GuildScheduledEventUserReceiveEvent.encoder d
-        | GatewayReceiveEventData.SOUNDBOARD_SOUND d -> SoundboardSound.encoder d
-        | GatewayReceiveEventData.GUILD_SOUNDBOARD_SOUNDS d -> GuildSoundboardSoundsReceiveEvent.encoder d
-        | GatewayReceiveEventData.INTEGRATION d -> IntegrationReceiveEvent.encoder d
-        | GatewayReceiveEventData.MESSAGE d -> MessageReceiveEvent.encoder d
-        | GatewayReceiveEventData.USER d -> User.encoder d
-        | GatewayReceiveEventData.VOICE_STATE d -> VoiceState.encoder d
-        | GatewayReceiveEventData.INTERACTION d -> Interaction.encoder d
-        | GatewayReceiveEventData.STAGE_INSTANCE d -> StageInstance.encoder d
-        | GatewayReceiveEventData.SUBSCRIPTION d -> Subscription.encoder d
-        | GatewayReceiveEventData.MESSAGE_POLL_VOTE d -> MessagePollVoteReceiveEvent.encoder d
-        | GatewayReceiveEventData.HELLO d -> HelloReceiveEvent.encoder d
-        | GatewayReceiveEventData.READY d -> ReadyReceiveEvent.encoder d
-        | GatewayReceiveEventData.AUTO_MODERATION_ACTION_EXECUTION d -> AutoModerationActionExecutionReceiveEvent.encoder d
-        | GatewayReceiveEventData.CHANNEL_PINS_UPDATE d -> ChannelPinsUpdateReceiveEvent.encoder d
-        | GatewayReceiveEventData.THREAD_CREATE d -> ThreadCreateReceiveEvent.encoder d
-        | GatewayReceiveEventData.THREAD_DELETE d -> ThreadDeleteReceiveEvent.encoder d
-        | GatewayReceiveEventData.THREAD_LIST_SYNC d -> ThreadListSyncReceiveEvent.encoder d
-        | GatewayReceiveEventData.THREAD_MEMBER_UPDATE d -> ThreadMemberUpdateReceiveEvent.encoder d
-        | GatewayReceiveEventData.THREAD_MEMBERS_UPDATE d -> ThreadMembersUpdateReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_CREATE d -> GuildCreateReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_DELETE d -> GuildDeleteReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_AUDIT_LOG_ENTRY_CREATE d -> GuildAuditLogEntryCreateReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_EMOJIS_UPDATE d -> GuildEmojisUpdateReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_STICKERS_UPDATE d -> GuildStickersUpdateReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_INTEGRATIONS_UPDATE d -> GuildIntegrationsUpdateReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_MEMBER_ADD d -> GuildMemberAddReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_MEMBER_UPDATE d -> GuildMemberUpdateReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_MEMBERS_CHUNK d -> GuildMembersChunkReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_ROLE_DELETE d -> GuildRoleDeleteReceiveEvent.encoder d
-        | GatewayReceiveEventData.GUILD_SOUNDBOARD_SOUND_DELETE d -> GuildSoundboardSoundDeleteReceiveEvent.encoder d
-        | GatewayReceiveEventData.INTEGRATION_DELETE d -> IntegrationDeleteReceiveEvent.encoder d
-        | GatewayReceiveEventData.INVITE_CREATE d -> InviteCreateReceiveEvent.encoder d
-        | GatewayReceiveEventData.INVITE_DELETE d -> InviteDeleteReceiveEvent.encoder d
-        | GatewayReceiveEventData.MESSAGE_DELETE d -> MessageDeleteReceiveEvent.encoder d
-        | GatewayReceiveEventData.MESSAGE_DELETE_BULK d -> MessageDeleteBulkReceiveEvent.encoder d
-        | GatewayReceiveEventData.MESSAGE_REACTION_ADD d -> MessageReactionAddReceiveEvent.encoder d
-        | GatewayReceiveEventData.MESSAGE_REACTION_REMOVE d -> MessageReactionRemoveReceiveEvent.encoder d
-        | GatewayReceiveEventData.MESSAGE_REACTION_REMOVE_ALL d -> MessageReactionRemoveAllReceiveEvent.encoder d
-        | GatewayReceiveEventData.MESSAGE_REACTION_REMOVE_EMOJI d -> MessageReactionRemoveEmojiReceiveEvent.encoder d
-        | GatewayReceiveEventData.PRESENCE_UPDATE d -> PresenceUpdateReceiveEvent.encoder d
-        | GatewayReceiveEventData.TYPING_START d -> TypingStartReceiveEvent.encoder d
-        | GatewayReceiveEventData.VOICE_CHANNEL_EFFECT_SEND d -> VoiceChannelEffectSendReceiveEvent.encoder d
-        | GatewayReceiveEventData.VOICE_SERVER_UPDATE d -> VoiceServerUpdateReceiveEvent.encoder d
-        | GatewayReceiveEventData.WEBHOOKS_UPDATE d -> WebhooksUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.Boolean d -> Encode.bool d
+        | GatewayReceiveEventData.ApplicationCommandPermission d -> ApplicationCommandPermission.encoder d
+        | GatewayReceiveEventData.AutoModerationRule d -> AutoModerationRule.encoder d
+        | GatewayReceiveEventData.Channel d -> Channel.encoder d
+        | GatewayReceiveEventData.Entitlement d -> Entitlement.encoder d
+        | GatewayReceiveEventData.Guild d -> Guild.encoder d
+        | GatewayReceiveEventData.GuildUser d -> GuildUserReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildRole d -> GuildRoleReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildScheduledEvent d -> GuildScheduledEvent.encoder d
+        | GatewayReceiveEventData.GuildScheduledEventUser d -> GuildScheduledEventUserReceiveEvent.encoder d
+        | GatewayReceiveEventData.SoundboardSound d -> SoundboardSound.encoder d
+        | GatewayReceiveEventData.GuildSoundboardSounds d -> GuildSoundboardSoundsReceiveEvent.encoder d
+        | GatewayReceiveEventData.Integration d -> IntegrationReceiveEvent.encoder d
+        | GatewayReceiveEventData.Message d -> MessageReceiveEvent.encoder d
+        | GatewayReceiveEventData.User d -> User.encoder d
+        | GatewayReceiveEventData.VoiceState d -> VoiceState.encoder d
+        | GatewayReceiveEventData.Interaction d -> Interaction.encoder d
+        | GatewayReceiveEventData.StageInstance d -> StageInstance.encoder d
+        | GatewayReceiveEventData.Subscription d -> Subscription.encoder d
+        | GatewayReceiveEventData.MessagePollVote d -> MessagePollVoteReceiveEvent.encoder d
+        | GatewayReceiveEventData.Hello d -> HelloReceiveEvent.encoder d
+        | GatewayReceiveEventData.Ready d -> ReadyReceiveEvent.encoder d
+        | GatewayReceiveEventData.AutoModerationActionExecution d -> AutoModerationActionExecutionReceiveEvent.encoder d
+        | GatewayReceiveEventData.ChannelPinsUpdate d -> ChannelPinsUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.ThreadCreate d -> ThreadCreateReceiveEvent.encoder d
+        | GatewayReceiveEventData.ThreadDelete d -> ThreadDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.ThreadListSync d -> ThreadListSyncReceiveEvent.encoder d
+        | GatewayReceiveEventData.ThreadMemberUpdate d -> ThreadMemberUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.ThreadMembersUpdate d -> ThreadMembersUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildCreate d -> GuildCreateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildDelete d -> GuildDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildAuditLogEntryCreate d -> GuildAuditLogEntryCreateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildEmojisUpdate d -> GuildEmojisUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildStickersUpdate d -> GuildStickersUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildIntegrationsUpdate d -> GuildIntegrationsUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildMemberAdd d -> GuildMemberAddReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildMemberUpdate d -> GuildMemberUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildMembersChunk d -> GuildMembersChunkReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildRoleDelete d -> GuildRoleDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.GuildSoundboardSoundDelete d -> GuildSoundboardSoundDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.IntegrationDelete d -> IntegrationDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.InviteCreate d -> InviteCreateReceiveEvent.encoder d
+        | GatewayReceiveEventData.InviteDelete d -> InviteDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.MessageDelete d -> MessageDeleteReceiveEvent.encoder d
+        | GatewayReceiveEventData.MessageDeleteBulk d -> MessageDeleteBulkReceiveEvent.encoder d
+        | GatewayReceiveEventData.MessageReactionAdd d -> MessageReactionAddReceiveEvent.encoder d
+        | GatewayReceiveEventData.MessageReactionRemove d -> MessageReactionRemoveReceiveEvent.encoder d
+        | GatewayReceiveEventData.MessageReactionRemoveAll d -> MessageReactionRemoveAllReceiveEvent.encoder d
+        | GatewayReceiveEventData.MessageReactionRemoveEmoji d -> MessageReactionRemoveEmojiReceiveEvent.encoder d
+        | GatewayReceiveEventData.PresenceUpdate d -> PresenceUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.TypingStart d -> TypingStartReceiveEvent.encoder d
+        | GatewayReceiveEventData.VoiceChannelEffectSend d -> VoiceChannelEffectSendReceiveEvent.encoder d
+        | GatewayReceiveEventData.VoiceServerUpdate d -> VoiceServerUpdateReceiveEvent.encoder d
+        | GatewayReceiveEventData.WebhooksUpdate d -> WebhooksUpdateReceiveEvent.encoder d
 
 module IdentifySendEvent =
     module Property =
@@ -3125,14 +3125,14 @@ module WebhookEventBody =
 module WebhookEventData =
     let decoder: Decoder<WebhookEventData> =
         Decode.oneOf [
-            Decode.map WebhookEventData.APPLICATION_AUTHORIZED ApplicationAuthorizedEvent.decoder
-            Decode.map WebhookEventData.ENTITLEMENT_CREATE EntitlementCreateEvent.decoder
+            Decode.map WebhookEventData.ApplicationAuthorized ApplicationAuthorizedEvent.decoder
+            Decode.map WebhookEventData.EntitlementCreate EntitlementCreateEvent.decoder
         ]
 
     let encoder (v: WebhookEventData) =
         match v with
-        | WebhookEventData.APPLICATION_AUTHORIZED d -> ApplicationAuthorizedEvent.encoder d
-        | WebhookEventData.ENTITLEMENT_CREATE d -> EntitlementCreateEvent.encoder d
+        | WebhookEventData.ApplicationAuthorized d -> ApplicationAuthorizedEvent.encoder d
+        | WebhookEventData.EntitlementCreate d -> EntitlementCreateEvent.encoder d
 
 module ApplicationAuthorizedEvent =
     module Property =
@@ -5535,14 +5535,14 @@ module Message =
 module MessageNonce =
     let decoder: Decoder<MessageNonce> =
         Decode.oneOf [
-            Decode.map MessageNonce.INT Decode.int
-            Decode.map MessageNonce.STRING Decode.string
+            Decode.map MessageNonce.Int Decode.int
+            Decode.map MessageNonce.String Decode.string
         ]
         
     let encoder (v: MessageNonce) =
         match v with
-        | MessageNonce.INT v -> Encode.int v
-        | MessageNonce.STRING v -> Encode.string v
+        | MessageNonce.Int v -> Encode.int v
+        | MessageNonce.String v -> Encode.string v
 
 module MessageActivity =
     module Property =
@@ -5654,16 +5654,16 @@ module ModalSubmitInteractionMetadata =
 module MessageInteractionMetadata =
     let decoder: Decoder<MessageInteractionMetadata> =
         Decode.oneOf [
-            Decode.map MessageInteractionMetadata.APPLICATION_COMMAND ApplicationCommandInteractionMetadata.decoder
-            Decode.map MessageInteractionMetadata.MESSAGE_COMPONENT MessageComponentInteractionMetadata.decoder
-            Decode.map MessageInteractionMetadata.MODAL_SUBMIT ModalSubmitInteractionMetadata.decoder
+            Decode.map MessageInteractionMetadata.ApplicationCommand ApplicationCommandInteractionMetadata.decoder
+            Decode.map MessageInteractionMetadata.MessageComponent MessageComponentInteractionMetadata.decoder
+            Decode.map MessageInteractionMetadata.ModalSubmit ModalSubmitInteractionMetadata.decoder
         ]
 
     let encoder (v: MessageInteractionMetadata) =
         match v with
-        | MessageInteractionMetadata.APPLICATION_COMMAND v -> ApplicationCommandInteractionMetadata.encoder v
-        | MessageInteractionMetadata.MESSAGE_COMPONENT v -> MessageComponentInteractionMetadata.encoder v
-        | MessageInteractionMetadata.MODAL_SUBMIT v -> ModalSubmitInteractionMetadata.encoder v
+        | MessageInteractionMetadata.ApplicationCommand v -> ApplicationCommandInteractionMetadata.encoder v
+        | MessageInteractionMetadata.MessageComponent v -> MessageComponentInteractionMetadata.encoder v
+        | MessageInteractionMetadata.ModalSubmit v -> ModalSubmitInteractionMetadata.encoder v
 
 module MessageCall =
     module Property =

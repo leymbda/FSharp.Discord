@@ -32,7 +32,7 @@ module String =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.STRING
-                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.String value)
             }) -> Some value
             | _ -> None
         )
@@ -48,7 +48,7 @@ module String =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.STRING
-                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.String value)
                 Focused = Some true
             }) -> Some value
             | _ -> None
@@ -61,7 +61,7 @@ module Integer =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.INTEGER
-                Value = Some (ApplicationCommandInteractionDataOptionValue.INT value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.Int value)
             }) -> Some value
             | _ -> None
         )
@@ -77,7 +77,7 @@ module Integer =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.INTEGER
-                Value = Some (ApplicationCommandInteractionDataOptionValue.INT value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.Int value)
                 Focused = Some true
             }) -> Some value
             | _ -> None
@@ -90,7 +90,7 @@ module Boolean =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.BOOLEAN
-                Value = Some (ApplicationCommandInteractionDataOptionValue.BOOL value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.Bool value)
             }) -> Some value
             | _ -> None
         )
@@ -107,7 +107,7 @@ module UserId =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.USER
-                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING userId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.String userId)
             }) -> Some userId
             | _ -> None
         )
@@ -135,7 +135,7 @@ module ChannelId =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.CHANNEL
-                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING channelId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.String channelId)
             }) -> Some channelId
             | _ -> None
         )
@@ -163,7 +163,7 @@ module RoleId =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.ROLE
-                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING roleId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.String roleId)
             }) -> Some roleId
             | _ -> None
         )
@@ -191,7 +191,7 @@ module MentionableId =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.MENTIONABLE
-                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING mentionableId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.String mentionableId)
             }) -> Some mentionableId
             | _ -> None
         )
@@ -231,7 +231,7 @@ module Number =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.NUMBER
-                Value = Some (ApplicationCommandInteractionDataOptionValue.DOUBLE value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.Double value)
             }) -> Some value
             | _ -> None
         )
@@ -247,7 +247,7 @@ module Number =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.NUMBER
-                Value = Some (ApplicationCommandInteractionDataOptionValue.DOUBLE value)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.Double value)
                 Focused = Some true
             }) -> Some value
             | _ -> None
@@ -260,7 +260,7 @@ module AttachmentId =
         |> Option.bind (function
             | ({
                 Type = ApplicationCommandOptionType.ATTACHMENT
-                Value = Some (ApplicationCommandInteractionDataOptionValue.STRING attachmentId)
+                Value = Some (ApplicationCommandInteractionDataOptionValue.String attachmentId)
             }) -> Some attachmentId
             | _ -> None
         )

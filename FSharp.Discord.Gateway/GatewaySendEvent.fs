@@ -18,25 +18,25 @@ module GatewaySendEvent =
         GatewaySendEventPayload.decoder
         |> Decode.andThen (fun payload ->
             match payload.Opcode, payload.Data with
-            | GatewayOpcode.IDENTIFY, GatewaySendEventData.IDENTIFY d ->
+            | GatewayOpcode.IDENTIFY, GatewaySendEventData.Identify d ->
                 Decode.succeed (GatewaySendEvent.IDENTIFY d)
 
-            | GatewayOpcode.RESUME, GatewaySendEventData.RESUME d ->
+            | GatewayOpcode.RESUME, GatewaySendEventData.Resume d ->
                 Decode.succeed (GatewaySendEvent.RESUME d)
 
-            | GatewayOpcode.HEARTBEAT, GatewaySendEventData.OPTIONAL_INT d ->
+            | GatewayOpcode.HEARTBEAT, GatewaySendEventData.OptionalInt d ->
                 Decode.succeed (GatewaySendEvent.HEARTBEAT d)
 
-            | GatewayOpcode.REQUEST_GUILD_MEMBERS, GatewaySendEventData.REQUEST_GUILD_MEMBERS d ->
+            | GatewayOpcode.REQUEST_GUILD_MEMBERS, GatewaySendEventData.RequestGuildMembers d ->
                 Decode.succeed (GatewaySendEvent.REQUEST_GUILD_MEMBERS d)
 
-            | GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS d ->
+            | GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS, GatewaySendEventData.RequestSoundboardSounds d ->
                 Decode.succeed (GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS d)
 
-            | GatewayOpcode.VOICE_STATE_UPDATE, GatewaySendEventData.UPDATE_VOICE_STATE d ->
+            | GatewayOpcode.VOICE_STATE_UPDATE, GatewaySendEventData.UpdateVoiceState d ->
                 Decode.succeed (GatewaySendEvent.UPDATE_VOICE_STATE d)
 
-            | GatewayOpcode.PRESENCE_UPDATE, GatewaySendEventData.UPDATE_PRESENCE d ->
+            | GatewayOpcode.PRESENCE_UPDATE, GatewaySendEventData.UpdatePresence d ->
                 Decode.succeed (GatewaySendEvent.UPDATE_PRESENCE d)
 
             | _ ->
@@ -50,7 +50,7 @@ module GatewaySendEvent =
                 Opcode = GatewayOpcode.IDENTIFY
                 EventName = None
                 Sequence = None
-                Data = GatewaySendEventData.IDENTIFY ev
+                Data = GatewaySendEventData.Identify ev
             }
 
         | GatewaySendEvent.RESUME ev ->
@@ -58,7 +58,7 @@ module GatewaySendEvent =
                 Opcode = GatewayOpcode.RESUME
                 EventName = None
                 Sequence = None
-                Data = GatewaySendEventData.RESUME ev
+                Data = GatewaySendEventData.Resume ev
             }
 
         | GatewaySendEvent.HEARTBEAT ev ->
@@ -66,7 +66,7 @@ module GatewaySendEvent =
                 Opcode = GatewayOpcode.HEARTBEAT
                 EventName = None
                 Sequence = None
-                Data = GatewaySendEventData.OPTIONAL_INT ev
+                Data = GatewaySendEventData.OptionalInt ev
             }
 
         | GatewaySendEvent.REQUEST_GUILD_MEMBERS ev ->
@@ -74,7 +74,7 @@ module GatewaySendEvent =
                 Opcode = GatewayOpcode.REQUEST_GUILD_MEMBERS
                 EventName = None
                 Sequence = None
-                Data = GatewaySendEventData.REQUEST_GUILD_MEMBERS ev
+                Data = GatewaySendEventData.RequestGuildMembers ev
             }
 
         | GatewaySendEvent.REQUEST_SOUNDBOARD_SOUNDS ev ->
@@ -82,7 +82,7 @@ module GatewaySendEvent =
                 Opcode = GatewayOpcode.REQUEST_SOUNDBOARD_SOUNDS
                 EventName = None
                 Sequence = None
-                Data = GatewaySendEventData.REQUEST_SOUNDBOARD_SOUNDS ev
+                Data = GatewaySendEventData.RequestSoundboardSounds ev
             }
 
         | GatewaySendEvent.UPDATE_VOICE_STATE ev ->
@@ -90,7 +90,7 @@ module GatewaySendEvent =
                 Opcode = GatewayOpcode.VOICE_STATE_UPDATE
                 EventName = None
                 Sequence = None
-                Data = GatewaySendEventData.UPDATE_VOICE_STATE ev
+                Data = GatewaySendEventData.UpdateVoiceState ev
             }
 
         | GatewaySendEvent.UPDATE_PRESENCE ev ->
@@ -98,5 +98,7 @@ module GatewaySendEvent =
                 Opcode = GatewayOpcode.PRESENCE_UPDATE
                 EventName = None
                 Sequence = None
-                Data = GatewaySendEventData.UPDATE_PRESENCE ev
+                Data = GatewaySendEventData.UpdatePresence ev
             }
+            
+// TODO: Make all values pascal case

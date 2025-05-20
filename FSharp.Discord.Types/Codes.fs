@@ -281,3 +281,5 @@ type JsonErrorCode =
     | JWT_ID_TOKEN_ISSUED_TOO_LONG_AGO                             = 530004
     | DISCORD_FAILED_TO_GENERATE_UNIQUE_USERNAME_IN_TIME           = 530006
     | CLIENT_SECRET_INVALID                                        = 530007
+    
+// TODO: Make all values pascal case

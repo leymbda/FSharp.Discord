@@ -546,3 +546,4 @@ type RateLimitScope =
 
 // TODO: Sort alphabetically and extract more into separate files in enums folder
 // TODO: Add missing documentation links
+// TODO: Make all values pascal case

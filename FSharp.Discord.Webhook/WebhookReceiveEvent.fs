@@ -32,10 +32,10 @@ module WebhookReceiveEvent =
 
             | WebhookPayloadType.EVENT, Some body ->
                 match body.Type, body.Data with
-                | WebhookEventType.APPLICATION_AUTHORIZED, Some (WebhookEventData.APPLICATION_AUTHORIZED e) ->
+                | WebhookEventType.APPLICATION_AUTHORIZED, Some (WebhookEventData.ApplicationAuthorized e) ->
                     Decode.succeed (WebhookReceiveEvent.APPLICATION_AUTHORIZED (e, metadata))
 
-                | WebhookEventType.ENTITLEMENT_CREATE, Some (WebhookEventData.ENTITLEMENT_CREATE e) ->
+                | WebhookEventType.ENTITLEMENT_CREATE, Some (WebhookEventData.EntitlementCreate e) ->
                     Decode.succeed (WebhookReceiveEvent.ENTITLEMENT_CREATE (e, metadata))
 
                 | _ ->
@@ -63,7 +63,7 @@ module WebhookReceiveEvent =
                 Event = Some {
                     Type = WebhookEventType.APPLICATION_AUTHORIZED
                     Timestamp = metadata.Timestamp |> Option.get
-                    Data = Some (WebhookEventData.APPLICATION_AUTHORIZED event)
+                    Data = Some (WebhookEventData.ApplicationAuthorized event)
                 }
             }
 
@@ -75,6 +75,8 @@ module WebhookReceiveEvent =
                 Event = Some {
                     Type = WebhookEventType.ENTITLEMENT_CREATE
                     Timestamp = metadata.Timestamp |> Option.get
-                    Data = Some (WebhookEventData.ENTITLEMENT_CREATE event)
+                    Data = Some (WebhookEventData.EntitlementCreate event)
                 }
             }
+            
+// TODO: Make all values pascal case

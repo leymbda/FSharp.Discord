@@ -190,3 +190,5 @@ type UserFlag =
     | BOT_HTTP_INTERACTIONS    = (1 <<< 19)
     /// User is an active developer
     | ACTIVE_DEVELOPER         = (1 <<< 22)
+    
+// TODO: Make all values pascal case

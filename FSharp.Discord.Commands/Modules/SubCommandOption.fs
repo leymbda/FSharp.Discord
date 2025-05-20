@@ -26,7 +26,7 @@ module StringSubCommandOptionChoice =
         {
             Name = v.Name
             NameLocalizations = v.Localizations |> Map.toOption |> Some
-            Value = ApplicationCommandOptionChoiceValue.STRING v.Value
+            Value = ApplicationCommandOptionChoiceValue.String v.Value
         }
 
 type StringSubCommandOptionInput =
@@ -134,7 +134,7 @@ module IntegerSubCommandOptionChoice =
         {
             Name = v.Name
             NameLocalizations = v.Localizations |> Map.toOption |> Some
-            Value = ApplicationCommandOptionChoiceValue.INT v.Value
+            Value = ApplicationCommandOptionChoiceValue.Int v.Value
         }
 
 type IntegerSubCommandOptionInput =
@@ -210,8 +210,8 @@ module IntegerSubCommandOption =
             Required = Some v.Required
             Options = None
             ChannelTypes = None
-            MinValue = Option.map (fst >> ApplicationCommandOptionMinValue.INT) v.Range
-            MaxValue = Option.map (snd >> ApplicationCommandOptionMaxValue.INT) v.Range
+            MinValue = Option.map (fst >> ApplicationCommandOptionMinValue.Int) v.Range
+            MaxValue = Option.map (snd >> ApplicationCommandOptionMaxValue.Int) v.Range
             MinLength = None
             MaxLength = None
             Choices = choices
@@ -490,7 +490,7 @@ module NumberSubCommandOptionChoice =
         {
             Name = v.Name
             NameLocalizations = v.Localizations |> Map.toOption |> Some
-            Value = ApplicationCommandOptionChoiceValue.DOUBLE v.Value
+            Value = ApplicationCommandOptionChoiceValue.Double v.Value
         }
 
 type NumberSubCommandOptionInput =
@@ -566,8 +566,8 @@ module NumberSubCommandOption =
             Required = Some v.Required
             Options = None
             ChannelTypes = None
-            MinValue = Option.map (fst >> ApplicationCommandOptionMinValue.DOUBLE) v.Range
-            MaxValue = Option.map (snd >> ApplicationCommandOptionMaxValue.DOUBLE) v.Range
+            MinValue = Option.map (fst >> ApplicationCommandOptionMinValue.Double) v.Range
+            MaxValue = Option.map (snd >> ApplicationCommandOptionMaxValue.Double) v.Range
             MinLength = None
             MaxLength = None
             Choices = choices

@@ -59,16 +59,16 @@ module InteractionCreateEvent =
             | InteractionType.PING, _ ->
                 Decode.succeed (InteractionCreateEvent.PING metadata)
 
-            | InteractionType.APPLICATION_COMMAND, Some (InteractionData.APPLICATION_COMMAND d) ->
+            | InteractionType.APPLICATION_COMMAND, Some (InteractionData.ApplicationCommand d) ->
                 Decode.succeed (InteractionCreateEvent.APPLICATION_COMMAND (d, metadata))
 
-            | InteractionType.MESSAGE_COMPONENT, Some (InteractionData.MESSAGE_COMPONENT d) ->
+            | InteractionType.MESSAGE_COMPONENT, Some (InteractionData.MessageComponent d) ->
                 Decode.succeed (InteractionCreateEvent.MESSAGE_COMPONENT (d, metadata))
 
-            | InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE, Some (InteractionData.APPLICATION_COMMAND d) ->
+            | InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE, Some (InteractionData.ApplicationCommand d) ->
                 Decode.succeed (InteractionCreateEvent.APPLICATION_COMMAND_AUTOCOMPLETE (d, metadata))
 
-            | InteractionType.MODAL_SUBMIT, Some (InteractionData.MODAL_SUBMIT d) ->
+            | InteractionType.MODAL_SUBMIT, Some (InteractionData.ModalSubmit d) ->
                 Decode.succeed (InteractionCreateEvent.MODAL_SUBMIT (d, metadata))
 
             | _ ->
@@ -105,13 +105,15 @@ module InteractionCreateEvent =
             encodeInteraction InteractionType.PING None metadata
 
         | InteractionCreateEvent.APPLICATION_COMMAND (d, metadata) ->
-            encodeInteraction InteractionType.APPLICATION_COMMAND (Some (InteractionData.APPLICATION_COMMAND d)) metadata
+            encodeInteraction InteractionType.APPLICATION_COMMAND (Some (InteractionData.ApplicationCommand d)) metadata
 
         | InteractionCreateEvent.MESSAGE_COMPONENT (d, metadata) ->
-            encodeInteraction InteractionType.MESSAGE_COMPONENT (Some (InteractionData.MESSAGE_COMPONENT d)) metadata
+            encodeInteraction InteractionType.MESSAGE_COMPONENT (Some (InteractionData.MessageComponent d)) metadata
 
         | InteractionCreateEvent.APPLICATION_COMMAND_AUTOCOMPLETE (d, metadata) ->
-            encodeInteraction InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE (Some (InteractionData.APPLICATION_COMMAND d)) metadata
+            encodeInteraction InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE (Some (InteractionData.ApplicationCommand d)) metadata
 
         | InteractionCreateEvent.MODAL_SUBMIT (d, metadata) ->
-            encodeInteraction InteractionType.MODAL_SUBMIT (Some (InteractionData.MODAL_SUBMIT d)) metadata
+            encodeInteraction InteractionType.MODAL_SUBMIT (Some (InteractionData.ModalSubmit d)) metadata
+            
+// TODO: Make all values pascal case

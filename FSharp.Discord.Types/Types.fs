@@ -466,3 +466,4 @@ type WebhookType =
     | APPLICATION      = 3
 
 // TODO: Add missing documentation links
+// TODO: Make all values pascal case

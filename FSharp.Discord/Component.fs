@@ -316,7 +316,7 @@ module UserSelect =
         { v with CustomId = customId }
 
     let addDefaultUserValue defaultValue (v: UserSelect) =
-        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.USER defaultValue]) }
+        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.User defaultValue]) }
 
     let setPlaceholder placeholder (v: UserSelect) =
         { v with Placeholder = Some placeholder }
@@ -349,7 +349,7 @@ module RoleSelect =
         { v with CustomId = customId }
 
     let addDefaultRoleValue defaultValue (v: RoleSelect) =
-        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.ROLE defaultValue]) }
+        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.Role defaultValue]) }
 
     let setPlaceholder placeholder (v: RoleSelect) =
         { v with Placeholder = Some placeholder }
@@ -382,10 +382,10 @@ module MentionableSelect =
         { v with CustomId = customId }
 
     let addDefaultRoleValue defaultValue (v: MentionableSelect) =
-        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.ROLE defaultValue]) }
+        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.Role defaultValue]) }
         
     let addDefaultUserValue defaultValue (v: MentionableSelect) =
-        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.USER defaultValue]) }
+        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.User defaultValue]) }
 
     let setPlaceholder placeholder (v: MentionableSelect) =
         { v with Placeholder = Some placeholder }
@@ -422,7 +422,7 @@ module ChannelSelect =
         { v with ChannelTypes = Some ((Option.defaultValue [] v.ChannelTypes) @ [channelType]) }
 
     let addDefaultChannelValue defaultValue (v: ChannelSelect) =
-        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.CHANNEL defaultValue]) }
+        { v with DefaultValues = Some ((Option.defaultValue [] v.DefaultValues) @ [SelectDefaultValue.Channel defaultValue]) }
         
     let setPlaceholder placeholder (v: ChannelSelect) =
         { v with Placeholder = Some placeholder }

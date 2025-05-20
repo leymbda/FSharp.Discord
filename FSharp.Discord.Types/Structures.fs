@@ -4,6 +4,7 @@ open System
 
 // ----- Interactions: Receiving and Responding -----
 
+[<RequireQualifiedAccess>]
 type InteractionAuthor =
     | User of User
     | GuildMember of GuildMember
@@ -62,10 +63,11 @@ type ModalSubmitData = {
     Components: Component list
 }
 
+[<RequireQualifiedAccess>]
 type InteractionData =
-    | APPLICATION_COMMAND of ApplicationCommandData
-    | MESSAGE_COMPONENT   of MessageComponentData
-    | MODAL_SUBMIT        of ModalSubmitData
+    | ApplicationCommand of ApplicationCommandData
+    | MessageComponent   of MessageComponentData
+    | ModalSubmit        of ModalSubmitData
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure
 type ResolvedData = {
@@ -88,10 +90,10 @@ type ApplicationCommandInteractionDataOption = {
 
 [<RequireQualifiedAccess>]
 type ApplicationCommandInteractionDataOptionValue =
-    | STRING of string
-    | INT    of int
-    | DOUBLE of double
-    | BOOL   of bool
+    | String of string
+    | Int    of int
+    | Double of double
+    | Bool   of bool
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#message-interaction-object-message-interaction-structure
 type MessageInteraction = {
@@ -132,10 +134,11 @@ type ModalInteractionCallbackData = {
     Components: Component list
 }
 
+[<RequireQualifiedAccess>]
 type InteractionCallbackData =
-    | MESSAGE      of MessageInteractionCallbackData
-    | AUTOCOMPLETE of AutocompleteInteractionCallbackData
-    | MODAL        of ModalInteractionCallbackData
+    | Message      of MessageInteractionCallbackData
+    | Autocomplete of AutocompleteInteractionCallbackData
+    | Modal        of ModalInteractionCallbackData
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-response-object
 type InteractionCallbackResponse = {
@@ -218,15 +221,15 @@ type ApplicationCommandOption = {
 
 [<RequireQualifiedAccess>]
 type ApplicationCommandOptionMinValue =
-    | INT    of int
-    | DOUBLE of double
+    | Int    of int
+    | Double of double
 
 // TODO: Ensure min 1, max 6000 (create single DU with this requirement)
 
 [<RequireQualifiedAccess>]
 type ApplicationCommandOptionMaxValue =
-    | INT    of int
-    | DOUBLE of double
+    | Int    of int
+    | Double of double
 
 // TODO: Ensure min 1, max 6000 (create single DU with this requirement)
 
@@ -239,9 +242,9 @@ type ApplicationCommandOptionChoice = {
 
 [<RequireQualifiedAccess>]
 type ApplicationCommandOptionChoiceValue =
-    | STRING of string
-    | INT    of int
-    | DOUBLE of double
+    | String of string
+    | Int    of int
+    | Double of double
 
 // TODO: Handle value type based on parent application command option type
 
@@ -336,13 +339,14 @@ type PremiumButton = {
     Disabled: bool
 }
 
+[<RequireQualifiedAccess>]
 type Button =
-    | PRIMARY of PrimaryButton
-    | SECONDARY of SecondaryButton
-    | SUCCESS of SuccessButton
-    | DANGER of DangerButton
-    | LINK of LinkButton
-    | PREMIUM of PremiumButton
+    | Primary   of PrimaryButton
+    | Secondary of SecondaryButton
+    | Success   of SuccessButton
+    | Danger    of DangerButton
+    | Link      of LinkButton
+    | Premium   of PremiumButton
 
 // https://discord.com/developers/docs/components/reference#string-select-string-select-structure
 type StringSelect = {
@@ -388,9 +392,10 @@ type ParagraphTextInput = {
     Placeholder: string option
 }
 
+[<RequireQualifiedAccess>]
 type TextInput =
-    | SHORT of ShortTextInput
-    | PARAGRAPH of ParagraphTextInput
+    | Short     of ShortTextInput
+    | Paragraph of ParagraphTextInput
 
 // https://discord.com/developers/docs/components/reference#user-select-user-select-structure
 type UserSelect = {
@@ -404,10 +409,11 @@ type UserSelect = {
 }
 
 // https://discord.com/developers/docs/components/reference#user-select-select-default-value-structure
+[<RequireQualifiedAccess>]
 type SelectDefaultValue =
-    | USER of string
-    | ROLE of string
-    | CHANNEL of string
+    | User    of string
+    | Role    of string
+    | Channel of string
 
 // https://discord.com/developers/docs/components/reference#role-select
 type RoleSelect = {
@@ -508,22 +514,23 @@ type UnfurledMediaItem = {
     ContentType: string option
 }
 
+[<RequireQualifiedAccess>]
 type Component =
-    | ACTION_ROW of ActionRow
-    | BUTTON of Button
-    | STRING_SELECT of StringSelect
-    | TEXT_INPUT of TextInput
-    | USER_SELECT of UserSelect
-    | ROLE_SELECT of RoleSelect
-    | MENTIONABLE_SELECT of MentionableSelect
-    | CHANNEL_SELECT of ChannelSelect
-    | SECTION of Section
-    | TEXT_DISPLAY of TextDisplay
-    | THUMBNAIL of Thumbnail
-    | MEDIA_GALLERY of MediaGallery
-    | FILE of File
-    | SEPARATOR of Separator
-    | CONTAINER of Container
+    | ActionRow         of ActionRow
+    | Button            of Button
+    | StringSelect      of StringSelect
+    | TextInput         of TextInput
+    | UserSelect        of UserSelect
+    | RoleSelect        of RoleSelect
+    | MentionableSelect of MentionableSelect
+    | ChannelSelect     of ChannelSelect
+    | Section           of Section
+    | TextDisplay       of TextDisplay
+    | Thumbnail         of Thumbnail
+    | MediaGallery      of MediaGallery
+    | File              of File
+    | Separator         of Separator
+    | Container         of Container
 
 // ----- Events: Using Gateway -----
 
@@ -547,80 +554,82 @@ type GatewayEventPayload<'a> = {
 
 type GatewaySendEventPayload = GatewayEventPayload<GatewaySendEventData>
 
+[<RequireQualifiedAccess>]
 type GatewaySendEventData =
     // Primitive
-    | OPTIONAL_INT              of int option
+    | OptionalInt             of int option
 
     // Event specific
-    | IDENTIFY                  of IdentifySendEvent
-    | RESUME                    of ResumeSendEvent
-    | REQUEST_GUILD_MEMBERS     of RequestGuildMembersSendEvent
-    | REQUEST_SOUNDBOARD_SOUNDS of RequestSoundboardSoundsSendEvent
-    | UPDATE_VOICE_STATE        of UpdateVoiceStateSendEvent
-    | UPDATE_PRESENCE           of UpdatePresenceSendEvent
+    | Identify                of IdentifySendEvent
+    | Resume                  of ResumeSendEvent
+    | RequestGuildMembers     of RequestGuildMembersSendEvent
+    | RequestSoundboardSounds of RequestSoundboardSoundsSendEvent
+    | UpdateVoiceState        of UpdateVoiceStateSendEvent
+    | UpdatePresence          of UpdatePresenceSendEvent
 
 type GatewayReceiveEventPayload = GatewayEventPayload<GatewayReceiveEventData option>
 
+[<RequireQualifiedAccess>]
 type GatewayReceiveEventData =
     // Primitive
-    | BOOLEAN of bool
+    | Boolean                       of bool
 
     // Reused
-    | APPLICATION_COMMAND_PERMISSION of ApplicationCommandPermission
-    | AUTO_MODERATION_RULE of AutoModerationRule
-    | CHANNEL of Channel
-    | ENTITLEMENT of Entitlement
-    | GUILD of Guild
-    | GUILD_USER of GuildUserReceiveEvent
-    | GUILD_ROLE of GuildRoleReceiveEvent
-    | GUILD_SCHEDULED_EVENT of GuildScheduledEvent
-    | GUILD_SCHEDULED_EVENT_USER of GuildScheduledEventUserReceiveEvent
-    | SOUNDBOARD_SOUND of SoundboardSound
-    | GUILD_SOUNDBOARD_SOUNDS of GuildSoundboardSoundsReceiveEvent
-    | INTEGRATION of IntegrationReceiveEvent
-    | MESSAGE of MessageReceiveEvent
-    | USER of User
-    | VOICE_STATE of VoiceState
-    | INTERACTION of Interaction
-    | STAGE_INSTANCE of StageInstance
-    | SUBSCRIPTION of Subscription
-    | MESSAGE_POLL_VOTE of MessagePollVoteReceiveEvent
+    | ApplicationCommandPermission  of ApplicationCommandPermission
+    | AutoModerationRule            of AutoModerationRule
+    | Channel                       of Channel
+    | Entitlement                   of Entitlement
+    | Guild                         of Guild
+    | GuildUser                     of GuildUserReceiveEvent
+    | GuildRole                     of GuildRoleReceiveEvent
+    | GuildScheduledEvent           of GuildScheduledEvent
+    | GuildScheduledEventUser       of GuildScheduledEventUserReceiveEvent
+    | SoundboardSound               of SoundboardSound
+    | GuildSoundboardSounds         of GuildSoundboardSoundsReceiveEvent
+    | Integration                   of IntegrationReceiveEvent
+    | Message                       of MessageReceiveEvent
+    | User                          of User
+    | VoiceState                    of VoiceState
+    | Interaction                   of Interaction
+    | StageInstance                 of StageInstance
+    | Subscription                  of Subscription
+    | MessagePollVote               of MessagePollVoteReceiveEvent
 
     // Event specific
-    | HELLO of HelloReceiveEvent
-    | READY of ReadyReceiveEvent
-    | AUTO_MODERATION_ACTION_EXECUTION of AutoModerationActionExecutionReceiveEvent
-    | CHANNEL_PINS_UPDATE of ChannelPinsUpdateReceiveEvent
-    | THREAD_CREATE of ThreadCreateReceiveEvent
-    | THREAD_DELETE of ThreadDeleteReceiveEvent
-    | THREAD_LIST_SYNC of ThreadListSyncReceiveEvent
-    | THREAD_MEMBER_UPDATE of ThreadMemberUpdateReceiveEvent
-    | THREAD_MEMBERS_UPDATE of ThreadMembersUpdateReceiveEvent
-    | GUILD_CREATE of GuildCreateReceiveEvent
-    | GUILD_DELETE of GuildDeleteReceiveEvent
-    | GUILD_AUDIT_LOG_ENTRY_CREATE of GuildAuditLogEntryCreateReceiveEvent
-    | GUILD_EMOJIS_UPDATE of GuildEmojisUpdateReceiveEvent
-    | GUILD_STICKERS_UPDATE of GuildStickersUpdateReceiveEvent
-    | GUILD_INTEGRATIONS_UPDATE of GuildIntegrationsUpdateReceiveEvent
-    | GUILD_MEMBER_ADD of GuildMemberAddReceiveEvent
-    | GUILD_MEMBER_UPDATE of GuildMemberUpdateReceiveEvent
-    | GUILD_MEMBERS_CHUNK of GuildMembersChunkReceiveEvent
-    | GUILD_ROLE_DELETE of GuildRoleDeleteReceiveEvent
-    | GUILD_SOUNDBOARD_SOUND_DELETE of GuildSoundboardSoundDeleteReceiveEvent
-    | INTEGRATION_DELETE of IntegrationDeleteReceiveEvent
-    | INVITE_CREATE of InviteCreateReceiveEvent
-    | INVITE_DELETE of InviteDeleteReceiveEvent
-    | MESSAGE_DELETE of MessageDeleteReceiveEvent
-    | MESSAGE_DELETE_BULK of MessageDeleteBulkReceiveEvent
-    | MESSAGE_REACTION_ADD of MessageReactionAddReceiveEvent
-    | MESSAGE_REACTION_REMOVE of MessageReactionRemoveReceiveEvent
-    | MESSAGE_REACTION_REMOVE_ALL of MessageReactionRemoveAllReceiveEvent
-    | MESSAGE_REACTION_REMOVE_EMOJI of MessageReactionRemoveEmojiReceiveEvent
-    | PRESENCE_UPDATE of PresenceUpdateReceiveEvent
-    | TYPING_START of TypingStartReceiveEvent
-    | VOICE_CHANNEL_EFFECT_SEND of VoiceChannelEffectSendReceiveEvent
-    | VOICE_SERVER_UPDATE of VoiceServerUpdateReceiveEvent
-    | WEBHOOKS_UPDATE of WebhooksUpdateReceiveEvent
+    | Hello                         of HelloReceiveEvent
+    | Ready                         of ReadyReceiveEvent
+    | AutoModerationActionExecution of AutoModerationActionExecutionReceiveEvent
+    | ChannelPinsUpdate             of ChannelPinsUpdateReceiveEvent
+    | ThreadCreate                  of ThreadCreateReceiveEvent
+    | ThreadDelete                  of ThreadDeleteReceiveEvent
+    | ThreadListSync                of ThreadListSyncReceiveEvent
+    | ThreadMemberUpdate            of ThreadMemberUpdateReceiveEvent
+    | ThreadMembersUpdate           of ThreadMembersUpdateReceiveEvent
+    | GuildCreate                   of GuildCreateReceiveEvent
+    | GuildDelete                   of GuildDeleteReceiveEvent
+    | GuildAuditLogEntryCreate      of GuildAuditLogEntryCreateReceiveEvent
+    | GuildEmojisUpdate             of GuildEmojisUpdateReceiveEvent
+    | GuildStickersUpdate           of GuildStickersUpdateReceiveEvent
+    | GuildIntegrationsUpdate       of GuildIntegrationsUpdateReceiveEvent
+    | GuildMemberAdd                of GuildMemberAddReceiveEvent
+    | GuildMemberUpdate             of GuildMemberUpdateReceiveEvent
+    | GuildMembersChunk             of GuildMembersChunkReceiveEvent
+    | GuildRoleDelete               of GuildRoleDeleteReceiveEvent
+    | GuildSoundboardSoundDelete    of GuildSoundboardSoundDeleteReceiveEvent
+    | IntegrationDelete             of IntegrationDeleteReceiveEvent
+    | InviteCreate                  of InviteCreateReceiveEvent
+    | InviteDelete                  of InviteDeleteReceiveEvent
+    | MessageDelete                 of MessageDeleteReceiveEvent
+    | MessageDeleteBulk             of MessageDeleteBulkReceiveEvent
+    | MessageReactionAdd            of MessageReactionAddReceiveEvent
+    | MessageReactionRemove         of MessageReactionRemoveReceiveEvent
+    | MessageReactionRemoveAll      of MessageReactionRemoveAllReceiveEvent
+    | MessageReactionRemoveEmoji    of MessageReactionRemoveEmojiReceiveEvent
+    | PresenceUpdate                of PresenceUpdateReceiveEvent
+    | TypingStart                   of TypingStartReceiveEvent
+    | VoiceChannelEffectSend        of VoiceChannelEffectSendReceiveEvent
+    | VoiceServerUpdate             of VoiceServerUpdateReceiveEvent
+    | WebhooksUpdate                of WebhooksUpdateReceiveEvent
 
 // https://discord.com/developers/docs/topics/gateway-events#identify-identify-structure
 type IdentifySendEvent = {
@@ -764,6 +773,7 @@ type ChannelPinsUpdateReceiveEvent = {
 }
 
 // https://discord.com/developers/docs/events/gateway-events#guild-create
+[<RequireQualifiedAccess>]
 type GuildCreateReceiveEvent =
     | AvailableGuild of GuildCreateReceiveEventAvailableGuild
     | UnavailableGuild of UnavailableGuild
@@ -1142,9 +1152,10 @@ type WebhookEventBody = {
     Data: WebhookEventData option
 }
 
+[<RequireQualifiedAccess>]
 type WebhookEventData =
-    | APPLICATION_AUTHORIZED of ApplicationAuthorizedEvent
-    | ENTITLEMENT_CREATE     of EntitlementCreateEvent
+    | ApplicationAuthorized of ApplicationAuthorizedEvent
+    | EntitlementCreate     of EntitlementCreateEvent
 
 // https://discord.com/developers/docs/events/webhook-events#application-authorized-application-authorized-structure
 type ApplicationAuthorizedEvent = {
@@ -2094,8 +2105,8 @@ and SnapshotPartialMessage = {
 
 [<RequireQualifiedAccess>]
 type MessageNonce =
-    | INT of int
-    | STRING of string
+    | Int of int
+    | String of string
 
 // TODO: Handle documented conditions?
 
@@ -2136,10 +2147,11 @@ type ModalSubmitInteractionMetadata = {
     TriggeringInteractionMetadata: MessageInteractionMetadata // TODO: Make this not allowed to be a ModalSubmitInteractionMetadata
 }
 
+[<RequireQualifiedAccess>]
 type MessageInteractionMetadata =
-    | APPLICATION_COMMAND of ApplicationCommandInteractionMetadata
-    | MESSAGE_COMPONENT of MessageComponentInteractionMetadata
-    | MODAL_SUBMIT of ModalSubmitInteractionMetadata
+    | ApplicationCommand of ApplicationCommandInteractionMetadata
+    | MessageComponent   of MessageComponentInteractionMetadata
+    | ModalSubmit        of ModalSubmitInteractionMetadata
 
 // https://discord.com/developers/docs/resources/message#message-call-object-message-call-object-structure
 type MessageCall = {
