@@ -1,4 +1,4 @@
-﻿namespace rec FSharp.Discord.Utils
+﻿namespace FSharp.Discord.Utils
 
 open System
 
